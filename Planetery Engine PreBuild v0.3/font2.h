@@ -53,10 +53,12 @@ namespace font {
 	static std::vector<const std::string*> getAllFontSets();
 	static const std::vector<std::string>& getAllFontStyles();
 	static bool addFont(const std::string& fileLocation, const std::string& fontSetName, const std::vector<std::string>& style = {});
-	static void useFont(const std::string& fontSet, const std::vector<std::string>& style = {});
+	static bool useFont(const std::string& fontSet = {}); //leave empty as default
+	static void useStyle(const std::vector<std::string>& style = {});
+	static bool toggleStyle(const std::string& style, bool setTo); //return previous value
 	static void closeFontSet(const std::string& fontSet);
 	static void closeFont(const std::string& fontSet, const std::vector<std::string>& style = {});
-	static void setDefaultFontSet(const std::string& fontSet);
+	static bool setDefaultFontSet(const std::string& fontSet);
 
 
 	static FontFaceData getFontFaceData(FontFace* fontFace, float pointSize);

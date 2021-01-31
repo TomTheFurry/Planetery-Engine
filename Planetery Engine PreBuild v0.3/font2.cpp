@@ -24,7 +24,6 @@ struct _Glyph {
 };
 
 typedef unsigned int Style;
-static std::array<std::string,sizeof(Style)*8> style;
 
 extern class font::FontFace {
 public:
@@ -65,22 +64,22 @@ public:
 	}
 };
 
-static std::vector<std::string> styles;
-static std::vector<FontSet*> fontSets;
-static FontSet* targetFont;
-static FontSet* defaultFont;
-ShaderProgram* textShader = nullptr;
-gl::VertexAttributeArray* vao = nullptr;
-gl::VertexBuffer* vbo = nullptr;
-
-constexpr int FT_LOAD_FLAG = FT_LOAD_LINEAR_DESIGN;
+//TODO: invalidate all FontSet.cachedStyleMap on changing _style.
+static std::array<std::string, sizeof(Style)*8> _style;
+static std::vector<FontSet*> _fontSets;
+static FontSet* _targetFont = nullptr;
+static FontSet* _defaultFont = nullptr;
+static Style _targetStyle = 0;
+static ShaderProgram* _textShader = nullptr;
+static gl::VertexAttributeArray* _vao = nullptr;
+static gl::VertexBuffer* _vbo = nullptr;
 static const std::array<const uint, 10> _size {{4, 8, 12, 24, 36, 48, 60, 72, 144, 288}};
 static std::array<uint, 7> _texSize{{1024, 4096, 16384, 65536, 262144, 1048576, uint(-1)}};
 static uint MAXTEXTURESIZE = 0;
 static FT_Library _ftLib = nullptr;
 
 inline FontSet* _getFontSet(const std::string& name) {
-	for (auto ptr : fontSets) {
+	for (auto ptr : _fontSets) {
 		if (ptr->fontName==name) return ptr;
 	} return nullptr;
 }
@@ -93,6 +92,11 @@ void font::init() {
 	while (*(++it)!=uint(-1)) {
 		*it = uint(-1);
 	}
+	for (auto& str : _style) {
+		str = std::string{};
+	}
+
+
 	if (FT_Init_FreeType(&_ftLib)) {
 		logger("Failed to init FT Library!!\n");
 		throw "FT_Lib_Error";
@@ -101,14 +105,15 @@ void font::init() {
 
 std::vector<const std::string*> font::getAllFontSets() {
 	std::vector<const std::string*> v{};
-	v.reserve(fontSets.size());
-	for (auto& ptr : fontSets) {
+	v.reserve(_fontSets.size());
+	for (auto& ptr : _fontSets) {
 		v.emplace_back(&ptr->fontName);
 	}
 	return v;
 }
 const std::vector<std::string>& font::getAllFontStyles() {
-	return styles;
+	//wil return empty string...
+	return std::vector(std::begin(_style), std::end(_style));
 }
 
 
@@ -117,15 +122,19 @@ bool font::addFont(const std::string& fileLocation, const std::string& fontSetNa
 	Style styl = 0;
 	for (auto& sty : style) {
 		uint i;
-		for (i = 0; i<styles.size(); i++) {
-			if (sty==styles[i]) break;
+		for (i = 0;i < sizeof(Style)*8 && !_style[i].empty(); i++) {
+			if (sty==_style[i]) break;
 		}
-		styles.emplace_back(sty);
-		styl += i<<i;
+		if (i >= sizeof(Style)*8) {
+			logger(sizeof(Style)*8, " styles type limit reached!\n");
+		} else {
+			_style[i] = sty;
+		}
+		styl += Style(1)<<i;
 	}
 	FontSet* fontSet = _getFontSet(fontSetName);
 	if (fontSet==nullptr) {
-		fontSet = fontSets.emplace_back(new FontSet{fontSetName});
+		fontSet = _fontSets.emplace_back(new FontSet{fontSetName});
 	}
 	if (!fontSet->fontFaces.empty() && fontSet->getFace(styl)->style==styl) {
 		logger("FontSet ", fontSetName, " with this style aready exist. Unload that first!\n");
@@ -192,6 +201,68 @@ bool font::addFont(const std::string& fileLocation, const std::string& fontSetNa
 		logger("Loading completed. Number of registored charCodes: ", face->charCodeLookup.size(), ", Number of registored glyphs: ", face->glyphs.size(), "\n");
 	}
 	return true;
+}
+
+
+bool font::useFont(const std::string& fontSet) {
+	if (fontSet.empty()) {
+		_targetFont = _defaultFont;
+		return true;
+	} else {
+		for (auto& font : _fontSets) {
+			if (font->fontName==fontSet) {
+				_targetFont = font;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+void font::useStyle(const std::vector<std::string>& style) {
+	_targetStyle = 0;
+	for (auto& sty : style) {
+		uint i;
+		for (i = 0; i < sizeof(Style)*8 && !_style[i].empty(); i++) {
+			if (sty==_style[i]) break;
+		}
+		if (i >= sizeof(Style)*8) {
+			logger(sizeof(Style)*8, " styles type limit reached! Not adding ", sty, " into style list.\n");
+		} else {
+			_style[i] = sty;
+			_targetStyle += Style(1)<<i;
+		}
+	}
+}
+
+bool font::toggleStyle(const std::string& style, bool setTo) {
+	uint i;
+	for (i = 0; i < sizeof(Style)*8 && !_style[i].empty(); i++) {
+		if (style==_style[i]) {
+			bool v = _targetStyle & Style(1)<<i;
+			if (setTo != v)
+				_targetStyle ^= Style(1)<<i; //flap bit if not equal
+			return v;
+		}
+	}
+	if (i >= sizeof(Style)*8) {
+		logger(sizeof(Style)*8, " styles type limit reached! Not adding ", style, " into style list.\n");
+		return false;
+	} else {
+		_style[i] = style;
+		if (setTo)
+			_targetStyle |= Style(1)<<i;
+		return false;
+	}
+}
+
+bool font::setDefaultFontSet(const std::string& fontSet) {
+	for (auto& font : _fontSets) {
+		if (font->fontName==fontSet) {
+			_defaultFont = font;
+			return true;
+		}
+	}
+	return false;
 }
 
 FontFaceData font::getFontFaceData(FontFace* fontFace, float pointSize) {
@@ -269,37 +340,41 @@ void font::renderRequiredGlyph() {
 }
 
 void font::_renderBatch(FontFace* f, std::vector<_RenderData> d, float pointSize) {
-	textShader->enable();
+	_textShader->enable();
 	gl::target->bind(f->ssbo);
 	gl::target->bind(f->texture, 0);
-	vbo->setFormatAndData(sizeof(_RenderData)*d.size(), 0, d.data());
+	_vbo->setFormatAndData(sizeof(_RenderData)*d.size(), 0, d.data());
 	gl::target->drawArrays(GL_POINTS, 0, d.size());
-	vbo->release();
-	vbo = new gl::VertexBuffer();
-	vao->setBufferBinding(0, {vbo,sizeof(_RenderData)});
+	_vbo->release();
+	_vbo = new gl::VertexBuffer();
+	_vao->setBufferBinding(0, {_vbo,sizeof(_RenderData)});
 }
 
-std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c) {
-	std::set<FontFace*> searched{};
-	FontFace* font = targetFont->getFace(0);
-	while (font != nullptr) {
-		auto itS = searched.lower_bound(font);
-		if (itS != searched.end() && *itS == font) break;
-		searched.emplace_hint(itS, font);
-		auto it = font->charCodeLookup.find(c);
-		if (it != font->charCodeLookup.end())
-			return std::make_pair(font, it->second);
-		font = font->fallbackFont;
+inline bool _checkFont(char32_t c, FontSet* f, std::set<FontSet*>& searched, std::pair<FontFace*, GlyphId>& result) {
+	auto itS = searched.lower_bound(f);
+	if (itS != searched.end() && *itS == f) return false;
+	searched.emplace_hint(itS, f);
+	FontFace* fontFace = f->getFace(_targetStyle);
+	auto it = fontFace->charCodeLookup.find(c);
+	if (it != fontFace->charCodeLookup.end()) {
+		result = std::make_pair(fontFace, it->second);
+		return true;
 	}
-	font = defaultFont;
-	while (font != nullptr) {
-		auto itS = searched.lower_bound(font);
-		if (itS != searched.end() && *itS == font) break;
-		searched.emplace_hint(itS, font);
-		auto it = font->charCodeLookup.find(c);
-		if (it != font->charCodeLookup.end())
-			return std::make_pair(font, it->second);
-		font = font->fallbackFont;
+	for (auto fontSet : f->fallbackFonts) {
+		if (_checkFont(c, fontSet, searched, result)) return true;
+	}
+	return false;
+}
+std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c) {
+	std::pair<FontFace*, GlyphId> result;
+	std::set<FontSet*> searched{};
+	if (_targetFont != nullptr) {
+		if (_checkFont(c, _targetFont, searched, result))
+			return result;
+	}
+	if (_defaultFont != nullptr) {
+		if (_checkFont(c, _defaultFont, searched, result))
+			return result;
 	}
 	return std::make_pair(nullptr, 0);
 }
