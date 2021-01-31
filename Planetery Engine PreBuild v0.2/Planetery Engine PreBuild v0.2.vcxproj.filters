@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\shader">
+      <UniqueIdentifier>{6745ddcb-f473-4b55-bacf-a5c8e4af142f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shader\stars">
+      <UniqueIdentifier>{8ad764f2-92f5-4750-abba-ff1bee304e90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{adec06f6-9831-4165-bd33-f3697d4e40c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{d060ecec-29f0-4b8a-a260-d8b673e51715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{9fad8782-de21-4615-9cbf-c005a860c7f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{233df512-f946-4855-a069-383148f08a1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BaseClass">
+      <UniqueIdentifier>{30cf1ce8-0c32-498e-b119-53e44ac85a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BaseClass">
+      <UniqueIdentifier>{9cfc5598-7d59-4c7b-abfc-c7112198b897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object">
+      <UniqueIdentifier>{837a1dbf-faa1-456d-8951-37a7e2eab222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object">
+      <UniqueIdentifier>{4120731f-acf9-4648-8769-efbb72334f4d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Global.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="GridGalaxies.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Header Files\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBase.h">
+      <Filter>Header Files\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBase.h">
+      <Filter>Header Files\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Translations.h">
+      <Filter>Header Files\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Anchors.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GridGalaxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GridGalaxies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Source Files\BaseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Anchors.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBase.cpp">
+      <Filter>Source Files\BaseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererBase.cpp">
+      <Filter>Source Files\BaseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Translations.cpp">
+      <Filter>Source Files\BaseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="GridGalaxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\default.frag">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\default.vert">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lighting.frag">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lighting.vert">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lightSource.frag">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lightSource.vert">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\stars\stars.frag">
+      <Filter>Resource Files\shader\stars</Filter>
+    </None>
+    <None Include="shader\stars\stars.geom">
+      <Filter>Resource Files\shader\stars</Filter>
+    </None>
+    <None Include="shader\stars\stars.vert">
+      <Filter>Resource Files\shader\stars</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\TranslationObject">
+      <UniqueIdentifier>{53a44413-30a6-470f-9c2d-70b0fafa897b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DataPacket">
+      <UniqueIdentifier>{233df512-f946-4855-a069-383148f08a1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer">
+      <UniqueIdentifier>{295e0999-f7e6-4095-a234-5b2ba60a4749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{88a0180f-e2d5-4593-85cd-26452864a4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DataPacket">
+      <UniqueIdentifier>{9fad8782-de21-4615-9cbf-c005a860c7f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TranslationObject">
+      <UniqueIdentifier>{374e07e6-1e9c-49b6-9af8-df8a8232620c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shader">
+      <UniqueIdentifier>{6745ddcb-f473-4b55-bacf-a5c8e4af142f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shader\stars">
+      <UniqueIdentifier>{8ad764f2-92f5-4750-abba-ff1bee304e90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{adec06f6-9831-4165-bd33-f3697d4e40c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{d060ecec-29f0-4b8a-a260-d8b673e51715}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\TranslationObject</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancedModel.h">
+      <Filter>Header Files\TranslationObject</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderProgram.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\TranslationObject</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderProgramLighting.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderProgramLightSource.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Translation.h">
+      <Filter>Header Files\TranslationObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Data.h">
+      <Filter>Header Files\DataPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>Header Files\DataPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="layer0.h">
+      <Filter>Header Files\TranslationObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Translations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderProgram.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancedModel.cpp">
+      <Filter>Source Files\TranslationObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\TranslationObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\TranslationObject</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderProgramLighting.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderProgramLightSource.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>Source Files\DataPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="layer0.cpp">
+      <Filter>Source Files\TranslationObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Translations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\default.frag">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\default.vert">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lighting.frag">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lighting.vert">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lightSource.frag">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\lightSource.vert">
+      <Filter>Resource Files\shader</Filter>
+    </None>
+    <None Include="shader\stars\stars.frag">
+      <Filter>Resource Files\shader\stars</Filter>
+    </None>
+    <None Include="shader\stars\stars.geom">
+      <Filter>Resource Files\shader\stars</Filter>
+    </None>
+    <None Include="shader\stars\stars.vert">
+      <Filter>Resource Files\shader\stars</Filter>
+    </None>
+  </ItemGroup>
+</Project>
