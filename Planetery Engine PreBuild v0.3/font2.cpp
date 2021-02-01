@@ -25,8 +25,9 @@ struct _Glyph {
 
 typedef unsigned int Style;
 
-extern class font::FontFace {
+class font::FontFace {
 public:
+	FontSet* fontSet;
 	Style style;
 	vec2 texturePPI;
 	uint _lineHeightUnit = 0;
@@ -38,7 +39,7 @@ public:
 	std::unordered_map<char32_t, uint> charCodeLookup{};
 	std::vector<_Glyph> glyphs{};
 };
-extern class font::FontSet {
+class font::FontSet {
 public:
 	std::string fontName;
 	std::vector<FontSet*> fallbackFonts{};
@@ -77,11 +78,28 @@ static const std::array<const uint, 10> _size {{4, 8, 12, 24, 36, 48, 60, 72, 14
 static std::array<uint, 7> _texSize{{1024, 4096, 16384, 65536, 262144, 1048576, uint(-1)}};
 static uint MAXTEXTURESIZE = 0;
 static FT_Library _ftLib = nullptr;
+constexpr uint GLYP_SPRITE_BORDER_WIDTH = 2;
+thread_local std::unordered_map<FontFace*, std::unordered_map<GlyphId, uint>>_requireRender{};
 
 inline FontSet* _getFontSet(const std::string& name) {
 	for (auto ptr : _fontSets) {
 		if (ptr->fontName==name) return ptr;
 	} return nullptr;
+}
+inline bool _checkFont(char32_t c, FontSet* f, std::set<FontSet*>& searched, std::pair<FontFace*, GlyphId>& result) {
+	auto itS = searched.lower_bound(f);
+	if (itS != searched.end() && *itS == f) return false;
+	searched.emplace_hint(itS, f);
+	FontFace* fontFace = f->getFace(_targetStyle);
+	auto it = fontFace->charCodeLookup.find(c);
+	if (it != fontFace->charCodeLookup.end()) {
+		result = std::make_pair(fontFace, it->second);
+		return true;
+	}
+	for (auto fontSet : f->fallbackFonts) {
+		if (_checkFont(c, fontSet, searched, result)) return true;
+	}
+	return false;
 }
 
 
@@ -95,12 +113,35 @@ void font::init() {
 	for (auto& str : _style) {
 		str = std::string{};
 	}
-
-
 	if (FT_Init_FreeType(&_ftLib)) {
 		logger("Failed to init FT Library!!\n");
 		throw "FT_Lib_Error";
 	};
+
+
+
+	_textShader = new ShaderProgram("shader/textRender2.vert", "shader/textRender2.geom", "shader/textRender2.frag");
+
+	if (!addFont("LastResort", "fonts/LastResortHE-Regular.ttf")) throw "LastResort font loading failed";
+	if (!addFont("Arial", "fonts/arialuni.ttf")) throw "Default font loading failed";
+	if (!setDefaultFontSet("Arial")) throw "Default font linking failed";
+	if (!linkFallbackFont("Arial", "LastResort")) throw "Default font to fallback font linking failed";
+	assert(_defaultFont!=nullptr);
+	addFont("OrangeJuice", "fonts/orange juice.ttf");
+	addFont("RemachineScript", "fonts/RemachineScript.ttf");
+	addFont("AeroviasBrasilNF", "fonts/AeroviasBrasilNF.ttf");
+	addFont("Sketsaramadhan", "fonts/Sketsaramadhan-nRLAO.otf");
+	addFont("Slick", "fonts/slick.woff");
+	//addFont("Emoji", "fonts/AppleEmoji.ttf");
+	addFont("ArialBoldItalic", "fonts/ArialCEBoldItalic.ttf");
+
+	_vao = new gl::VertexAttributeArray();
+	_vbo = new gl::VertexBuffer();
+	_vao->setBufferBinding(0, {_vbo,sizeof(vec2) + sizeof(uint)});
+	_vao->setAttribute(0, {1,GL_UNSIGNED_INT,0}, GL_INT);
+	_vao->setAttribute(1, {2,GL_FLOAT,sizeof(uint)}, GL_FLOAT);
+	_vao->bindAttributeToBufferBinding(0, 0);
+	_vao->bindAttributeToBufferBinding(1, 0);
 }
 
 std::vector<const std::string*> font::getAllFontSets() {
@@ -111,13 +152,11 @@ std::vector<const std::string*> font::getAllFontSets() {
 	}
 	return v;
 }
-const std::vector<std::string>& font::getAllFontStyles() {
+const std::vector<std::string> font::getAllFontStyles() {
 	//wil return empty string...
 	return std::vector(std::begin(_style), std::end(_style));
 }
-
-
-bool font::addFont(const std::string& fileLocation, const std::string& fontSetName, const std::vector<std::string>& style) {
+bool font::addFont(const std::string& fontSetName, const std::string& fileLocation, const std::vector<std::string>& style) {
 	logger("Loading font file: ", fileLocation, "...\n");
 	Style styl = 0;
 	for (auto& sty : style) {
@@ -140,7 +179,7 @@ bool font::addFont(const std::string& fileLocation, const std::string& fontSetNa
 		logger("FontSet ", fontSetName, " with this style aready exist. Unload that first!\n");
 		return false;
 	}
-	FontFace* face = fontSet->fontFaces.emplace_back(new FontFace{styl, gl::target->pixelPerInch});
+	FontFace* face = fontSet->fontFaces.emplace_back(new FontFace{fontSet, styl, gl::target->pixelPerInch});
 	if (FT_New_Face(_ftLib, fileLocation.data(), 0, &face->face)) {
 		logger("Loading failed.\n");
 		return false;
@@ -195,15 +234,33 @@ bool font::addFont(const std::string& fileLocation, const std::string& fontSetNa
 					uvec2(face->face->glyph->bitmap.width, face->face->glyph->bitmap.rows)}
 				);
 			}
-			face->charCodeLookup.emplace(p.first, face->glyphs.size()-1);
+			face->charCodeLookup.emplace(p.first, uint(face->glyphs.size()-1));
 		}
 		face->glyphs.shrink_to_fit();
 		logger("Loading completed. Number of registored charCodes: ", face->charCodeLookup.size(), ", Number of registored glyphs: ", face->glyphs.size(), "\n");
 	}
 	return true;
 }
-
-
+bool font::linkFallbackFont(const std::string& fontSet, const std::string& fallbackFontSet) {
+	FontSet* tFont = nullptr;
+	FontSet* bFont = nullptr;
+	for (auto& f : _fontSets) {
+		assert(f!=nullptr);
+		if (f->fontName==fontSet) {
+			tFont = f;
+			if (tFont!=nullptr && bFont!=nullptr) break;
+		}
+		if (f->fontName==fallbackFontSet) {
+			bFont = f;
+			if (tFont!=nullptr && bFont!=nullptr) break;
+		}
+	}
+	if (tFont!=nullptr && bFont!=nullptr) {
+		tFont->fallbackFonts.emplace_back(bFont);
+		return true;
+	}
+	return false;
+}
 bool font::useFont(const std::string& fontSet) {
 	if (fontSet.empty()) {
 		_targetFont = _defaultFont;
@@ -233,7 +290,6 @@ void font::useStyle(const std::vector<std::string>& style) {
 		}
 	}
 }
-
 bool font::toggleStyle(const std::string& style, bool setTo) {
 	uint i;
 	for (i = 0; i < sizeof(Style)*8 && !_style[i].empty(); i++) {
@@ -254,7 +310,6 @@ bool font::toggleStyle(const std::string& style, bool setTo) {
 		return false;
 	}
 }
-
 bool font::setDefaultFontSet(const std::string& fontSet) {
 	for (auto& font : _fontSets) {
 		if (font->fontName==fontSet) {
@@ -271,48 +326,53 @@ FontFaceData font::getFontFaceData(FontFace* fontFace, float pointSize) {
 		float(double(fontFace->_lineHeightUnit)*double(pointSize)/double(fontFace->_unitPerEM)/72.*double(gl::target->pixelPerInch.y)/double(gl::target->viewport.w)*2.-1.)
 	};
 }
-
-thread_local std::unordered_map<FontFace*,std::unordered_map<GlyphId, uint>>_requireRender{};
-
 GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) { //5 (1,1) -> (5,5)
 	auto& g = fontFace->glyphs[gId];
 
+	if (fontFace->texturePPI==vec2{0}) 
+		fontFace->texturePPI = gl::target->pixelPerInch;
 	// >1 = enlarge (not enough resolution),  <1 = minify (enough resolution)
 	//NOTE: Divade by zero may cause issue if not using IEEE float!
 	vec2 textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
 	float& higherValue = textureRelativeScale.x>textureRelativeScale.y ? textureRelativeScale.x : textureRelativeScale.y;
-	if (g._renderedPointSize!=_size.back() && (higherValue>1)) { // the '1' is the thresold point where it decides it doesn't have enough resolution and requires reRendering
-		const auto& SIZE = _size;
-		auto sizeIt = std::lower_bound(SIZE.begin(), SIZE.end(), uint(ceil(g._renderedPointSize*higherValue)));
-		if (sizeIt==SIZE.end()) sizeIt--;
-		g._renderedPointSize = *sizeIt;
-		_requireRender[fontFace].emplace(gId, *sizeIt);
-		//recaculate scale
-		textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
-		assert(textureRelativeScale.x<=1 && textureRelativeScale.y<=1);
+	if (textureRelativeScale.x > textureRelativeScale.y) {
+		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.x>1)) {
+			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), uint(ceil(pointSize * (gl::target->pixelPerInch.x/fontFace->texturePPI.x))));
+			if (sizeIt==_size.end()) sizeIt--;
+			g._renderedPointSize = *sizeIt;
+			_requireRender[fontFace].emplace(gId, *sizeIt);
+			//recaculate scale
+			textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
+		}
+	} else {
+		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.y>1)) {
+			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), uint(ceil(pointSize * (gl::target->pixelPerInch.y/fontFace->texturePPI.y))));
+			if (sizeIt==_size.end()) sizeIt--;
+			g._renderedPointSize = *sizeIt;
+			_requireRender[fontFace].emplace(gId, *sizeIt);
+			//recaculate scale
+			textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
+		}
 	}
+	assert(textureRelativeScale.x<=1 && textureRelativeScale.y<=1);
 	return GlyphData{
 		gId,
-		gl::target->normalize(dvec2(g._advanceUnit)*(double(pointSize)/double(fontFace->_unitPerEM)/72.)*dvec2(gl::target->pixelPerInch)),
+		gl::target->normalizeLength(vec2(g._advanceUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch),
 		textureRelativeScale
 	};
 }
-
 void font::renderRequiredGlyph() {
-	struct glGlyph {
-		uvec2 origin; //Texture origin (pixel)
-		uvec2 size; //Texture size (pixel)
-		vec2 bearing; //relative bearing (relative to size)
+	struct alignas(vec2) glGlyph {
+		//uint gId = -1;
+		uvec2 origin = {0,0}; //Texture origin (pixel)
+		uvec2 size = {0,0}; //Texture size (pixel)
+		vec2 emBearing = {0,0}; //bearing (in em size)
+		vec2 emSize = {0,0}; //size (relative to the em square)
 	};
-	struct glData {
+	struct alignas(uint) glData {
 		uint identifier = 43; //New identifier: textRender v 1.1
 		uint size;
-		glGlyph glyphs[];
-	};
-	struct _Packing {
-		GlyphId gId;
-		float size;
-		mapbox::Bin* bin;
+		glGlyph glyphs[]; //NOTE: using non statandard extension
 	};
 	for (auto& fontPair : _requireRender) {
 		auto& font = fontPair.first;
@@ -320,50 +380,123 @@ void font::renderRequiredGlyph() {
 		if (glyphs.empty()) continue;
 		if (font->textureShelf == nullptr) {
 			font->textureShelf = new mapbox::ShelfPack(_texSize[0], _texSize[0]);
+			font->texture = new gl::Texture2D();
+			glTextureParameteri(font->texture->id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteri(font->texture->id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(font->texture->id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTextureParameteri(font->texture->id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			font->texture->setFormat(GL_R8, _texSize[0], _texSize[0], 1);
 		};
 		auto& shelf = *font->textureShelf;
-		std::vector<_Packing> packing{};
-		packing.reserve(glyphs.size());
+		glData* ssboData;
+		if (font->ssbo == nullptr) {
+			font->ssbo = new gl::ShaderStorageBuffer();
+			font->ssbo->setFormatAndData(sizeof(glData)+sizeof(glGlyph)*font->glyphs.size(), GL_MAP_WRITE_BIT);
+			ssboData = (glData*)font->ssbo->map(GL_WRITE_ONLY);
+			ssboData->identifier = 43;
+			ssboData->size = font->glyphs.size();
+		} else {
+			ssboData = (glData*)font->ssbo->map(GL_WRITE_ONLY);
+		}
+
+
 		for (auto& gPair : glyphs) {
-			mapbox::Bin* oldBin = shelf.getBin(gPair.first);
-			if (oldBin != nullptr) {
-				shelf.unref(*oldBin);
+			mapbox::Bin* bin = shelf.getBin(gPair.first);
+			if (bin != nullptr) {
+				//NOTE: Not sure how mapbox::shelfpack works in unref-ing bins.
+				//Does it only ever deallocate memory when shelf is destroyed?
+				//if so we have a memory problem here if you run the game too long.
+				shelf.unref(*bin);
+			}
+			_Glyph& _glyph = font->glyphs[gPair.first];
+			uint& _pointSize = gPair.second;
+			auto& g = ssboData->glyphs[gPair.first];
+			//g.gId = gPair.first;
+			FT_Set_Pixel_Sizes(font->face, ceil(float(_pointSize)*font->texturePPI.x), ceil(float(_pointSize)*font->texturePPI.y));
+			if (FT_Load_Glyph(font->face, _glyph._gId, FT_LOAD_DEFAULT)) {
+				logger("Warning: Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " failed to load. Skipping...");
+				g.origin = uvec2{0,0};
+				g.size = uvec2{0,0};
+				g.emBearing = vec2{0,0};
+				g.emSize = vec2{0,0};
+				continue;
+			}if (FT_Render_Glyph(font->face->glyph, FT_RENDER_MODE_NORMAL)) { //change this for color rendering)) {
+				logger("Warning: Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " failed to render. Skipping...");
+				g.origin = uvec2{0,0};
+				g.size = uvec2{0,0};
+				g.emBearing = vec2{0,0};
+				g.emSize = vec2{0,0};
+				continue;
+			}
+			g.size = uvec2{font->face->glyph->bitmap.width, font->face->glyph->bitmap.rows};
+			g.emBearing = vec2{vec2(_glyph._bearingUnit)/float(font->_unitPerEM)};
+			g.emSize = vec2(vec2(_glyph._sizeUnit)/float(font->_unitPerEM));
+			if (g.size.x==0 || g.size.y==0) {
+				continue; //a glyph that's empty (like space:' ')
 			}
 
-
-
-			//oldBin->w = 
-
-			//packing.emplace_back(_Packing{gPair.first,gPair.second,oldBin});
+			bin = shelf.packOne(gPair.first, g.size.x + GLYP_SPRITE_BORDER_WIDTH, g.size.y + GLYP_SPRITE_BORDER_WIDTH);
+			if (bin == nullptr) {
+				//do resize
+				uint oldSize = shelf.width();
+				while (bin == nullptr) {
+					if (shelf.width() == MAXTEXTURESIZE) break;
+					//get new size
+					uint i;
+					for (i = 0; i<_texSize.size(); i++) {
+						if (_texSize[i]>shelf.width()) break;
+					}
+					shelf.resize(_texSize[i], _texSize[i]);
+					bin = shelf.packOne(gPair.first, g.size.x + GLYP_SPRITE_BORDER_WIDTH, g.size.y + GLYP_SPRITE_BORDER_WIDTH);
+				}
+				//check if resize successful
+				if (bin == nullptr) {
+					bool successful = shelf.resize(oldSize, oldSize);
+					assert(successful);
+					logger("Max texture size reached. Font glyph sprite map creation failed. Skipping glyph sprite...\n");
+					g.origin = uvec2{0,0};
+					g.size = uvec2{0,0};
+					g.emBearing = vec2{0,0};
+					g.emSize = vec2{0,0};
+					continue;
+				}
+				//resize texture
+				assert(font->texture!=nullptr);
+				gl::Texture2D* newTexture = new gl::Texture2D();
+				newTexture->setFormat(GL_R8, shelf.width(), shelf.width(), 1);
+				newTexture->cloneData(font->texture, uvec2{0}, uvec2{oldSize}, 0);
+				font->texture->release();
+				font->texture = newTexture;
+				glTextureParameteri(font->texture->id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTextureParameteri(font->texture->id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTextureParameteri(font->texture->id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTextureParameteri(font->texture->id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+			assert(bin != nullptr);
+			g.origin = uvec2(bin->x, bin->y);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //IMPORTANT!! Without this, it WILL cause seg fault!
+			font->texture->setData(bin->x, bin->y, g.size.x, g.size.y, 0, GL_RED, GL_UNSIGNED_BYTE, font->face->glyph->bitmap.buffer);
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+			logger("Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " render successfully.");
 		}
+		font->ssbo->unmap();
 	}
+	_requireRender.clear();
 }
-
 void font::_renderBatch(FontFace* f, std::vector<_RenderData> d, float pointSize) {
+	Swapper _{gl::target->vao, _vao};
+	Swapper __{gl::target->useBlend, true};
+	Swapper ___{gl::target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
 	_textShader->enable();
+	_textShader->setVec2("emSize", gl::target->normalizeLength((pointSize/72.f)*gl::target->pixelPerInch));
+	_textShader->setVec4("texColor", vec4(0.0,0.0,0.0,1.0));
 	gl::target->bind(f->ssbo);
 	gl::target->bind(f->texture, 0);
 	_vbo->setFormatAndData(sizeof(_RenderData)*d.size(), 0, d.data());
 	gl::target->drawArrays(GL_POINTS, 0, d.size());
 	_vbo->release();
 	_vbo = new gl::VertexBuffer();
-	_vao->setBufferBinding(0, {_vbo,sizeof(_RenderData)});
-}
-
-inline bool _checkFont(char32_t c, FontSet* f, std::set<FontSet*>& searched, std::pair<FontFace*, GlyphId>& result) {
-	auto itS = searched.lower_bound(f);
-	if (itS != searched.end() && *itS == f) return false;
-	searched.emplace_hint(itS, f);
-	FontFace* fontFace = f->getFace(_targetStyle);
-	auto it = fontFace->charCodeLookup.find(c);
-	if (it != fontFace->charCodeLookup.end()) {
-		result = std::make_pair(fontFace, it->second);
-		return true;
-	}
-	for (auto fontSet : f->fallbackFonts) {
-		if (_checkFont(c, fontSet, searched, result)) return true;
-	}
-	return false;
+	gl::target->vao->setBufferBinding(0, {_vbo,sizeof(_RenderData)});
 }
 std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c) {
 	std::pair<FontFace*, GlyphId> result;

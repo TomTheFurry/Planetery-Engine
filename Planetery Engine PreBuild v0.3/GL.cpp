@@ -27,7 +27,7 @@ struct _state {
 };
 
 static _state state;
-static int _maxTexUnit = 0;
+static uint _maxTexUnit = 0;
 
 //Base
 void Base::addLink() { _refCount++; }
@@ -60,7 +60,7 @@ ShaderProgram::~ShaderProgram() {
 }
 
 //BufferBase
-BufferBase::BufferBase() { glCreateBuffers(1, &id); }
+BufferBase::BufferBase() { _mapPointer = nullptr; glCreateBuffers(1, &id); }
 void gl::BufferBase::setFormatAndData(size_t size, GLflags usageFlags, const void* data) {
 	glNamedBufferStorage(id, size, data, usageFlags);
 }
@@ -146,6 +146,14 @@ void Texture2D::setFormat(GLEnum internalFormat, size_t width, size_t height, ui
 }
 void gl::Texture2D::setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, GLEnum dataType, const void* data) {
 	glTextureSubImage2D(id, level, x, y, w, h, dataFormat, dataType, data);
+}
+Texture2D* gl::Texture2D::cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level) {
+	glCopyImageSubData(source->id, GL_TEXTURE_2D, level, pos.x, pos.y, 0, id, GL_TEXTURE_2D, level, pos.x, pos.y, 0, size.x, size.y, 1);
+	return this;
+}
+Texture2D* gl::Texture2D::cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level, uvec2 targetPos, uint targetLevel) {
+	glCopyImageSubData(source->id, GL_TEXTURE_2D, level, pos.x, pos.y, 0, id, GL_TEXTURE_2D, targetLevel, targetPos.x, targetPos.y, 0, size.x, size.y, 1);
+	return this;
 }
 Texture2D::~Texture2D() { glDeleteTextures(1, &id); }
 
@@ -310,7 +318,9 @@ void RenderTarget::_use() {
 
 void gl::init() {
 	logger("GL Interface init.\n");
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_maxTexUnit);
+	int __maxTexU;
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &__maxTexU);
+	_maxTexUnit = uint(__maxTexU);
 	state.texUnit.reserve(_maxTexUnit);
 	for (uint i = 0; i<_maxTexUnit; i++) state.texUnit.push_back(nullptr);
 	gl::target = new RenderTarget();

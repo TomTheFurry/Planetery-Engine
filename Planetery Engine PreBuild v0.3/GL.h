@@ -88,6 +88,8 @@ namespace gl {
 		Texture2D();
 		void setFormat(GLEnum internalFormat, size_t width, size_t height, uint levels);
 		void setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, GLEnum dataType, const void* data);
+		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level);
+		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level, uvec2 targetPos, uint targetLevel);
 	protected:
 		~Texture2D();
 	};
@@ -140,8 +142,12 @@ namespace gl {
 		void drawElementsInstanced(GLEnum mode, size_t count, GLEnum type, size_t instanceCount, const void* indices = nullptr);
 		void activateFrameBuffer();
 		template <typename T>
-		T normalize(T v) {
-			return v/T{viewport.z,viewport.w}*T{2}-T{1};
+		T normalizePos(T v) {
+			return (v/T{viewport.z,viewport.w})*T{2}-T{1};
+		}
+		template <typename T>
+		T normalizeLength(T v) {
+			return (v/T{viewport.z,viewport.w})*T{2};
 		}
 
 		static RenderTarget* swapTarget(RenderTarget* target);

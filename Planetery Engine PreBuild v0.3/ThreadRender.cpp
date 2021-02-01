@@ -5,7 +5,7 @@
 #include "ThreadEvents.h"
 
 #include "RollingAverage.h"
-#include "Font.h"
+#include "Font2.h"
 
 #include <thread>
 #include <atomic>
@@ -128,7 +128,7 @@ static void _main() {
 
 		//Shader setup
 		logger("GL graphics init done.\n Now init fonts...\n");
-		FontManager::init();
+		font::init();
 		logger("Font init done. Now loading shader...\n");
 		//ShaderProgram::initClass();
 
@@ -184,6 +184,10 @@ static void _main() {
 				if (events::ThreadEvents::isWindowResized()) {
 					auto v = events::ThreadEvents::getFramebufferSize();
 					gl::target->setViewport(0, 0, v.x, v.y);
+					gl::target->pixelPerInch = events::ThreadEvents::getPixelPerInch();
+				}
+				if (events::ThreadEvents::isWindowMoved()) {
+					gl::target->pixelPerInch = events::ThreadEvents::getPixelPerInch();
 				}
 				
 				gl::target->activateFrameBuffer();
@@ -203,8 +207,8 @@ static void _main() {
 				}
 
 				//FontManager::renderString("01234567890ABCDEFG#......,,,,,,llllll  MMMMMM !!!!!!~~~~~~", vec2(-0.8, 0.9), vec2(1.f)/(vec2(windowSize)*.75f));
-				FontManager::renderString(std::to_string(tps)+"("+std::to_string(eventTickCount)+")", vec2(-0.8, 0.9), 72.f);
-				FontManager::renderStringInBox(wstrBuf, vec4(-0.9, 0.85, 1.8, 0.025), 11.f);
+				font::drawString(std::to_string(tps)+"("+std::to_string(eventTickCount)+")", 72.f, vec2(-0.8, 0.6));
+				//font::drawString(wstrBuf, 11.f, vec2(-0.9, 0.85), 1.8f);
 				//FontManager::renderString(wstrBuf, vec2(-0.9, 0.0), vec2(1.f)/(vec2(windowSize)*2.f));
 				//FontManager::renderString(L"\uFFFD", vec2(-0.9, 0.9), vec2(1.f)/(vec2(windowSize)*1.f));
 

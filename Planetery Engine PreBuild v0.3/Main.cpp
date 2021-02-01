@@ -1,7 +1,7 @@
 #include "Logger.h"
 #include "ThreadEvents.h"
 #include "ThreadRender.h"
-#include "Font.h"
+#include "Font2.h"
 #include "GL.h"
 
 #include <thread>
@@ -43,8 +43,8 @@ int main() {
 			}
 		}, events::KeyCode::F11, events::KeyAction::press, events::KeyModFlags(events::KeyModFlag::matchShift));
 	auto rHandle = render::ThreadRender::newRenderHandle([]() {
-		vec2 v = gl::target->normalize(vec2(events::ThreadEvents::getMousePos()));
-		FontManager::renderString("MousePointer", vec2(v.x,-v.y),12.f);
+		vec2 v = gl::target->normalizePos(vec2(events::ThreadEvents::getMousePos()));
+		font::drawString("~_:{}[]\\/0123456789aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ", 24.f, vec2(v.x,-v.y));
 		});
 	logger("Waiting for core thread end...\n");
 	events::ThreadEvents::join();
