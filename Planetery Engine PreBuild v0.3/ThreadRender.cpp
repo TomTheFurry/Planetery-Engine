@@ -5,7 +5,7 @@
 #include "ThreadEvents.h"
 
 #include "RollingAverage.h"
-#include "Font2.h"
+#include "Font.h"
 
 #include <thread>
 #include <atomic>

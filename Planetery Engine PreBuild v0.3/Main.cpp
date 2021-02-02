@@ -1,7 +1,7 @@
 #include "Logger.h"
 #include "ThreadEvents.h"
 #include "ThreadRender.h"
-#include "Font2.h"
+#include "Font.h"
 #include "GL.h"
 
 #include <thread>

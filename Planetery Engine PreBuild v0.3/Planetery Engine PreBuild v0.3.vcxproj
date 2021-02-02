@@ -157,8 +157,7 @@
   <ItemGroup>
     <ClCompile Include="..\sharedInclude\glad\glad.c" />
     <ClCompile Include="DefineThreadSync.cpp" />
-    <ClCompile Include="Font.cpp" />
-    <ClCompile Include="font2.cpp" />
+    <ClCompile Include="font.cpp" />
     <ClCompile Include="GL.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -174,8 +173,7 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="DefineMath.h" />
     <ClInclude Include="DefineThreadSync.h" />
-    <ClInclude Include="Font.h" />
-    <ClInclude Include="font2.h" />
+    <ClInclude Include="font.h" />
     <ClInclude Include="GL.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MultilineString.h" />

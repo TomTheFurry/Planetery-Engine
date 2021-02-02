@@ -30,9 +30,6 @@
     <ClCompile Include="..\sharedInclude\glad\glad.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,7 +48,7 @@
     <ClCompile Include="DefineThreadSync.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="font2.cpp">
+    <ClCompile Include="font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,9 +77,6 @@
     <ClInclude Include="RollingAverage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -101,7 +95,7 @@
     <ClInclude Include="DefineThreadSync.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="font2.h">
+    <ClInclude Include="font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
