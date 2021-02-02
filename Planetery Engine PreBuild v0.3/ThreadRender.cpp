@@ -208,7 +208,7 @@ static void _main() {
 
 				//FontManager::renderString("01234567890ABCDEFG#......,,,,,,llllll  MMMMMM !!!!!!~~~~~~", vec2(-0.8, 0.9), vec2(1.f)/(vec2(windowSize)*.75f));
 				font::drawString(std::to_string(tps)+"("+std::to_string(eventTickCount)+")", 72.f, vec2(-0.8, 0.6));
-				//font::drawString(wstrBuf, 11.f, vec2(-0.9, 0.85), 1.8f);
+				font::drawString(wstrBuf, 11.f, vec2(-0.9, 0.85), 1.8f);
 				//FontManager::renderString(wstrBuf, vec2(-0.9, 0.0), vec2(1.f)/(vec2(windowSize)*2.f));
 				//FontManager::renderString(L"\uFFFD", vec2(-0.9, 0.9), vec2(1.f)/(vec2(windowSize)*1.f));
 

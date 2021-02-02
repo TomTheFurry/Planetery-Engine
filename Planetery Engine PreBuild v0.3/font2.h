@@ -85,7 +85,7 @@ namespace font {
 		for (; it!=itEnd; it++) {
 			auto cache = cacheMap.lower_bound(char32_t(*it));
 			if (cache==cacheMap.end() || cache->first!=*it) {
-				auto pair = getGlyphFromChar(*it);
+				auto pair = getGlyphFromChar(*it); //OPTI: cache the char->FontSet w/ gId pair in FontSet
 				if (pair.first==nullptr) //Font/Glyph set is NOT found, use BACKUPCHARCODE
 					pair = getGlyphFromChar(CHARCODE_32_UNKNOWN_CHAR);
 				FontFaceData* font = nullptr;

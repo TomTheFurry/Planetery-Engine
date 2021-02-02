@@ -74,7 +74,7 @@ static Style _targetStyle = 0;
 static ShaderProgram* _textShader = nullptr;
 static gl::VertexAttributeArray* _vao = nullptr;
 static gl::VertexBuffer* _vbo = nullptr;
-static const std::array<const uint, 10> _size {{4, 8, 12, 24, 36, 48, 60, 72, 144, 288}};
+static const std::array<const uint, 14> _size {{2, 4, 6, 8, 12, 16, 20, 24, 36, 48, 60, 72, 144, 288}};
 static std::array<uint, 7> _texSize{{1024, 4096, 16384, 65536, 262144, 1048576, uint(-1)}};
 static uint MAXTEXTURESIZE = 0;
 static FT_Library _ftLib = nullptr;
@@ -127,13 +127,13 @@ void font::init() {
 	if (!setDefaultFontSet("Arial")) throw "Default font linking failed";
 	if (!linkFallbackFont("Arial", "LastResort")) throw "Default font to fallback font linking failed";
 	assert(_defaultFont!=nullptr);
-	addFont("OrangeJuice", "fonts/orange juice.ttf");
-	addFont("RemachineScript", "fonts/RemachineScript.ttf");
-	addFont("AeroviasBrasilNF", "fonts/AeroviasBrasilNF.ttf");
-	addFont("Sketsaramadhan", "fonts/Sketsaramadhan-nRLAO.otf");
-	addFont("Slick", "fonts/slick.woff");
+	//addFont("OrangeJuice", "fonts/orange juice.ttf");
+	//addFont("RemachineScript", "fonts/RemachineScript.ttf");
+	//addFont("AeroviasBrasilNF", "fonts/AeroviasBrasilNF.ttf");
+	//addFont("Sketsaramadhan", "fonts/Sketsaramadhan-nRLAO.otf");
+	//addFont("Slick", "fonts/slick.woff");
 	//addFont("Emoji", "fonts/AppleEmoji.ttf");
-	addFont("ArialBoldItalic", "fonts/ArialCEBoldItalic.ttf");
+	//addFont("ArialBoldItalic", "fonts/ArialCEBoldItalic.ttf");
 
 	_vao = new gl::VertexAttributeArray();
 	_vbo = new gl::VertexBuffer();
@@ -323,7 +323,7 @@ bool font::setDefaultFontSet(const std::string& fontSet) {
 FontFaceData font::getFontFaceData(FontFace* fontFace, float pointSize) {
 	return FontFaceData{
 		fontFace,
-		float(double(fontFace->_lineHeightUnit)*double(pointSize)/double(fontFace->_unitPerEM)/72.*double(gl::target->pixelPerInch.y)/double(gl::target->viewport.w)*2.-1.)
+		float(fontFace->_lineHeightUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f
 	};
 }
 GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) { //5 (1,1) -> (5,5)
@@ -336,8 +336,9 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 	vec2 textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
 	float& higherValue = textureRelativeScale.x>textureRelativeScale.y ? textureRelativeScale.x : textureRelativeScale.y;
 	if (textureRelativeScale.x > textureRelativeScale.y) {
-		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.x>1)) {
-			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), uint(ceil(pointSize * (gl::target->pixelPerInch.x/fontFace->texturePPI.x))));
+		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.x>2)) {
+			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.x/fontFace->texturePPI.x)));
+			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
 			if (sizeIt==_size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;
 			_requireRender[fontFace].emplace(gId, *sizeIt);
@@ -345,8 +346,9 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 			textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
 		}
 	} else {
-		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.y>1)) {
-			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), uint(ceil(pointSize * (gl::target->pixelPerInch.y/fontFace->texturePPI.y))));
+		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.y>2)) {
+			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.y/fontFace->texturePPI.y)));
+			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
 			if (sizeIt==_size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;
 			_requireRender[fontFace].emplace(gId, *sizeIt);
@@ -412,7 +414,9 @@ void font::renderRequiredGlyph() {
 			uint& _pointSize = gPair.second;
 			auto& g = ssboData->glyphs[gPair.first];
 			//g.gId = gPair.first;
-			FT_Set_Pixel_Sizes(font->face, ceil(float(_pointSize)*font->texturePPI.x), ceil(float(_pointSize)*font->texturePPI.y));
+			uvec2 pixelSize = uvec2(ceil(float(_pointSize)*font->texturePPI.x/72.f), ceil(float(_pointSize)* font->texturePPI.y/72.f));
+			pixelSize *= 2; //Subsampling rate
+			FT_Set_Pixel_Sizes(font->face, pixelSize.x, pixelSize.y);
 			if (FT_Load_Glyph(font->face, _glyph._gId, FT_LOAD_DEFAULT)) {
 				logger("Warning: Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " failed to load. Skipping...");
 				g.origin = uvec2{0,0};
@@ -446,6 +450,7 @@ void font::renderRequiredGlyph() {
 					for (i = 0; i<_texSize.size(); i++) {
 						if (_texSize[i]>shelf.width()) break;
 					}
+
 					shelf.resize(_texSize[i], _texSize[i]);
 					bin = shelf.packOne(gPair.first, g.size.x + GLYP_SPRITE_BORDER_WIDTH, g.size.y + GLYP_SPRITE_BORDER_WIDTH);
 				}
@@ -468,7 +473,7 @@ void font::renderRequiredGlyph() {
 				font->texture->release();
 				font->texture = newTexture;
 				glTextureParameteri(font->texture->id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTextureParameteri(font->texture->id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTextureParameteri(font->texture->id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTextureParameteri(font->texture->id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 				glTextureParameteri(font->texture->id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			}
