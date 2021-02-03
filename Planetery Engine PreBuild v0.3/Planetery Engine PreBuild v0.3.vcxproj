@@ -162,7 +162,6 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MultilineString.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="StringBox.cpp" />
     <ClCompile Include="ThreadEvents.cpp" />
     <ClCompile Include="ThreadMain.cpp" />
@@ -179,7 +178,6 @@
     <ClInclude Include="MultilineString.h" />
     <ClInclude Include="MultiStream.h" />
     <ClInclude Include="RollingAverage.h" />
-    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="StringBox.h" />
     <ClInclude Include="ThreadEvents.h" />
     <ClInclude Include="ThreadMain.h" />
