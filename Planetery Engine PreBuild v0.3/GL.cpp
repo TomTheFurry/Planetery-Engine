@@ -3,9 +3,12 @@
 #include "GL.h"
 #include <assert.h>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace gl;
 
@@ -13,6 +16,7 @@ struct _state {
 	uint fbo = 0;
 	uint vao = 0;
 	uint ssbo = 0;
+	uint spo = 0;
 	bool useDepth = false;
 	bool useBlend = false;
 	bool useCull = false;
@@ -38,11 +42,36 @@ void Base::release() {
 }
 
 //Shader
-Shader::Shader(GLEnum type) { id = glCreateShader(type); }
-void Shader::setSource(size_t arrayCount, const char*const* stringArray, const int* lengthArray) {
+Shader::Shader(ShaderType type) {
+	switch (type) {
+	case gl::ShaderType::Vertex:
+		id = glCreateShader(GL_VERTEX_SHADER);
+		break;
+	case gl::ShaderType::Fragment:
+		id = glCreateShader(GL_FRAGMENT_SHADER);
+		break;
+	case gl::ShaderType::Geometry:
+		id = glCreateShader(GL_GEOMETRY_SHADER);
+		break;
+	case gl::ShaderType::TessControl:
+		id = glCreateShader(GL_TESS_CONTROL_SHADER);
+		break;
+	case gl::ShaderType::TessEvaluation:
+		id = glCreateShader(GL_TESS_EVALUATION_SHADER);
+		break;
+	default:
+		throw;
+	}
+}
+void Shader::setSource(size_t arrayCount, const char* const* stringArray, const int* lengthArray) {
 	glShaderSource(id, arrayCount, stringArray, lengthArray);
 }
-void Shader::compile() { glCompileShader(id); }
+bool Shader::compile() {
+	glCompileShader(id);
+	int stat;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &stat);
+	return stat==GL_TRUE;
+}
 Shader::~Shader() { glDeleteShader(id); }
 
 //ShaderProgram
@@ -50,13 +79,196 @@ ShaderProgram::ShaderProgram() { id = glCreateProgram(); }
 void ShaderProgram::attachShader(Shader* sd) {
 	glAttachShader(id, sd->id);
 	sd->addLink();
-	_sd.push_back(sd);
+	_sd.emplace_back(sd);
 }
-void ShaderProgram::linkProgram() {
+bool ShaderProgram::linkProgram() {
 	glLinkProgram(id);
+	int stat;
+	glGetProgramiv(id, GL_LINK_STATUS, &stat);
+	return stat==GL_TRUE;
 }
+
+void gl::ShaderProgram::use() {
+	if (state.spo!=id) {
+		glUseProgram(id);
+		state.spo = id;
+	}
+}
+
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, bool value) {
+	glUniform1ui(glGetUniformLocation(id, valueNameP.c_str()), (uint)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uint value) {
+	glUniform1ui(glGetUniformLocation(id, valueNameP.c_str()), value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec2 value) {
+	glUniform2ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec3 value) {
+	glUniform3ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec4 value) {
+	glUniform4ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uint* value, uint length) {
+	glUniform1uiv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec2* value, uint length) {
+	glUniform2uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec3* value, uint length) {
+	glUniform3uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec4* value, uint length) {
+	glUniform4uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, int value) {
+	glUniform1i(glGetUniformLocation(id, valueNameP.c_str()), value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec2 value) {
+	glUniform2i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec3 value) {
+	glUniform3i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec4 value) {
+	glUniform4i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, int* value, uint length) {
+	glUniform1iv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec2* value, uint length) {
+	glUniform2iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec3* value, uint length) {
+	glUniform3iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec4* value, uint length) {
+	glUniform4iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, float value) {
+	glUniform1f(glGetUniformLocation(id, valueNameP.c_str()), value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec2 value) {
+	glUniform2f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec3 value) {
+	glUniform3f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec4 value) {
+	glUniform4f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, float* value, uint length) {
+	glUniform1fv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec2* value, uint length) {
+	glUniform2fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec3* value, uint length) {
+	glUniform3fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec4* value, uint length) {
+	glUniform4fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat2 value) {
+	glUniformMatrix2fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat3 value) {
+	glUniformMatrix3fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat4 value) {
+	glUniformMatrix4fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+
 ShaderProgram::~ShaderProgram() {
 	glDeleteProgram(id);
+}
+
+constexpr const char* SHADER_PATH = "shader/";
+inline std::string _tryRead(const char* fileName, const char* pointName) {
+	std::string result;
+	std::ifstream file;
+	std::stringstream strStream;
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	file.open(SHADER_PATH + (fileName + std::string(pointName)));
+	strStream << file.rdbuf();
+	file.close();
+	result = strStream.str();
+	return result;
+}
+
+ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
+	logger.newMessage();
+	logger << "GL: Loading shader " << fileName << "...\n";
+
+	auto* program(new ShaderProgram());
+	{
+		auto* vertShader(new Shader(ShaderType::Vertex));
+		try {
+			auto vectStr = _tryRead(fileName, ".vert");
+			const char* c = vectStr.c_str();
+			const int s = vectStr.size();
+			vertShader->setSource(1, &c, &s);
+			if (!vertShader->compile()) {
+				logger("Error! Shader load failed! Cannot compile ", SHADER_PATH, fileName, ".vert. Returning!\n");
+				logger.closeMessage();
+				return {};
+			}
+		} catch (std::ifstream::failure e) {
+			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".vert. Returning!\n");
+			logger.closeMessage();
+			return {};
+		}
+		program->attachShader(vertShader);
+		vertShader->release();
+	}
+	{
+		auto* fragShader(new Shader(ShaderType::Fragment));
+		try {
+			auto fragStr = _tryRead(fileName, ".frag");
+			const char* c = fragStr.c_str();
+			const int s = fragStr.size();
+			fragShader->setSource(1, &c, &s);
+			if (!fragShader->compile()) {
+				logger("Error! Shader load failed! Cannot compile ", SHADER_PATH, fileName, ".frag. Returning!\n");
+				logger.closeMessage();
+				return {};
+			}
+		} catch (std::ifstream::failure e) {
+			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".frag. Returning!\n");
+			logger.closeMessage();
+			return {};
+		}
+		program->attachShader(fragShader);
+		fragShader->release();
+	}
+	if (hasGeomShader) {
+		auto* geomShader(new Shader(ShaderType::Geometry));
+		try {
+			auto geomStr = _tryRead(fileName, ".geom");
+			const char* c = geomStr.c_str();
+			const int s = geomStr.size();
+			geomShader->setSource(1, &c, &s);
+			if (!geomShader->compile()) {
+				logger("Error! Shader load failed! Cannot compile ", SHADER_PATH, fileName, ".geom. Returning!\n");
+				logger.closeMessage();
+				return {};
+			}
+		} catch (std::ifstream::failure e) {
+			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".geom. Returning!\n");
+			logger.closeMessage();
+			return {};
+		}
+		program->attachShader(geomShader);
+		geomShader->release();
+	}
+	if (!program->linkProgram()) {
+		logger("Error! Shader loading failed! Cannot link ", fileName, " shaders together. Returning!\n");
+		logger.closeMessage();
+		return {};
+		program->release();
+	}
+	return program;
 }
 
 //BufferBase
@@ -137,6 +349,7 @@ VertexAttributeArray::~VertexAttributeArray() {
 		p.second->release();
 	}
 	if (_ib != nullptr) _ib->release();
+	glDeleteVertexArrays(1, &id);
 }
 
 //Texture2D
@@ -178,6 +391,7 @@ void FrameBuffer::attach(Texture* tx, GLEnum attachmentPoint, int level) {
 }
 FrameBuffer::~FrameBuffer() {
 	for (auto b : _rb) b->release();
+	glDeleteFramebuffers(1, &id);
 }
 
 
@@ -186,6 +400,7 @@ RenderTarget::RenderTarget() {
 	fbo = nullptr;
 	vao = nullptr;
 	ssbo = nullptr;
+	spo = nullptr;
 	useDepth = false;
 	useBlend = false;
 	useCull = false;
@@ -213,6 +428,11 @@ void RenderTarget::bind(ShaderStorageBuffer* ssb) {
 	if (ssbo != nullptr) ssbo->release();
 	ssbo = ssb;
 	ssbo->addLink();
+}
+void RenderTarget::bind(ShaderProgram* sp) {
+	if (spo != nullptr) spo->release();
+	spo = sp;
+	spo->addLink();
 }
 void gl::RenderTarget::bind(Texture* tx, uint i) {
 	if (i>=_maxTexUnit) throw "Max texture unit reached!";

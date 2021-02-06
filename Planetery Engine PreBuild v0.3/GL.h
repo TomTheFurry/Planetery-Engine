@@ -9,6 +9,7 @@ namespace gl {
 	typedef uint GLEnum;
 	typedef uint GLflags;
 
+
 	class Base {
 	public:
 		Base() = default;
@@ -21,11 +22,18 @@ namespace gl {
 	private:
 		uint _refCount = 1;
 	};
+	enum class ShaderType {
+		Vertex,
+		Fragment,
+		Geometry,
+		TessControl,
+		TessEvaluation
+	};
 	class Shader : virtual public Base {
 	public:
-		Shader(GLEnum type);
-		void setSource(size_t arrayCount, const char*const* stringArray, const int* lengthArray);
-		void compile();
+		void setSource(size_t arrayCount, const char* const* stringArray, const int* lengthArray);
+		bool compile();
+		Shader(ShaderType type);
 	protected:
 		~Shader();
 	};
@@ -33,12 +41,44 @@ namespace gl {
 	public:
 		ShaderProgram();
 		void attachShader(Shader* sd);
-		void linkProgram();
+		bool linkProgram();
+		void use();
+		//call use() before calling the function below
+		void setUniform(const std::string& valueNameP, bool value);
+		void setUniform(const std::string& valueNameP, uint value);
+		void setUniform(const std::string& valueNameP, uvec2 value);
+		void setUniform(const std::string& valueNameP, uvec3 value);
+		void setUniform(const std::string& valueNameP, uvec4 value);
+		void setUniform(const std::string& valueNameP, uint* value, uint length);
+		void setUniform(const std::string& valueNameP, uvec2* value, uint length);
+		void setUniform(const std::string& valueNameP, uvec3* value, uint length);
+		void setUniform(const std::string& valueNameP, uvec4* value, uint length);
+		void setUniform(const std::string& valueNameP, int value);
+		void setUniform(const std::string& valueNameP, ivec2 value);
+		void setUniform(const std::string& valueNameP, ivec3 value);
+		void setUniform(const std::string& valueNameP, ivec4 value);
+		void setUniform(const std::string& valueNameP, int* value, uint length);
+		void setUniform(const std::string& valueNameP, ivec2* value, uint length);
+		void setUniform(const std::string& valueNameP, ivec3* value, uint length);
+		void setUniform(const std::string& valueNameP, ivec4* value, uint length);
+		void setUniform(const std::string& valueNameP, float value);
+		void setUniform(const std::string& valueNameP, vec2 value);
+		void setUniform(const std::string& valueNameP, vec3 value);
+		void setUniform(const std::string& valueNameP, vec4 value);
+		void setUniform(const std::string& valueNameP, float* value, uint length);
+		void setUniform(const std::string& valueNameP, vec2* value, uint length);
+		void setUniform(const std::string& valueNameP, vec3* value, uint length);
+		void setUniform(const std::string& valueNameP, vec4* value, uint length);
+		void setUniform(const std::string& valueNameP, mat2 value);
+		void setUniform(const std::string& valueNameP, mat3 value);
+		void setUniform(const std::string& valueNameP, mat4 value);
 	protected:
 		~ShaderProgram();
 	private:
 		std::vector<Shader*> _sd;
 	};
+	extern ShaderProgram* makeShaderProgram(const char* fileName, bool hasGeomShader);
+
 
 	class BufferBase : virtual public Base {
 	public:
@@ -120,6 +160,7 @@ namespace gl {
 		FrameBuffer* fbo;
 		VertexAttributeArray* vao;
 		ShaderStorageBuffer* ssbo;
+		ShaderProgram* spo;
 		bool useDepth;
 		bool useBlend;
 		bool useCull;
@@ -134,6 +175,7 @@ namespace gl {
 		void bind(FrameBuffer* fb);
 		void bind(VertexAttributeArray* va);
 		void bind(ShaderStorageBuffer* ssb);
+		void bind(ShaderProgram* ssb);
 		void bind(Texture* tx, uint targetUnit);
 		void setViewport(uint x, uint y, uint width, uint height);
 		void drawArrays(GLEnum mode, uint first, size_t count);
