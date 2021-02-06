@@ -147,9 +147,9 @@ void font::init() {
 
 	_vao = new gl::VertexAttributeArray();
 	_vbo = new gl::VertexBuffer();
-	_vao->setBufferBinding(0, {_vbo,sizeof(vec2) + sizeof(uint)});
-	_vao->setAttribute(0, {1,GL_UNSIGNED_INT,0}, GL_INT);
-	_vao->setAttribute(1, {2,GL_FLOAT,sizeof(uint)}, GL_FLOAT);
+	_vao->setBufferBinding(0, _vbo, sizeof(vec2) + sizeof(uint));
+	_vao->setAttribute(0, 1, gl::DataType::UnsignedInt, 0, gl::DataType::UnsignedInt);
+	_vao->setAttribute(1, 2, gl::DataType::Float, sizeof(uint), gl::DataType::Float);
 	_vao->bindAttributeToBufferBinding(0, 0);
 	_vao->bindAttributeToBufferBinding(1, 0);
 }
@@ -518,10 +518,10 @@ void font::_renderBatch(FontFace* f, std::vector<_RenderData> d, float pointSize
 	gl::target->bind(f->ssbo);
 	gl::target->bind(f->texture, 0);
 	_vbo->setFormatAndData(sizeof(_RenderData)*d.size(), 0, d.data());
-	gl::target->drawArrays(GL_POINTS, 0, d.size());
+	gl::target->drawArrays(gl::GeomType::Points, 0, d.size());
 	_vbo->release();
 	_vbo = new gl::VertexBuffer();
-	gl::target->vao->setBufferBinding(0, {_vbo,sizeof(_RenderData)});
+	gl::target->vao->setBufferBinding(0, _vbo, sizeof(_RenderData));
 }
 std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c) {
 	std::pair<FontFace*, GlyphId> result;
