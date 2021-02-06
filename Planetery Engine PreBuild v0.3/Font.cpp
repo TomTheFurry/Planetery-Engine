@@ -1,6 +1,5 @@
 #include "font.h"
 #include "GL.h"
-#include "ShaderProgram.h"
 #include "ThreadEvents.h"
 #include "Logger.h"
 
@@ -71,7 +70,7 @@ static std::vector<FontSet*> _fontSets;
 static FontSet* _targetFont = nullptr;
 static FontSet* _defaultFont = nullptr;
 static Style _targetStyle = 0;
-static ShaderProgram* _textShader = nullptr;
+static gl::ShaderProgram* _textShader = nullptr;
 static gl::VertexAttributeArray* _vao = nullptr;
 static gl::VertexBuffer* _vbo = nullptr;
 static const std::array<const uint, 14> _size {{2, 4, 6, 8, 12, 16, 20, 24, 36, 48, 60, 72, 144, 288}};
@@ -120,7 +119,7 @@ void font::init() {
 
 
 
-	_textShader = new ShaderProgram("shader/textRender2.vert", "shader/textRender2.geom", "shader/textRender2.frag");
+	_textShader = gl::makeShaderProgram("textRender2", true);
 
 	if (!addFont("LastResort", "fonts/LastResortHE-Regular.ttf")) throw "LastResort font loading failed";
 	if (!addFont("Arial", "fonts/arialuni.ttf")) throw "Default font loading failed";
@@ -492,9 +491,9 @@ void font::_renderBatch(FontFace* f, std::vector<_RenderData> d, float pointSize
 	Swapper _{gl::target->vao, _vao};
 	Swapper __{gl::target->useBlend, true};
 	Swapper ___{gl::target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
-	_textShader->enable();
-	_textShader->setVec2("emSize", gl::target->normalizeLength((pointSize/72.f)*gl::target->pixelPerInch));
-	_textShader->setVec4("texColor", vec4(0.0,0.0,0.0,1.0));
+	_textShader->use();
+	_textShader->setUniform("emSize", gl::target->normalizeLength((pointSize/72.f)*gl::target->pixelPerInch));
+	_textShader->setUniform("texColor", vec4(0.0,0.0,0.0,1.0));
 	gl::target->bind(f->ssbo);
 	gl::target->bind(f->texture, 0);
 	_vbo->setFormatAndData(sizeof(_RenderData)*d.size(), 0, d.data());
