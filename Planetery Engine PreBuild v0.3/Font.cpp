@@ -482,7 +482,7 @@ void font::renderRequiredGlyph() {
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //IMPORTANT!! Without this, it WILL cause seg fault!
 			font->texture->setData(bin->x, bin->y, g.size.x, g.size.y, 0, GL_RED, GL_UNSIGNED_BYTE, font->face->glyph->bitmap.buffer);
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-			logger("Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " render successfully.");
+			//logger("Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " render successfully.");
 		}
 		font->ssbo->unmap();
 	}
