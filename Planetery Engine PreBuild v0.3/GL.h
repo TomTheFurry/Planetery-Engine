@@ -9,6 +9,19 @@ namespace gl {
 	typedef uint GLEnum;
 	typedef uint GLflags;
 
+	enum class DataType {
+		Byte,
+		UnsignedByte,
+		Short,
+		UnsignedShort,
+		Int,
+		UnsignedInt,
+		HalfFloat,
+		Float,
+		Double,
+		Fixed //Fixed 16.16 unit
+		//Also has the (u)int-2-10-10-10-rev and 10f-11f-11f-11f-rev format unused
+	};
 
 	class Base {
 	public:
@@ -79,6 +92,17 @@ namespace gl {
 	};
 	extern ShaderProgram* makeShaderProgram(const char* fileName, bool hasGeomShader);
 
+	namespace bufferFlags {
+		enum bufferFlags {
+			None = 0,
+			MappingRead = 1,
+			MappingWrite = 2,
+			MappingPersistent = 64,
+			MappingCoherent = 128,
+			DynamicStorage = 256,
+			ClientStorage = 512
+		};
+	}
 
 	class BufferBase : virtual public Base {
 	public:
@@ -98,21 +122,11 @@ namespace gl {
 	class ShaderStorageBuffer : virtual public BufferBase {};
 
 	class VertexAttributeArray : virtual public Base {
-		struct Attribute {
-			int dataSize;
-			GLEnum type;
-			uint offset;
-			bool normalized = false;
-		};
-		struct BufferBinding {
-			VertexBuffer* targetBuffer;
-			size_t stride;
-			int offset = 0; //in bytes
-		};
 	public:
 		VertexAttributeArray(IndiceBuffer* ib = nullptr);
-		void setAttribute(uint atbId, Attribute atb, GLEnum internalType);
-		void setBufferBinding(uint bfbId, BufferBinding bfb); // bfb.targetBuffer MUST be a valid Vertex Buffer!
+		//internalType only accepts: Int, UnsignedInt, Float, Double
+		void setAttribute(uint atbId, int dataSize, DataType inputType, uint offset, DataType internalType, bool normalized = false);
+		void setBufferBinding(uint bfbId, VertexBuffer* targetBuffer, uint stride, int offset = 0); // bfb.targetBuffer MUST be a valid Vertex Buffer!
 		void bindAttributeToBufferBinding(uint atbId, uint bfbId);
 		void bindIndiceBuffer(IndiceBuffer* ib);
 	protected:
@@ -152,6 +166,21 @@ namespace gl {
 		std::vector<Base*> _rb;
 	};
 
+	enum class GeomType {
+		Points,
+		Lines,
+		LineLoops,
+		LineStrips,
+		AdjacentLines,
+		AdjacentLineStrips,
+		Triangles,
+		TriangleFans,
+		TriangleStrips,
+		AdjacentTriangles,
+		AdjacentTriangleStrips,
+		Patches
+	};
+
 	class RenderTarget {
 	public:
 		RenderTarget();
@@ -178,10 +207,10 @@ namespace gl {
 		void bind(ShaderProgram* ssb);
 		void bind(Texture* tx, uint targetUnit);
 		void setViewport(uint x, uint y, uint width, uint height);
-		void drawArrays(GLEnum mode, uint first, size_t count);
-		void drawArraysInstanced(GLEnum mode, uint first, size_t count, size_t instanceCount);
-		void drawElements(GLEnum mode, size_t count, GLEnum type, const void* indices = nullptr);
-		void drawElementsInstanced(GLEnum mode, size_t count, GLEnum type, size_t instanceCount, const void* indices = nullptr);
+		void drawArrays(GeomType geomType, uint first, size_t count);
+		void drawArraysInstanced(GeomType geomType, uint first, size_t count, size_t instanceCount);
+		void drawElements(GeomType geomType, size_t count, GLEnum type, const void* indices = nullptr);
+		void drawElementsInstanced(GeomType geomType, size_t count, GLEnum type, size_t instanceCount, const void* indices = nullptr);
 		void activateFrameBuffer();
 		template <typename T>
 		T normalizePos(T v) {
@@ -200,7 +229,9 @@ namespace gl {
 
 	extern void init();
 	extern void end();
-	extern uint getMaxTextureSize();
+	extern [[nodiscard]] uint getMaxTextureSize();
+
+	extern void drawRectangle(Texture2D* tex, vec2 pos, vec2 size);
 
 	extern RenderTarget* target;
 

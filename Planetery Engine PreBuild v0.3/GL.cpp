@@ -12,6 +12,18 @@
 
 using namespace gl;
 
+//Test flag if same
+static_assert(GL_MAP_READ_BIT==bufferFlags::MappingRead, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_WRITE_BIT==bufferFlags::MappingWrite, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_PERSISTENT_BIT==bufferFlags::MappingPersistent, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_COHERENT_BIT==bufferFlags::MappingCoherent, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_DYNAMIC_STORAGE_BIT==bufferFlags::DynamicStorage, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_CLIENT_STORAGE_BIT==bufferFlags::ClientStorage, "ERROR! GL Enum is incorrect in header file!");
+
+
+
+
+
 struct _state {
 	uint fbo = 0;
 	uint vao = 0;
@@ -33,6 +45,83 @@ struct _state {
 static _state state;
 static uint _maxTexUnit = 0;
 
+//Enum convertion
+GLEnum _val(DataType d) {
+	switch (d) {
+	case gl::DataType::Byte:
+		return GL_BYTE;
+	case gl::DataType::UnsignedByte:
+		return GL_UNSIGNED_BYTE;
+	case gl::DataType::Short:
+		return GL_SHORT;
+	case gl::DataType::UnsignedShort:
+		return GL_UNSIGNED_SHORT;
+	case gl::DataType::Int:
+		return GL_INT;
+	case gl::DataType::UnsignedInt:
+		return GL_UNSIGNED_INT;
+	case gl::DataType::HalfFloat:
+		return GL_HALF_FLOAT;
+	case gl::DataType::Float:
+		return GL_FLOAT;
+	case gl::DataType::Double:
+		return GL_DOUBLE;
+	case gl::DataType::Fixed:
+		return GL_FIXED;
+	default:
+		throw;
+	}
+}
+GLEnum _val(ShaderType s) {
+	switch (s) {
+	case gl::ShaderType::Vertex:
+		return GL_VERTEX_SHADER;
+	case gl::ShaderType::Fragment:
+		return GL_FRAGMENT_SHADER;
+	case gl::ShaderType::Geometry:
+		return GL_GEOMETRY_SHADER;
+	case gl::ShaderType::TessControl:
+		return GL_TESS_CONTROL_SHADER;
+	case gl::ShaderType::TessEvaluation:
+		return GL_TESS_EVALUATION_SHADER;
+	default:
+		throw;
+	}
+}
+GLEnum _val(GeomType g) {
+	switch (g) {
+	case gl::GeomType::Points:
+		return GL_POINTS;
+	case gl::GeomType::Lines:
+		return GL_LINES;
+	case gl::GeomType::LineLoops:
+		return GL_LINE_LOOP;
+	case gl::GeomType::LineStrips:
+		return GL_LINE_STRIP;
+	case gl::GeomType::AdjacentLines:
+		return GL_LINES_ADJACENCY;
+	case gl::GeomType::AdjacentLineStrips:
+		return GL_LINE_STRIP_ADJACENCY;
+	case gl::GeomType::Triangles:
+		return GL_TRIANGLES;
+	case gl::GeomType::TriangleFans:
+		return GL_TRIANGLE_FAN;
+	case gl::GeomType::TriangleStrips:
+		return GL_TRIANGLE_STRIP;
+	case gl::GeomType::AdjacentTriangles:
+		return GL_TRIANGLES_ADJACENCY;
+	case gl::GeomType::AdjacentTriangleStrips:
+		return GL_TRIANGLE_STRIP_ADJACENCY;
+	case gl::GeomType::Patches:
+		return GL_PATCHES;
+	default:
+		throw;
+	}
+}
+
+
+
+
 //Base
 void Base::addLink() { _refCount++; }
 void Base::release() {
@@ -43,25 +132,7 @@ void Base::release() {
 
 //Shader
 Shader::Shader(ShaderType type) {
-	switch (type) {
-	case gl::ShaderType::Vertex:
-		id = glCreateShader(GL_VERTEX_SHADER);
-		break;
-	case gl::ShaderType::Fragment:
-		id = glCreateShader(GL_FRAGMENT_SHADER);
-		break;
-	case gl::ShaderType::Geometry:
-		id = glCreateShader(GL_GEOMETRY_SHADER);
-		break;
-	case gl::ShaderType::TessControl:
-		id = glCreateShader(GL_TESS_CONTROL_SHADER);
-		break;
-	case gl::ShaderType::TessEvaluation:
-		id = glCreateShader(GL_TESS_EVALUATION_SHADER);
-		break;
-	default:
-		throw;
-	}
+	id = glCreateShader(_val(type));
 }
 void Shader::setSource(size_t arrayCount, const char* const* stringArray, const int* lengthArray) {
 	glShaderSource(id, arrayCount, stringArray, lengthArray);
@@ -310,33 +381,33 @@ VertexAttributeArray::VertexAttributeArray(IndiceBuffer* ib) {
 		ib->addLink();
 	}
 }
-void VertexAttributeArray::setAttribute(uint atbId, Attribute atb, GLEnum internalType) {
+void VertexAttributeArray::setAttribute(uint atbId, int dataSize, DataType type, uint offset, DataType internalType, bool normalized) {
 	glEnableVertexArrayAttrib(id, atbId);
 	switch (internalType) {
-	case GL_INT:
-	case GL_UNSIGNED_INT:
-		glVertexArrayAttribIFormat(id, atbId, atb.dataSize, atb.type, atb.offset);
+	case DataType::Int:
+	case DataType::UnsignedInt:
+		glVertexArrayAttribIFormat(id, atbId, dataSize, _val(type), offset);
 		break;
-	case GL_FLOAT:
-		glVertexArrayAttribFormat(id, atbId, atb.dataSize, atb.type, atb.normalized, atb.offset);
+	case DataType::Float:
+		glVertexArrayAttribFormat(id, atbId, dataSize, _val(type), normalized, offset);
 		break;
-	case GL_DOUBLE:
-		glVertexArrayAttribLFormat(id, atbId, atb.dataSize, atb.type, atb.offset);
+	case DataType::Double:
+		glVertexArrayAttribLFormat(id, atbId, dataSize, _val(type), offset);
 		break;
 	default:
 		throw;
 	}
 }
-void VertexAttributeArray::setBufferBinding(uint bfbId, BufferBinding bfb) {
+void VertexAttributeArray::setBufferBinding(uint bfbId, VertexBuffer* targetBuffer, uint stride, int offset) {
 	auto it = _bfb.lower_bound(bfbId);
 	if (it!=_bfb.end() && it->first==bfbId) {
 		it->second->release();
-		it->second = bfb.targetBuffer;
+		it->second = targetBuffer;
 	} else {
-		_bfb.emplace_hint(it, std::make_pair(bfbId, bfb.targetBuffer));
+		_bfb.emplace_hint(it, std::make_pair(bfbId, targetBuffer));
 	}
-	bfb.targetBuffer->addLink();
-	glVertexArrayVertexBuffer(id, bfbId, bfb.targetBuffer->id, bfb.offset, bfb.stride);
+	targetBuffer->addLink();
+	glVertexArrayVertexBuffer(id, bfbId, targetBuffer->id, offset, stride);
 }
 void VertexAttributeArray::bindAttributeToBufferBinding(uint atbId, uint bfbId) {
 	glVertexArrayAttribBinding(id, atbId, bfbId);
@@ -445,21 +516,21 @@ void gl::RenderTarget::setViewport(uint x, uint y, uint width, uint height) {
 	viewport = uvec4{x,y,width,height};
 }
 
-void RenderTarget::drawArrays(GLEnum mode, uint first, size_t count) {
+void RenderTarget::drawArrays(GeomType mode, uint first, size_t count) {
 	_use();
-	glDrawArrays(mode, first, count);
+	glDrawArrays(_val(mode), first, count);
 }
-void RenderTarget::drawArraysInstanced(GLEnum mode, uint first, size_t count, size_t instanceCount) {
+void RenderTarget::drawArraysInstanced(GeomType mode, uint first, size_t count, size_t instanceCount) {
 	_use();
-	glDrawArraysInstanced(mode, first, count, instanceCount);
+	glDrawArraysInstanced(_val(mode), first, count, instanceCount);
 }
-void RenderTarget::drawElements(GLEnum mode, size_t count, GLEnum type, const void* indices) {
+void RenderTarget::drawElements(GeomType mode, size_t count, GLEnum type, const void* indices) {
 	_use();
-	glDrawElements(mode, count, type, indices);
+	glDrawElements(_val(mode), count, type, indices);
 }
-void RenderTarget::drawElementsInstanced(GLEnum mode, size_t count, GLEnum type, size_t instanceCount, const void* indices) {
+void RenderTarget::drawElementsInstanced(GeomType mode, size_t count, GLEnum type, size_t instanceCount, const void* indices) {
 	_use();
-	glDrawElementsInstanced(mode, count, type, indices, instanceCount);
+	glDrawElementsInstanced(_val(mode), count, type, indices, instanceCount);
 }
 void gl::RenderTarget::activateFrameBuffer() {
 	if (state.fbo!=(fbo==nullptr ? 0 : fbo->id))
@@ -575,6 +646,40 @@ uint gl::getMaxTextureSize() {
 	int size;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
 	return (uint)size;
+}
+
+//Helper Renderer
+static ShaderProgram* _flatShader = nullptr;
+static VertexAttributeArray* _flatVao = nullptr;
+
+struct GLRect {
+	vec2 pos;
+	vec2 size;
+};
+
+void gl::drawRectangle(Texture2D* tex, vec2 pos, vec2 size) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	{
+		GLRect _data = {pos,size};
+		rectBuffer->setFormatAndData(sizeof(_data), bufferFlags::None, &_data);
+	}
+
+	if (_flatShader==nullptr) {
+		_flatShader = makeShaderProgram("flatRect", true);
+		_flatVao = new VertexAttributeArray();
+		_flatVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
+		_flatVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
+		_flatVao->bindAttributeToBufferBinding(0, 0);
+		_flatVao->bindAttributeToBufferBinding(1, 0);
+	}
+	_flatVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
+	{
+		Swapper _(target->vao, _flatVao);
+		Swapper __(target->texUnit[0], (Texture*)tex);
+
+		target->drawArrays(GeomType::Points, 0, 1);
+	}
+	rectBuffer->release();
 }
 
 RenderTarget* gl::target = nullptr;
