@@ -57,6 +57,7 @@ namespace font {
 	};
 
 	extern void init();
+	extern void close();
 
 	extern std::vector<const std::string*> getAllFontSets();
 	extern const std::vector<std::string> getAllFontStyles();

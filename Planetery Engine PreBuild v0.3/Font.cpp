@@ -37,6 +37,15 @@ public:
 	FT_Face face = nullptr;
 	std::unordered_map<char32_t, uint> charCodeLookup{};
 	std::vector<_Glyph> glyphs{};
+	~FontFace() {
+		if (ssbo) ssbo->release();
+		if (texture) texture->release();
+		if (textureShelf) {
+			textureShelf->clear();
+			delete textureShelf;
+		}
+		if (face) FT_Done_Face(face);
+	}
 };
 class font::FontSet {
 public:
@@ -61,6 +70,11 @@ public:
 		}
 		cachedStyleMap.emplace(style, mostMatch);
 		return mostMatch;
+	}
+	~FontSet() {
+		for (auto faces : fontFaces) {
+			delete faces;
+		}
 	}
 };
 
@@ -116,9 +130,6 @@ void font::init() {
 		logger("Failed to init FT Library!!\n");
 		throw "FT_Lib_Error";
 	};
-
-
-
 	_textShader = gl::makeShaderProgram("textRender2", true);
 
 	if (!addFont("LastResort", "fonts/LastResortHE-Regular.ttf")) throw "LastResort font loading failed";
@@ -141,6 +152,16 @@ void font::init() {
 	_vao->setAttribute(1, {2,GL_FLOAT,sizeof(uint)}, GL_FLOAT);
 	_vao->bindAttributeToBufferBinding(0, 0);
 	_vao->bindAttributeToBufferBinding(1, 0);
+}
+
+void font::close() {
+	for (auto fontSets : _fontSets) {
+		delete fontSets;
+	}
+	_vao->release();
+	_vbo->release();
+	_textShader->release();
+	FT_Done_FreeType(_ftLib);
 }
 
 std::vector<const std::string*> font::getAllFontSets() {

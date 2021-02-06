@@ -247,6 +247,7 @@ static void _main() {
 	}
 	logger("Thread ended.\n");
 	try {
+		font::close();
 		gl::end();
 	} catch (...) {
 		events::ThreadEvents::panic(std::current_exception());
