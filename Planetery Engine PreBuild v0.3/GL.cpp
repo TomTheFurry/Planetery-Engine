@@ -281,13 +281,27 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 			const int s = vectStr.size();
 			vertShader->setSource(1, &c, &s);
 			if (!vertShader->compile()) {
-				logger("Error! Shader load failed! Cannot compile ", SHADER_PATH, fileName, ".vert. Returning!\n");
+				logger.newLayer();
+				logger << "Error! Shader load failed! Cannot compile " << SHADER_PATH << fileName << ".vert. Returning!\n";
+				GLint maxLength = 0;
+				glGetShaderiv(vertShader->id, GL_INFO_LOG_LENGTH, &maxLength);
+				std::vector<GLchar> errorLog(maxLength);
+				glGetShaderInfoLog(vertShader->id, maxLength, &maxLength, &errorLog[0]);
+				logger << "Additional error message:\n";
+				logger.newLayer();
+				logger << errorLog.data();
+				logger.closeLayer();
+				logger.closeLayer();
 				logger.closeMessage();
+				vertShader->release();
+				program->release();
 				return {};
 			}
 		} catch (std::ifstream::failure e) {
 			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".vert. Returning!\n");
 			logger.closeMessage();
+			vertShader->release();
+			program->release();
 			return {};
 		}
 		program->attachShader(vertShader);
@@ -301,13 +315,27 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 			const int s = fragStr.size();
 			fragShader->setSource(1, &c, &s);
 			if (!fragShader->compile()) {
-				logger("Error! Shader load failed! Cannot compile ", SHADER_PATH, fileName, ".frag. Returning!\n");
+				logger.newLayer();
+				logger << "Error! Shader load failed! Cannot compile " << SHADER_PATH << fileName << ".frag. Returning!\n";
+				GLint maxLength = 0;
+				glGetShaderiv(fragShader->id, GL_INFO_LOG_LENGTH, &maxLength);
+				std::vector<GLchar> errorLog(maxLength);
+				glGetShaderInfoLog(fragShader->id, maxLength, &maxLength, &errorLog[0]);
+				logger << "Additional error message:\n";
+				logger.newLayer();
+				logger << errorLog.data();
+				logger.closeLayer();
+				logger.closeLayer();
 				logger.closeMessage();
+				fragShader->release();
+				program->release();
 				return {};
 			}
 		} catch (std::ifstream::failure e) {
 			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".frag. Returning!\n");
 			logger.closeMessage();
+			fragShader->release();
+			program->release();
 			return {};
 		}
 		program->attachShader(fragShader);
@@ -321,24 +349,49 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 			const int s = geomStr.size();
 			geomShader->setSource(1, &c, &s);
 			if (!geomShader->compile()) {
-				logger("Error! Shader load failed! Cannot compile ", SHADER_PATH, fileName, ".geom. Returning!\n");
+				logger.newLayer();
+				logger << "Error! Shader load failed! Cannot compile " << SHADER_PATH << fileName << ".geom. Returning!\n";
+				GLint maxLength = 0;
+				glGetShaderiv(geomShader->id, GL_INFO_LOG_LENGTH, &maxLength);
+				std::vector<GLchar> errorLog(maxLength);
+				glGetShaderInfoLog(geomShader->id, maxLength, &maxLength, &errorLog[0]);
+				logger << "Additional error message:\n";
+				logger.newLayer();
+				logger << errorLog.data();
+				logger.closeLayer();
+				logger.closeLayer();
 				logger.closeMessage();
+				geomShader->release();
+				program->release();
 				return {};
 			}
 		} catch (std::ifstream::failure e) {
 			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".geom. Returning!\n");
 			logger.closeMessage();
+			geomShader->release();
+			program->release();
 			return {};
 		}
 		program->attachShader(geomShader);
 		geomShader->release();
 	}
 	if (!program->linkProgram()) {
-		logger("Error! Shader loading failed! Cannot link ", fileName, " shaders together. Returning!\n");
+		logger.newLayer();
+		logger << "Error! Shader loading failed! Cannot link " << fileName << " shaders together. Returning!\n";
+		GLint maxLength = 0;
+		glGetProgramiv(program->id, GL_INFO_LOG_LENGTH, &maxLength);
+		std::vector<GLchar> infoLog(maxLength);
+		glGetProgramInfoLog(program->id, maxLength, &maxLength, &infoLog[0]);
+		logger << "Additional error message:\n";
+		logger.newLayer();
+		logger << infoLog.data();
+		logger.closeLayer();
+		logger.closeLayer();
 		logger.closeMessage();
-		return {};
 		program->release();
+		return {};
 	}
+	logger.closeMessage();
 	return program;
 }
 
@@ -560,9 +613,13 @@ if (state.##a != ##a) {\
 }
 #define _M_SETID(a,b,c)\
 if (##a!=nullptr) {\
-	if (state.##a != ##a->id) b;\
+	if (state.##a != ##a->id) {\
+		b;\
+		state.##a =  ##a->id;\
+	}\
 } else if (state.##a != 0) {\
 	c;\
+	state.##a = 0;\
 }
 
 void RenderTarget::_use() {
@@ -582,12 +639,10 @@ void RenderTarget::_use() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	_M_SETID(vao, glBindVertexArray(vao->id),
 		glBindVertexArray(0));
-	_M_SETID(ssbo, {
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo->id);
-		}, {
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-		}
-	);
+	_M_SETID(ssbo, glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo->id),
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0));
+	_M_SETID(spo, glUseProgram(spo->id),
+		glUseProgram(0));
 	for (uint i = 0; i < texUnit.size(); i++) {
 		if (texUnit[i]!=nullptr && texUnit[i]!=state.texUnit[i]) {
 			glBindTextureUnit(i, texUnit[i]->id);
@@ -676,6 +731,7 @@ void gl::drawRectangle(Texture2D* tex, vec2 pos, vec2 size) {
 	{
 		Swapper _(target->vao, _flatVao);
 		Swapper __(target->texUnit[0], (Texture*)tex);
+		Swapper ___(target->spo, _flatShader);
 
 		target->drawArrays(GeomType::Points, 0, 1);
 	}
