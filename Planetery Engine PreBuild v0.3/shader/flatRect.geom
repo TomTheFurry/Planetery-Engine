@@ -9,16 +9,16 @@ out vec2 texPos;
 
 void main()
 {
-	texPos = vec2(-1.,-1.);
-	gl_Position = aPos[0];
+	texPos = vec2(0.,0.);
+	gl_Position = vec4(aPos[0].xy,0.,1.);
 	EmitVertex();
-	texPos = vec2(-1.,1.);
-	gl_Position = vec2(aPos[0].x,aPos[0].y+aSize[0].y);
+	texPos = vec2(0.,1.);
+	gl_Position = vec4(aPos[0].x,aPos[0].y+aSize[0].y,0.,1.);
 	EmitVertex();
-	texPos = vec2(1.,-1.);
-	gl_Position = vec2(aPos[0].x+aSize[0].x,aPos[0].y);
+	texPos = vec2(1.,0.);
+	gl_Position = vec4(aPos[0].x+aSize[0].x,aPos[0].y,0.,1.);
 	EmitVertex();
-	texPos = vec2(-1.,-1.);
-	gl_Position = aPos[0]+aSize[0];
+	texPos = vec2(1.,1.);
+	gl_Position = vec4(aPos[0].xy+aSize[0].xy,0.,1.);
 	EmitVertex();
 }

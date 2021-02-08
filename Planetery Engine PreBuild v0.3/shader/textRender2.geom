@@ -9,8 +9,8 @@ struct glGlyph
 	//uint gId;
 	uvec2 origin; //top left offset of bitmap texture
 	uvec2 size; //size of bitmap texture
-	vec2 emBearing;
-	vec2 emSize;
+	vec2 emBearing; //how much left then how much top
+	vec2 emSize; //width and height
 };
 
 layout(std430) buffer fontSet
@@ -55,22 +55,22 @@ void main() {
 	uint texmaxx = g.origin.x+g.size.x;
 	uint texminy = g.origin.y;
 	uint texmaxy = g.origin.y+g.size.y;
-	vec2 upperLeft = pos + vec2(g.emBearing) * emSize;
-	vec2 bottomRight = upperLeft - vec2(g.emSize) * emSize;
+	vec2 upperLeft = pos + vec2(-g.emBearing.x, g.emBearing.y) * emSize;
+	vec2 bottomRight = upperLeft + vec2(g.emSize.x, -g.emSize.y) * emSize;
 
 	//2 4
 	//1 3
 
-	texPosG = vec2(texmaxx, texmaxy);
+	texPosG = vec2(texminx, texmaxy);
 	gl_Position = vec4(upperLeft.x, bottomRight.y, 0.0, 1.0);
 	EmitVertex();
-	texPosG = vec2(texmaxx, texminy);
+	texPosG = vec2(texminx, texminy);
 	gl_Position = vec4(upperLeft.x, upperLeft.y, 0.0, 1.0);
 	EmitVertex();
-	texPosG = vec2(texminx, texmaxy);
+	texPosG = vec2(texmaxx, texmaxy);
 	gl_Position = vec4(bottomRight.x, bottomRight.y, 0.0, 1.0);
 	EmitVertex();
-	texPosG = vec2(texminx, texminy);
+	texPosG = vec2(texmaxx, texminy);
 	gl_Position = vec4(bottomRight.x, upperLeft.y, 0.0, 1.0);
 	EmitVertex();
 	EndPrimitive();
