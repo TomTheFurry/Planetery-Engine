@@ -30,6 +30,13 @@ public:
 	Style style;
 	vec2 texturePPI;
 	uint _lineHeightUnit = 0;
+	uint _maxDescendUnit = 0;
+	uint _maxAccendUnit = 0;
+	uint _maxLeftUnit = 0;
+	uint _maxRightUnit = 0;
+	uvec2 _maxAdvanceUnit = uvec2(0);
+	uint _underlinePositionUnit = 0;
+	uint _underlineThicknessUnit = 0;
 	uint _unitPerEM = 0;
 	gl::Texture2D* texture = nullptr;
 	gl::ShaderStorageBuffer* ssbo = nullptr;
@@ -208,6 +215,13 @@ bool font::addFont(const std::string& fontSetName, const std::string& fileLocati
 	{	//Logging some stuff about fontface and set stuff in face
 		face->_unitPerEM = face->face->units_per_EM;
 		face->_lineHeightUnit = face->face->height;
+		face->_maxDescendUnit = -face->face->bbox.yMin;
+		face->_maxAccendUnit = face->face->bbox.yMax;
+		face->_maxLeftUnit = -face->face->bbox.xMin;
+		face->_maxRightUnit = face->face->bbox.xMax;
+		face->_maxAdvanceUnit = uvec2(face->face->max_advance_width, face->face->max_advance_height);
+		face->_underlinePositionUnit = face->face->underline_position;
+		face->_underlineThicknessUnit = face->face->underline_thickness;
 		logger.newLayer();
 		logger << "Face meta data loaded:\n";
 		logger(face->face->family_name, ": ", face->face->style_name, "\n");
@@ -342,8 +356,15 @@ bool font::setDefaultFontSet(const std::string& fontSet) {
 
 FontFaceData font::getFontFaceData(FontFace* fontFace, float pointSize) {
 	return FontFaceData{
-		fontFace,
-		float(fontFace->_lineHeightUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f
+		._font = fontFace,
+		.lineHeight = float(fontFace->_lineHeightUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
+		.maxDescend = float(fontFace->_maxDescendUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
+		.maxAccend = float(fontFace->_maxAccendUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
+		.maxLeft = float(fontFace->_maxLeftUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.x/gl::target->viewport.z*2.f,
+		.maxRight = float(fontFace->_maxRightUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.x/gl::target->viewport.z*2.f,
+		.maxAdvance = vec2(fontFace->_maxAdvanceUnit)/vec2(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch/vec2(gl::target->viewport.z,gl::target->viewport.w)*2.f,
+		.underlinePosition = float(fontFace->_underlinePositionUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
+		.underlineThickness = float(fontFace->_underlineThicknessUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f
 	};
 }
 GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) { //5 (1,1) -> (5,5)
@@ -356,7 +377,7 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 	vec2 textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
 	float& higherValue = textureRelativeScale.x>textureRelativeScale.y ? textureRelativeScale.x : textureRelativeScale.y;
 	if (textureRelativeScale.x > textureRelativeScale.y) {
-		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.x>2)) {
+		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.x>1)) {
 			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.x/fontFace->texturePPI.x)));
 			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
 			if (sizeIt==_size.end()) sizeIt--;
@@ -366,7 +387,7 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 			textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
 		}
 	} else {
-		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.y>2)) {
+		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.y>1)) {
 			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.y/fontFace->texturePPI.y)));
 			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
 			if (sizeIt==_size.end()) sizeIt--;
@@ -377,11 +398,25 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 		}
 	}
 	assert(textureRelativeScale.x<=1 && textureRelativeScale.y<=1);
-	return GlyphData{
-		gId,
-		gl::target->normalizeLength(vec2(g._advanceUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch),
-		textureRelativeScale
+
+	auto result = GlyphData{
+		.gId = gId,
+		.descend = float(int(g._sizeUnit.y)-int(g._bearingUnit.y))/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
+		.accend = float(g._bearingUnit.y)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
+		.left = float(g._bearingUnit.x)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.x/gl::target->viewport.z*2.f,
+		.right = float(int(g._sizeUnit.x)-int(g._bearingUnit.x))/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.x/gl::target->viewport.z*2.f,
+		.advance = gl::target->normalizeLength(vec2(g._advanceUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch),
+		.textureResolutionScale = textureRelativeScale
 	};
+	assert(result.gId!=-1);
+	assert(result.advance.x>-2 && result.advance.x<2);
+	assert(result.advance.y>-2 && result.advance.y<2);
+	assert(result.descend>=-1 && result.descend<1);
+	assert(result.accend>=-1 && result.accend<1);
+	assert(result.left>=-1 && result.left<1);
+	assert(result.right>=-1 && result.right<1);
+
+	return result;
 }
 void font::renderRequiredGlyph() {
 	struct alignas(vec2) glGlyph {
@@ -425,7 +460,7 @@ void font::renderRequiredGlyph() {
 		for (auto& gPair : glyphs) {
 			mapbox::Bin* bin = shelf.getBin(gPair.first);
 			if (bin != nullptr) {
-				//NOTE: Not sure how mapbox::shelfpack works in unref-ing bins.
+				//NOTE MEMLEAK: Not sure how mapbox::shelfpack works in unref-ing bins.
 				//Does it only ever deallocate memory when shelf is destroyed?
 				//if so we have a memory problem here if you run the game too long.
 				shelf.unref(*bin);
@@ -471,7 +506,7 @@ void font::renderRequiredGlyph() {
 						if (_texSize[i]>shelf.width()) break;
 					}
 
-					shelf.resize(_texSize[i], _texSize[i]);
+					shelf.resize(_texSize[i], _texSize[i]); //????
 					bin = shelf.packOne(gPair.first, g.size.x + GLYP_SPRITE_BORDER_WIDTH, g.size.y + GLYP_SPRITE_BORDER_WIDTH);
 				}
 				//check if resize successful
@@ -508,20 +543,21 @@ void font::renderRequiredGlyph() {
 	}
 	_requireRender.clear();
 }
-void font::_renderBatch(FontFace* f, std::vector<_RenderData> d, float pointSize) {
+void font::_renderBatch(FontFace* f, std::vector<RenderData> d, float pointSize) {
 	Swapper _{gl::target->vao, _vao};
 	Swapper __{gl::target->useBlend, true};
 	Swapper ___{gl::target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
-	_textShader->use();
-	_textShader->setUniform("emSize", gl::target->normalizeLength((pointSize/72.f)*gl::target->pixelPerInch));
-	_textShader->setUniform("texColor", vec4(0.0,0.0,0.0,1.0));
+	Swapper ____{gl::target->spo, _textShader};
+	gl::target->spo->use();
+	gl::target->spo->setUniform("emSize", gl::target->normalizeLength((pointSize/72.f)*gl::target->pixelPerInch));
+	gl::target->spo->setUniform("texColor", vec4(0.0,0.0,0.0,1.0));
 	gl::target->bind(f->ssbo);
 	gl::target->bind(f->texture, 0);
-	_vbo->setFormatAndData(sizeof(_RenderData)*d.size(), 0, d.data());
+	_vbo->setFormatAndData(sizeof(RenderData)*d.size(), 0, d.data());
 	gl::target->drawArrays(gl::GeomType::Points, 0, d.size());
 	_vbo->release();
 	_vbo = new gl::VertexBuffer();
-	gl::target->vao->setBufferBinding(0, _vbo, sizeof(_RenderData));
+	gl::target->vao->setBufferBinding(0, _vbo, sizeof(RenderData));
 }
 std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c) {
 	std::pair<FontFace*, GlyphId> result;
@@ -532,6 +568,28 @@ std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c) {
 	}
 	if (_defaultFont != nullptr) {
 		if (_checkFont(c, _defaultFont, searched, result))
+			return result;
+	}
+	return std::make_pair(nullptr, 0);
+}
+std::pair<FontFace*, GlyphId> font::getGlyphFromChar(char32_t c, char32_t d) {
+	std::pair<FontFace*, GlyphId> result;
+	std::set<FontSet*> searched{};
+	if (_targetFont != nullptr) {
+		if (_checkFont(c, _targetFont, searched, result))
+			return result;
+	}
+	if (_defaultFont != nullptr) {
+		if (_checkFont(c, _defaultFont, searched, result))
+			return result;
+	}
+	searched.clear();
+	if (_targetFont != nullptr) {
+		if (_checkFont(d, _targetFont, searched, result))
+			return result;
+	}
+	if (_defaultFont != nullptr) {
+		if (_checkFont(d, _defaultFont, searched, result))
 			return result;
 	}
 	return std::make_pair(nullptr, 0);
