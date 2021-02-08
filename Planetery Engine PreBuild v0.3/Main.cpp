@@ -3,12 +3,12 @@
 #include "ThreadRender.h"
 #include "Font.h"
 #include "GL.h"
+#include "StringBox.h"
 
 #include <thread>
 #include <iostream>
 #include <chrono>
 #include <atomic>
-
 
 
 
@@ -43,8 +43,20 @@ int main() {
 			}
 		}, events::KeyCode::F11, events::KeyAction::press, events::KeyModFlags(events::KeyModFlag::matchShift));
 	auto rHandle = render::ThreadRender::newRenderHandle([]() {
+		static StringBox* sb = nullptr;
+		constexpr float HALF_SIZE_X = 0.5;
+		constexpr float HALF_SIZE_Y = 0.5;
 		vec2 v = gl::target->normalizePos(vec2(events::ThreadEvents::getMousePos()));
-		font::drawString("~_:{}[]\\/012\n345\n6789\naAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ", 24.f, vec2(v.x,-v.y));
+		if (sb==nullptr) {
+			sb = new StringBox();
+			sb->pos = vec2(v.x-HALF_SIZE_X, -v.y-HALF_SIZE_Y);
+			sb->setSize(vec2(HALF_SIZE_X*2, HALF_SIZE_Y*2)/2.f);
+			sb->setTextSize(48.f);
+			sb->str("_~_:{}[]\\/01(2)22\n345\n*6789\n@aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ");
+		} else {
+			sb->pos = vec2(v.x-HALF_SIZE_X, -v.y-HALF_SIZE_Y);
+		}
+		sb->render();
 		});
 	logger("Waiting for core thread end...\n");
 	events::ThreadEvents::join();
