@@ -408,6 +408,7 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 		.advance = gl::target->normalizeLength(vec2(g._advanceUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch),
 		.textureResolutionScale = textureRelativeScale
 	};
+#ifdef FONT_ASSERT_BREAKING
 	assert(result.gId!=-1);
 	assert(result.advance.x>-2 && result.advance.x<2);
 	assert(result.advance.y>-2 && result.advance.y<2);
@@ -415,7 +416,7 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 	assert(result.accend>=-1 && result.accend<1);
 	assert(result.left>=-1 && result.left<1);
 	assert(result.right>=-1 && result.right<1);
-
+#endif
 	return result;
 }
 void font::renderRequiredGlyph() {
@@ -544,6 +545,7 @@ void font::renderRequiredGlyph() {
 	_requireRender.clear();
 }
 void font::_renderBatch(FontFace* f, std::vector<RenderData> d, float pointSize) {
+	if (d.empty()) return;
 	Swapper _{gl::target->vao, _vao};
 	Swapper __{gl::target->useBlend, true};
 	Swapper ___{gl::target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
