@@ -1,5 +1,4 @@
 #include "StringBox.h"
-#include "ThreadEvents.h"
 #include "Logger.h"
 #include "GL.h"
 #include "Font.h"
@@ -8,30 +7,41 @@
 
 static gl::RenderTarget* _targetText = nullptr;
 
-StringBox::StringBox() {
+StringBox::StringBox() : _ss() {
 	pos = vec2(0, 0);
 	size = vec2(0, 0);
 	_ppi = vec2(0, 0);
 	_textureSize = vec2(0, 0);
+	_pointSize = 12.f;
 	_change = true;
-	_tex = new gl::Texture2D();
-	_fbo = new gl::FrameBuffer();
-	uvec2 windowSize{events::ThreadEvents::getFramebufferSize()};
-	_tex->setFormat(GL_RGBA8, windowSize.x, windowSize.y, 1);
-	_fbo->attach(_tex, GL_COLOR_ATTACHMENT0, 0);
+	_tex = nullptr;
+	_fbo = nullptr;
 }
 
 void StringBox::render() {
 	if (_change) {
+		logger("ReRendering...\n");
 		//render text here
 		_ppi = gl::target->pixelPerInch;
-		_textureSize = vec2(gl::target->viewport.z, gl::target->viewport.w)*size*2.f; //TODO: WHY *2.f ?????????
+		_textureSize = vec2(gl::target->viewport.z, gl::target->viewport.w)*size;
+		if (_textureSize.x<=0 || _textureSize.y<=0) {
+			_change = false;
+			return;
+		}
+		
 		if (_targetText==nullptr) {
 			_targetText = new gl::RenderTarget();
-			_targetText->bind(_fbo);
 		}
+		if (_fbo == nullptr)
+			_fbo = new gl::FrameBuffer();
+		_targetText->bind(_fbo);
 		_targetText->viewport = vec4(vec2(0.f), _textureSize);
 		_targetText->pixelPerInch = _ppi;
+		if (_tex != nullptr)
+			_tex->release();
+		_tex = new gl::Texture2D();
+		_tex->setFormat(GL_R8, _textureSize.x, _textureSize.y, 1);
+		_fbo->attach(_tex, GL_COLOR_ATTACHMENT0, 0);
 		Swapper _{gl::target, _targetText};
 
 		gl::target->activateFrameBuffer();
@@ -60,8 +70,6 @@ void StringBox::render() {
 				while (charIt!=chars.end()) {
 					constexpr char32_t CONTROL_PICTURES = u'\u2400';
 					while (charIt!=chars.end()) {
-						assert(drawHead.y>-1.5&&drawHead.y<1.5);
-						assert(drawHead.x>-1.5&&drawHead.x<1.5);
 
 						char32_t c = std::get<0>(*charIt);
 						uint fontI = std::get<1>(*charIt);
@@ -70,34 +78,44 @@ void StringBox::render() {
 						if (drawHead.x+data.at(fontI).second.at(glyphI).right > 1) goto NextLine;
 						bool nextLine = false;
 						bool tab = false;
+						bool noRender = false;
 						switch (c) {
-						case u'\0'+CONTROL_PICTURES:
 						case u'\0':
-							logger("FontEngine: Warning: Null Char detected!\n");
+							noRender = true;
 							break;
 
-						case u'\t'+CONTROL_PICTURES:
 						case u'\t':
+							noRender = true;
+							[[fallthrough]];
+						case u'\t'+CONTROL_PICTURES:
 							tab = true;
 							break;
 
-						case u'\n'+CONTROL_PICTURES:
 						case u'\n':
+							noRender = true;
+							[[fallthrough]];
+						case u'\n'+CONTROL_PICTURES:
 							nextLine = true;
 							break;
 
-						case u'\v'+CONTROL_PICTURES:
 						case u'\v':
+							noRender = true;
+							[[fallthrough]];
+						case u'\v'+CONTROL_PICTURES:
 							nextLine = true;
 							break;
 
-						case u'\f'+CONTROL_PICTURES:
 						case u'\f':
+							noRender = true;
+							[[fallthrough]];
+						case u'\f'+CONTROL_PICTURES:
 							nextLine = true;
 							break;
 
-						case u'\r'+CONTROL_PICTURES:
 						case u'\r':
+							noRender = true;
+							[[fallthrough]];
+						case u'\r'+CONTROL_PICTURES:
 							if (charIt+1==chars.end() ||
 								(std::get<0>(*(charIt+1))!=u'\n' && std::get<0>(*(charIt+1))!=u'\n'+CONTROL_PICTURES)) {
 								nextLine = true;
@@ -107,24 +125,27 @@ void StringBox::render() {
 						case u'\u0085':
 						case u'\u2828':
 						case u'\u2029':
+							noRender = true;
 							nextLine = true;
 							break;
 
-						case u'\u009f'+CONTROL_PICTURES:
 						case u'\u009f':
-							logger("Font Engine: Warning: This DrawMode does not support font engine control commend!\n");
-							break; //treat as normal char for now
+							noRender = true;
+							[[fallthrough]];
+						case u'\u009f'+CONTROL_PICTURES:
+							//logger("Font Engine: Warning: This DrawMode does not support font engine control commend!\n");
+							break;
 							
 						default:
 							break;
 						}
 
-						if (fontI!=-1) {
+						if (fontI!=-1 && !noRender) {
 							if (drawHead.x-data.at(fontI).second.at(glyphI).left<-1.f)
 								drawHead.x += data.at(fontI).second.at(glyphI).left;
 							assert(drawHead.x>=-1 && drawHead.x<=1);
 							assert(drawHead.y+maxAccend>=-1 && drawHead.y<=1);
-							gl::drawRectangle(nullptr, drawHead, vec2(0.01));
+							//gl::drawRectangle(nullptr, drawHead, vec2(0.01));
 							output.at(fontI).emplace_back(indexLookup.at(fontI).second.at(glyphI), drawHead);
 							drawHead.x += data.at(fontI).second.at(glyphI).advance.x;
 						}
@@ -138,24 +159,35 @@ NextLine:
 				}
 			}
 		);
+		_change = false;
 	}
 	//use render texture here
-	gl::drawRectangle(_tex, pos, size*2.f);
+	gl::drawRectangleR8Color(_tex, pos, size*2.f, vec4(0.f,0.2f,0.f,1.f));
 }
 
 std::string StringBox::str() const {
-	return this->std::stringstream::str();
+	return _ss.str();
 }
 void StringBox::str(const std::string& string) {
 	_change = true;
-	this->std::stringstream::str(string);
+	_ss.str(string);
+}
+void StringBox::str(std::string&& string) {
+	_change = true;
+	_ss.str(std::move(string));
+}
+
+void StringBox::clear() {
+	_change = true;
+	_ss.str(std::string());
+	_ss.clear();
 }
 
 void StringBox::setSize(vec2 s) {
 	_change = true;
 	size = s;
 }
-vec2 StringBox::getSize() {
+vec2 StringBox::getSize() const {
 	return size;
 }
 void StringBox::setTextSize(float p) {
