@@ -232,6 +232,7 @@ namespace gl {
 	extern [[nodiscard]] uint getMaxTextureSize();
 
 	extern void drawRectangle(Texture2D* tex, vec2 pos, vec2 size);
+	extern void drawRectangleR8Color(Texture2D* tex, vec2 pos, vec2 size, vec4 color);
 
 	extern RenderTarget* target;
 

@@ -1,6 +1,7 @@
 #include "Logger.h"
 
 #include "GL.h"
+
 #include <assert.h>
 #include <vector>
 #include <fstream>
@@ -705,6 +706,7 @@ uint gl::getMaxTextureSize() {
 
 //Helper Renderer
 static ShaderProgram* _flatShader = nullptr;
+static ShaderProgram* _flatR8ColorShader = nullptr;
 static VertexAttributeArray* _flatVao = nullptr;
 
 struct GLRect {
@@ -721,6 +723,8 @@ void gl::drawRectangle(Texture2D* tex, vec2 pos, vec2 size) {
 
 	if (_flatShader==nullptr) {
 		_flatShader = makeShaderProgram("flatRect", true);
+	}
+	if (_flatVao==nullptr) {
 		_flatVao = new VertexAttributeArray();
 		_flatVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
 		_flatVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
@@ -738,4 +742,34 @@ void gl::drawRectangle(Texture2D* tex, vec2 pos, vec2 size) {
 	rectBuffer->release();
 }
 
+void gl::drawRectangleR8Color(Texture2D* tex, vec2 pos, vec2 size, vec4 color) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	{
+		GLRect _data = {pos,size};
+		rectBuffer->setFormatAndData(sizeof(_data), bufferFlags::None, &_data);
+	}
+
+	if (_flatR8ColorShader==nullptr) {
+		_flatR8ColorShader = makeShaderProgram("flatRectR8Color", true);
+	}
+	if (_flatVao==nullptr) {
+		_flatVao = new VertexAttributeArray();
+		_flatVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
+		_flatVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
+		_flatVao->bindAttributeToBufferBinding(0, 0);
+		_flatVao->bindAttributeToBufferBinding(1, 0);
+	}
+	_flatVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
+	{
+		Swapper _(target->vao, _flatVao);
+		Swapper __(target->texUnit[0], (Texture*)tex);
+		Swapper ___(target->spo, _flatR8ColorShader);
+		Swapper ____(target->useBlend, true);
+		Swapper _____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		target->spo->use();
+		target->spo->setUniform("textColor", color);
+		target->drawArrays(GeomType::Points, 0, 1);
+	}
+	rectBuffer->release();
+}
 RenderTarget* gl::target = nullptr;
