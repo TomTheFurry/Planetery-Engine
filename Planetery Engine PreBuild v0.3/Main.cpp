@@ -10,7 +10,7 @@
 #include <chrono>
 #include <atomic>
 
-
+static StringBox* listTest = nullptr;
 
 int main() {
 	logger.newThread("MainThread");
@@ -42,6 +42,17 @@ int main() {
 				events::ThreadEvents::setWindowedInline();
 			}
 		}, events::KeyCode::F11, events::KeyAction::press, events::KeyModFlags(events::KeyModFlag::matchShift));
+	
+	events::ThreadEvents::addInlineKeyEventCallback(
+		[](int keyCode, events::KeyAction action, events::KeyModFlags flags) {
+			listTest->pos += vec2(0, 0.1);
+		}, events::KeyCode::s, events::KeyAction::repeat);
+
+	events::ThreadEvents::addInlineKeyEventCallback(
+		[](int keyCode, events::KeyAction action, events::KeyModFlags flags) {
+			listTest->pos += vec2(0, -0.1);
+		}, events::KeyCode::w, events::KeyAction::repeat);
+
 	auto rHandle = render::ThreadRender::newRenderHandle([]() {
 		static StringBox* sb = nullptr;
 		constexpr float HALF_SIZE_X = 0.5;
@@ -56,7 +67,26 @@ int main() {
 		} else {
 			sb->pos = vec2(v.x-HALF_SIZE_X, -v.y-HALF_SIZE_Y);
 		}
+		if (events::ThreadEvents::isWindowResized() || events::ThreadEvents::isWindowMoved()) {
+			sb->notifyPPIChanged();
+		}
 		sb->render();
+
+		if (listTest==nullptr) {
+			listTest = new StringBox();
+			listTest->pos = vec2(-1, -1);
+			listTest->setSize(vec2(1, 1));
+			listTest->setTextSize(12.f);
+			listTest->clear();
+			for (uint i = 0; i<128; i++) {
+				*listTest << i << ": Hello~ How are you doing?\n";
+			}
+		}
+		if (events::ThreadEvents::isWindowResized() || events::ThreadEvents::isWindowMoved()) {
+			listTest->notifyPPIChanged();
+		}
+		listTest->render();
+
 		});
 	logger("Waiting for core thread end...\n");
 	events::ThreadEvents::join();

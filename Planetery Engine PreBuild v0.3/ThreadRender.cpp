@@ -6,6 +6,7 @@
 
 #include "RollingAverage.h"
 #include "Font.h"
+#include "StringBox.h"
 
 #include <thread>
 #include <atomic>
@@ -149,10 +150,14 @@ static void _main() {
 		std::chrono::steady_clock::time_point tickTimerA;
 		std::chrono::steady_clock::time_point tickTimerB;
 		tickTimerB = std::chrono::high_resolution_clock::now();
-		std::string strBuf{' '};
-		std::wstring wstrBuf{L' '};
 		uint sec_count = 0;
 		uint eventTickCount = 0;
+		StringBox fpsBox{};
+		fpsBox.str("FPS Counter");
+		fpsBox.pos = vec2{-0.9, 0.5};
+		fpsBox.setTextSize(72.f);
+		fpsBox.setSize(vec2{0.4,0.2});
+
 		while (_state.load(std::memory_order_relaxed) != State::requestStop) { //does not have to instantly respond
 			if (_state.load(std::memory_order_relaxed) == State::paused) {
 				logger("Thread paused.");
@@ -185,14 +190,17 @@ static void _main() {
 					auto v = events::ThreadEvents::getFramebufferSize();
 					gl::target->setViewport(0, 0, v.x, v.y);
 					gl::target->pixelPerInch = events::ThreadEvents::getPixelPerInch();
+					fpsBox.notifyPPIChanged();
 				}
 				if (events::ThreadEvents::isWindowMoved()) {
 					gl::target->pixelPerInch = events::ThreadEvents::getPixelPerInch();
+					fpsBox.notifyPPIChanged();
 				}
 				
 				gl::target->activateFrameBuffer();
-				if (flips) { glClearColor(1.0f, 0.0f, 1.0f, 1.0f); } else { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); }
+				if (flips) { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); } else { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); }
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				fpsBox.render();
 
 				//do jobs
 				for (auto& h : _renderJobs) {
@@ -206,17 +214,8 @@ static void _main() {
 					}
 				}
 
-				//FontManager::renderString("01234567890ABCDEFG#......,,,,,,llllll  MMMMMM !!!!!!~~~~~~", vec2(-0.8, 0.9), vec2(1.f)/(vec2(windowSize)*.75f));
-				font::drawString(std::to_string(tps)+"("+std::to_string(eventTickCount)+")", 72.f, vec2(-0.8, 0.6));
-				font::drawString(wstrBuf, 11.f, vec2(-0.9, 0.85), 1.8f);
-				//FontManager::renderString(wstrBuf, vec2(-0.9, 0.0), vec2(1.f)/(vec2(windowSize)*2.f));
-				//FontManager::renderString(L"\uFFFD", vec2(-0.9, 0.9), vec2(1.f)/(vec2(windowSize)*1.f));
-
-				for (uint i = 0; i<5; i++) {
-					wstrBuf += wchar_t(wstrBuf.back()+1);
-				}
-
 				if (sec_count >= 10) {
+					//testText.str("Dummy test:\n");
 					//while (true) {} //Lock the thread up after 30 sec for testing
 				}
 
@@ -235,6 +234,8 @@ static void _main() {
 					logger("Average Tick speed: ", nanoSec(roller.get()), " (", tickCount, "), Event tps: ", eventTickCount, "\n");
 					nsDeltaPerSec -= NS_PER_S;
 					tps = tickCount;
+					fpsBox.clear();
+					fpsBox << tps << "(" << eventTickCount << ")\n";
 					tickCount = 0;
 					flips = !flips;
 
