@@ -28,6 +28,8 @@
 
 using namespace events;
 
+constexpr vec2 windowInitSize = {1520,800};
+
 struct _KeyEvent {
 	KeyEventFunction func;
 	int keyCode = KeyCode::unkown;
@@ -94,26 +96,26 @@ static void glfwErrorCallback(int errorCode, const char* text) {
 static void window_size_callback(GLFWwindow* _, int width, int height) {
 	_windowSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
-		pair.second.flags.fetch_xor(_flag::windowResized, std::memory_order_relaxed);
+		pair.second.flags.fetch_or(_flag::windowResized, std::memory_order_relaxed);
 	}
 }
 static void window_pos_callback(GLFWwindow* _, int x, int y) {
 	_windowPos.store(ivec2(x, y), std::memory_order_release);
 	for (auto& pair : _threads) {
-		pair.second.flags.fetch_xor(_flag::windowMoved, std::memory_order_relaxed);
+		pair.second.flags.fetch_or(_flag::windowMoved, std::memory_order_relaxed);
 	}
 }
 static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
 	_framebufferSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
-		pair.second.flags.fetch_xor(_flag::windowResized, std::memory_order_relaxed);
+		pair.second.flags.fetch_or(_flag::windowResized, std::memory_order_relaxed);
 	}
 }
 static void mouse_pos_callback(GLFWwindow* _, double x, double y) {
 	if (x<0 || y<0) return;
 	_mousePos.store(uvec2{x,y}, std::memory_order_release);
 	for (auto& pair : _threads) {
-		pair.second.flags.fetch_xor(_flag::mouseMoved, std::memory_order_relaxed);
+		pair.second.flags.fetch_or(_flag::mouseMoved, std::memory_order_relaxed);
 	}
 }
 
@@ -222,8 +224,8 @@ static void _main() {
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_FALSE); //Is the window transparent?
 
 		bool useFullScreen = false;
-		uint windowW = 1560;
-		uint windowH = 900;
+		uint windowW = windowInitSize.x;
+		uint windowH = windowInitSize.y;
 
 		//make window. Finally
 		_targetMonitor = glfwGetPrimaryMonitor();
@@ -448,7 +450,7 @@ State ThreadEvents::getState() {
 	return _state.load(std::memory_order_relaxed);
 }
 
-thread_local _Flags _loadedFlag;
+thread_local _Flags _loadedFlag = 0;
 
 void ThreadEvents::pollFlags() {
 	_loadedFlag = _threads[std::this_thread::get_id()].flags.exchange(0);
