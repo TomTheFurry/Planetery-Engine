@@ -48,6 +48,9 @@
     <ClCompile Include="font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UTF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThreadRender.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UTF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
