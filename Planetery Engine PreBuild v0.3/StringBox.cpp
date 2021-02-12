@@ -2,6 +2,7 @@
 #include "Logger.h"
 #include "GL.h"
 #include "Font.h"
+#include "UTF.h"
 
 #include <glad/glad.h>
 
@@ -50,7 +51,7 @@ void StringBox::render() {
 		std::string _str{str()};
 		vec2 drawHead = vec2(-1,1);
 		float maxLineHeight = -1;
-		font::drawChar(_str.begin(), _str.end(), _pointSize,
+		font::drawChar(utf::UTFIterator((char_u8*)&*_str.begin()), utf::UTFIterator(((char_u8*)&*(_str.end()-1))+1), _pointSize,
 			[](const font::fullStringFunction::FontData& data,
 				const font::fullStringFunction::Chars& chars,
 				const font::fullStringFunction::IndexLookup& indexLookup,
