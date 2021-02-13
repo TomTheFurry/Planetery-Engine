@@ -1,5 +1,8 @@
 #include "UTF.h"
 #include <iterator>
+#include "Logger.h"
+#include <assert.h>
+using namespace utf;
 
 std::pair<const char_u8*, char_cp> utf::getCodePoint(const char_u8* ptr) {
 	if (*ptr < 0x80u) return {ptr+1, (char_cp)(*ptr)}; //1 code unit: ASCII
@@ -31,4 +34,20 @@ std::pair<const char_u8*, char_cp> utf::getCodePoint(const char_u8* ptr) {
 std::pair<const char_u16*, char_cp> utf::getCodePoint(const char_u16* ptr) {
 	//TODO: Implement utf-16 decoding
 	return {ptr+1, 0xFFFDu};
+}
+
+
+UTFIterator<char_u8> utf::beginOfUTF8(const std::string& str) {
+	return UTFIterator((const char_u8*)str.c_str());
+}
+UTFIterator<char_u8> utf::endOfUTF8(const std::string& str) {
+	assert(*(str.c_str()+str.size())=='\0');
+	return UTFIterator((const char_u8*)str.c_str()+str.size());
+}
+UTFIterator<char_u8> utf::beginOfUTF8(const char* charStr) {
+	return UTFIterator((const char_u8*)charStr);
+}
+UTFIterator<char_u8> utf::endOfUTF8(const char* charStr) {
+	assert(*(charStr+std::strlen(charStr))=='\0');
+	return UTFIterator((const char_u8*)charStr+std::strlen(charStr));
 }

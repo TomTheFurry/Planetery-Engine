@@ -51,7 +51,7 @@ void StringBox::render() {
 		std::string _str{str()};
 		vec2 drawHead = vec2(-1,1);
 		float maxLineHeight = -1;
-		font::drawChar(utf::UTFIterator((char_u8*)&*_str.begin()), utf::UTFIterator(((char_u8*)&*(_str.end()-1))+1), _pointSize,
+		font::drawChar(utf::beginOfUTF8(_str), utf::endOfUTF8(_str), _pointSize,
 			[](const font::fullStringFunction::FontData& data,
 				const font::fullStringFunction::Chars& chars,
 				const font::fullStringFunction::IndexLookup& indexLookup,

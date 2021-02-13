@@ -69,4 +69,9 @@ namespace utf {
 		const C* _ptr = nullptr;
 		const C* _nextUnit = nullptr;
 	};
+
+	extern UTFIterator<char_u8> beginOfUTF8(const std::string& str);
+	extern UTFIterator<char_u8> endOfUTF8(const std::string& str);
+	extern UTFIterator<char_u8> beginOfUTF8(const char* charStr);
+	extern UTFIterator<char_u8> endOfUTF8(const char* charStr);
 }
