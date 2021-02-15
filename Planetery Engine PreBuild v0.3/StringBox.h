@@ -20,6 +20,7 @@ public:
 	vec2 getSize() const; //true normalized length (0 - 1)
 	void setTextSize(float pointSize);
 	void notifyPPIChanged();
+	void setLineCenter(bool v);
 
 	template <typename T>
 	StringBox& operator<< (T&& t) {
@@ -31,6 +32,7 @@ public:
 protected:
 	vec2 size; //true normalized length (0 - 1)
 	bool _change;
+	bool _isLineCentre;
 	float _pointSize;
 	vec2 _ppi;
 	vec2 _textureSize;

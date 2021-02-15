@@ -103,13 +103,18 @@ namespace gl {
 			ClientStorage = 512
 		};
 	}
+	enum class MapAccess {
+		ReadOnly,
+		WriteOnly,
+		ReadWrite,
+	};
 
 	class BufferBase : virtual public Base {
 	public:
 		BufferBase();
 		void setFormatAndData(size_t size, GLflags usageFlags, const void* data = nullptr);
 		void editData(size_t size, const void* data, size_t atOffset = 0);
-		void* map(GLEnum access);
+		void* map(MapAccess access);
 		void* getMapPointer();
 		void unmap();
 		void reset();
@@ -135,13 +140,24 @@ namespace gl {
 		~VertexAttributeArray();
 	};
 
-	class Texture : virtual public Base {};
+	class Texture : virtual public Base {
+	public:
+		enum class SamplingFilter {
+			linear,
+			nearest,
+			nearestLODNearest,
+			linearLODNearest,
+			nearestLODLinear,
+			linearLODLinear,
+		};
+		void setTextureSamplingFilter(SamplingFilter maximize, SamplingFilter minimize);
+	};
 
 	class Texture2D : virtual public Texture {
 	public:
 		Texture2D();
 		void setFormat(GLEnum internalFormat, size_t width, size_t height, uint levels);
-		void setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, GLEnum dataType, const void* data);
+		void setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, DataType dataType, const void* data);
 		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level);
 		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level, uvec2 targetPos, uint targetLevel);
 	protected:
@@ -209,8 +225,8 @@ namespace gl {
 		void setViewport(uint x, uint y, uint width, uint height);
 		void drawArrays(GeomType geomType, uint first, size_t count);
 		void drawArraysInstanced(GeomType geomType, uint first, size_t count, size_t instanceCount);
-		void drawElements(GeomType geomType, size_t count, GLEnum type, const void* indices = nullptr);
-		void drawElementsInstanced(GeomType geomType, size_t count, GLEnum type, size_t instanceCount, const void* indices = nullptr);
+		void drawElements(GeomType geomType, size_t count, DataType indicesDataType, const void* indices = nullptr);
+		void drawElementsInstanced(GeomType geomType, size_t count, DataType indicesDataType, size_t instanceCount, const void* indices = nullptr);
 		void activateFrameBuffer();
 		template <typename T>
 		T normalizePos(T v) {

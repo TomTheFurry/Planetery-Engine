@@ -14,18 +14,18 @@
 
 const char*const UTF_8_TEST_STRING = reinterpret_cast<const char*const>(u8"English: The quick brown fox jumps over the lazy dog.\n\
 Jamaican: Chruu, a kwik di kwik brong fox a jomp huova di liezi daag de, yu no siit ?\n\
-Irish : \"An ḃfuil do ċroí ag bualaḋ ó ḟaitíos an ġrá a ṁeall lena ṗóg éada ó ṡlí do leasa ṫú?\" \"D'ḟuascail Íosa Úrṁac na hÓiġe Beannaiṫe pór Éava agus Áḋaiṁ.\"\n\
+	\tIrish : \"An ḃfuil do ċroí ag bualaḋ ó ḟaitíos an ġrá a ṁeall lena ṗóg éada ó ṡlí do leasa ṫú?\" \"D'ḟuascail Íosa Úrṁac na hÓiġe Beannaiṫe pór Éava agus Áḋaiṁ.\"\n\
 Dutch : Pa's wĳze lynx bezag vroom het fikse aquaduct.\n\
-German : Falsches Üben von Xylophonmusik quält jeden größeren Zwerg. (1)\n\
-German : Im finſteren Jagdſchloß am offenen Felsquellwaſſer patzte der affig-flatterhafte kauzig-höf‌liche Bäcker über ſeinem verſifften kniffligen C-Xylophon. (2)\n\
-Norwegian : Blåbærsyltetøy(\"blueberry jam\", includes every extra letter used in Norwegian).\n\
-Swedish : Flygande bäckasiner söka strax hwila på mjuka tuvor.\n\
-Icelandic : Sævör grét áðan því úlpan var ónýt.\n\
-Finnish : (5) Törkylempijävongahdus(This is a perfect pangram, every letter appears only once.Translating it is an art on its own, but I'll say \"rude lover's yelp\". :-D)\n\
-Finnish: (5) Albert osti fagotin ja töräytti puhkuvan melodian. (Albert bought a bassoon and hooted an impressive melody.)\n\
-Finnish : (5) On sangen hauskaa, että polkupyörä on maanteiden jokapäiväinen ilmiö. (It's pleasantly amusing, that the bicycle is an everyday sight on the roads.)\n\
-Polish: Pchnąć w tę łódź jeża lub osiem skrzyń fig.\n\
-Czech : Příliš žluťoučký kůň úpěl ďábelské ódy.\n\
+		\t\tGerman : Falsches Üben von Xylophonmusik quält jeden größeren Zwerg. (1)\n\
+\tGerman : Im finſteren Jagdſchloß am offenen Felsquellwaſſer patzte der affig-flatterhafte kauzig-höf‌liche Bäcker über ſeinem verſifften kniffligen C-Xylophon. (2)\n\
+\tNorwegian : Blåbærsyltetøy(\"blueberry jam\", includes every extra letter used in Norwegian).\n\
+\tSwedish : Flygande bäckasiner söka strax hwila på mjuka tuvor.\n\
+\t\tIcelandic : Sævör grét áðan því úlpan var ónýt.\n\
+\t\tFinnish : (5) Törkylempijävongahdus(This is a perfect pangram, every letter appears only once.Translating it is an art on its own, but I'll say \"rude lover's yelp\". :-D)\n\
+\t\tFinnish: (5) Albert osti fagotin ja töräytti puhkuvan melodian. (Albert bought a bassoon and hooted an impressive melody.)\n\
+\t\t\tFinnish : (5) On sangen hauskaa, että polkupyörä on maanteiden jokapäiväinen ilmiö. (It's pleasantly amusing, that the bicycle is an everyday sight on the roads.)\n\
+\t\t\tPolish: Pchnąć w tę łódź jeża lub osiem skrzyń fig.\n\
+\t\t\tCzech : Příliš žluťoučký kůň úpěl ďábelské ódy.\n\
 Slovak : Starý kôň na hŕbe kníh žuje tíško povädnuté ruže, na stĺpe sa ďateľ učí kvákať novú ódu o živote.\n\
 Slovenian : Šerif bo za domačo vajo spet kuhal žgance.\n\
 Greek(monotonic) : ξεσκεπάζω την ψυχοφθόρα βδελυγμία\n\
@@ -117,6 +117,7 @@ int main() {
 			listTest->pos = vec2(-1, -1);
 			listTest->setSize(vec2(1, 1));
 			listTest->setTextSize(12.f);
+			listTest->setLineCenter(true);
 			listTest->clear();
 			*listTest << UTF_8_TEST_STRING;
 		}

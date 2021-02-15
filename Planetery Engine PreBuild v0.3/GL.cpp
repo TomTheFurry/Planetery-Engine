@@ -70,7 +70,7 @@ GLEnum _val(DataType d) {
 	case gl::DataType::Fixed:
 		return GL_FIXED;
 	default:
-		throw;
+		throw "Invalid gl::DataType Enum";
 	}
 }
 GLEnum _val(ShaderType s) {
@@ -86,7 +86,7 @@ GLEnum _val(ShaderType s) {
 	case gl::ShaderType::TessEvaluation:
 		return GL_TESS_EVALUATION_SHADER;
 	default:
-		throw;
+		throw "Invalid gl::ShaderType Enum";
 	}
 }
 GLEnum _val(GeomType g) {
@@ -116,10 +116,39 @@ GLEnum _val(GeomType g) {
 	case gl::GeomType::Patches:
 		return GL_PATCHES;
 	default:
-		throw;
+		throw "Invalid gl::GeomType Enum";
 	}
 }
-
+GLEnum _val(Texture::SamplingFilter s) {
+	switch (s) {
+	case gl::Texture::SamplingFilter::linear:
+		return GL_LINEAR;
+	case gl::Texture::SamplingFilter::nearest:
+		return GL_NEAREST;
+	case gl::Texture::SamplingFilter::nearestLODNearest:
+		return GL_NEAREST_MIPMAP_NEAREST;
+	case gl::Texture::SamplingFilter::linearLODNearest:
+		return GL_LINEAR_MIPMAP_NEAREST;
+	case gl::Texture::SamplingFilter::nearestLODLinear:
+		return GL_NEAREST_MIPMAP_LINEAR;
+	case gl::Texture::SamplingFilter::linearLODLinear:
+		return GL_LINEAR_MIPMAP_LINEAR;
+	default:
+		throw "Invalid gl::Texture::SamplingFilter Enum";
+	}
+}
+GLEnum _val(MapAccess m) {
+	switch (m) {
+	case gl::MapAccess::ReadOnly:
+		return GL_READ_ONLY;
+	case gl::MapAccess::WriteOnly:
+		return GL_WRITE_ONLY;
+	case gl::MapAccess::ReadWrite:
+		return GL_READ_WRITE;
+	default:
+		throw "Invalid gl::MapAccess Enum";
+	}
+}
 
 
 
@@ -404,8 +433,8 @@ void gl::BufferBase::setFormatAndData(size_t size, GLflags usageFlags, const voi
 void BufferBase::editData(size_t size, const void* data, size_t atOffset) {
 	glNamedBufferSubData(id, atOffset, size, data);
 }
-void* gl::BufferBase::map(GLEnum access) {
-	return _mapPointer = glMapNamedBuffer(id, access);
+void* gl::BufferBase::map(MapAccess access) {
+	return _mapPointer = glMapNamedBuffer(id, _val(access));
 }
 void* gl::BufferBase::getMapPointer() {
 	return _mapPointer;
@@ -477,13 +506,20 @@ VertexAttributeArray::~VertexAttributeArray() {
 	glDeleteVertexArrays(1, &id);
 }
 
+//Texture
+void gl::Texture::setTextureSamplingFilter(SamplingFilter maximize, SamplingFilter minimize) {
+	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, _val(maximize));
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, _val(minimize));
+
+}
+
 //Texture2D
 Texture2D::Texture2D() { glCreateTextures(GL_TEXTURE_2D, 1, &id); }
 void Texture2D::setFormat(GLEnum internalFormat, size_t width, size_t height, uint levels) {
 	glTextureStorage2D(id, levels, internalFormat, width, height);
 }
-void gl::Texture2D::setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, GLEnum dataType, const void* data) {
-	glTextureSubImage2D(id, level, x, y, w, h, dataFormat, dataType, data);
+void gl::Texture2D::setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, DataType dataType, const void* data) {
+	glTextureSubImage2D(id, level, x, y, w, h, dataFormat, _val(dataType), data);
 }
 Texture2D* gl::Texture2D::cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level) {
 	glCopyImageSubData(source->id, GL_TEXTURE_2D, level, pos.x, pos.y, 0, id, GL_TEXTURE_2D, level, pos.x, pos.y, 0, size.x, size.y, 1);
@@ -578,13 +614,13 @@ void RenderTarget::drawArraysInstanced(GeomType mode, uint first, size_t count, 
 	_use();
 	glDrawArraysInstanced(_val(mode), first, count, instanceCount);
 }
-void RenderTarget::drawElements(GeomType mode, size_t count, GLEnum type, const void* indices) {
+void RenderTarget::drawElements(GeomType mode, size_t count, DataType type, const void* indices) {
 	_use();
-	glDrawElements(_val(mode), count, type, indices);
+	glDrawElements(_val(mode), count, _val(type), indices);
 }
-void RenderTarget::drawElementsInstanced(GeomType mode, size_t count, GLEnum type, size_t instanceCount, const void* indices) {
+void RenderTarget::drawElementsInstanced(GeomType mode, size_t count, DataType type, size_t instanceCount, const void* indices) {
 	_use();
-	glDrawElementsInstanced(_val(mode), count, type, indices, instanceCount);
+	glDrawElementsInstanced(_val(mode), count, _val(type), indices, instanceCount);
 }
 void gl::RenderTarget::activateFrameBuffer() {
 	if (state.fbo!=(fbo==nullptr ? 0 : fbo->id))
