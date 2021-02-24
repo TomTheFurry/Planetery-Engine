@@ -247,9 +247,17 @@ namespace gl {
 	extern void end();
 	extern [[nodiscard]] uint getMaxTextureSize();
 
-	extern void drawRectangle(Texture2D* tex, vec2 pos, vec2 size);
-	extern void drawRectangleR8Color(Texture2D* tex, vec2 pos, vec2 size, vec4 color);
+	struct GLRect {
+		vec2 pos;
+		vec2 size;
+	};
 
+	extern void drawTexRectangle(Texture2D* tex, GLRect rect);
+	extern void drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
+	extern void drawRectangles(std::vector<GLRect> rects, vec2 color);
+	extern void drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color);
+	extern void drawRectanglesFilledBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color);
+	extern void drawLineStrip(vec2 prePos, std::vector<vec2> lines, vec2 pastPos, vec2 color, float width);
 	extern RenderTarget* target;
 
 	template <typename T>

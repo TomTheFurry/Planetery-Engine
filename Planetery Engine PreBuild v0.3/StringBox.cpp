@@ -61,7 +61,7 @@ void StringBox::render() {
 		_change = false; //disable this to make it always refeashing
 	}
 	//use render texture here
-	gl::drawRectangleR8Color(_tex, pos, size*2.f, vec4(0.f,0.2f,0.f,1.f));
+	gl::drawTexR8Rectangle(_tex, gl::GLRect{.pos=pos, .size=size*2.f}, vec4(0.f, 0.2f, 0.f, 1.f));
 }
 
 std::string StringBox::str() const {

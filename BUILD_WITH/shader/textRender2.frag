@@ -10,6 +10,8 @@ void main() {
 		fragColor = vec4(1.0,0.0,0.0,1.0);
 	} else if (debugFlag==2) {
 		fragColor = vec4(0.0,1.0,0.0,1.0);
+	} else if (debugFlag==3) {
+		fragColor = vec4(0.0,0.0,1.0,1.0);
 	} else {
 		vec2 texSize = textureSize(fontMap,0);
 		float s = texture(fontMap, texPosG/texSize).r;

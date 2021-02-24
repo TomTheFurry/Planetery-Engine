@@ -21,10 +21,6 @@ static_assert(GL_MAP_COHERENT_BIT==bufferFlags::MappingCoherent, "ERROR! GL Enum
 static_assert(GL_DYNAMIC_STORAGE_BIT==bufferFlags::DynamicStorage, "ERROR! GL Enum is incorrect in header file!");
 static_assert(GL_CLIENT_STORAGE_BIT==bufferFlags::ClientStorage, "ERROR! GL Enum is incorrect in header file!");
 
-
-
-
-
 struct _state {
 	uint fbo = 0;
 	uint vao = 0;
@@ -196,89 +192,91 @@ void gl::ShaderProgram::use() {
 	}
 }
 
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, bool value) {
-	glUniform1ui(glGetUniformLocation(id, valueNameP.c_str()), (uint)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uint value) {
-	glUniform1ui(glGetUniformLocation(id, valueNameP.c_str()), value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec2 value) {
-	glUniform2ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec3 value) {
-	glUniform3ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec4 value) {
-	glUniform4ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uint* value, uint length) {
-	glUniform1uiv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec2* value, uint length) {
-	glUniform2uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec3* value, uint length) {
-	glUniform3uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec4* value, uint length) {
-	glUniform4uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, int value) {
-	glUniform1i(glGetUniformLocation(id, valueNameP.c_str()), value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec2 value) {
-	glUniform2i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec3 value) {
-	glUniform3i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec4 value) {
-	glUniform4i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, int* value, uint length) {
-	glUniform1iv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec2* value, uint length) {
-	glUniform2iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec3* value, uint length) {
-	glUniform3iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec4* value, uint length) {
-	glUniform4iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, float value) {
-	glUniform1f(glGetUniformLocation(id, valueNameP.c_str()), value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec2 value) {
-	glUniform2f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec3 value) {
-	glUniform3f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec4 value) {
-	glUniform4f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, float* value, uint length) {
-	glUniform1fv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec2* value, uint length) {
-	glUniform2fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec3* value, uint length) {
-	glUniform3fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec4* value, uint length) {
-	glUniform4fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat2 value) {
-	glUniformMatrix2fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat3 value) {
-	glUniformMatrix3fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
-}
-void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat4 value) {
-	glUniformMatrix4fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+namespace gl {
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, bool value) {
+		glUniform1ui(glGetUniformLocation(id, valueNameP.c_str()), (uint)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uint value) {
+		glUniform1ui(glGetUniformLocation(id, valueNameP.c_str()), value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec2 value) {
+		glUniform2ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec3 value) {
+		glUniform3ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec4 value) {
+		glUniform4ui(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uint* value, uint length) {
+		glUniform1uiv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec2* value, uint length) {
+		glUniform2uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec3* value, uint length) {
+		glUniform3uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, uvec4* value, uint length) {
+		glUniform4uiv(glGetUniformLocation(id, valueNameP.c_str()), length, (uint*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, int value) {
+		glUniform1i(glGetUniformLocation(id, valueNameP.c_str()), value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec2 value) {
+		glUniform2i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec3 value) {
+		glUniform3i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec4 value) {
+		glUniform4i(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, int* value, uint length) {
+		glUniform1iv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec2* value, uint length) {
+		glUniform2iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec3* value, uint length) {
+		glUniform3iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, ivec4* value, uint length) {
+		glUniform4iv(glGetUniformLocation(id, valueNameP.c_str()), length, (int*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, float value) {
+		glUniform1f(glGetUniformLocation(id, valueNameP.c_str()), value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec2 value) {
+		glUniform2f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec3 value) {
+		glUniform3f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec4 value) {
+		glUniform4f(glGetUniformLocation(id, valueNameP.c_str()), value.x, value.y, value.z, value.w);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, float* value, uint length) {
+		glUniform1fv(glGetUniformLocation(id, valueNameP.c_str()), length, value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec2* value, uint length) {
+		glUniform2fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec3* value, uint length) {
+		glUniform3fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, vec4* value, uint length) {
+		glUniform4fv(glGetUniformLocation(id, valueNameP.c_str()), length, (float*)value);
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat2 value) {
+		glUniformMatrix2fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat3 value) {
+		glUniformMatrix3fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+	}
+	void gl::ShaderProgram::setUniform(const std::string& valueNameP, mat4 value) {
+		glUniformMatrix4fv(glGetUniformLocation(id, valueNameP.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+	}
 }
 
 ShaderProgram::~ShaderProgram() {
@@ -741,65 +739,50 @@ uint gl::getMaxTextureSize() {
 }
 
 //Helper Renderer
-static ShaderProgram* _flatShader = nullptr;
-static ShaderProgram* _flatR8ColorShader = nullptr;
-static VertexAttributeArray* _flatVao = nullptr;
-
-struct GLRect {
-	vec2 pos;
-	vec2 size;
-};
-
-void gl::drawRectangle(Texture2D* tex, vec2 pos, vec2 size) {
+static ShaderProgram* _texRectShader = nullptr;
+static VertexAttributeArray* _rectVao = nullptr;
+void gl::drawTexRectangle(Texture2D* tex, GLRect rect) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
+	if (_texRectShader==nullptr) {
+		_texRectShader = makeShaderProgram("texRect", true);
+	}
+	if (_rectVao==nullptr) {
+		_rectVao = new VertexAttributeArray();
+		_rectVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
+		_rectVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
+		_rectVao->bindAttributeToBufferBinding(0, 0);
+		_rectVao->bindAttributeToBufferBinding(1, 0);
+	}
+	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
 	{
-		GLRect _data = {pos,size};
-		rectBuffer->setFormatAndData(sizeof(_data), bufferFlags::None, &_data);
-	}
-
-	if (_flatShader==nullptr) {
-		_flatShader = makeShaderProgram("flatRect", true);
-	}
-	if (_flatVao==nullptr) {
-		_flatVao = new VertexAttributeArray();
-		_flatVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
-		_flatVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
-		_flatVao->bindAttributeToBufferBinding(0, 0);
-		_flatVao->bindAttributeToBufferBinding(1, 0);
-	}
-	_flatVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
-	{
-		Swapper _(target->vao, _flatVao);
+		Swapper _(target->vao, _rectVao);
 		Swapper __(target->texUnit[0], (Texture*)tex);
-		Swapper ___(target->spo, _flatShader);
+		Swapper ___(target->spo, _texRectShader);
 
 		target->drawArrays(GeomType::Points, 0, 1);
 	}
 	rectBuffer->release();
 }
-
-void gl::drawRectangleR8Color(Texture2D* tex, vec2 pos, vec2 size, vec4 color) {
+static ShaderProgram* _texR8RectShader = nullptr;
+void gl::drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
+	if (_texR8RectShader==nullptr) {
+		_texR8RectShader = makeShaderProgram("texR8Rect", true);
+	}
+	if (_rectVao==nullptr) {
+		_rectVao = new VertexAttributeArray();
+		_rectVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
+		_rectVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
+		_rectVao->bindAttributeToBufferBinding(0, 0);
+		_rectVao->bindAttributeToBufferBinding(1, 0);
+	}
+	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
 	{
-		GLRect _data = {pos,size};
-		rectBuffer->setFormatAndData(sizeof(_data), bufferFlags::None, &_data);
-	}
-
-	if (_flatR8ColorShader==nullptr) {
-		_flatR8ColorShader = makeShaderProgram("flatRectR8Color", true);
-	}
-	if (_flatVao==nullptr) {
-		_flatVao = new VertexAttributeArray();
-		_flatVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
-		_flatVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
-		_flatVao->bindAttributeToBufferBinding(0, 0);
-		_flatVao->bindAttributeToBufferBinding(1, 0);
-	}
-	_flatVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
-	{
-		Swapper _(target->vao, _flatVao);
+		Swapper _(target->vao, _rectVao);
 		Swapper __(target->texUnit[0], (Texture*)tex);
-		Swapper ___(target->spo, _flatR8ColorShader);
+		Swapper ___(target->spo, _texR8RectShader);
 		Swapper ____(target->useBlend, true);
 		Swapper _____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
 		target->spo->use();
@@ -808,4 +791,18 @@ void gl::drawRectangleR8Color(Texture2D* tex, vec2 pos, vec2 size, vec4 color) {
 	}
 	rectBuffer->release();
 }
+static ShaderProgram* _flatRectShader = nullptr;
+void gl::drawRectangles(std::vector<GLRect> rects, vec2 color) {
+
+}
+
+void gl::drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color) {}
+
+void gl::drawRectanglesFilledBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color) {}
+
+void gl::drawLineStrip(vec2 prePos, std::vector<vec2> lines, vec2 pastPos, vec2 color, float width) {}
+
+
+
+
 RenderTarget* gl::target = nullptr;
