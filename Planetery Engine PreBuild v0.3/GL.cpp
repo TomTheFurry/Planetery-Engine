@@ -424,8 +424,9 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 }
 
 //BufferBase
-BufferBase::BufferBase() { _mapPointer = nullptr; glCreateBuffers(1, &id); }
+BufferBase::BufferBase() { _mapPointer = nullptr; _size = 0; glCreateBuffers(1, &id); }
 void gl::BufferBase::setFormatAndData(size_t size, GLflags usageFlags, const void* data) {
+	_size = size;
 	glNamedBufferStorage(id, size, data, usageFlags);
 }
 void BufferBase::editData(size_t size, const void* data, size_t atOffset) {
@@ -442,6 +443,9 @@ void gl::BufferBase::unmap() {
 }
 void gl::BufferBase::reset() {
 	glInvalidateBufferData(id);
+}
+size_t gl::BufferBase::getSize() {
+	return _size;
 }
 BufferBase::~BufferBase() {
 	glDeleteBuffers(1, &id);
@@ -691,6 +695,13 @@ void RenderTarget::_use() {
 	}
 }
 
+
+
+
+
+static VertexAttributeArray* _rectVao = nullptr;
+static VertexAttributeArray* _lineVao = nullptr;
+
 //----Hashtag Macro HELL version 2 !!! HAHAHAHAHAHAHAHAHAHA~~~
 #define _M_BOOL_S(a,b)\
 	state.##a ? glEnable(b) : glDisable(b)
@@ -723,6 +734,15 @@ void gl::init() {
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0));
 	glViewport(state.viewport.x, state.viewport.y, state.viewport.z, state.viewport.w);
 	//Should I unbind all texture units?
+	_rectVao = new VertexAttributeArray();
+	_rectVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float); //pos
+	_rectVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float); //size
+	_rectVao->bindAttributeToBufferBinding(0, 0);
+	_rectVao->bindAttributeToBufferBinding(1, 0);
+	_lineVao = new VertexAttributeArray();
+	_lineVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float); //pos
+	_lineVao->bindAttributeToBufferBinding(0, 0);
+
 }
 
 void gl::end() {
@@ -738,45 +758,74 @@ uint gl::getMaxTextureSize() {
 	return (uint)size;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Helper Renderer
-static ShaderProgram* _texRectShader = nullptr;
-static VertexAttributeArray* _rectVao = nullptr;
-void gl::drawTexRectangle(Texture2D* tex, GLRect rect) {
+VertexBuffer* gl::drawTexRectangle(Texture2D* tex, GLRect rect) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
+	drawTexRectangle(tex, rectBuffer);
+	return rectBuffer;
+}
+VertexBuffer* gl::drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
+	drawTexR8Rectangle(tex, rectBuffer, color);
+	return rectBuffer;
+}
+VertexBuffer* gl::drawRectangles(std::vector<GLRect> rects, vec4 color) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
+	drawRectangles(rectBuffer, color);
+	return rectBuffer;
+}
+VertexBuffer* gl::drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
+	drawRectanglesBorder(rectBuffer, borderWidth, borderColor);
+	return rectBuffer;
+}
+VertexBuffer* gl::drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
+	drawRectanglesFilledBorder(rectBuffer, color, borderWidth, borderColor);
+	return rectBuffer;
+}
+static ShaderProgram* _lineShader = nullptr;
+VertexBuffer* gl::drawLineStrip(std::vector<vec2> lines, vec4 color, float width) {
+	VertexBuffer* rectBuffer = new VertexBuffer();
+	rectBuffer->setFormatAndData((lines.size()+2)*sizeof(vec2), bufferFlags::None, lines.data());
+	drawLineStrip(rectBuffer, color, width);
+	return rectBuffer;
+}
+static ShaderProgram* _texRectShader = nullptr;
+void gl::drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer) {
 	if (_texRectShader==nullptr) {
 		_texRectShader = makeShaderProgram("texRect", true);
-	}
-	if (_rectVao==nullptr) {
-		_rectVao = new VertexAttributeArray();
-		_rectVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
-		_rectVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
-		_rectVao->bindAttributeToBufferBinding(0, 0);
-		_rectVao->bindAttributeToBufferBinding(1, 0);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
 	{
 		Swapper _(target->vao, _rectVao);
 		Swapper __(target->texUnit[0], (Texture*)tex);
 		Swapper ___(target->spo, _texRectShader);
-
 		target->drawArrays(GeomType::Points, 0, 1);
 	}
-	rectBuffer->release();
 }
 static ShaderProgram* _texR8RectShader = nullptr;
-void gl::drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color) {
-	VertexBuffer* rectBuffer = new VertexBuffer();
-	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
+void gl::drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color) {
 	if (_texR8RectShader==nullptr) {
 		_texR8RectShader = makeShaderProgram("texR8Rect", true);
-	}
-	if (_rectVao==nullptr) {
-		_rectVao = new VertexAttributeArray();
-		_rectVao->setAttribute(0, 2, DataType::Float, 0, DataType::Float);
-		_rectVao->setAttribute(1, 2, DataType::Float, sizeof(vec2), DataType::Float);
-		_rectVao->bindAttributeToBufferBinding(0, 0);
-		_rectVao->bindAttributeToBufferBinding(1, 0);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
 	{
@@ -789,18 +838,75 @@ void gl::drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color) {
 		target->spo->setUniform("textColor", color);
 		target->drawArrays(GeomType::Points, 0, 1);
 	}
-	rectBuffer->release();
 }
 static ShaderProgram* _flatRectShader = nullptr;
-void gl::drawRectangles(std::vector<GLRect> rects, vec2 color) {
-
+void gl::drawRectangles(VertexBuffer* rectBuffer, vec4 color) {
+	if (_flatRectShader==nullptr) {
+		_flatRectShader = makeShaderProgram("flatRect", true);
+	}
+	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
+	{
+		Swapper _(target->vao, _rectVao);
+		Swapper __(target->spo, _flatRectShader);
+		Swapper ___(target->useBlend, true);
+		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		target->spo->use();
+		target->spo->setUniform("rectColor", color);
+		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize()/sizeof(GLRect));
+	}
 }
-
-void gl::drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color) {}
-
-void gl::drawRectanglesFilledBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color) {}
-
-void gl::drawLineStrip(vec2 prePos, std::vector<vec2> lines, vec2 pastPos, vec2 color, float width) {}
+static ShaderProgram* _flatRectBorderShader = nullptr;
+void gl::drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 borderColor) {
+	if (_flatRectBorderShader==nullptr) {
+		_flatRectBorderShader = makeShaderProgram("flatRectBorder", true);
+	}
+	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
+	{
+		Swapper _(target->vao, _rectVao);
+		Swapper __(target->spo, _flatRectBorderShader);
+		Swapper ___(target->useBlend, true);
+		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		target->spo->use();
+		target->spo->setUniform("rectBorderColor", borderColor);
+		target->spo->setUniform("rectBorderWidth", borderWidth);
+		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize()/sizeof(GLRect));
+	}
+}
+static ShaderProgram* _flatRectFilledBorderShader = nullptr;
+void gl::drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 borderWidth, vec4 borderColor) {
+	if (_flatRectFilledBorderShader==nullptr) {
+		_flatRectFilledBorderShader = makeShaderProgram("flatRectFilledBorder", true);
+	}
+	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
+	{
+		Swapper _(target->vao, _rectVao);
+		Swapper __(target->spo, _flatRectFilledBorderShader);
+		Swapper ___(target->useBlend, true);
+		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		target->spo->use();
+		target->spo->setUniform("rectColor", color);
+		target->spo->setUniform("rectBorderColor", borderColor);
+		target->spo->setUniform("rectBorderWidth", borderWidth);
+		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize()/sizeof(GLRect));
+	}
+}
+static ShaderProgram* _lineStripShader = nullptr;
+void gl::drawLineStrip(VertexBuffer* lineBuffer, vec4 color, float width) {
+	if (_lineStripShader==nullptr) {
+		_lineStripShader = makeShaderProgram("lineStrip", true);
+	}
+	_lineVao->setBufferBinding(0, lineBuffer, sizeof(vec2));
+	{
+		Swapper _(target->vao, _rectVao);
+		Swapper __(target->spo, _lineStripShader);
+		Swapper ___(target->useBlend, true);
+		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		target->spo->use();
+		target->spo->setUniform("lineColor", color);
+		target->spo->setUniform("lineWidth", width);
+		target->drawArrays(GeomType::AdjacentLineStrips, 0, lineBuffer->getSize()/sizeof(vec2));
+	}
+}
 
 
 

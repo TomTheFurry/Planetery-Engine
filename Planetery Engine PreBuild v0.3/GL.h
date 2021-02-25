@@ -118,8 +118,10 @@ namespace gl {
 		void* getMapPointer();
 		void unmap();
 		void reset();
+		size_t getSize();
 	protected:
 		void* _mapPointer;
+		size_t _size;
 		~BufferBase();
 	};
 	class VertexBuffer : virtual public BufferBase {};
@@ -252,12 +254,18 @@ namespace gl {
 		vec2 size;
 	};
 
-	extern void drawTexRectangle(Texture2D* tex, GLRect rect);
-	extern void drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
-	extern void drawRectangles(std::vector<GLRect> rects, vec2 color);
-	extern void drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color);
-	extern void drawRectanglesFilledBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 color);
-	extern void drawLineStrip(vec2 prePos, std::vector<vec2> lines, vec2 pastPos, vec2 color, float width);
+	extern VertexBuffer* drawTexRectangle(Texture2D* tex, GLRect rect);
+	extern VertexBuffer* drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
+	extern VertexBuffer* drawRectangles(std::vector<GLRect> rects, vec4 color);
+	extern VertexBuffer* drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor);
+	extern VertexBuffer* drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor);
+	extern VertexBuffer* drawLineStrip(std::vector<vec2> lines, vec4 color, float width);
+	extern void drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer);
+	extern void drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color);
+	extern void drawRectangles(VertexBuffer* rectBuffer, vec4 color);
+	extern void drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 borderColor);
+	extern void drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 borderWidth, vec4 borderColor);
+	extern void drawLineStrip(VertexBuffer* rectBuffer, vec4 color, float width);
 	extern RenderTarget* target;
 
 	template <typename T>
