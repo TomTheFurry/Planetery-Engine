@@ -110,13 +110,14 @@ int main() {
 		if (events::ThreadEvents::isWindowResized() || events::ThreadEvents::isWindowMoved()) {
 			sb->notifyPPIChanged();
 		}
-		sb->render();
 
 		if (listTest==nullptr) {
 			listTest = new StringBox();
 			listTest->pos = vec2(-1, -1);
 			listTest->setSize(vec2(1, 1));
 			listTest->setTextSize(12.f);
+			listTest->backgroundColor = vec4(0);
+			listTest->borderThickness = vec2(0);
 			listTest->setLineCenter(true);
 			listTest->clear();
 			*listTest << UTF_8_TEST_STRING;
@@ -124,17 +125,11 @@ int main() {
 		if (events::ThreadEvents::isWindowResized() || events::ThreadEvents::isWindowMoved()) {
 			listTest->notifyPPIChanged();
 		}
-		listTest->render();
 
-		const std::vector<gl::GLRect> RECTS{gl::GLRect{vec2{0,0},vec2{0.2,0.2}}, gl::GLRect{vec2{-0.5,0.5},vec2{0.1,0.4}}};
-		static gl::VertexBuffer* rectTest = nullptr;
-		if (rectTest==nullptr) {
-			rectTest = gl::drawRectangles(RECTS, vec4{0.8,0.3,0.6,1.0});
-		} else {
-			gl::drawRectangles(rectTest, vec4(0.8, 0.3, 0.6, 1.0));
-		}
-		auto mouseBox = gl::drawRectanglesFilledBorder({gl::GLRect{vec2{v.x,-v.y},vec2{0.1,0.1}}}, vec4{0.1,0.1,0.1,0.8}, vec2{0.01,0.02}, vec4(0.1, 0.2, 0.3, 1.0));
-		mouseBox->release();
+		listTest->render();
+		sb->render();
+
+
 	});
 	logger("Waiting for core thread end...\n");
 	events::ThreadEvents::join();

@@ -156,7 +156,7 @@ static void _main() {
 		fpsBox.str("FPS Counter");
 		fpsBox.pos = vec2{-0.9, 0.5};
 		fpsBox.setTextSize(72.f);
-		fpsBox.setSize(vec2{0.4,0.2});
+		fpsBox.setSize(vec2{0.3,0.2});
 
 		while (_state.load(std::memory_order_relaxed) != State::requestStop) { //does not have to instantly respond
 			if (_state.load(std::memory_order_relaxed) == State::paused) {
@@ -200,7 +200,6 @@ static void _main() {
 				gl::target->activateFrameBuffer();
 				if (flips) { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); } else { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); }
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				fpsBox.render();
 
 				//do jobs
 				for (auto& h : _renderJobs) {
@@ -213,6 +212,7 @@ static void _main() {
 						}
 					}
 				}
+				fpsBox.render();
 
 				if (sec_count >= 10) {
 					//testText.str("Dummy test:\n");

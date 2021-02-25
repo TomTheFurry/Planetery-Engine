@@ -149,7 +149,7 @@ inline bool _checkFont(char32_t c, FontSet* f, std::set<FontSet*>& searched, std
 
 font::Reader::Reader(float fontSize) : _fontSize(fontSize) {}
 Reader& Reader::operator<<(char32_t c) {
-	c = _replaceSpecialChar(c);
+	//c = _replaceSpecialChar(c);
 	auto cacheIt = cacheCharMap.lower_bound(c);
 	if (cacheIt==cacheCharMap.end() || cacheIt->first!=c) {
 		auto lookupPair = getGlyphFromChar(c, CHARCODE_16_UNKNOWN_CHAR);

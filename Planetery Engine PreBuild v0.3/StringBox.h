@@ -9,7 +9,9 @@ class StringBox {
 public:
 	StringBox();
 	vec2 pos; //normalized (-1 - 1)
-
+	vec4 backgroundColor;
+	vec4 borderColor;
+	vec2 borderThickness;
 	void render();
 	std::string str() const;
 	void str(const std::string& string);

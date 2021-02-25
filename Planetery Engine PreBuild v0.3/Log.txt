@@ -71,176 +71,66 @@
 [;0m  [90m-[39mAll init done. Ready to sync with other threads.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mGL: Loading shader texR8Rect...
+[;0m  [90m-[39mGL: Loading shader flatRect...
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mGL: Loading shader flatRect...
+[;0m  [90m-[39mGL: Loading shader texR8Rect...
 
 [0;4;97mThreadRender:
 [;0m  [90m-[39mGL: Loading shader flatRectFilledBorder...
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.296641ms (58), Event tps: 206
+[;0m  [90m-[39mAverage Tick speed: 2.498723ms (56), Event tps: 211
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.078103ms (59), Event tps: 2
+[;0m  [90m-[39mAverage Tick speed: 292.501000us (60), Event tps: 168
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 223.703000us (60), Event tps: 88
+[;0m  [90m-[39mAverage Tick speed: 308.656000us (60), Event tps: 5
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 227.183000us (60), Event tps: 6
+[;0m  [90m-[39mAverage Tick speed: 266.073000us (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 221.820000us (60), Event tps: 1
+[;0m  [90m-[39mAverage Tick speed: 330.816000us (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 224.946000us (60), Event tps: 21
+[;0m  [90m-[39mAverage Tick speed: 280.371000us (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 223.371000us (60), Event tps: 129
+[;0m  [90m-[39mAverage Tick speed: 283.416000us (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 209.636000us (60), Event tps: 144
+[;0m  [90m-[39mAverage Tick speed: 265.441000us (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 220.300000us (60), Event tps: 111
+[;0m  [90m-[39mAverage Tick speed: 271.281000us (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.001213ms (60), Event tps: 19
+[;0m  [90m-[39mAverage Tick speed: 263.070000us (60), Event tps: 32
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.543140ms (60), Event tps: 2
+[;0m  [90m-[39mAverage Tick speed: 1.531873ms (59), Event tps: 21
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 2.729950ms (60), Event tps: 3
+[;0m  [90m-[39mAverage Tick speed: 5.036643ms (59), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 947.421000us (60), Event tps: 0
+[;0m  [90m-[39mAverage Tick speed: 4.620900ms (60), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 330.335000us (60), Event tps: 108
+[;0m  [90m-[39mAverage Tick speed: 4.554823ms (60), Event tps: 4
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.333246ms (58), Event tps: 48
+[;0m  [90m-[39mAverage Tick speed: 252.168000us (60), Event tps: 129
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 7.261786ms (53), Event tps: 0
+[;0m  [90m-[39mAverage Tick speed: 252.106000us (60), Event tps: 221
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 2.822195ms (60), Event tps: 63
+[;0m  [90m-[39mAverage Tick speed: 252.081000us (60), Event tps: 126
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 851.803000us (60), Event tps: 18
+[;0m  [90m-[39mAverage Tick speed: 243.765000us (60), Event tps: 77
 
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 223.788000us (60), Event tps: 147
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 217.746000us (60), Event tps: 3
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 209.946000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 217.205000us (60), Event tps: 124
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 212.481000us (60), Event tps: 10
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 214.961000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 219.408000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 212.060000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 208.951000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 214.071000us (60), Event tps: 96
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 833.758000us (60), Event tps: 49
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 860.700000us (58), Event tps: 91
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 226.000000us (60), Event tps: 2
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 227.645000us (60), Event tps: 136
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 225.493000us (60), Event tps: 26
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 228.638000us (60), Event tps: 4
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 226.975000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 214.903000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 220.850000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 222.893000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 208.381000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 223.355000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 216.205000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 258.163000us (60), Event tps: 38
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 262.768000us (60), Event tps: 75
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 237.708000us (60), Event tps: 87
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 233.358000us (60), Event tps: 108
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 254.976000us (60), Event tps: 53
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 247.900000us (60), Event tps: 1
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 234.458000us (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 252.645000us (60), Event tps: 33
-
-[0;4;97mThreadEvent:
-[;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mThread ended.
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mGL Interface end.
-
-[0;4;97mThreadEvent:
-[;0m  [90m-[39mRender thread stopped.[31m\n[39m
-
-[0;4;97mMainThread:
-[;0m  [90m-[39mcore thread ended.
-
-[0;4;97mMainThread:
-[;0m  [90m-[39mExiting...
-
+[0;4;97mT
