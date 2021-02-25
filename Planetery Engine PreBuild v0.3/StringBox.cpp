@@ -12,7 +12,7 @@ StringBox::StringBox() : _ss() {
 	pos = vec2(0, 0);
 	size = vec2(0, 0);
 	_ppi = vec2(0, 0);
-	_textureSize = vec2(0, 0);
+	_textureSize = uvec2(0, 0);
 	_pointSize = 12.f;
 	_change = true;
 	_isLineCentre = false;
@@ -25,7 +25,7 @@ void StringBox::render() {
 		//logger("ReRendering...\n");
 		//render text here
 		_ppi = gl::target->pixelPerInch;
-		_textureSize = vec2(gl::target->viewport.z, gl::target->viewport.w)*size;
+		_textureSize = uvec2(glm::ceil(vec2(gl::target->viewport.z, gl::target->viewport.w)*size));
 		if (_textureSize.x<=0 || _textureSize.y<=0) {
 			_change = false;
 			return;
@@ -61,7 +61,7 @@ void StringBox::render() {
 		_change = false; //disable this to make it always refeashing
 	}
 	//use render texture here
-	gl::drawTexR8Rectangle(_tex, gl::GLRect{.pos=pos, .size=size*2.f}, vec4(0.f, 0.2f, 0.f, 1.f));
+	gl::drawTexR8Rectangle(_tex, gl::GLRect{.pos=pos, .size=size*2.f}, vec4(0.f, 0.2f, 0.f, 1.f))->release();
 }
 
 std::string StringBox::str() const {

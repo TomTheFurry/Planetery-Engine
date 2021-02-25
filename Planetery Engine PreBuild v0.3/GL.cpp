@@ -544,16 +544,16 @@ RenderBuffer::~RenderBuffer() { glDeleteRenderbuffers(1, &id); }
 FrameBuffer::FrameBuffer() { glCreateFramebuffers(1, &id); }
 void FrameBuffer::attach(RenderBuffer* rb, GLEnum attachmentPoint) {
 	glNamedFramebufferRenderbuffer(id, attachmentPoint, GL_RENDERBUFFER, rb->id);
-	rb->addLink();
-	_rb.push_back(rb);
+	//rb->addLink();
+	//_rb.push_back(rb);
 }
 void FrameBuffer::attach(Texture* tx, GLEnum attachmentPoint, int level) {
 	glNamedFramebufferTexture(id, attachmentPoint, tx->id, level);
-	tx->addLink();
-	_rb.push_back(tx);
+	//tx->addLink();
+	//_rb.push_back(tx);
 }
 FrameBuffer::~FrameBuffer() {
-	for (auto b : _rb) b->release();
+	//for (auto b : _rb) b->release();
 	glDeleteFramebuffers(1, &id);
 }
 
@@ -772,43 +772,43 @@ uint gl::getMaxTextureSize() {
 
 
 //Helper Renderer
-VertexBuffer* gl::drawTexRectangle(Texture2D* tex, GLRect rect) {
+[[nodiscard]] VertexBuffer* gl::drawTexRectangle(Texture2D* tex, GLRect rect) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
 	drawTexRectangle(tex, rectBuffer);
 	return rectBuffer;
 }
-VertexBuffer* gl::drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color) {
+[[nodiscard]] VertexBuffer* gl::drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData(sizeof(rect), bufferFlags::None, &rect);
 	drawTexR8Rectangle(tex, rectBuffer, color);
 	return rectBuffer;
 }
-VertexBuffer* gl::drawRectangles(std::vector<GLRect> rects, vec4 color) {
+[[nodiscard]] VertexBuffer* gl::drawRectangles(std::vector<GLRect> rects, vec4 color) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
 	drawRectangles(rectBuffer, color);
 	return rectBuffer;
 }
-VertexBuffer* gl::drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor) {
+[[nodiscard]] VertexBuffer* gl::drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
 	drawRectanglesBorder(rectBuffer, borderWidth, borderColor);
 	return rectBuffer;
 }
-VertexBuffer* gl::drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor) {
+[[nodiscard]] VertexBuffer* gl::drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
 	drawRectanglesFilledBorder(rectBuffer, color, borderWidth, borderColor);
 	return rectBuffer;
 }
-static ShaderProgram* _lineShader = nullptr;
-VertexBuffer* gl::drawLineStrip(std::vector<vec2> lines, vec4 color, float width) {
+[[nodiscard]] VertexBuffer* gl::drawLineStrip(std::vector<vec2> lines, vec4 color, float width) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
 	rectBuffer->setFormatAndData((lines.size()+2)*sizeof(vec2), bufferFlags::None, lines.data());
 	drawLineStrip(rectBuffer, color, width);
 	return rectBuffer;
 }
+
 static ShaderProgram* _texRectShader = nullptr;
 void gl::drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer) {
 	if (_texRectShader==nullptr) {

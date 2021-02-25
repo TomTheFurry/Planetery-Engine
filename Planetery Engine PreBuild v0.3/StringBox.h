@@ -35,7 +35,7 @@ protected:
 	bool _isLineCentre;
 	float _pointSize;
 	vec2 _ppi;
-	vec2 _textureSize;
+	uvec2 _textureSize;
 	gl::Texture2D* _tex;
 	gl::FrameBuffer* _fbo;
 	std::ostringstream _ss;

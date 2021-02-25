@@ -166,7 +166,7 @@ Reader& Reader::operator<<(char32_t c) {
 				fontData.emplace_back(getFontFaceData(lookupPair.first, _fontSize), std::vector<GlyphData>{});
 				facePos = indexLookup.size()-1;
 				assert(indexLookup.size()==fontData.size());
-				assert(facePos+1==fontData.size());
+				assert(facePos==fontData.size()-1);
 			} else {
 				facePos = faceIndexIt-indexLookup.begin();
 				assert(facePos<fontData.size());
@@ -182,7 +182,7 @@ Reader& Reader::operator<<(char32_t c) {
 				glyphData.emplace_back(getGlyphData(lookupPair.first, lookupPair.second, _fontSize));
 				glyphPos = glyphIndexLookup.size()-1;
 				assert(glyphIndexLookup.size()==glyphData.size());
-				assert(glyphPos+1==glyphData.size());
+				assert(glyphPos==glyphData.size()-1);
 			} else {
 				glyphPos = glyphIndexIt-glyphIndexLookup.begin();
 				assert(glyphPos<fontData.at(facePos).second.size());
@@ -203,6 +203,7 @@ Reader& Reader::operator<<(char32_t c) {
 		assert(cacheIt->first==c);
 	}
 	chars.emplace_back(c, faceIndex, glyphIndex);
+	return *this;
 }
 
 

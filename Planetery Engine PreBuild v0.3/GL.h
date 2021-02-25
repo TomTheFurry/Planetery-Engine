@@ -181,7 +181,7 @@ namespace gl {
 	protected:
 		~FrameBuffer();
 	private:
-		std::vector<Base*> _rb;
+		//std::vector<Base*> _rb;
 	};
 
 	enum class GeomType {
@@ -253,13 +253,12 @@ namespace gl {
 		vec2 pos;
 		vec2 size;
 	};
-
-	extern VertexBuffer* drawTexRectangle(Texture2D* tex, GLRect rect);
-	extern VertexBuffer* drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
-	extern VertexBuffer* drawRectangles(std::vector<GLRect> rects, vec4 color);
-	extern VertexBuffer* drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor);
-	extern VertexBuffer* drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor);
-	extern VertexBuffer* drawLineStrip(std::vector<vec2> lines, vec4 color, float width);
+	[[nodiscard]] extern VertexBuffer* drawTexRectangle(Texture2D* tex, GLRect rect);
+	[[nodiscard]] extern VertexBuffer* drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
+	[[nodiscard]] extern VertexBuffer* drawRectangles(std::vector<GLRect> rects, vec4 color);
+	[[nodiscard]] extern VertexBuffer* drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor);
+	[[nodiscard]] extern VertexBuffer* drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor);
+	[[nodiscard]] extern VertexBuffer* drawLineStrip(std::vector<vec2> lines, vec4 color, float width);
 	extern void drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer);
 	extern void drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color);
 	extern void drawRectangles(VertexBuffer* rectBuffer, vec4 color);

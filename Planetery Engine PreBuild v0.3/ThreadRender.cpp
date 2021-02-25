@@ -243,7 +243,7 @@ static void _main() {
 				events::ThreadEvents::swapBuffer(); //Will block and wait for screen updates (v-sync)
 			}
 		}
-	} catch (const char const* e) {
+	} catch (const char* e) {
 		logger("Uncaught Exception!! ", e);
 		events::ThreadEvents::panic(std::current_exception());
 	} //catch (...) {
