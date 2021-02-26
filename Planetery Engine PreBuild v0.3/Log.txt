@@ -80,57 +80,32 @@
 [;0m  [90m-[39mGL: Loading shader flatRectFilledBorder...
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 2.498723ms (56), Event tps: 211
+[;0m  [90m-[39mAverage Tick speed: 2.470021ms (55), Event tps: 154
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 292.501000us (60), Event tps: 168
+[;0m  [90m-[39mAverage Tick speed: 283.605000us (60), Event tps: 63
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 308.656000us (60), Event tps: 5
+[;0m  [90m-[39mAverage Tick speed: 263.236000us (60), Event tps: 17
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 266.073000us (60), Event tps: 0
+[;0m  [90m-[39mAverage Tick speed: 265.558000us (60), Event tps: 143
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 330.816000us (60), Event tps: 0
+[;0m  [90m-[39mThread ended.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 280.371000us (60), Event tps: 0
+[;0m  [90m-[39mGL Interface end.
 
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 283.416000us (60), Event tps: 0
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mRender thread stopped.[31m\n[39m
 
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 265.441000us (60), Event tps: 0
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread ended.
 
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 271.281000us (60), Event tps: 0
+[0;4;97mMainThread:
+[;0m  [90m-[39mExiting...
 
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 263.070000us (60), Event tps: 32
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.531873ms (59), Event tps: 21
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 5.036643ms (59), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 4.620900ms (60), Event tps: 0
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 4.554823ms (60), Event tps: 4
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 252.168000us (60), Event tps: 129
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 252.106000us (60), Event tps: 221
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 252.081000us (60), Event tps: 126
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 243.765000us (60), Event tps: 77
-
-[0;4;97mT
