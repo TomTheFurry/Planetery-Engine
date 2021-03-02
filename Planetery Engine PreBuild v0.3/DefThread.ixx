@@ -1,9 +1,11 @@
-#pragma once
+module;
 
 #include <utility>
 #include <atomic>
 
-namespace sync {
+export module DefThread;
+
+export namespace sync {
 	template <typename T>
 	class Promisee;
 	template <typename T>
@@ -117,7 +119,13 @@ namespace sync {
 		auto* dPtr = new std::atomic<T>(std::forward<T>(data));
 		return std::make_pair(Promisee<T>(ptr, dPtr), Promisor<T>(ptr, dPtr));
 	}
+}
 
+module: private;
 
+using namespace sync;
 
+std::pair<Promisee<bool>, Promisor<bool>> sync::newPromises() {
+	auto* ptr = new std::atomic<bool>(false);
+	return std::make_pair(Promisee<bool>(ptr), Promisor<bool>(ptr));
 }

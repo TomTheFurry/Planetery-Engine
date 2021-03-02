@@ -1,25 +1,318 @@
-#include "Logger.h"
+module;
 
-#include "GL.h"
-
-#include <assert.h>
 #include <vector>
-#include <fstream>
+#include <string>
+#include <map>
 #include <sstream>
-
+#include <fstream>
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 
+export module GL;
+import Def;
+import DefMath;
+
+export namespace gl {
+	typedef uint GLEnum;
+	typedef uint GLflags;
+
+	enum class DataType {
+		Byte,
+		UnsignedByte,
+		Short,
+		UnsignedShort,
+		Int,
+		UnsignedInt,
+		HalfFloat,
+		Float,
+		Double,
+		Fixed //Fixed 16.16 unit
+		//Also has the (u)int-2-10-10-10-rev and 10f-11f-11f-11f-rev format unused
+	};
+
+	class Base {
+	public:
+		Base() = default;
+		Base(Base& b) = delete;
+		Base(Base&& b) = delete;
+		uint id = -1;
+		void addLink();
+		void release();
+		virtual ~Base() = default;
+	private:
+		uint _refCount = 1;
+	};
+	enum class ShaderType {
+		Vertex,
+		Fragment,
+		Geometry,
+		TessControl,
+		TessEvaluation
+	};
+	class Shader : virtual public Base {
+	public:
+		void setSource(size_t arrayCount, const char* const* stringArray, const int* lengthArray);
+		bool compile();
+		Shader(ShaderType type);
+	protected:
+		~Shader();
+	};
+	class ShaderProgram : virtual public Base {
+	public:
+		ShaderProgram();
+		void attachShader(Shader* sd);
+		bool linkProgram();
+		void use();
+		//call use() before calling the function below
+		void setUniform(const std::string& valueNameP, bool value);
+		void setUniform(const std::string& valueNameP, uint value);
+		void setUniform(const std::string& valueNameP, uvec2 value);
+		void setUniform(const std::string& valueNameP, uvec3 value);
+		void setUniform(const std::string& valueNameP, uvec4 value);
+		void setUniform(const std::string& valueNameP, uint* value, uint length);
+		void setUniform(const std::string& valueNameP, uvec2* value, uint length);
+		void setUniform(const std::string& valueNameP, uvec3* value, uint length);
+		void setUniform(const std::string& valueNameP, uvec4* value, uint length);
+		void setUniform(const std::string& valueNameP, int value);
+		void setUniform(const std::string& valueNameP, ivec2 value);
+		void setUniform(const std::string& valueNameP, ivec3 value);
+		void setUniform(const std::string& valueNameP, ivec4 value);
+		void setUniform(const std::string& valueNameP, int* value, uint length);
+		void setUniform(const std::string& valueNameP, ivec2* value, uint length);
+		void setUniform(const std::string& valueNameP, ivec3* value, uint length);
+		void setUniform(const std::string& valueNameP, ivec4* value, uint length);
+		void setUniform(const std::string& valueNameP, float value);
+		void setUniform(const std::string& valueNameP, vec2 value);
+		void setUniform(const std::string& valueNameP, vec3 value);
+		void setUniform(const std::string& valueNameP, vec4 value);
+		void setUniform(const std::string& valueNameP, float* value, uint length);
+		void setUniform(const std::string& valueNameP, vec2* value, uint length);
+		void setUniform(const std::string& valueNameP, vec3* value, uint length);
+		void setUniform(const std::string& valueNameP, vec4* value, uint length);
+		void setUniform(const std::string& valueNameP, mat2 value);
+		void setUniform(const std::string& valueNameP, mat3 value);
+		void setUniform(const std::string& valueNameP, mat4 value);
+	protected:
+		~ShaderProgram();
+	private:
+		std::vector<Shader*> _sd;
+	};
+	extern ShaderProgram* makeShaderProgram(const char* fileName, bool hasGeomShader);
+
+	namespace bufferFlags {
+		enum bufferFlags {
+			None = 0,
+			MappingRead = 1,
+			MappingWrite = 2,
+			MappingPersistent = 64,
+			MappingCoherent = 128,
+			DynamicStorage = 256,
+			ClientStorage = 512
+		};
+	}
+	enum class MapAccess {
+		ReadOnly,
+		WriteOnly,
+		ReadWrite,
+	};
+
+	class BufferBase : virtual public Base {
+	public:
+		BufferBase();
+		void setFormatAndData(size_t size, GLflags usageFlags, const void* data = nullptr);
+		void editData(size_t size, const void* data, size_t atOffset = 0);
+		void* map(MapAccess access);
+		void* getMapPointer();
+		void unmap();
+		void reset();
+		size_t getSize();
+	protected:
+		void* _mapPointer;
+		size_t _size;
+		~BufferBase();
+	};
+	class VertexBuffer : virtual public BufferBase {};
+	class IndiceBuffer : virtual public BufferBase {};
+	class ShaderStorageBuffer : virtual public BufferBase {};
+
+	class VertexAttributeArray : virtual public Base {
+	public:
+		VertexAttributeArray(IndiceBuffer* ib = nullptr);
+		//internalType only accepts: Int, UnsignedInt, Float, Double
+		void setAttribute(uint atbId, int dataSize, DataType inputType, uint offset, DataType internalType, bool normalized = false);
+		void setBufferBinding(uint bfbId, VertexBuffer* targetBuffer, uint stride, int offset = 0); // bfb.targetBuffer MUST be a valid Vertex Buffer!
+		void bindAttributeToBufferBinding(uint atbId, uint bfbId);
+		void bindIndiceBuffer(IndiceBuffer* ib);
+	protected:
+		std::map<uint, VertexBuffer*> _bfb;
+		IndiceBuffer* _ib;
+		~VertexAttributeArray();
+	};
+
+	class Texture : virtual public Base {
+	public:
+		enum class SamplingFilter {
+			linear,
+			nearest,
+			nearestLODNearest,
+			linearLODNearest,
+			nearestLODLinear,
+			linearLODLinear,
+		};
+		void setTextureSamplingFilter(SamplingFilter maximize, SamplingFilter minimize);
+	};
+
+	class Texture2D : virtual public Texture {
+	public:
+		Texture2D();
+		void setFormat(GLEnum internalFormat, size_t width, size_t height, uint levels);
+		void setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, DataType dataType, const void* data);
+		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level);
+		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level, uvec2 targetPos, uint targetLevel);
+	protected:
+		~Texture2D();
+	};
+
+	class RenderBuffer : virtual public Base {
+	public:
+		RenderBuffer();
+		void setFormat(GLEnum internalFormat, size_t width, size_t height);
+	protected:
+		~RenderBuffer();
+	};
+	class FrameBuffer : virtual public Base {
+	public:
+		FrameBuffer();
+		void attach(RenderBuffer* rb, GLEnum attachmentPoint);
+		void attach(Texture* tx, GLEnum attachmentPoint, int level);
+	protected:
+		~FrameBuffer();
+	private:
+		//std::vector<Base*> _rb;
+	};
+
+	enum class GeomType {
+		Points,
+		Lines,
+		LineLoops,
+		LineStrips,
+		AdjacentLines,
+		AdjacentLineStrips,
+		Triangles,
+		TriangleFans,
+		TriangleStrips,
+		AdjacentTriangles,
+		AdjacentTriangleStrips,
+		Patches
+	};
+
+	class RenderTarget {
+	public:
+		RenderTarget();
+		RenderTarget(RenderTarget& r) = delete;
+		RenderTarget(RenderTarget&& r) = delete;
+		FrameBuffer* fbo;
+		VertexAttributeArray* vao;
+		ShaderStorageBuffer* ssbo;
+		ShaderProgram* spo;
+		bool useDepth;
+		bool useBlend;
+		bool useCull;
+		bool useStencil;
+		bool useMultisample;
+		GLEnum depthFunc;
+		std::pair<GLEnum, GLEnum> blendFunc;
+		GLEnum cullFace;
+		uvec4 viewport;
+		vec2 pixelPerInch;
+		std::vector<Texture*> texUnit{};
+		void bind(FrameBuffer* fb);
+		void bind(VertexAttributeArray* va);
+		void bind(ShaderStorageBuffer* ssb);
+		void bind(ShaderProgram* ssb);
+		void bind(Texture* tx, uint targetUnit);
+		void setViewport(uint x, uint y, uint width, uint height);
+		void drawArrays(GeomType geomType, uint first, size_t count);
+		void drawArraysInstanced(GeomType geomType, uint first, size_t count, size_t instanceCount);
+		void drawElements(GeomType geomType, size_t count, DataType indicesDataType, const void* indices = nullptr);
+		void drawElementsInstanced(GeomType geomType, size_t count, DataType indicesDataType, size_t instanceCount, const void* indices = nullptr);
+		void activateFrameBuffer();
+		template <typename T>
+		T normalizePos(T v) {
+			return (v/T{viewport.z,viewport.w})*T{2}-T{1};
+		}
+		template <typename T>
+		T normalizeLength(T v) {
+			return (v/T{viewport.z,viewport.w})*T{2};
+		}
+
+		static RenderTarget* swapTarget(RenderTarget* target);
+		~RenderTarget();
+	private:
+		void _use();
+	};
+
+	extern void init();
+	extern void end();
+	extern [[nodiscard]] uint getMaxTextureSize();
+
+	struct GLRect {
+		vec2 pos;
+		vec2 size;
+	};
+	[[nodiscard]] extern VertexBuffer* drawTexRectangle(Texture2D* tex, GLRect rect);
+	[[nodiscard]] extern VertexBuffer* drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
+	[[nodiscard]] extern VertexBuffer* drawRectangles(std::vector<GLRect> rects, vec4 color);
+	[[nodiscard]] extern VertexBuffer* drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor);
+	[[nodiscard]] extern VertexBuffer* drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor);
+	[[nodiscard]] extern VertexBuffer* drawLineStrip(std::vector<vec2> lines, vec4 color, float width);
+	extern void drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer);
+	extern void drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color);
+	extern void drawRectangles(VertexBuffer* rectBuffer, vec4 color);
+	extern void drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 borderColor);
+	extern void drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 borderWidth, vec4 borderColor);
+	extern void drawLineStrip(VertexBuffer* rectBuffer, vec4 color, float width);
+	extern RenderTarget* target;
+
+	template <typename T>
+	static void bind(T* t) { target->bind(t); }
+}
+
+export {
+	template <typename T>
+	class Swapper {
+		T _b;
+		T& _t;
+	public:
+		Swapper(T& loc, const T& v) :
+			_b(v), _t(loc) {
+			std::swap(loc, _b);
+		}
+		Swapper(T& loc, T&& v) :
+			_b(std::move(v)), _t(loc) {
+			std::swap(loc, _b);
+		}
+		Swapper(const Swapper& s) = delete;
+		Swapper(Swapper&& s) = delete;
+		~Swapper() {
+			std::swap(_t, _b);
+		}
+	};
+}
+
+module :private;
+import Logger;
+
 using namespace gl;
 
 //Test flag if same
-static_assert(GL_MAP_READ_BIT==bufferFlags::MappingRead, "ERROR! GL Enum is incorrect in header file!");
-static_assert(GL_MAP_WRITE_BIT==bufferFlags::MappingWrite, "ERROR! GL Enum is incorrect in header file!");
-static_assert(GL_MAP_PERSISTENT_BIT==bufferFlags::MappingPersistent, "ERROR! GL Enum is incorrect in header file!");
-static_assert(GL_MAP_COHERENT_BIT==bufferFlags::MappingCoherent, "ERROR! GL Enum is incorrect in header file!");
-static_assert(GL_DYNAMIC_STORAGE_BIT==bufferFlags::DynamicStorage, "ERROR! GL Enum is incorrect in header file!");
-static_assert(GL_CLIENT_STORAGE_BIT==bufferFlags::ClientStorage, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_READ_BIT == bufferFlags::MappingRead, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_WRITE_BIT == bufferFlags::MappingWrite, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_PERSISTENT_BIT == bufferFlags::MappingPersistent, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_MAP_COHERENT_BIT == bufferFlags::MappingCoherent, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_DYNAMIC_STORAGE_BIT == bufferFlags::DynamicStorage, "ERROR! GL Enum is incorrect in header file!");
+static_assert(GL_CLIENT_STORAGE_BIT == bufferFlags::ClientStorage, "ERROR! GL Enum is incorrect in header file!");
 
 struct _state {
 	uint fbo = 0;
@@ -34,9 +327,9 @@ struct _state {
 	GLEnum depthFunc = GL_LESS;
 	std::pair<GLEnum, GLEnum> blendFunc = std::make_pair(GL_ONE, GL_ZERO);
 	GLEnum cullFace = GL_BACK;
-	uvec4 viewport = uvec4{0,0,1920,1080};
-	vec2 pixelPerInch = vec2{0,0};
-	std::vector<Texture*> texUnit {};
+	uvec4 viewport = uvec4{ 0,0,1920,1080 };
+	vec2 pixelPerInch = vec2{ 0,0 };
+	std::vector<Texture*> texUnit{};
 };
 
 static _state state;
@@ -152,7 +445,7 @@ GLEnum _val(MapAccess m) {
 void Base::addLink() { _refCount++; }
 void Base::release() {
 	_refCount--;
-	if (_refCount==0)
+	if (_refCount == 0)
 		delete this;
 }
 
@@ -167,7 +460,7 @@ bool Shader::compile() {
 	glCompileShader(id);
 	int stat;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &stat);
-	return stat==GL_TRUE;
+	return stat == GL_TRUE;
 }
 Shader::~Shader() { glDeleteShader(id); }
 
@@ -182,11 +475,11 @@ bool ShaderProgram::linkProgram() {
 	glLinkProgram(id);
 	int stat;
 	glGetProgramiv(id, GL_LINK_STATUS, &stat);
-	return stat==GL_TRUE;
+	return stat == GL_TRUE;
 }
 
 void gl::ShaderProgram::use() {
-	if (state.spo!=id) {
+	if (state.spo != id) {
 		glUseProgram(id);
 		state.spo = id;
 	}
@@ -325,7 +618,8 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 				program->release();
 				return {};
 			}
-		} catch (std::ifstream::failure e) {
+		}
+		catch (std::ifstream::failure e) {
 			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".vert. Returning!\n");
 			logger.closeMessage();
 			vertShader->release();
@@ -359,7 +653,8 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 				program->release();
 				return {};
 			}
-		} catch (std::ifstream::failure e) {
+		}
+		catch (std::ifstream::failure e) {
 			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".frag. Returning!\n");
 			logger.closeMessage();
 			fragShader->release();
@@ -393,7 +688,8 @@ ShaderProgram* gl::makeShaderProgram(const char* fileName, bool hasGeomShader) {
 				program->release();
 				return {};
 			}
-		} catch (std::ifstream::failure e) {
+		}
+		catch (std::ifstream::failure e) {
 			logger("Error! Shader loading failed! Cannot load file ", SHADER_PATH, fileName, ".geom. Returning!\n");
 			logger.closeMessage();
 			geomShader->release();
@@ -461,7 +757,7 @@ BufferBase::~BufferBase() {
 VertexAttributeArray::VertexAttributeArray(IndiceBuffer* ib) {
 	glCreateVertexArrays(1, &id);
 	_ib = ib;
-	if (ib!=nullptr) {
+	if (ib != nullptr) {
 		glVertexArrayElementBuffer(id, ib->id);
 		ib->addLink();
 	}
@@ -485,10 +781,11 @@ void VertexAttributeArray::setAttribute(uint atbId, int dataSize, DataType type,
 }
 void VertexAttributeArray::setBufferBinding(uint bfbId, VertexBuffer* targetBuffer, uint stride, int offset) {
 	auto it = _bfb.lower_bound(bfbId);
-	if (it!=_bfb.end() && it->first==bfbId) {
+	if (it != _bfb.end() && it->first == bfbId) {
 		it->second->release();
 		it->second = targetBuffer;
-	} else {
+	}
+	else {
 		_bfb.emplace_hint(it, std::make_pair(bfbId, targetBuffer));
 	}
 	targetBuffer->addLink();
@@ -573,7 +870,7 @@ RenderTarget::RenderTarget() {
 	blendFunc = std::make_pair(GL_ONE, GL_ZERO);
 	cullFace = GL_BACK;
 	texUnit.reserve(_maxTexUnit);
-	for (uint i = 0; i<_maxTexUnit; i++) texUnit.push_back(nullptr);
+	for (uint i = 0; i < _maxTexUnit; i++) texUnit.push_back(nullptr);
 	viewport = uvec4(0, 0, 1920, 1080);
 	pixelPerInch = vec2(0, 0);
 }
@@ -598,14 +895,14 @@ void RenderTarget::bind(ShaderProgram* sp) {
 	spo->addLink();
 }
 void gl::RenderTarget::bind(Texture* tx, uint i) {
-	if (i>=_maxTexUnit) throw "Max texture unit reached!";
+	if (i >= _maxTexUnit) throw "Max texture unit reached!";
 	if (texUnit[i] != nullptr) texUnit[i]->release();
 	texUnit[i] = tx;
 	tx->addLink();
 }
 
 void gl::RenderTarget::setViewport(uint x, uint y, uint width, uint height) {
-	viewport = uvec4{x,y,width,height};
+	viewport = uvec4{ x,y,width,height };
 }
 
 void RenderTarget::drawArrays(GeomType mode, uint first, size_t count) {
@@ -625,18 +922,18 @@ void RenderTarget::drawElementsInstanced(GeomType mode, size_t count, DataType t
 	glDrawElementsInstanced(_val(mode), count, _val(type), indices, instanceCount);
 }
 void gl::RenderTarget::activateFrameBuffer() {
-	if (state.fbo!=(fbo==nullptr ? 0 : fbo->id))
-		glBindFramebuffer(GL_FRAMEBUFFER, (fbo==nullptr ? 0 : fbo->id));
+	if (state.fbo != (fbo == nullptr ? 0 : fbo->id))
+		glBindFramebuffer(GL_FRAMEBUFFER, (fbo == nullptr ? 0 : fbo->id));
 }
 RenderTarget* gl::RenderTarget::swapTarget(RenderTarget* target) {
 	std::swap(target, gl::target);
 	return target;
 }
 RenderTarget::~RenderTarget() {
-	if (fbo!=nullptr) fbo->release();
-	if (vao!=nullptr) vao->release();
-	if (ssbo!=nullptr) ssbo->release();
-	for (auto ptr : texUnit) if (ptr!=nullptr) ptr->release();
+	if (fbo != nullptr) fbo->release();
+	if (vao != nullptr) vao->release();
+	if (ssbo != nullptr) ssbo->release();
+	for (auto ptr : texUnit) if (ptr != nullptr) ptr->release();
 }
 
 //----Hashtag Macro HELL!!! HAHAHAHAHAHAHAHAHAHA~~~
@@ -683,7 +980,7 @@ void RenderTarget::_use() {
 	_M_SETID(spo, glUseProgram(spo->id),
 		glUseProgram(0));
 	for (uint i = 0; i < texUnit.size(); i++) {
-		if (texUnit[i]!=nullptr && texUnit[i]!=state.texUnit[i]) {
+		if (texUnit[i] != nullptr && texUnit[i] != state.texUnit[i]) {
 			glBindTextureUnit(i, texUnit[i]->id);
 			state.texUnit[i] = texUnit[i];
 			//Currently not unbinding texture unit... Not sure if I should
@@ -694,10 +991,6 @@ void RenderTarget::_use() {
 		state.viewport = viewport;
 	}
 }
-
-
-
-
 
 static VertexAttributeArray* _rectVao = nullptr;
 static VertexAttributeArray* _lineVao = nullptr;
@@ -714,9 +1007,9 @@ void gl::init() {
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &__maxTexU);
 	_maxTexUnit = uint(__maxTexU);
 	state.texUnit.reserve(_maxTexUnit);
-	for (uint i = 0; i<_maxTexUnit; i++) state.texUnit.push_back(nullptr);
+	for (uint i = 0; i < _maxTexUnit; i++) state.texUnit.push_back(nullptr);
 	gl::target = new RenderTarget();
-	assert(gl::target!=nullptr);
+	assert(gl::target != nullptr);
 	_M_BOOL_S(useDepth, GL_DEPTH_TEST);
 	_M_BOOL_S(useBlend, GL_BLEND);
 	_M_BOOL_S(useCull, GL_CULL_FACE);
@@ -747,8 +1040,8 @@ void gl::init() {
 
 void gl::end() {
 	logger("GL Interface end.\n");
-	if (target==nullptr) throw;
-	if (target->fbo!=nullptr) logger("WARNING!!! gl end() called when target is not the default original target! May point to memory leak! (Note that this catch is not always successful)\n");
+	if (target == nullptr) throw;
+	if (target->fbo != nullptr) logger("WARNING!!! gl end() called when target is not the default original target! May point to memory leak! (Note that this catch is not always successful)\n");
 	delete target;
 }
 
@@ -757,19 +1050,6 @@ uint gl::getMaxTextureSize() {
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
 	return (uint)size;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //Helper Renderer
 [[nodiscard]] VertexBuffer* gl::drawTexRectangle(Texture2D* tex, GLRect rect) {
@@ -786,32 +1066,32 @@ uint gl::getMaxTextureSize() {
 }
 [[nodiscard]] VertexBuffer* gl::drawRectangles(std::vector<GLRect> rects, vec4 color) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
-	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
+	rectBuffer->setFormatAndData(rects.size() * sizeof(GLRect), bufferFlags::None, rects.data());
 	drawRectangles(rectBuffer, color);
 	return rectBuffer;
 }
 [[nodiscard]] VertexBuffer* gl::drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
-	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
+	rectBuffer->setFormatAndData(rects.size() * sizeof(GLRect), bufferFlags::None, rects.data());
 	drawRectanglesBorder(rectBuffer, borderWidth, borderColor);
 	return rectBuffer;
 }
 [[nodiscard]] VertexBuffer* gl::drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
-	rectBuffer->setFormatAndData(rects.size()*sizeof(GLRect), bufferFlags::None, rects.data());
+	rectBuffer->setFormatAndData(rects.size() * sizeof(GLRect), bufferFlags::None, rects.data());
 	drawRectanglesFilledBorder(rectBuffer, color, borderWidth, borderColor);
 	return rectBuffer;
 }
 [[nodiscard]] VertexBuffer* gl::drawLineStrip(std::vector<vec2> lines, vec4 color, float width) {
 	VertexBuffer* rectBuffer = new VertexBuffer();
-	rectBuffer->setFormatAndData((lines.size()+2)*sizeof(vec2), bufferFlags::None, lines.data());
+	rectBuffer->setFormatAndData((lines.size() + 2) * sizeof(vec2), bufferFlags::None, lines.data());
 	drawLineStrip(rectBuffer, color, width);
 	return rectBuffer;
 }
 
 static ShaderProgram* _texRectShader = nullptr;
 void gl::drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer) {
-	if (_texRectShader==nullptr) {
+	if (_texRectShader == nullptr) {
 		_texRectShader = makeShaderProgram("texRect", true);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
@@ -824,7 +1104,7 @@ void gl::drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer) {
 }
 static ShaderProgram* _texR8RectShader = nullptr;
 void gl::drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color) {
-	if (_texR8RectShader==nullptr) {
+	if (_texR8RectShader == nullptr) {
 		_texR8RectShader = makeShaderProgram("texR8Rect", true);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
@@ -833,7 +1113,7 @@ void gl::drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color
 		Swapper __(target->texUnit[0], (Texture*)tex);
 		Swapper ___(target->spo, _texR8RectShader);
 		Swapper ____(target->useBlend, true);
-		Swapper _____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		Swapper _____{ target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA} };
 		target->spo->use();
 		target->spo->setUniform("textColor", color);
 		target->drawArrays(GeomType::Points, 0, 1);
@@ -841,7 +1121,7 @@ void gl::drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color
 }
 static ShaderProgram* _flatRectShader = nullptr;
 void gl::drawRectangles(VertexBuffer* rectBuffer, vec4 color) {
-	if (_flatRectShader==nullptr) {
+	if (_flatRectShader == nullptr) {
 		_flatRectShader = makeShaderProgram("flatRect", true);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
@@ -849,15 +1129,15 @@ void gl::drawRectangles(VertexBuffer* rectBuffer, vec4 color) {
 		Swapper _(target->vao, _rectVao);
 		Swapper __(target->spo, _flatRectShader);
 		Swapper ___(target->useBlend, true);
-		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		Swapper ____{ target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA} };
 		target->spo->use();
 		target->spo->setUniform("rectColor", color);
-		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize()/sizeof(GLRect));
+		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize() / sizeof(GLRect));
 	}
 }
 static ShaderProgram* _flatRectBorderShader = nullptr;
 void gl::drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 borderColor) {
-	if (_flatRectBorderShader==nullptr) {
+	if (_flatRectBorderShader == nullptr) {
 		_flatRectBorderShader = makeShaderProgram("flatRectBorder", true);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
@@ -865,16 +1145,16 @@ void gl::drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 b
 		Swapper _(target->vao, _rectVao);
 		Swapper __(target->spo, _flatRectBorderShader);
 		Swapper ___(target->useBlend, true);
-		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		Swapper ____{ target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA} };
 		target->spo->use();
 		target->spo->setUniform("rectBorderColor", borderColor);
 		target->spo->setUniform("rectBorderWidth", borderWidth);
-		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize()/sizeof(GLRect));
+		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize() / sizeof(GLRect));
 	}
 }
 static ShaderProgram* _flatRectFilledBorderShader = nullptr;
 void gl::drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 borderWidth, vec4 borderColor) {
-	if (_flatRectFilledBorderShader==nullptr) {
+	if (_flatRectFilledBorderShader == nullptr) {
 		_flatRectFilledBorderShader = makeShaderProgram("flatRectFilledBorder", true);
 	}
 	_rectVao->setBufferBinding(0, rectBuffer, sizeof(GLRect));
@@ -882,17 +1162,17 @@ void gl::drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 b
 		Swapper _(target->vao, _rectVao);
 		Swapper __(target->spo, _flatRectFilledBorderShader);
 		Swapper ___(target->useBlend, true);
-		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		Swapper ____{ target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA} };
 		target->spo->use();
 		target->spo->setUniform("rectColor", color);
 		target->spo->setUniform("rectBorderColor", borderColor);
 		target->spo->setUniform("rectBorderWidth", borderWidth);
-		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize()/sizeof(GLRect));
+		target->drawArrays(GeomType::Points, 0, rectBuffer->getSize() / sizeof(GLRect));
 	}
 }
 static ShaderProgram* _lineStripShader = nullptr;
 void gl::drawLineStrip(VertexBuffer* lineBuffer, vec4 color, float width) {
-	if (_lineStripShader==nullptr) {
+	if (_lineStripShader == nullptr) {
 		_lineStripShader = makeShaderProgram("lineStrip", true);
 	}
 	_lineVao->setBufferBinding(0, lineBuffer, sizeof(vec2));
@@ -900,15 +1180,12 @@ void gl::drawLineStrip(VertexBuffer* lineBuffer, vec4 color, float width) {
 		Swapper _(target->vao, _rectVao);
 		Swapper __(target->spo, _lineStripShader);
 		Swapper ___(target->useBlend, true);
-		Swapper ____{target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
+		Swapper ____{ target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA} };
 		target->spo->use();
 		target->spo->setUniform("lineColor", color);
 		target->spo->setUniform("lineWidth", width);
-		target->drawArrays(GeomType::AdjacentLineStrips, 0, lineBuffer->getSize()/sizeof(vec2));
+		target->drawArrays(GeomType::AdjacentLineStrips, 0, lineBuffer->getSize() / sizeof(vec2));
 	}
 }
-
-
-
 
 RenderTarget* gl::target = nullptr;

@@ -1,7 +1,36 @@
-#include "MultilineString.h"
+module;
+
+#include <string>
+#include <vector>
+#include <iostream>
 #include "ConsoleFormat.h"
 
+export module MultilineString;
+
+constexpr auto STD_NEXTLINE_CHAR = '\n';
 //BUG: Unkown issue with "\n newline missing" warning with logger. Not sure where the bug is.
+export class MultilineString {
+public:
+    MultilineString(const MultilineString& ms);
+    MultilineString(MultilineString&& ms) noexcept;
+    MultilineString();
+    MultilineString(const std::string& str, size_t lineLimit);
+    MultilineString(const std::vector<std::string>& strlist);
+    MultilineString(std::vector<std::string>&& strlist);
+    operator std::string() const;
+    MultilineString& operator<<(MultilineString&& join);
+    std::string& getLine(size_t l);
+    const std::string& getLine(size_t l) const;
+    size_t countLines() const;
+    void padLeft(const std::string& str);
+    void padRight(const std::string& str);
+protected:
+    std::vector<std::string> _data;
+    friend std::ostream& operator<<(std::ostream& out, const MultilineString& str);
+};;
+export std::ostream& operator<<(std::ostream& out, const MultilineString& str);
+
+module : private;
 
 MultilineString::MultilineString(const MultilineString& ms) : _data(ms._data) {}
 MultilineString::MultilineString(MultilineString&& ms) noexcept : _data(std::move(ms._data)) {}
@@ -10,20 +39,21 @@ MultilineString::MultilineString(const std::string& str, size_t lineLimit) : _da
     size_t pos = 0;
     size_t newPos;
     while ((newPos = str.find(STD_NEXTLINE_CHAR, pos)) != std::string::npos) {
-        size_t strLen = newPos-pos;
+        size_t strLen = newPos - pos;
         pos = newPos;
-        for (; strLen>lineLimit; strLen -= lineLimit) {
-            _data.emplace_back(str.substr(pos-strLen, lineLimit));
+        for (; strLen > lineLimit; strLen -= lineLimit) {
+            _data.emplace_back(str.substr(pos - strLen, lineLimit));
         }
-        _data.emplace_back(str.substr(pos-strLen, strLen));
+        _data.emplace_back(str.substr(pos - strLen, strLen));
         pos++;
     }
     if (pos != str.length()) {
-        _data.emplace_back(str.substr(pos)+format({COLOR_RED})+"\\n"+format({COLOR_DEFAULT}));
+        _data.emplace_back(str.substr(pos) + format({ COLOR_RED }) + "\\n" + format({ COLOR_DEFAULT }));
     }
 }
 MultilineString::MultilineString(const std::vector<std::string>& strlist) : _data(strlist) {}
 MultilineString::MultilineString(std::vector<std::string>&& strlist) : _data(std::move(strlist)) {}
+
 MultilineString::operator std::string() const {
     std::string a{};
     for (const auto& line : _data) {
