@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="..\sharedInclude\glad\glad.c" />
     <ClCompile Include="DefineThreadSync.cpp" />
+    <ClCompile Include="DefineUtil.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="GL.cpp" />
     <ClCompile Include="GUI.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="DefineMath.h" />
     <ClInclude Include="DefineThreadSync.h" />
+    <ClInclude Include="DefineUtil.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="GL.h" />
     <ClInclude Include="GUI.h" />
@@ -194,6 +196,9 @@
     <ClInclude Include="ThreadMain.h" />
     <ClInclude Include="ThreadRender.h" />
     <ClInclude Include="UTF.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

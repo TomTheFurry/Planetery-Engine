@@ -2,16 +2,14 @@
 
 #include <array>
 
-template <typename I, typename R, size_t N>
-class RollingAverage {
-public:
+template<typename I, typename R, size_t N> class RollingAverage
+{
+  public:
     unsigned int index;
     I runningTotal;
     I buffer[N];
 
-    RollingAverage() {
-        clear();
-    }
+    RollingAverage() { clear(); }
 
     void clear() {
         runningTotal = 0;
@@ -31,7 +29,5 @@ public:
         return static_cast<R>(runningTotal) / static_cast<R>(N);
     }
 
-    R get() {
-        return static_cast<R>(runningTotal) / static_cast<R>(N);
-    }
+    R get() { return static_cast<R>(runningTotal) / static_cast<R>(N); }
 };

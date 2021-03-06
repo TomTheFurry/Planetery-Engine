@@ -11,17 +11,21 @@
 #include "MultiStream.h"
 #include "MultilineString.h"
 
-#define LOGGER_DEFAULT_THREAD_NAME "UnknownThread"+format({BRIGHT COLOR_RED})+toStr(std::this_thread::get_id())
-#define LOGGER_DEFAULT_THREAD_NAME_FORMAT format({RESET_ALL,UNDERLINE,BRIGHT COLOR_WHITE})
-#define LOGGER_MESSAGE_START LOGGER_DEFAULT_THREAD_NAME_FORMAT << name << ":\n"
-#define LOGGER_MESSAGE_END "\n"
-#define LOGGER_NEWLINE_PADDING std::string(FORMAT_RESET)+"  "
-#define LOGGER_MAX_LINE_WIDTH size_t(100) //set -1 as infinate
-//WARN: This causes bugs. Many bugs. the MultiLineString impimentation needs to redo.
+#define LOGGER_DEFAULT_THREAD_NAME               \
+    "UnknownThread" + format({BRIGHT COLOR_RED}) \
+      + toStr(std::this_thread::get_id())
+#define LOGGER_DEFAULT_THREAD_NAME_FORMAT \
+    format({RESET_ALL, UNDERLINE, BRIGHT COLOR_WHITE})
+#define LOGGER_MESSAGE_START   LOGGER_DEFAULT_THREAD_NAME_FORMAT << name << ":\n"
+#define LOGGER_MESSAGE_END     "\n"
+#define LOGGER_NEWLINE_PADDING std::string(FORMAT_RESET) + "  "
+#define LOGGER_MAX_LINE_WIDTH  size_t(100)  // set -1 as infinate
+// WARN: This causes bugs. Many bugs. the MultiLineString impimentation needs to
+// redo.
 
 
-std::string& replaceStringInPlace(std::string&& subject, const std::string& search,
-    const std::string& replace) {
+std::string& replaceStringInPlace(std::string&& subject,
+  const std::string& search, const std::string& replace) {
     size_t pos = 0;
     while ((pos = subject.find(search, pos)) != std::string::npos) {
         subject.replace(pos, search.length(), replace);
@@ -31,8 +35,9 @@ std::string& replaceStringInPlace(std::string&& subject, const std::string& sear
 }
 
 namespace Logger {
-    class LogLayerBase {
-    public:
+    class LogLayerBase
+    {
+      public:
         bool closed = false;
         LogLayerBase() = default;
         virtual ~LogLayerBase() = default;
@@ -41,8 +46,9 @@ namespace Logger {
         virtual bool push(LogLayerBase* object) { throw; }
         virtual bool pop() { throw; }
     };
-    class LogLayerContainer : public LogLayerBase {
-    public:
+    class LogLayerContainer: public LogLayerBase
+    {
+      public:
         LogLayerContainer() = default;
         virtual ~LogLayerContainer();
         virtual MultilineString str() const;
@@ -51,8 +57,9 @@ namespace Logger {
         virtual bool pop();
         std::vector<LogLayerBase*> childs;
     };
-    class LogLayerString : public LogLayerBase {
-    public:
+    class LogLayerString: public LogLayerBase
+    {
+      public:
         LogLayerString();
         virtual ~LogLayerString() = default;
         virtual MultilineString str() const;
@@ -61,17 +68,20 @@ namespace Logger {
         virtual bool pop();
         std::stringstream string;
     };
-    class Message {
-    public:
+    class Message
+    {
+      public:
         Message(std::string&& str);
         Message();
         LogLayerContainer data;
         std::string name;
         friend std::ostream& operator<<(std::ostream& out, const Message& ms);
     };
-    //OPTI: Make this thread_local to maybe save time and save the need to declare threads
-    class SingleThread {
-    public:
+    // OPTI: Make this thread_local to maybe save time and save the need to
+    // declare threads
+    class SingleThread
+    {
+      public:
         SingleThread(std::mutex& mx, std::ostream& os, std::string&& name);
         std::mutex& lock;
         std::ostream& output;
@@ -97,8 +107,7 @@ namespace Logger {
     }
 }
 
-template <typename T>
-inline std::string toStr(T t) {
+template<typename T> inline std::string toStr(T t) {
     return (std::stringstream() << t).str();
 }
 inline std::string getTimestamp() {
@@ -111,16 +120,14 @@ inline std::string getTimestamp() {
 
 Logger::LogLayerContainer::~LogLayerContainer() {
     for (auto c : childs) {
-        //delete c;
+        // delete c;
     }
 }
 
 MultilineString Logger::LogLayerContainer::str() const {
     if (childs.empty()) return MultilineString();
-    MultilineString ms{childs[0]->str(),LOGGER_MAX_LINE_WIDTH};
-    for (size_t i = 1; i<childs.size(); i++) {
-        ms << childs[i]->str();
-    }
+    MultilineString ms{childs[0]->str(), LOGGER_MAX_LINE_WIDTH};
+    for (size_t i = 1; i < childs.size(); i++) { ms << childs[i]->str(); }
     ms.padLeft(LOGGER_NEWLINE_PADDING);
     return ms;
 }
@@ -132,8 +139,8 @@ Logger::LogLayerBase* Logger::LogLayerContainer::getBack() {
 
 bool Logger::LogLayerContainer::push(LogLayerBase* object) {
     if (closed) return false;
-    for (size_t i = childs.size(); i!=0; i--) {
-        if (childs[i-1]->push(object)) return true;
+    for (size_t i = childs.size(); i != 0; i--) {
+        if (childs[i - 1]->push(object)) return true;
     }
     childs.push_back(object);
     return true;
@@ -146,33 +153,30 @@ bool Logger::LogLayerContainer::pop() {
     return true;
 }
 
-Logger::LogLayerString::LogLayerString() : string() {}
+Logger::LogLayerString::LogLayerString(): string() {}
 
 MultilineString Logger::LogLayerString::str() const {
-    return MultilineString(format({BRIGHT COLOR_BLACK})+"-"+format({COLOR_DEFAULT})+string.str());
+    return MultilineString(format({BRIGHT COLOR_BLACK}) + "-"
+                           + format({COLOR_DEFAULT}) + string.str());
 }
 
 Logger::LogLayerBase* Logger::LogLayerString::getBack() {
     return dynamic_cast<LogLayerBase*>(this);
 }
 
-bool Logger::LogLayerString::push(LogLayerBase* object) {
-    return false;
-}
+bool Logger::LogLayerString::push(LogLayerBase* object) { return false; }
 
-bool Logger::LogLayerString::pop() {
-    return false;
-}
+bool Logger::LogLayerString::pop() { return false; }
 
 
-Logger::Message::Message(std::string&& str) : name(str), data() {}
+Logger::Message::Message(std::string&& str): name(str), data() {}
 
-Logger::Message::Message() : Message(getTimestamp()) {}
+Logger::Message::Message(): Message(getTimestamp()) {}
 
-Logger::SingleThread::SingleThread(
-    std::mutex& mx, std::ostream& os,
-    std::string&& str = LOGGER_DEFAULT_THREAD_NAME
-) : lock(mx), output(os), name(str) {}
+Logger::SingleThread::SingleThread(std::mutex& mx, std::ostream& os,
+  std::string&& str = LOGGER_DEFAULT_THREAD_NAME):
+  lock(mx),
+  output(os), name(str) {}
 
 void Logger::SingleThread::newLayer() {
     if (messages.empty()) {
@@ -188,21 +192,19 @@ void Logger::SingleThread::closeLayer() {
     if (messages.back().data.closed) {
         lock.lock();
         output << LOGGER_MESSAGE_START << messages.back() << LOGGER_MESSAGE_END;
-        //output << name << ":\n" << messages.back() << "\n";
+        // output << name << ":\n" << messages.back() << "\n";
         output.flush();
         lock.unlock();
         messages.pop_back();
     }
 }
 
-void Logger::SingleThread::newMessage() {
-    messages.emplace_back();
-}
+void Logger::SingleThread::newMessage() { messages.emplace_back(); }
 
 void Logger::SingleThread::closeMessage() {
     lock.lock();
     output << LOGGER_MESSAGE_START << messages.back() << LOGGER_MESSAGE_END;
-    //output << name << ":\n" << messages.back() << "\n";
+    // output << name << ":\n" << messages.back() << "\n";
     output.flush();
     lock.unlock();
     messages.pop_back();
@@ -213,10 +215,11 @@ void Logger::SingleThread::newMessage(std::string&& str) {
 }
 
 void Logger::SingleThread::closeMessage(std::string&& str) {
-    if (messages.back().name!=str) throw "Logger: TopMessage not the correct one!";
+    if (messages.back().name != str)
+        throw "Logger: TopMessage not the correct one!";
     lock.lock();
     output << LOGGER_MESSAGE_START << messages.back() << LOGGER_MESSAGE_END;
-    //output << name << ":\n" << messages.back() << "\n";
+    // output << name << ":\n" << messages.back() << "\n";
     output.flush();
     lock.unlock();
     messages.pop_back();
@@ -225,27 +228,31 @@ void Logger::SingleThread::closeMessage(std::string&& str) {
 std::ostream& Logger::SingleThread::getStream() {
     auto back = (messages.back().data.getBack());
     auto* pt = dynamic_cast<LogLayerString*>(back);
-    if (pt==nullptr) {
+    if (pt == nullptr) {
         auto backContainer = dynamic_cast<LogLayerContainer*>(back);
         auto newString = new LogLayerString();
-        if (!backContainer->push(newString)) throw "Logger: Failed to insert new string!";
+        if (!backContainer->push(newString))
+            throw "Logger: Failed to insert new string!";
         return newString->string;
     }
-    return (dynamic_cast<LogLayerString*>((messages.back().data.getBack()))->string);
+    return (
+      dynamic_cast<LogLayerString*>((messages.back().data.getBack()))->string);
 }
 
 void Log::newThread() {
-    auto r = Logger::threads.try_emplace(std::this_thread::get_id(), Logger::writeLock, Logger::outStream);
+    auto r = Logger::threads.try_emplace(
+      std::this_thread::get_id(), Logger::writeLock, Logger::outStream);
     if (!r.second) throw "Logger: Thread already exists.";
 }
 
 void Log::closeThread() {
     auto i = Logger::threads.erase(std::this_thread::get_id());
-    if (i!=1) throw "Logger: Thread already closed.";
+    if (i != 1) throw "Logger: Thread already closed.";
 }
 
 void Log::newThread(std::string&& str) {
-    auto r = Logger::threads.try_emplace(std::this_thread::get_id(), Logger::writeLock, Logger::outStream, std::move(str));
+    auto r = Logger::threads.try_emplace(std::this_thread::get_id(),
+      Logger::writeLock, Logger::outStream, std::move(str));
     if (!r.second) throw "Logger: Thread already exists.";
 }
 
@@ -257,7 +264,8 @@ void Log::closeThread(std::string&& str) {
 }
 
 void Log::newLayer() {
-    auto r = Logger::threads.try_emplace(std::this_thread::get_id(), Logger::writeLock, Logger::outStream);
+    auto r = Logger::threads.try_emplace(
+      std::this_thread::get_id(), Logger::writeLock, Logger::outStream);
     r.first->second.newLayer();
 }
 
@@ -266,7 +274,8 @@ void Log::closeLayer() {
 }
 
 void Log::newMessage() {
-    auto r = Logger::threads.try_emplace(std::this_thread::get_id(), Logger::writeLock, Logger::outStream);
+    auto r = Logger::threads.try_emplace(
+      std::this_thread::get_id(), Logger::writeLock, Logger::outStream);
     r.first->second.newMessage();
 }
 
@@ -275,7 +284,8 @@ void Log::closeMessage() {
 }
 
 void Log::newMessage(std::string&& str) {
-    auto r = Logger::threads.try_emplace(std::this_thread::get_id(), Logger::writeLock, Logger::outStream, "Testing");
+    auto r = Logger::threads.try_emplace(std::this_thread::get_id(),
+      Logger::writeLock, Logger::outStream, "Testing");
     r.first->second.newMessage(std::move(str));
 }
 
@@ -293,4 +303,3 @@ std::ostream& Log::getStream() {
 }
 
 extern Log logger = Log{};
-

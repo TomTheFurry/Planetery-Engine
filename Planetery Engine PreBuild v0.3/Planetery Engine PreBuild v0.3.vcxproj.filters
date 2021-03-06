@@ -54,6 +54,9 @@
     <ClCompile Include="GUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DefineUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThreadRender.h">
@@ -104,5 +107,11 @@
     <ClInclude Include="GUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DefineUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
   </ItemGroup>
 </Project>
