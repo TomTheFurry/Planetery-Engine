@@ -213,10 +213,6 @@ Reader& Reader::operator<<(char32_t c) {
     return *this;
 }
 
-
-
-
-
 void font::init() {
     MAXTEXTURESIZE = gl::getMaxTextureSize();
     auto it =
@@ -361,6 +357,7 @@ bool font::addFont(const std::string& fontSetName,
               return a.second < b.second;
           });
         face->glyphs.reserve(charToGId.size());
+		face->charCodeLookup.reserve(charToGId.size());
         // Not actually setting the render resolution. Just that it sets the
         // returned unit to be in font units. Not using FT_LOAD_NO_SCALE because
         // it sets FT_LOAD_NO_HINTING
@@ -368,6 +365,8 @@ bool font::addFont(const std::string& fontSetName,
         for (auto& p : charToGId) {
             if (face->glyphs.empty() || face->glyphs.back()._gId != p.second) {
                 // get glyph metadata
+                
+                //OPTI: Use lazy loading here. Only load glyph data if render is needed
                 if (FT_Load_Glyph(face->face, p.second,
                       FT_LOAD_NO_BITMAP | FT_LOAD_LINEAR_DESIGN)) {
                     throw;
@@ -615,7 +614,6 @@ void font::renderRequiredGlyph() {
         } else {
             ssboData = (glData*)font->ssbo->map(gl::MapAccess::WriteOnly);
         }
-
 
         for (auto& gPair : glyphs) {
             mapbox::Bin* bin = shelf.getBin(gPair.first);
