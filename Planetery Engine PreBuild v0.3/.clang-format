@@ -97,6 +97,6 @@ SpacesInContainerLiterals: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 Standard: Latest
-TabWidth: 2
+TabWidth: 4
 UseCRLF: false
-UseTab: Never
+UseTab: Always
