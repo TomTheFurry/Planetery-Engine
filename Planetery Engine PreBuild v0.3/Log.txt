@@ -1,0 +1,101 @@
+[0;4;97mMainThread:
+[;0m  [90m-[39mStarting core event thread...
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread started.
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mWaiting for core thread end...
+
+[0;4;97mThreadRender:
+[;0m  [;0m  [90m-[39mThread created
+[;0m  [;0m  [90m-[39mIniting glad....
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mglad init success.
+[;0m   Now init GL graphics...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL Interface init.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL graphics init done.
+[;0m   Now init fonts...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL: Loading shader textRender2...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading font file: fonts/LastResortHE-Regular.ttf...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mNow loading charmaps. Will take some time if font supports large number of charcodes...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading completed. Number of registored charCodes: 1114112, Number of registored glyphs: 
+[;0m  341
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLastResort Init Time: 152.522800ms
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading font file: fonts/arialuni.ttf...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mNow loading charmaps. Will take some time if font supports large number of charcodes...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading completed. Number of registored charCodes: 38917, Number of registored glyphs: 38
+[;0m  917
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mArial Init Time: 8.067000ms
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mFont Init Time: 163.669100ms
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mFont init done. Now loading shader...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading renderer...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAll init done. Ready to sync with other threads.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL: Loading shader flatRect...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL: Loading shader texR8Rect...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL: Loading shader flatRectFilledBorder...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 3.067315ms (52), Event tps: 101
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 252.126000us (60), Event tps: 81
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 246.831000us (60), Event tps: 193
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mThread ended.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mGL Interface end.
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mRender thread stopped.[31m\n[39m
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread ended.
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mExiting...
+

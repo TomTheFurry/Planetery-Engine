@@ -2,6 +2,7 @@
 #include "GL.h"
 #include "ThreadEvents.h"
 #include "Logger.h"
+#include "DefineUtil.h"
 
 #include <set>
 #include <unordered_map>
@@ -9,6 +10,7 @@
 #include <freetype/freetype.h>
 #include <shelf-pack.hpp>
 #include <array>
+#include <memory_resource>
 
 using namespace font;
 
@@ -16,7 +18,7 @@ FT_Library ftLib{};
 
 struct _Glyph {
 	uint _gId;
-	uint _renderedPointSize;
+	uint _renderedPointSize;  // 0 = Needs Loading the unit stuff
 	ivec2 _advanceUnit;
 	ivec2 _bearingUnit;
 	uvec2 _sizeUnit;
@@ -43,7 +45,8 @@ class font::FontFace
 	gl::ShaderStorageBuffer* ssbo = nullptr;
 	mapbox::ShelfPack* textureShelf = nullptr;
 	FT_Face face = nullptr;
-	std::unordered_map<char32_t, uint> charCodeLookup{};
+	std::pmr::monotonic_buffer_resource pmr_r;
+	std::pmr::unordered_map<char32_t, uint> charCodeLookup{};
 	std::vector<_Glyph> glyphs{};
 	~FontFace() {
 		if (ssbo) ssbo->release();
@@ -97,8 +100,12 @@ static std::array<uint, 7> _texSize{
 static uint MAXTEXTURESIZE = 0;
 static FT_Library _ftLib = nullptr;
 constexpr uint GLYP_SPRITE_BORDER_WIDTH = 2;
-thread_local std::unordered_map<FontFace*, std::unordered_map<GlyphId, uint>>
-  _requireRender{};
+// THE BELOW thread_local MAP MAY NOT CALL DESTRUCTOR!!!!!
+thread_local std::pmr::monotonic_buffer_resource _pmr_r_reRender;
+thread_local std::pmr::unordered_map<FontFace*,
+  std::pmr::unordered_map<GlyphId, uint>>
+  _requireRender{&_pmr_r_reRender};
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 static constexpr const std::array _dChar{U'⎕', U'⌈', U'⊥', U'⌋',  // 4
   U'⌁', U'⊠', U'✓', U'⍾',										  // 8
   U'⤺', U'⪫', U'≡', U'⩛',										  // C
@@ -214,6 +221,7 @@ Reader& Reader::operator<<(char32_t c) {
 }
 
 void font::init() {
+	util::Timer initTime;
 	MAXTEXTURESIZE = gl::getMaxTextureSize();
 	auto it =
 	  std::lower_bound(_texSize.begin(), _texSize.end(), MAXTEXTURESIZE);
@@ -226,10 +234,14 @@ void font::init() {
 	};
 	_textShader = gl::makeShaderProgram("textRender2", true);
 
+	util::Timer lastResortTime;
 	if (!addFont("LastResort", "fonts/LastResortHE-Regular.ttf"))
 		throw "LastResort font loading failed";
+	logger("LastResort Init Time: ", nanoSec(lastResortTime.time()), "\n");
+	util::Timer arialTime;
 	if (!addFont("Arial", "fonts/arialuni.ttf"))
 		throw "Default font loading failed";
+	logger("Arial Init Time: ", nanoSec(arialTime.time()), "\n");
 	if (!setDefaultFontSet("Arial")) throw "Default font linking failed";
 	if (!linkFallbackFont("Arial", "LastResort"))
 		throw "Default font to fallback font linking failed";
@@ -251,6 +263,7 @@ void font::init() {
 	  1, 2, gl::DataType::Float, sizeof(uint), gl::DataType::Float);
 	_vao->bindAttributeToBufferBinding(0, 0);
 	_vao->bindAttributeToBufferBinding(1, 0);
+	logger("Font Init Time: ", nanoSec(initTime.time()), "\n");
 }
 void font::close() {
 	for (auto fontSets : _fontSets) { delete fontSets; }
@@ -313,7 +326,7 @@ bool font::addFont(const std::string& fontSetName,
 		  uvec2(face->face->max_advance_width, face->face->max_advance_height);
 		face->_underlinePositionUnit = face->face->underline_position;
 		face->_underlineThicknessUnit = face->face->underline_thickness;
-		logger.newLayer();
+		/*logger.newLayer();
 		logger << "Face meta data loaded:\n";
 		logger(face->face->family_name, ": ", face->face->style_name, "\n");
 		logger("Scalable: ",
@@ -324,6 +337,7 @@ bool font::addFont(const std::string& fontSetName,
 		  bool(face->face->face_flags | FT_FACE_FLAG_VERTICAL), "\n");
 		logger("Has color: ", bool(face->face->face_flags | FT_FACE_FLAG_COLOR),
 		  "\n");
+		*/
 		if (face->face->num_faces > 1)
 			logger("Warning!! ", face->face->num_faces,
 			  " faces in a single font file detected! Currently only supports "
@@ -332,7 +346,7 @@ bool font::addFont(const std::string& fontSetName,
 			logger("Warning!! This font file does not seem to support unicode! "
 				   "Currently only supports unicode charcode mapping! Treating "
 				   "it as unicode mapping.\n");
-		logger.closeLayer();
+		// logger.closeLayer();
 	}
 
 	{  // Load charmap
@@ -357,17 +371,18 @@ bool font::addFont(const std::string& fontSetName,
 			  return a.second < b.second;
 		  });
 		face->glyphs.reserve(charToGId.size());
+		face->charCodeLookup =
+		  std::pmr::unordered_map<char32_t, uint>(&face->pmr_r);
 		face->charCodeLookup.reserve(charToGId.size());
 		// Not actually setting the render resolution. Just that it sets the
 		// returned unit to be in font units. Not using FT_LOAD_NO_SCALE because
 		// it sets FT_LOAD_NO_HINTING
-		FT_Set_Pixel_Sizes(face->face, face->_unitPerEM, face->_unitPerEM);
+		// FT_Set_Pixel_Sizes(face->face, face->_unitPerEM, face->_unitPerEM);
 		for (auto& p : charToGId) {
 			if (face->glyphs.empty() || face->glyphs.back()._gId != p.second) {
 				// get glyph metadata
 
-				// OPTI: Use lazy loading here. Only load glyph data if render
-				// is needed
+				/*
 				if (FT_Load_Glyph(face->face, p.second,
 					  FT_LOAD_NO_BITMAP | FT_LOAD_LINEAR_DESIGN)) {
 					throw;
@@ -379,6 +394,9 @@ bool font::addFont(const std::string& fontSetName,
 					face->face->glyph->bitmap_top),
 				  uvec2(face->face->glyph->bitmap.width,
 					face->face->glyph->bitmap.rows)});
+				*/
+				face->glyphs.emplace_back(
+				  _Glyph{p.second, 0, ivec2(0), ivec2(0), uvec2(0)});
 			}
 			face->charCodeLookup.emplace(
 			  p.first, uint(face->glyphs.size() - 1));
@@ -504,6 +522,24 @@ GlyphData font::getGlyphData(
   FontFace* fontFace, GlyphId gId, float pointSize) {  // 5 (1,1) -> (5,5)
 	auto& g = fontFace->glyphs[gId];
 
+	// Load the data of the glyph as it is now needed
+	if (g._renderedPointSize == 0) {
+		auto& ft_f = fontFace->face;
+		FT_Set_Pixel_Sizes(ft_f, fontFace->_unitPerEM, fontFace->_unitPerEM);
+		if (FT_Load_Glyph(
+			  ft_f, g._gId, FT_LOAD_NO_BITMAP | FT_LOAD_LINEAR_DESIGN)) {
+			// logger(
+			//  "Font Engine Error: Failed to read glyph data: ", g._gId, "\n");
+			throw;	// TODO: Needs actual error handling
+		}
+		g._advanceUnit =
+		  ivec2(ft_f->glyph->linearHoriAdvance, ft_f->glyph->linearHoriAdvance);
+		g._bearingUnit =
+		  ivec2(-ft_f->glyph->bitmap_left, ft_f->glyph->bitmap_top);
+		g._sizeUnit =
+		  uvec2(ft_f->glyph->bitmap.width, ft_f->glyph->bitmap.rows);
+	}
+
 	if (fontFace->texturePPI == vec2{0})
 		fontFace->texturePPI = gl::target->pixelPerInch;
 	// >1 = enlarge (not enough resolution),  <1 = minify (enough resolution)
@@ -514,6 +550,7 @@ GlyphData font::getGlyphData(
 	float& higherValue = textureRelativeScale.x > textureRelativeScale.y
 						 ? textureRelativeScale.x
 						 : textureRelativeScale.y;
+
 	if (textureRelativeScale.x > textureRelativeScale.y) {
 		if (g._renderedPointSize != _size.back()
 			&& (g._renderedPointSize == 0 || textureRelativeScale.x > 1)) {
@@ -524,7 +561,17 @@ GlyphData font::getGlyphData(
 			  std::lower_bound(_size.begin(), _size.end(), targetSize);
 			if (sizeIt == _size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;
-			_requireRender[fontFace].emplace(gId, *sizeIt);
+			{
+				auto it = _requireRender.find(fontFace);
+				if (it == _requireRender.end()) {
+					it = _requireRender
+						   .emplace(fontFace,
+							 std::pmr::unordered_map<font::GlyphId, uint>(
+							   &_pmr_r_reRender))
+						   .first;
+				}
+				it->second.emplace(gId, *sizeIt);
+			}
 			// recaculate scale
 			textureRelativeScale =
 			  (pointSize * gl::target->pixelPerInch)
@@ -540,7 +587,17 @@ GlyphData font::getGlyphData(
 			  std::lower_bound(_size.begin(), _size.end(), targetSize);
 			if (sizeIt == _size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;
-			_requireRender[fontFace].emplace(gId, *sizeIt);
+			{
+				auto it = _requireRender.find(fontFace);
+				if (it == _requireRender.end()) {
+					it = _requireRender
+						   .emplace(fontFace,
+							 std::pmr::unordered_map<font::GlyphId, uint>(
+							   &_pmr_r_reRender))
+						   .first;
+				}
+				it->second.emplace(gId, *sizeIt);
+			}
 			// recaculate scale
 			textureRelativeScale =
 			  (pointSize * gl::target->pixelPerInch)
@@ -722,6 +779,7 @@ void font::renderRequiredGlyph() {
 		font->ssbo->unmap();
 	}
 	_requireRender.clear();
+	_pmr_r_reRender.release();
 }
 void font::_renderBatch(
   FontFace* f, std::vector<RenderData> d, float pointSize) {
