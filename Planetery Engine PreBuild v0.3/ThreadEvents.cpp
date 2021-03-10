@@ -4,6 +4,7 @@
 
 #include "Logger.h"
 #include "ThreadRender.h"
+#include "GLFW.h"
 
 #include <thread>
 #include <atomic>
@@ -11,9 +12,6 @@
 #include <chrono>
 #include <mutex>
 #include <system_error>
-
-
-#include <glfw/glfw3.h>
 
 #define WINDOW_MIN_WIDTH  400
 #define WINDOW_MIN_HEIGHT 300
@@ -293,11 +291,7 @@ static void _main() {
 		  WINDOW_MAX_WIDTH, WINDOW_MAX_HEIGHT);
 
 		// start render thread
-		render::ThreadRender::start([]() {
-			glfwMakeContextCurrent(_window);
-			glfwSwapInterval(-1);
-			return (const char*)glfwGetProcAddress;
-		});
+		render::ThreadRender::start(_window);
 
 		while (
 		  !glfwWindowShouldClose(_window)

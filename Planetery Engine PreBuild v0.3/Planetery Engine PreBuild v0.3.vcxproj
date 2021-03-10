@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,7 +103,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -123,7 +123,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,7 +139,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,7 +159,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vulkan-1.lib;glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -177,6 +177,7 @@
     <ClCompile Include="ThreadMain.cpp" />
     <ClCompile Include="ThreadRender.cpp" />
     <ClCompile Include="UTF.cpp" />
+    <ClCompile Include="VK.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="DefineUtil.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="GL.h" />
+    <ClInclude Include="GLFW.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MultilineString.h" />
@@ -196,6 +198,7 @@
     <ClInclude Include="ThreadMain.h" />
     <ClInclude Include="ThreadRender.h" />
     <ClInclude Include="UTF.h" />
+    <ClInclude Include="VK.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

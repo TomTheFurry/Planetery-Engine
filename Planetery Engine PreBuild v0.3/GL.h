@@ -261,6 +261,7 @@ namespace gl {
 		void bind(ShaderProgram* ssb);
 		void bind(Texture* tx, uint targetUnit);
 		void setViewport(uint x, uint y, uint width, uint height);
+		void clearColor(vec4 color, bool clearDepth = true);
 		void drawArrays(GeomType geomType, uint first, size_t count);
 		void drawArraysInstanced(
 		  GeomType geomType, uint first, size_t count, size_t instanceCount);

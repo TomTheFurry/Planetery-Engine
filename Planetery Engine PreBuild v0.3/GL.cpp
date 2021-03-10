@@ -11,6 +11,63 @@
 #include <glfw/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 
+static void APIENTRY glDebugOutput(GLenum source, GLenum type, uint id,
+  GLenum severity, GLsizei length, const char* message, const void* userParam) {
+	if (id == 131185 || id == 131204 || id == 131169)
+		return;	 // 7: deprecated behavior warning
+	logger.newMessage("GLError");
+	logger << "--------OPENGL ERROR--------\n";
+	logger << "Error id " << std::to_string(id) << ": " << message << "\n";
+
+	logger.newLayer();
+	logger << "Source: ";
+	switch (source) {
+	case GL_DEBUG_SOURCE_API: logger << "API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM: logger << "Window System"; break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: logger << "Shader Compiler"; break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY: logger << "Third Party"; break;
+	case GL_DEBUG_SOURCE_APPLICATION: logger << "Application"; break;
+	case GL_DEBUG_SOURCE_OTHER: logger << "Other"; break;
+	default: logger << "Unknown (" << std::to_string(source) << ")"; break;
+	}
+	logger << "\n";
+	logger.closeLayer();
+
+	logger.newLayer();
+	logger << "Type: ";
+	switch (type) {
+	case GL_DEBUG_TYPE_ERROR: logger << "Error"; break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		logger << "Deprecated Behaviour";
+		break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		logger << "Undefined Behaviour";
+		break;
+	case GL_DEBUG_TYPE_PORTABILITY: logger << "Portability"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE: logger << "Performance"; break;
+	case GL_DEBUG_TYPE_MARKER: logger << "Marker"; break;
+	case GL_DEBUG_TYPE_PUSH_GROUP: logger << "Push Group"; break;
+	case GL_DEBUG_TYPE_POP_GROUP: logger << "Pop Group"; break;
+	case GL_DEBUG_TYPE_OTHER: logger << "Other"; break;
+	default: logger << "Unknown (" << std::to_string(type) << ")"; break;
+	}
+	logger << "\n";
+	logger.closeLayer();
+
+	logger.newLayer();
+	logger << "Severity: ";
+	switch (severity) {
+	case GL_DEBUG_SEVERITY_HIGH: logger << "high"; break;
+	case GL_DEBUG_SEVERITY_MEDIUM: logger << "medium"; break;
+	case GL_DEBUG_SEVERITY_LOW: logger << "low"; break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: logger << "notification"; break;
+	default: logger << "Unknown (" << std::to_string(severity) << ")"; break;
+	}
+	logger << "\n";
+	logger.closeLayer();
+	logger.closeMessage("GLError");
+}
+
 using namespace gl;
 
 // Test flag if same
@@ -642,6 +699,12 @@ void gl::RenderTarget::setViewport(uint x, uint y, uint width, uint height) {
 	viewport = uvec4{x, y, width, height};
 }
 
+void gl::RenderTarget::clearColor(vec4 color, bool clearDepth) {
+	activateFrameBuffer();
+	glClearColor(color.r, color.g, color.b, color.a);
+	glClear(GL_COLOR_BUFFER_BIT | (clearDepth & GL_DEPTH_BUFFER_BIT));
+}
+
 void RenderTarget::drawArrays(GeomType mode, uint first, size_t count) {
 	_use();
 	glDrawArrays(_val(mode), first, count);
@@ -743,6 +806,25 @@ static VertexAttributeArray* _lineVao = nullptr;
 
 void gl::init() {
 	logger("GL Interface init.\n");
+	glfwSwapInterval(-1);
+	if (!gladLoadGLLoader(
+		  (GLADloadproc)glfwGetProcAddress))
+	{
+		logger("Failed to initialize GLAD\n");
+
+		throw "GLAD init failed";
+	}
+	logger("glad init success.\n Now init OPENGL...\n");
+
+	glEnable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_MULTISAMPLE);
+	if (IS_DEBUG_MODE) {
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(glDebugOutput, nullptr);
+		glDebugMessageControl(
+		  GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+	}
 	int __maxTexU;
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &__maxTexU);
 	_maxTexUnit = uint(__maxTexU);

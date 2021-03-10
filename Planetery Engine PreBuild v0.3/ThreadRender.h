@@ -2,6 +2,7 @@
 #include "Define.h"
 #include "DefineMath.h"
 #include "DefineThreadSync.h"
+#include "GLFW.h"
 #include <atomic>
 #include <functional>
 
@@ -16,7 +17,7 @@ namespace render {
 	{
 	  public:
 		// thread control
-		static void start(const char* (*callback)(void));
+		static void start(GLFWwindow* window);
 		static void requestStop();	// stop thread (with cleanup)
 		static void pause();		// pause thread (for maybe debug?)
 		static void unpause();		// unpause thread

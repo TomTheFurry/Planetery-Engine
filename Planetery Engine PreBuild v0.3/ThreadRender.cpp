@@ -1,6 +1,12 @@
 ﻿#include "Logger.h"
-
 #include "ThreadRender.h"
+
+#ifdef USE_OPENGL
+#	include "GL.h"
+#endif
+#ifdef USE_VULKAN
+#	include "VK.h"
+#endif
 
 #include "ThreadEvents.h"
 
@@ -16,69 +22,12 @@
 
 #include <exception>
 
-#include "GL.h"
-#include <glad/glad.h>
+
 
 using namespace render;
 
 // GL Callback
 
-static void APIENTRY glDebugOutput(GLenum source, GLenum type, uint id,
-  GLenum severity, GLsizei length, const char* message, const void* userParam) {
-	if (id == 131185 || id == 131204 || id == 131169)
-		return;	 // 7: deprecated behavior warning
-	logger.newMessage("GLError");
-	logger << "--------OPENGL ERROR--------\n";
-	logger << "Error id " << std::to_string(id) << ": " << message << "\n";
-
-	logger.newLayer();
-	logger << "Source: ";
-	switch (source) {
-	case GL_DEBUG_SOURCE_API: logger << "API"; break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM: logger << "Window System"; break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER: logger << "Shader Compiler"; break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY: logger << "Third Party"; break;
-	case GL_DEBUG_SOURCE_APPLICATION: logger << "Application"; break;
-	case GL_DEBUG_SOURCE_OTHER: logger << "Other"; break;
-	default: logger << "Unknown (" << std::to_string(source) << ")"; break;
-	}
-	logger << "\n";
-	logger.closeLayer();
-
-	logger.newLayer();
-	logger << "Type: ";
-	switch (type) {
-	case GL_DEBUG_TYPE_ERROR: logger << "Error"; break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-		logger << "Deprecated Behaviour";
-		break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-		logger << "Undefined Behaviour";
-		break;
-	case GL_DEBUG_TYPE_PORTABILITY: logger << "Portability"; break;
-	case GL_DEBUG_TYPE_PERFORMANCE: logger << "Performance"; break;
-	case GL_DEBUG_TYPE_MARKER: logger << "Marker"; break;
-	case GL_DEBUG_TYPE_PUSH_GROUP: logger << "Push Group"; break;
-	case GL_DEBUG_TYPE_POP_GROUP: logger << "Pop Group"; break;
-	case GL_DEBUG_TYPE_OTHER: logger << "Other"; break;
-	default: logger << "Unknown (" << std::to_string(type) << ")"; break;
-	}
-	logger << "\n";
-	logger.closeLayer();
-
-	logger.newLayer();
-	logger << "Severity: ";
-	switch (severity) {
-	case GL_DEBUG_SEVERITY_HIGH: logger << "high"; break;
-	case GL_DEBUG_SEVERITY_MEDIUM: logger << "medium"; break;
-	case GL_DEBUG_SEVERITY_LOW: logger << "low"; break;
-	case GL_DEBUG_SEVERITY_NOTIFICATION: logger << "notification"; break;
-	default: logger << "Unknown (" << std::to_string(severity) << ")"; break;
-	}
-	logger << "\n";
-	logger.closeLayer();
-	logger.closeMessage("GLError");
-}
 
 struct _Thread {
 	std::mutex mxRenderHandles{};
@@ -95,7 +44,7 @@ static std::unordered_map<std::thread::id, _Thread> _threads{};
 static std::vector<RenderHandle*> _renderJobs{};
 
 // Thread
-static const char* (*_callback)(void) = nullptr;
+static GLFWwindow* _window = nullptr;
 
 // main for ThreadRender
 static void _main() {
@@ -106,33 +55,22 @@ static void _main() {
 
 		logger.newLayer();
 		logger("Thread created\n");
-		logger("Initing glad....\n");
+		logger("Initing graphic API....\n");
 		logger.closeLayer();
 
-		if (!gladLoadGLLoader(
-			  (GLADloadproc)_callback()))  // Context Current Needed
-		{
-			logger("Failed to initialize GLAD\n");
-
-			throw "GLAD init failed";
-		}
-		logger("glad init success.\n Now init GL graphics...\n");
-
+#ifdef USE_OPENGL
+		glfwMakeContextCurrent(_window);
 		uvec2 windowSize{events::ThreadEvents::getFramebufferSize()};
-		glEnable(GL_FRAMEBUFFER_SRGB);
-		glEnable(GL_MULTISAMPLE);
-		if (IS_DEBUG_MODE) {
-			glEnable(GL_DEBUG_OUTPUT);
-			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-			glDebugMessageCallback(glDebugOutput, nullptr);
-			glDebugMessageControl(
-			  GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-		}
 		gl::init();
 		gl::target->setViewport(0, 0, windowSize.x, windowSize.y);
-
-		// Shader setup
 		logger("GL graphics init done.\n Now init fonts...\n");
+#endif
+#ifdef USE_VULKAN
+		glfwMakeContextCurrent(_window);
+		vk::init();
+		logger("VK graphics init done.\n Now init fonts...\n");
+#endif
+		// Shader setup
 		font::init();
 		logger("Font init done. Now loading shader...\n");
 		// ShaderProgram::initClass();
@@ -206,14 +144,7 @@ static void _main() {
 					  events::ThreadEvents::getPixelPerInch();
 					fpsBox.notifyPPIChanged();
 				}
-
-				gl::target->activateFrameBuffer();
-				if (flips) {
-					glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-				} else {
-					glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-				}
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				gl::target->clearColor(vec4(1.0f));
 
 				// do jobs
 				for (auto& h : _renderJobs) {
@@ -278,8 +209,8 @@ static void _main() {
 	cv.notify_all();
 }
 
-void ThreadRender::start(const char* (*callback)(void)) {
-	_callback = callback;
+void ThreadRender::start(GLFWwindow* window) {
+	_window = window;
 	_thread = new std::thread(_main);
 }
 
