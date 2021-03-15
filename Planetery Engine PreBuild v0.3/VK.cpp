@@ -204,6 +204,108 @@ class ShaderPipeline
 	const LogicalDevice& d;
 };
 
+namespace _toFormat {
+	template<typename T>
+	constexpr VkFormat val();
+	constexpr VkFormat val<float>() {
+		return VK_FORMAT_R32_SFLOAT;
+	}
+	constexpr VkFormat val<vec2>() {
+		return VK_FORMAT_R32G32_SFLOAT;
+	}
+	constexpr VkFormat val<vec3>() {
+		return VK_FORMAT_R32G32B32_SFLOAT;
+	}
+	constexpr VkFormat val<vec4>() {
+		return VK_FORMAT_R32G32B32A32_SFLOAT;
+	}
+	constexpr VkFormat val<double>() {
+		return VK_FORMAT_R64_SFLOAT;
+	}
+	constexpr VkFormat val<dvec2>() {
+		return VK_FORMAT_R64G64_SFLOAT;
+	}
+	constexpr VkFormat val<dvec3>() {
+		return VK_FORMAT_R64G64B64_SFLOAT;
+	}
+	constexpr VkFormat val<dvec4>() {
+		return VK_FORMAT_R64G64B64A64_SFLOAT;
+	}
+	constexpr VkFormat val<uint>() {
+		return VK_FORMAT_R32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<uvec2>() {
+		return VK_FORMAT_R32G32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<uvec3>() {
+		return VK_FORMAT_R32G32B32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<uvec4>() {
+		return VK_FORMAT_R32G32B32A32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<int>() {
+		return VK_FORMAT_R32_SINT;
+	}
+	constexpr VkFormat val<ivec2>() {
+		return VK_FORMAT_R32G32_SINT;
+	}
+	constexpr VkFormat val<ivec3>() {
+		return VK_FORMAT_R32G32B32_SINT;
+	}
+	constexpr VkFormat val<ivec4>() {
+		return VK_FORMAT_R32G32B32A32_SINT;
+	}
+}
+
+class Buffer
+{
+public:
+	Buffer(const LogicalDevice& d, VkBufferCreateInfo bufferInfo);
+	Buffer(const LogicalDevice& d, size_t size);
+	Buffer(const Buffer&) = delete;
+	Buffer(Buffer&& other);
+	~Buffer();
+	void write(size_t size, size_t offset, void* data);
+	void* map(bool writeOnly = true);
+	void unmap(bool flushData = true);
+	size_t size;
+	VkBuffer b = nullptr;
+	VkMappedMemoryRange* mappedMemory = nullptr;
+	const LogicalDevice& d;
+};
+class VertexBuffer
+{
+	VertexBuffer(size_t size, void* data = nullptr);
+};
+
+class VertexAttribute
+{
+public:
+	VertexAttribute();
+	void addAttribute(uint offset, uint size, VkFormat);
+	template<typename T>
+	void addAttributeByType() {
+		addLocation(_currentOffset, sizeof(T), __toFormat::val<T>());
+	}
+	std::vector<VkVertexInputAttributeDescription> attributes;
+	std::vector<VkVertexInputBindingDescription> bindingPoints;
+	uint strideSize = 0;
+	void addBindingPoint(uint fromAttributeIndex, uint toAttributeIndex);
+	VkPipelineVertexInputStateCreateInfo getStructForPipeline();
+};
+
+class FrameBuffer
+{
+  public:
+	FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size, std::vector<ImageView*> attachments, uint layers = 1);
+	FrameBuffer(const FrameBuffer&) = delete;
+	FrameBuffer(FrameBuffer&& other) noexcept;
+	~FrameBuffer();
+	VkFrameBuffer fb = nullptr;
+	const LogicalDevice& device;
+};
+
+
 static bool _loadedPreInitData = false;
 static std::vector<VkLayerProperties> _layersAvailable;
 static std::vector<VkExtensionProperties> _extensionsAvailable;
@@ -716,6 +818,57 @@ void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
 	}
 }
 
+Buffer::Buffer(const LogicalDevice& device, VkBufferCreateInfo bufferInfo) : d(device) {
+	if (vkCreateBuffer(d.d, &bufferInfo, nullptr, &b) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create buffer!");
+	}
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(d.d, b, &memRequirements);
+	std::find_if()
+	for (uint i = 0; i < memProperties.memoryTypeCount; i++) {
+		if (memRequirements.memoryTypes[i].) {
+			break;
+		}
+	}
+	throw std::runtime_error("failed to find suitable memory type!");
+	VkMemoryAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+}
+Buffer::Buffer(Buffer&& other) : d(other.d) {
+	b = other.b;
+	other.b = nullptr;
+}
+Buffer::~Buffer() {
+	if (b != nullptr) vkDestroyBuffer(d.d, b, nullptr);
+}
+
+
+FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size, std::vector<ImageView*> attachments, uint layers) : d(device) {
+	std::vector<VkImageView> att;
+	att.reserve(attachments.size());
+	for (auto& iv : attachments) att.push_back(iv->img);
+	VkFramebufferCreateInfo info{};
+	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	info.renderPass = rp.rp;
+	info.attachmentCount = att.size();
+	info.pAttachments = att.data();
+	info.width = size.x;
+	info.height = size.y;
+	info.layers = layers;
+	if (vkCreateFramebuffer(d.d, &info, nullptr, &fb) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create framebuffer!");
+	}
+}
+FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept : d(other.d) {
+	fb = other.fb;
+	other.fb = nullptr;
+}
+FrameBuffer::~FrameBuffer() {
+	if (fb != nullptr) vkDestroyFrameBuffer(d.d, fb, nullptr);
+}
 
 inline void preInit() {
 	_loadedPreInitData = true;
