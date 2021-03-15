@@ -1,0 +1,2 @@
+C:/Users/a1/source/repos/Planetery-Engine/Multithread Playaround/include/glm/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/a1/source/repos/Planetery-Engine/Multithread Playaround/include/glm/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
