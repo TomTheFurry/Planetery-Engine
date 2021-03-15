@@ -11,8 +11,8 @@
 #include "ThreadEvents.h"
 
 #include "RollingAverage.h"
-#include "Font.h"
-#include "StringBox.h"
+//#include "Font.h"
+//#include "StringBox.h"
 
 #include <thread>
 #include <atomic>
@@ -66,12 +66,12 @@ static void _main() {
 		logger("GL graphics init done.\n Now init fonts...\n");
 #endif
 #ifdef USE_VULKAN
-		glfwMakeContextCurrent(_window);
+		// glfwMakeContextCurrent(_window); Vulkan does not have a context obj
 		vk::init();
 		logger("VK graphics init done.\n Now init fonts...\n");
 #endif
 		// Shader setup
-		font::init();
+		// font::init();
 		logger("Font init done. Now loading shader...\n");
 		// ShaderProgram::initClass();
 
@@ -94,11 +94,11 @@ static void _main() {
 		tickTimerB = std::chrono::high_resolution_clock::now();
 		uint sec_count = 0;
 		uint eventTickCount = 0;
-		StringBox fpsBox{};
-		fpsBox.str("FPS Counter");
-		fpsBox.pos = vec2{-0.9, 0.5};
-		fpsBox.setTextSize(72.f);
-		fpsBox.setSize(vec2{0.3, 0.2});
+		// StringBox fpsBox{};
+		// fpsBox.str("FPS Counter");
+		// fpsBox.pos = vec2{-0.9, 0.5};
+		// fpsBox.setTextSize(72.f);
+		// fpsBox.setSize(vec2{0.3, 0.2});
 
 		while (_state.load(std::memory_order_relaxed)
 			   != State::requestStop) {	 // does not have to instantly respond
@@ -132,6 +132,7 @@ static void _main() {
 				}
 
 				// setup render stuff
+#ifdef USE_OPENGL
 				if (events::ThreadEvents::isWindowResized()) {
 					auto v = events::ThreadEvents::getFramebufferSize();
 					gl::target->setViewport(0, 0, v.x, v.y);
@@ -145,6 +146,9 @@ static void _main() {
 					fpsBox.notifyPPIChanged();
 				}
 				gl::target->clearColor(vec4(1.0f));
+#endif
+
+
 
 				// do jobs
 				for (auto& h : _renderJobs) {
@@ -157,7 +161,7 @@ static void _main() {
 						}
 					}
 				}
-				fpsBox.render();
+				// fpsBox.render();
 
 				if (sec_count >= 10) {
 					// testText.str("Dummy test:\n");
@@ -181,13 +185,15 @@ static void _main() {
 					  tickCount, "), Event tps: ", eventTickCount, "\n");
 					nsDeltaPerSec -= NS_PER_S;
 					tps = tickCount;
-					fpsBox.clear();
-					fpsBox << tps << "(" << eventTickCount << ")\n";
+					// fpsBox.clear();
+					// fpsBox << tps << "(" << eventTickCount << ")\n";
 					tickCount = 0;
 					flips = !flips;
 				}
+#ifdef USE_OPENGL
 				events::ThreadEvents::swapBuffer();	 // Will block and wait for
 													 // screen updates (v-sync)
+#endif
 			}
 		}
 	} catch (const char* e) {
@@ -199,8 +205,13 @@ static void _main() {
 	//}
 	logger("Thread ended.\n");
 	try {
-		font::close();
+		// font::close();
+#ifdef USE_OPENGL
 		gl::end();
+#endif
+#ifdef USE_VULKAN
+		vk::end();
+#endif
 	} catch (...) { events::ThreadEvents::panic(std::current_exception()); }
 	logger.closeThread("ThreadRender");
 	mx.lock();

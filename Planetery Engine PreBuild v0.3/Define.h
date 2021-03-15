@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+#define USE_VULKAN
+//#define USE_OPENGL
+
 typedef unsigned int uint;
 typedef unsigned long long int ulint;
 typedef long long int lint;

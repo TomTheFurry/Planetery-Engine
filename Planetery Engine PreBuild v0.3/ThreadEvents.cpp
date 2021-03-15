@@ -213,6 +213,7 @@ static void _main() {
 		  GLFW_TRUE);  // Dot Per Inch messurement use monitor value instead of
 					   // OS value?
 
+#ifdef USE_OPENGL
 		// openGL settings
 		glfwWindowHint(
 		  GLFW_CLIENT_API, GLFW_OPENGL_API);  // Use what rendering api?
@@ -236,8 +237,13 @@ static void _main() {
 		glfwWindowHint(GLFW_CONTEXT_NO_ERROR,
 		  IS_DEBUG_MODE ? GLFW_FALSE
 						: GLFW_TRUE);  // should openGL not check error?
+#endif
+#ifdef USE_VULKAN
+		//Vulkan Renderer settings
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
 
-		// render settings
+		//Base render settings
 		glfwWindowHint(GLFW_SAMPLES, 4);  // gl sub sampling?
 		glfwWindowHint(GLFW_SRGB_CAPABLE,
 		  GLFW_TRUE);  // OpenGL can use sRGB color instead of RGB?
@@ -450,6 +456,8 @@ void ThreadEvents::log(std::exception_ptr eptr) {
 }
 
 void ThreadEvents::swapBuffer() { glfwSwapBuffers(_window); }
+
+void* events::ThreadEvents::getGLFWWindow() { return _window; }
 
 void ThreadEvents::setWindowedInline() {
 	if (_fullScreenMode != FullScreenMode::windowed) {

@@ -1,9 +1,14 @@
 ﻿#include "Logger.h"
 #include "ThreadEvents.h"
 #include "ThreadRender.h"
-#include "Font.h"
-#include "GL.h"
-#include "StringBox.h"
+//#include "Font.h"
+#ifdef USE_OPENGL
+#	include "GL.h"
+#endif
+#ifdef USE_VULKAN
+#	include "VK.h"
+#endif
+//#include "StringBox.h"
 
 #include <thread>
 #include <iostream>
@@ -52,7 +57,7 @@ Japanese(Hiragana) :\n\
 
 
 
-static StringBox* listTest = nullptr;
+//static StringBox* listTest = nullptr;
 
 int main() {
 	logger.newThread("MainThread");
@@ -94,16 +99,17 @@ int main() {
 
 	events::ThreadEvents::addInlineKeyEventCallback(
 	  [](int keyCode, events::KeyAction action, events::KeyModFlags flags) {
-		  listTest->pos += vec2(0, 0.1);
+		  //listTest->pos += vec2(0, 0.1);
 	  },
 	  events::KeyCode::s, events::KeyAction::repeat);
 
 	events::ThreadEvents::addInlineKeyEventCallback(
 	  [](int keyCode, events::KeyAction action, events::KeyModFlags flags) {
-		  listTest->pos += vec2(0, -0.1);
+		  //listTest->pos += vec2(0, -0.1);
 	  },
 	  events::KeyCode::w, events::KeyAction::repeat);
 
+#ifdef USE_OPENGL
 	auto rHandle = render::ThreadRender::newRenderHandle([]() {
 		static StringBox* sb = nullptr;
 		constexpr float HALF_SIZE_X = 0.5;
@@ -145,6 +151,8 @@ int main() {
 		listTest->render();
 		sb->render();
 	});
+#endif
+
 	logger("Waiting for core thread end...\n");
 	events::ThreadEvents::join();
 	logger("core thread ended.\n");

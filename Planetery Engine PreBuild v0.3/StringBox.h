@@ -3,7 +3,11 @@
 #include "Font.h"
 #include <iostream>
 #include <sstream>
-#include "GL.h"
+
+namespace gl {
+	class Texture2D;
+	class FrameBuffer;
+}
 
 class StringBox
 {

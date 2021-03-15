@@ -186,6 +186,9 @@ namespace events {
 
 		// called ONLY by render thread
 		static void swapBuffer();
+		// HACK: not sure who should own the glfwWindow object.
+		// Don't wanna show the glfwWindow in header file, so... return void*
+		static void* getGLFWWindow();
 
 		// called ONLY by event thread (inline function)
 		static void setWindowedInline();
@@ -206,8 +209,9 @@ namespace events {
 		static bool isWindowMoved();
 		static ivec2 getWindowPos();
 
-		static vec2
-		  getPixelPerInch();  // effected by both windowMoved & windowResized
+		// effected by both windowMoved & windowResized
+		static vec2 getPixelPerInch();
+
 		static bool isMouseMoved();
 		static uvec2 getMousePos();
 

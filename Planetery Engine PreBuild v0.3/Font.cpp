@@ -1,5 +1,7 @@
 ﻿#include "font.h"
-#include "GL.h"
+#ifdef USE_OPENGL
+#	include "GL.h"
+
 #include "ThreadEvents.h"
 #include "Logger.h"
 #include "DefineUtil.h"
@@ -1006,3 +1008,7 @@ NextLine:
 			break;	// out of space. drawing at below screen
 	}
 }
+#endif
+#ifdef USE_VULKAN
+#	include "VK.h"
+#endif
