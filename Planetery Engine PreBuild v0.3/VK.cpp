@@ -204,6 +204,107 @@ class ShaderPipeline
 	const LogicalDevice& d;
 };
 
+namespace _toFormat {
+	template<typename T>
+	constexpr VkFormat val();
+	constexpr VkFormat val<float>() {
+		return VK_FORMAT_R32_SFLOAT;
+	}
+	constexpr VkFormat val<vec2>() {
+		return VK_FORMAT_R32G32_SFLOAT;
+	}
+	constexpr VkFormat val<vec3>() {
+		return VK_FORMAT_R32G32B32_SFLOAT;
+	}
+	constexpr VkFormat val<vec4>() {
+		return VK_FORMAT_R32G32B32A32_SFLOAT;
+	}
+	constexpr VkFormat val<double>() {
+		return VK_FORMAT_R64_SFLOAT;
+	}
+	constexpr VkFormat val<dvec2>() {
+		return VK_FORMAT_R64G64_SFLOAT;
+	}
+	constexpr VkFormat val<dvec3>() {
+		return VK_FORMAT_R64G64B64_SFLOAT;
+	}
+	constexpr VkFormat val<dvec4>() {
+		return VK_FORMAT_R64G64B64A64_SFLOAT;
+	}
+	constexpr VkFormat val<uint>() {
+		return VK_FORMAT_R32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<uvec2>() {
+		return VK_FORMAT_R32G32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<uvec3>() {
+		return VK_FORMAT_R32G32B32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<uvec4>() {
+		return VK_FORMAT_R32G32B32A32_SUNSIGNED_INT;
+	}
+	constexpr VkFormat val<int>() {
+		return VK_FORMAT_R32_SINT;
+	}
+	constexpr VkFormat val<ivec2>() {
+		return VK_FORMAT_R32G32_SINT;
+	}
+	constexpr VkFormat val<ivec3>() {
+		return VK_FORMAT_R32G32B32_SINT;
+	}
+	constexpr VkFormat val<ivec4>() {
+		return VK_FORMAT_R32G32B32A32_SINT;
+	}
+}
+
+class Buffer
+{
+public:
+	Buffer(const LogicalDevice& d, VkBufferCreateInfo bufferInfo);
+	Buffer(const LogicalDevice& d, size_t size);
+	Buffer(const Buffer&) = delete;
+	Buffer(Buffer&& other);
+	~Buffer();
+	void write(size_t size, size_t offset, void* data);
+	void* map(bool writeOnly = true);
+	void unmap(bool flushData = true);
+	size_t size;
+	VkBuffer b = nullptr;
+	VkMappedMemoryRange* mappedMemory = nullptr;
+	const LogicalDevice& d;
+};
+class VertexBuffer
+{
+	VertexBuffer(size_t size, void* data = nullptr);
+};
+
+class VertexAttribute
+{
+public:
+	VertexAttribute();
+	void addAttribute(uint offset, uint size, VkFormat);
+	template<typename T>
+	void addAttributeByType() {
+		addLocation(_currentOffset, sizeof(T), __toFormat::val<T>());
+	}
+	std::vector<VkVertexInputAttributeDescription> attributes;
+	std::vector<VkVertexInputBindingDescription> bindingPoints;
+	uint strideSize = 0;
+	void addBindingPoint(uint fromAttributeIndex, uint toAttributeIndex);
+	VkPipelineVertexInputStateCreateInfo getStructForPipeline();
+};
+
+class FrameBuffer
+{
+  public:
+	FrameBuffer(const LogicalDevice& device);
+	FrameBuffer(const FrameBuffer&) = delete;
+	FrameBuffer(FrameBuffer&& other) noexcept;
+	~FrameBuffer();
+
+};
+
+
 static bool _loadedPreInitData = false;
 static std::vector<VkLayerProperties> _layersAvailable;
 static std::vector<VkExtensionProperties> _extensionsAvailable;
