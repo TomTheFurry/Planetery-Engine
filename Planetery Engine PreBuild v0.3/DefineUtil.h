@@ -7,8 +7,27 @@
 
 #include "Define.h"
 
-namespace util {
+// typesafe flag decil
+template<typename T> class Flags
+{};
+#define DECLARE_FLAG_TYPE(__type)                         \
+	template<> class Flags<__type>                        \
+	{                                                     \
+		using value = std::underlying_type<__type>::type; \
+		value _v;                                         \
+	  public:                                             \
+		Flags(__type f) { _v = static_cast<value>(f); }   \
+		Flags(value f) { _v = f; }                        \
+		explicit operator value() { return _v; }          \
+		Flags operator|(Flags b) { return _v | b._v; }    \
+		Flags operator&(Flags b) { return _v & b._v; }    \
+		Flags operator^(Flags b) { return _v ^ b._v; }    \
+	}
+template<typename T> typename Flags<T>::value operator|(T a, T b) {
+	return a | b;
+}
 
+namespace util {
 
 	class Timer
 	{

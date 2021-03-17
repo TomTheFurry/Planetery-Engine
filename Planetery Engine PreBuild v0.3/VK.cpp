@@ -1,7 +1,11 @@
+#pragma warning(disable: 26812)
+
 #include "VK.h"
 
 #include "Logger.h"
 #include "ThreadEvents.h"
+
+#include "DefineUtil.h"
 
 #include <array>
 #include <algorithm>
@@ -52,6 +56,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 
 using namespace vk;
 class PhysicalDevice;
+class LogicalDevice;
 class OSRenderSurface;
 class SwapChainSupport;
 class SwapChain;
@@ -65,9 +70,47 @@ class SwapChainSupport
 	VkSurfaceFormatKHR getFormat() const;
 	VkPresentModeKHR getPresentMode(bool preferRelaxedVBlank = false) const;
 	uvec2 getSwapChainSize(uvec2 preferredSize = uvec2(uint(-1))) const;
-	VkSurfaceCapabilitiesKHR capabilities;
+	VkSurfaceCapabilitiesKHR capabilities{};
 	std::vector<VkSurfaceFormatKHR> formats;
 	std::vector<VkPresentModeKHR> presentModes;
+};
+enum class MemoryProperties : uint {
+	local = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+	mappable = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+	coherent = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	cached = VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
+	lazy = VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT,
+};
+DECLARE_FLAG_TYPE(MemoryProperties);
+class PhysicalDevice
+{
+  public:
+	PhysicalDevice(
+	  VkPhysicalDevice _d, OSRenderSurface* renderSurface = nullptr);
+	PhysicalDevice(const PhysicalDevice&) = delete;
+	PhysicalDevice(PhysicalDevice&&) noexcept;
+	VkPhysicalDevice d;
+	VkPhysicalDeviceProperties properties;
+	VkPhysicalDeviceFeatures features;
+	VkPhysicalDeviceMemoryProperties memProperties;
+	std::vector<VkQueueFamilyProperties> queueFamilies;
+	std::list<LogicalDevice> devices;
+	int rating;
+	bool meetRequirements;
+	SwapChainSupport swapChain;
+	OSRenderSurface* renderOut = nullptr;
+	QueueFamilyIndex getQueueFamily(
+	  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
+	uint getMemoryTypeIndex(
+	  uint bitFilter, Flags<MemoryProperties> requirement) const;
+	LogicalDevice* makeDevice(
+	  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
+	VkPhysicalDevice operator->() { return d; }
+	bool operator==(const PhysicalDevice& other) const { return d == other.d; }
+	std::weak_ordering operator<=>(const PhysicalDevice& other) const {
+		return rating <=> other.rating;
+	}
+	~PhysicalDevice();
 };
 class LogicalDevice
 {
@@ -80,33 +123,7 @@ class LogicalDevice
 	std::unique_ptr<SwapChain> swapChain;
 	VkDevice operator->() { return d; }
 	~LogicalDevice();
-};
-class PhysicalDevice
-{
-  public:
-	PhysicalDevice(
-	  VkPhysicalDevice _d, OSRenderSurface* renderSurface = nullptr);
-	PhysicalDevice(const PhysicalDevice&) = delete;
-	PhysicalDevice(PhysicalDevice&&) noexcept;
-	VkPhysicalDevice d;
-	VkPhysicalDeviceProperties properties;
-	VkPhysicalDeviceFeatures features;
-	std::vector<VkQueueFamilyProperties> queueFamilies;
-	std::list<LogicalDevice> devices;
-	int rating;
-	bool meetRequirements;
-	SwapChainSupport swapChain;
-	OSRenderSurface* renderOut = nullptr;
-	QueueFamilyIndex getQueueFamily(
-	  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
-	LogicalDevice* makeDevice(
-	  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
-	VkPhysicalDevice operator->() { return d; }
-	bool operator==(const PhysicalDevice& other) const { return d == other.d; }
-	std::weak_ordering operator<=>(const PhysicalDevice& other) const {
-		return rating <=> other.rating;
-	}
-	~PhysicalDevice();
+	const PhysicalDevice& pd;
 };
 class OSRenderSurface
 {
@@ -114,7 +131,7 @@ class OSRenderSurface
 	OSRenderSurface();
 	OSRenderSurface(const OSRenderSurface&) = delete;
 	OSRenderSurface(OSRenderSurface&&) = delete;
-	VkSurfaceKHR surface;
+	VkSurfaceKHR surface = nullptr;
 	VkSurfaceKHR operator->() { return surface; }
 	~OSRenderSurface();
 };
@@ -204,88 +221,103 @@ class ShaderPipeline
 	const LogicalDevice& d;
 };
 
+class CommendPool
+{
+  public:
+	CommendPool(const CommendPool&) = delete;
+	CommendPool(CommendPool&& other) noexcept;
+	~CommendPool();
+};
+
 namespace _toFormat {
-	template<typename T>
-	constexpr VkFormat val();
-	constexpr VkFormat val<float>() {
-		return VK_FORMAT_R32_SFLOAT;
-	}
-	constexpr VkFormat val<vec2>() {
+	template<typename T> VkFormat val() {}
+	template<> constexpr VkFormat val<float>() { return VK_FORMAT_R32_SFLOAT; }
+	template<> constexpr VkFormat val<vec2>() {
 		return VK_FORMAT_R32G32_SFLOAT;
 	}
-	constexpr VkFormat val<vec3>() {
+	template<> constexpr VkFormat val<vec3>() {
 		return VK_FORMAT_R32G32B32_SFLOAT;
 	}
-	constexpr VkFormat val<vec4>() {
+	template<> constexpr VkFormat val<vec4>() {
 		return VK_FORMAT_R32G32B32A32_SFLOAT;
 	}
-	constexpr VkFormat val<double>() {
-		return VK_FORMAT_R64_SFLOAT;
-	}
-	constexpr VkFormat val<dvec2>() {
+	template<> constexpr VkFormat val<double>() { return VK_FORMAT_R64_SFLOAT; }
+	template<> constexpr VkFormat val<dvec2>() {
 		return VK_FORMAT_R64G64_SFLOAT;
 	}
-	constexpr VkFormat val<dvec3>() {
+	template<> constexpr VkFormat val<dvec3>() {
 		return VK_FORMAT_R64G64B64_SFLOAT;
 	}
-	constexpr VkFormat val<dvec4>() {
+	template<> constexpr VkFormat val<dvec4>() {
 		return VK_FORMAT_R64G64B64A64_SFLOAT;
 	}
-	constexpr VkFormat val<uint>() {
-		return VK_FORMAT_R32_SUNSIGNED_INT;
+	template<> constexpr VkFormat val<uint>() { return VK_FORMAT_R32_UINT; }
+	template<> constexpr VkFormat val<uvec2>() { return VK_FORMAT_R32G32_UINT; }
+	template<> constexpr VkFormat val<uvec3>() {
+		return VK_FORMAT_R32G32B32_UINT;
 	}
-	constexpr VkFormat val<uvec2>() {
-		return VK_FORMAT_R32G32_SUNSIGNED_INT;
+	template<> constexpr VkFormat val<uvec4>() {
+		return VK_FORMAT_R32G32B32A32_UINT;
 	}
-	constexpr VkFormat val<uvec3>() {
-		return VK_FORMAT_R32G32B32_SUNSIGNED_INT;
-	}
-	constexpr VkFormat val<uvec4>() {
-		return VK_FORMAT_R32G32B32A32_SUNSIGNED_INT;
-	}
-	constexpr VkFormat val<int>() {
-		return VK_FORMAT_R32_SINT;
-	}
-	constexpr VkFormat val<ivec2>() {
-		return VK_FORMAT_R32G32_SINT;
-	}
-	constexpr VkFormat val<ivec3>() {
+	template<> constexpr VkFormat val<int>() { return VK_FORMAT_R32_SINT; }
+	template<> constexpr VkFormat val<ivec2>() { return VK_FORMAT_R32G32_SINT; }
+	template<> constexpr VkFormat val<ivec3>() {
 		return VK_FORMAT_R32G32B32_SINT;
 	}
-	constexpr VkFormat val<ivec4>() {
+	template<> constexpr VkFormat val<ivec4>() {
 		return VK_FORMAT_R32G32B32A32_SINT;
 	}
 }
 
+enum class BufferUseType : uint {
+	TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+	TransferDst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	UniformTexel = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
+	StorageTexel = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
+	Uniform = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+	Storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+	Index = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	Vertex = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	IndirectDraw = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+	All = 511,
+};
+DECLARE_FLAG_TYPE(BufferUseType);
+
 class Buffer
 {
-public:
+  public:
 	Buffer(const LogicalDevice& d, VkBufferCreateInfo bufferInfo);
-	Buffer(const LogicalDevice& d, size_t size);
+	Buffer(const LogicalDevice& d, size_t size,
+	  Flags<BufferUseType> usage = BufferUseType::All);
 	Buffer(const Buffer&) = delete;
-	Buffer(Buffer&& other);
+	Buffer(Buffer&& other) noexcept;
 	~Buffer();
-	void write(size_t size, size_t offset, void* data);
-	void* map(bool writeOnly = true);
-	void unmap(bool flushData = true);
+	void write(size_t size, size_t offset, void* data, bool flush = true);
+	void flush(size_t size, size_t offset);
+	void update(size_t size, size_t offset);
+	void writeAll(void* data, bool flush = true);
+	void flushAll();
+	void updateAll();
 	size_t size;
+	size_t minAlignment;
 	VkBuffer b = nullptr;
-	VkMappedMemoryRange* mappedMemory = nullptr;
+	VkDeviceMemory dm = nullptr;
+	void* mappedPtr = nullptr;
 	const LogicalDevice& d;
 };
-class VertexBuffer
+class VertexBuffer: public Buffer
 {
-	VertexBuffer(size_t size, void* data = nullptr);
+  public:
+	VertexBuffer(const LogicalDevice& d, size_t size, void* data = nullptr);
 };
 
 class VertexAttribute
 {
-public:
+  public:
 	VertexAttribute();
-	void addAttribute(uint offset, uint size, VkFormat);
-	template<typename T>
-	void addAttributeByType() {
-		addLocation(_currentOffset, sizeof(T), __toFormat::val<T>());
+	void addAttribute(uint size, VkFormat);
+	template<typename T> void addAttributeByType() {
+		addLocation(sizeof(T), _toFormat::val<T>());
 	}
 	std::vector<VkVertexInputAttributeDescription> attributes;
 	std::vector<VkVertexInputBindingDescription> bindingPoints;
@@ -297,12 +329,13 @@ public:
 class FrameBuffer
 {
   public:
-	FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size, std::vector<ImageView*> attachments, uint layers = 1);
+	FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size,
+	  std::vector<ImageView*> attachments, uint layers = 1);
 	FrameBuffer(const FrameBuffer&) = delete;
 	FrameBuffer(FrameBuffer&& other) noexcept;
 	~FrameBuffer();
-	VkFrameBuffer fb = nullptr;
-	const LogicalDevice& device;
+	VkFramebuffer fb = nullptr;
+	const LogicalDevice& d;
 };
 
 
@@ -329,8 +362,9 @@ constexpr const std::pair<const char*, uint> EXTENSIONS[] = {
 constexpr const char* DEVICE_EXTENSIONS[] = {
   "VK_KHR_swapchain",
 };
-
-LogicalDevice::LogicalDevice(const PhysicalDevice& pd, uint queueFamilyIndex) {
+LogicalDevice::LogicalDevice(
+  const PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
+  pd(p) {
 	static const float One = 1.0f;
 	std::array<VkDeviceQueueCreateInfo, 1> queueInfo{};
 	queueInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -357,12 +391,13 @@ LogicalDevice::LogicalDevice(const PhysicalDevice& pd, uint queueFamilyIndex) {
 		swapChain = std::make_unique<SwapChain>(
 		  *pd.renderOut, pd.swapChain, *this, uvec2{1100, 900});
 }
-LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept {
+LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept: pd(o.pd) {
 	queue = o.queue;
 	d = o.d;
 	o.d = nullptr;
 }
 LogicalDevice::~LogicalDevice() {
+	if (swapChain) swapChain.reset();
 	if (d) vkDestroyDevice(d, nullptr);
 }
 PhysicalDevice::PhysicalDevice(
@@ -376,9 +411,8 @@ PhysicalDevice::PhysicalDevice(
 	queueFamilies.resize(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(
 	  d, &queueFamilyCount, queueFamilies.data());
-
+	vkGetPhysicalDeviceMemoryProperties(d, &memProperties);
 	renderOut = renderSurface;
-
 
 	auto& limit = properties.limits;
 	logger << properties.deviceName << "...";
@@ -444,6 +478,7 @@ PhysicalDevice::PhysicalDevice(PhysicalDevice&& o) noexcept:
 	rating = o.rating;
 	renderOut = o.renderOut;
 	swapChain = o.swapChain;
+	memProperties = o.memProperties;
 	o.d = nullptr;
 }
 QueueFamilyIndex PhysicalDevice::getQueueFamily(
@@ -456,6 +491,17 @@ QueueFamilyIndex PhysicalDevice::getQueueFamily(
 			vkGetPhysicalDeviceSurfaceSupportKHR(
 			  d, i, surfaceOut->surface, &canRenderToSurface);
 			if (canRenderToSurface) return i;
+		}
+	}
+	return uint(-1);
+}
+uint PhysicalDevice::getMemoryTypeIndex(
+  uint bitFilter, Flags<MemoryProperties> requirement) const {
+	for (uint i = 0; i < memProperties.memoryTypeCount; i++) {
+		if ((bitFilter & (1 << i))
+			&& (memProperties.memoryTypes[i].propertyFlags & (uint)requirement)
+				 == (uint)requirement) {
+			return i;
 		}
 	}
 	return uint(-1);
@@ -630,6 +676,7 @@ ShaderCompiled::ShaderCompiled(const LogicalDevice& device, ShaderType st,
 	}
 }
 ShaderCompiled::ShaderCompiled(ShaderCompiled&& other) noexcept: d(other.d) {
+	shaderType = other.shaderType;
 	sm = other.sm;
 	other.sm = nullptr;
 }
@@ -683,7 +730,7 @@ RenderPass::~RenderPass() {
 	if (rp != nullptr) vkDestroyRenderPass(d.d, rp, nullptr);
 }
 
-ShaderPipeline::ShaderPipeline(const LogicalDevice& device) : d(device) {}
+ShaderPipeline::ShaderPipeline(const LogicalDevice& device): d(device) {}
 
 ShaderPipeline::ShaderPipeline(ShaderPipeline&& other) noexcept: d(other.d) {}
 
@@ -818,38 +865,142 @@ void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
 	}
 }
 
-Buffer::Buffer(const LogicalDevice& device, VkBufferCreateInfo bufferInfo) : d(device) {
-	if (vkCreateBuffer(d.d, &bufferInfo, nullptr, &b) != VK_SUCCESS) {
+inline void _makeBuffer(const LogicalDevice& d, VkBuffer& out,
+  VkDeviceMemory& outdm, const VkBufferCreateInfo& cInfo) {
+	if (vkCreateBuffer(d.d, &cInfo, nullptr, &out) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create buffer!");
 	}
 	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(d.d, b, &memRequirements);
-	std::find_if()
-	for (uint i = 0; i < memProperties.memoryTypeCount; i++) {
-		if (memRequirements.memoryTypes[i].) {
-			break;
-		}
+	vkGetBufferMemoryRequirements(d.d, out, &memRequirements);
+	Flags<MemoryProperties> memProp = MemoryProperties::mappable;
+	// memProp = memProp | MemoryProperties::coherent;
+	uint memTypeIndex =
+	  d.pd.getMemoryTypeIndex(memRequirements.memoryTypeBits, memProp);
+	if (memTypeIndex == uint(-1)) {
+		throw std::runtime_error("failed to create buffer!");
 	}
-	throw std::runtime_error("failed to find suitable memory type!");
 	VkMemoryAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
+	allocInfo.memoryTypeIndex = memTypeIndex;
+	if (vkAllocateMemory(d.d, &allocInfo, nullptr, &outdm) != VK_SUCCESS) {
+		throw std::runtime_error("failed to allocate buffer memory!");
+	}
+	vkBindBufferMemory(d.d, out, outdm, 0);
 }
-Buffer::Buffer(Buffer&& other) : d(other.d) {
+
+Buffer::Buffer(
+  const LogicalDevice& device, size_t s, Flags<BufferUseType> usage):
+  d(device) {
+	size = s;
+	minAlignment = d.pd.properties.limits.nonCoherentAtomSize;
+	VkBufferCreateInfo bInfo{};
+	bInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bInfo.size = size;
+	bInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	bInfo.usage = (VkBufferUsageFlags)usage;
+	_makeBuffer(d, b, dm, bInfo);
+	vkMapMemory(d.d, dm, 0, size, 0, &mappedPtr);
+	assert(mappedPtr != nullptr);
+}
+Buffer::Buffer(const LogicalDevice& device, VkBufferCreateInfo bInfo):
+  d(device) {
+	size = bInfo.size;
+	minAlignment = d.pd.properties.limits.nonCoherentAtomSize;
+	_makeBuffer(d, b, dm, bInfo);
+	vkMapMemory(d.d, dm, 0, size, 0, &mappedPtr);
+	assert(mappedPtr != nullptr);
+}
+Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
+	size = other.size;
+	minAlignment = other.minAlignment;
 	b = other.b;
+	dm = other.dm;
+	mappedPtr = other.mappedPtr;
 	other.b = nullptr;
+	other.dm = nullptr;
+	other.mappedPtr = nullptr;
 }
 Buffer::~Buffer() {
+	if (mappedPtr != nullptr) vkUnmapMemory(d.d, dm);
 	if (b != nullptr) vkDestroyBuffer(d.d, b, nullptr);
+	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
+}
+void Buffer::write(size_t nSize, size_t offset, void* data, bool doFlush) {
+	assert(nSize + offset <= size);
+	assert(mappedPtr != nullptr);
+	memcpy((std::byte*)(mappedPtr) + offset, data, nSize);
+	if (doFlush) flush(nSize, offset);
+}
+void Buffer::flush(size_t nSize, size_t offset) {
+	assert(nSize + offset <= size);
+	assert(mappedPtr != nullptr);
+	size_t offsetAlign = offset % minAlignment;
+	if (offsetAlign != 0) {
+		offset -= offsetAlign;
+		nSize += offsetAlign;
+	}
+	size_t nSizeAlign = nSize % minAlignment;
+	if (nSizeAlign != 0) { nSize += minAlignment - nSizeAlign; }
+	if (offset == 0 && nSize >= size) { nSize = VK_WHOLE_SIZE; }
+	VkMappedMemoryRange r{};
+	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	r.memory = dm;
+	r.size = nSize;
+	r.offset = offset;
+	vkFlushMappedMemoryRanges(d.d, 1, &r);
+}
+void Buffer::update(size_t nSize, size_t offset) {
+	assert(nSize + offset <= size);
+	assert(mappedPtr != nullptr);
+	size_t offsetAlign = offset % minAlignment;
+	if (offsetAlign != 0) {
+		offset -= offsetAlign;
+		nSize += offsetAlign;
+	}
+	size_t nSizeAlign = nSize % minAlignment;
+	if (nSizeAlign != 0) { nSize += minAlignment - nSizeAlign; }
+	if (offset == 0 && nSize >= size) { nSize = VK_WHOLE_SIZE; }
+	VkMappedMemoryRange r{};
+	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	r.memory = dm;
+	r.size = nSize;
+	r.offset = offset;
+	vkInvalidateMappedMemoryRanges(d.d, 1, &r);
+}
+void Buffer::writeAll(void* data, bool doFlush) {
+	memcpy(mappedPtr, data, size);
+	if (doFlush) flushAll();
+}
+void Buffer::flushAll() {
+	VkMappedMemoryRange r{};
+	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	r.memory = dm;
+	r.size = VK_WHOLE_SIZE;
+	r.offset = 0;
+	vkFlushMappedMemoryRanges(d.d, 1, &r);
+}
+void Buffer::updateAll() {
+	VkMappedMemoryRange r{};
+	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	r.memory = dm;
+	r.size = VK_WHOLE_SIZE;
+	r.offset = 0;
+	vkInvalidateMappedMemoryRanges(d.d, 1, &r);
+}
+
+VertexBuffer::VertexBuffer(const LogicalDevice& d, size_t size, void* data):
+  Buffer(d, size) {
+	if (data != nullptr) writeAll(data);
 }
 
 
-FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size, std::vector<ImageView*> attachments, uint layers) : d(device) {
+FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp,
+  uvec2 size, std::vector<ImageView*> attachments, uint layers):
+  d(device) {
 	std::vector<VkImageView> att;
 	att.reserve(attachments.size());
-	for (auto& iv : attachments) att.push_back(iv->img);
+	for (auto& iv : attachments) att.push_back(iv->imgView);
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.renderPass = rp.rp;
@@ -862,12 +1013,12 @@ FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size
 		throw std::runtime_error("failed to create framebuffer!");
 	}
 }
-FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept : d(other.d) {
+FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
 	fb = other.fb;
 	other.fb = nullptr;
 }
 FrameBuffer::~FrameBuffer() {
-	if (fb != nullptr) vkDestroyFrameBuffer(d.d, fb, nullptr);
+	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
 }
 
 inline void preInit() {
@@ -1045,6 +1196,21 @@ bool vk::requestExtension(const char* name, uint minVersion) {
 
 static RenderPass* _renderPass = nullptr;
 static ShaderPipeline* _pipeline = nullptr;
+static VertexBuffer* _vertBuff = nullptr;
+static std::list<ImageView> _swapchainViews{};
+static std::list<FrameBuffer> _frameBuffer{};
+
+const float testVert[]{
+  0.5,
+  0.5,
+  -0.5,
+  0.5,
+  0.5,
+  -0.5,
+  -0.5,
+  -0.5,
+};
+
 
 void vk::init() {
 	logger("VK Interface init.\n");
@@ -1077,7 +1243,7 @@ void vk::init() {
 	  .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 	};
 	_renderPass->attachmentTypes.push_back(ad);
-	_renderPass->subpasses.emplace_back(1,0);
+	_renderPass->subpasses.emplace_back(1, 0);
 	_renderPass->complete();
 	_pipeline = new ShaderPipeline(*_renderDevice);
 	std::vector<const ShaderCompiled*> pointShad;
@@ -1094,10 +1260,30 @@ void vk::init() {
 	};
 	_pipeline->complete(pointShad, viewport, *_renderPass);
 	assert(_pipeline->p != nullptr);
+
+	// Make swapchain framebuffer
+	for (uint i = 0; i < _renderDevice->swapChain->swapChainImages.size(); i++) {
+		_swapchainViews.push_back(_renderDevice->swapChain->getChainImageView(i));
+		std::vector<ImageView*>b;
+		b.emplace_back(&_swapchainViews.back());
+		_frameBuffer.emplace_back(
+		  *_renderDevice, *_renderPass, _renderDevice->swapChain->pixelSize, b);
+	}
+
+	// Make vertex buffer
+	_vertBuff = new VertexBuffer(
+	  *_renderDevice, sizeof(testVert), (void*)std::data(testVert));
 }
 
 void vk::end() {
 	logger("VK Interface end.\n");
+	if (_vertBuff != nullptr) delete _vertBuff;
+	_frameBuffer.clear();
+	_swapchainViews.clear();
+	if (_renderPass != nullptr) delete _renderPass;
+	if (_pipeline != nullptr) delete _pipeline;
+	_physicalDevices.clear();
+	if (_OSSurface != nullptr) delete _OSSurface;
 	if (_debugMessenger)
 		vkDestroyDebugUtilsMessengerEXT(_vk, _debugMessenger, nullptr);
 	if (_vk) vkDestroyInstance(_vk, nullptr);

@@ -203,7 +203,7 @@ static void _main() {
 	//	logger("Uncaught Unknown Exception!!");
 	//	events::ThreadEvents::panic(std::current_exception());
 	//}
-	logger("Thread ended.\n");
+	logger("Thread stopping...\n");
 	try {
 		// font::close();
 #ifdef USE_OPENGL
@@ -212,6 +212,7 @@ static void _main() {
 #ifdef USE_VULKAN
 		vk::end();
 #endif
+		logger("Thread normally stopped.\n");
 	} catch (...) { events::ThreadEvents::panic(std::current_exception()); }
 	logger.closeThread("ThreadRender");
 	mx.lock();
