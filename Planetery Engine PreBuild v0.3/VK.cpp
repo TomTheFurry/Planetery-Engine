@@ -1,6 +1,7 @@
 #pragma warning(disable: 26812)
 
 #include "VK.h"
+#include "VK.ih"
 
 #include "Logger.h"
 #include "ThreadEvents.h"
@@ -12,7 +13,6 @@
 #include <set>
 #include <fstream>
 #include <glfw/glfw3.h>
-
 
 VkResult vkCreateDebugUtilsMessengerEXT(VkInstance instance,
   const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
@@ -33,7 +33,6 @@ void vkDestroyDebugUtilsMessengerEXT(VkInstance instance,
 	  instance, "vkDestroyDebugUtilsMessengerEXT");
 	if (func != nullptr) { func(instance, debugMessenger, pAllocator); }
 }
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
   VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
   VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -52,320 +51,23 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	return VK_FALSE;
 }
 
-
-
-using namespace vk;
-class PhysicalDevice;
-class LogicalDevice;
-class OSRenderSurface;
-class SwapChainSupport;
-class SwapChain;
-class ImageView;
-typedef uint QueueFamilyIndex;
-class SwapChainSupport
-{
-  public:
-	SwapChainSupport() = default;
-	SwapChainSupport(const PhysicalDevice& pd, const OSRenderSurface& surface);
-	VkSurfaceFormatKHR getFormat() const;
-	VkPresentModeKHR getPresentMode(bool preferRelaxedVBlank = false) const;
-	uvec2 getSwapChainSize(uvec2 preferredSize = uvec2(uint(-1))) const;
-	VkSurfaceCapabilitiesKHR capabilities{};
-	std::vector<VkSurfaceFormatKHR> formats;
-	std::vector<VkPresentModeKHR> presentModes;
-};
-enum class MemoryProperties : uint {
-	local = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-	mappable = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-	coherent = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-	cached = VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
-	lazy = VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT,
-};
-DECLARE_FLAG_TYPE(MemoryProperties);
-class PhysicalDevice
-{
-  public:
-	PhysicalDevice(
-	  VkPhysicalDevice _d, OSRenderSurface* renderSurface = nullptr);
-	PhysicalDevice(const PhysicalDevice&) = delete;
-	PhysicalDevice(PhysicalDevice&&) noexcept;
-	VkPhysicalDevice d;
-	VkPhysicalDeviceProperties properties;
-	VkPhysicalDeviceFeatures features;
-	VkPhysicalDeviceMemoryProperties memProperties;
-	std::vector<VkQueueFamilyProperties> queueFamilies;
-	std::list<LogicalDevice> devices;
-	int rating;
-	bool meetRequirements;
-	SwapChainSupport swapChain;
-	OSRenderSurface* renderOut = nullptr;
-	QueueFamilyIndex getQueueFamily(
-	  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
-	uint getMemoryTypeIndex(
-	  uint bitFilter, Flags<MemoryProperties> requirement) const;
-	LogicalDevice* makeDevice(
-	  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
-	VkPhysicalDevice operator->() { return d; }
-	bool operator==(const PhysicalDevice& other) const { return d == other.d; }
-	std::weak_ordering operator<=>(const PhysicalDevice& other) const {
-		return rating <=> other.rating;
-	}
-	~PhysicalDevice();
-};
-class LogicalDevice
-{
-  public:
-	LogicalDevice(const PhysicalDevice& pd, QueueFamilyIndex queueFamilyIndex);
-	LogicalDevice(const LogicalDevice&) = delete;
-	LogicalDevice(LogicalDevice&&) noexcept;
-	VkDevice d;
-	VkQueue queue;
-	std::unique_ptr<SwapChain> swapChain;
-	VkDevice operator->() { return d; }
-	~LogicalDevice();
-	const PhysicalDevice& pd;
-};
-class OSRenderSurface
-{
-  public:
-	OSRenderSurface();
-	OSRenderSurface(const OSRenderSurface&) = delete;
-	OSRenderSurface(OSRenderSurface&&) = delete;
-	VkSurfaceKHR surface = nullptr;
-	VkSurfaceKHR operator->() { return surface; }
-	~OSRenderSurface();
-};
-class SwapChain
-{
-  public:
-	SwapChain(const OSRenderSurface& surface, const SwapChainSupport& sp,
-	  const LogicalDevice& device, uvec2 preferredSize,
-	  bool transparentWindow = false);
-	SwapChain(const SwapChain&) = delete;
-	SwapChain(SwapChain&&) = delete;
-	const LogicalDevice& d;
-	VkSwapchainKHR sc;
-	VkSurfaceFormatKHR surfaceFormat;
-	uvec2 pixelSize;
-	std::vector<VkImage> swapChainImages;
-	ImageView getChainImageView(uint index);
-	~SwapChain();
-};
-
-class ImageView
-{
-  public:
-	ImageView(const LogicalDevice& d, VkImageViewCreateInfo createInfo);
-	ImageView(const ImageView&) = delete;
-	ImageView(ImageView&& other) noexcept;
-	ImageView& operator=(const ImageView&) = delete;
-	ImageView& operator=(ImageView&&) = default;
-	~ImageView();
-	VkImageView imgView;
-	const LogicalDevice& d;
-};
-
-enum class ShaderType {
-	Vert,
-	Geom,
-	Frag,
-};
-inline VkShaderStageFlagBits _getVal(ShaderType st) {
-	switch (st) {
-	case ShaderType::Vert: return VK_SHADER_STAGE_VERTEX_BIT;
-	case ShaderType::Geom: return VK_SHADER_STAGE_GEOMETRY_BIT;
-	case ShaderType::Frag: return VK_SHADER_STAGE_FRAGMENT_BIT;
-	}
-	assert(false);
-}
-
-class ShaderCompiled
-{
-  public:
-	ShaderCompiled(const LogicalDevice& d, ShaderType shaderType,
-	  const std::string_view& file_name);
-	ShaderCompiled(const ShaderCompiled&) = delete;
-	ShaderCompiled(ShaderCompiled&& other) noexcept;
-	~ShaderCompiled();
-	VkPipelineShaderStageCreateInfo getCreateInfo() const;
-	ShaderType shaderType;
-	VkShaderModule sm;
-	const LogicalDevice& d;
-};
-
-class RenderPass
-{
-  public:
-	RenderPass(const LogicalDevice& d);
-	RenderPass(const RenderPass& d) = delete;
-	RenderPass(RenderPass&& d) noexcept;
-	~RenderPass();
-	void complete();
-	VkRenderPass rp = nullptr;
-	std::vector<VkAttachmentDescription> attachmentTypes;
-	std::vector<std::vector<uint>> subpasses;
-	const LogicalDevice& d;
-};
-
-class ShaderPipeline
-{
-  public:
-	ShaderPipeline(const LogicalDevice& device);
-	ShaderPipeline(const ShaderPipeline&) = delete;
-	ShaderPipeline(ShaderPipeline&& other) noexcept;
-	~ShaderPipeline();
-	void complete(std::vector<const ShaderCompiled*> shaderModules,
-	  VkViewport viewport, const RenderPass& renderPass);
-	VkPipeline p = nullptr;
-	VkPipelineLayout pl = nullptr;
-	const LogicalDevice& d;
-};
-
-class CommendPool
-{
-  public:
-	CommendPool(const CommendPool&) = delete;
-	CommendPool(CommendPool&& other) noexcept;
-	~CommendPool();
-};
-
-namespace _toFormat {
-	template<typename T> VkFormat val() {}
-	template<> constexpr VkFormat val<float>() { return VK_FORMAT_R32_SFLOAT; }
-	template<> constexpr VkFormat val<vec2>() {
-		return VK_FORMAT_R32G32_SFLOAT;
-	}
-	template<> constexpr VkFormat val<vec3>() {
-		return VK_FORMAT_R32G32B32_SFLOAT;
-	}
-	template<> constexpr VkFormat val<vec4>() {
-		return VK_FORMAT_R32G32B32A32_SFLOAT;
-	}
-	template<> constexpr VkFormat val<double>() { return VK_FORMAT_R64_SFLOAT; }
-	template<> constexpr VkFormat val<dvec2>() {
-		return VK_FORMAT_R64G64_SFLOAT;
-	}
-	template<> constexpr VkFormat val<dvec3>() {
-		return VK_FORMAT_R64G64B64_SFLOAT;
-	}
-	template<> constexpr VkFormat val<dvec4>() {
-		return VK_FORMAT_R64G64B64A64_SFLOAT;
-	}
-	template<> constexpr VkFormat val<uint>() { return VK_FORMAT_R32_UINT; }
-	template<> constexpr VkFormat val<uvec2>() { return VK_FORMAT_R32G32_UINT; }
-	template<> constexpr VkFormat val<uvec3>() {
-		return VK_FORMAT_R32G32B32_UINT;
-	}
-	template<> constexpr VkFormat val<uvec4>() {
-		return VK_FORMAT_R32G32B32A32_UINT;
-	}
-	template<> constexpr VkFormat val<int>() { return VK_FORMAT_R32_SINT; }
-	template<> constexpr VkFormat val<ivec2>() { return VK_FORMAT_R32G32_SINT; }
-	template<> constexpr VkFormat val<ivec3>() {
-		return VK_FORMAT_R32G32B32_SINT;
-	}
-	template<> constexpr VkFormat val<ivec4>() {
-		return VK_FORMAT_R32G32B32A32_SINT;
-	}
-}
-
-enum class BufferUseType : uint {
-	TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-	TransferDst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-	UniformTexel = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
-	StorageTexel = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
-	Uniform = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-	Storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-	Index = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-	Vertex = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-	IndirectDraw = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
-	All = 511,
-};
-DECLARE_FLAG_TYPE(BufferUseType);
-
-class Buffer
-{
-  public:
-	Buffer(const LogicalDevice& d, VkBufferCreateInfo bufferInfo);
-	Buffer(const LogicalDevice& d, size_t size,
-	  Flags<BufferUseType> usage = BufferUseType::All);
-	Buffer(const Buffer&) = delete;
-	Buffer(Buffer&& other) noexcept;
-	~Buffer();
-	void write(size_t size, size_t offset, void* data, bool flush = true);
-	void flush(size_t size, size_t offset);
-	void update(size_t size, size_t offset);
-	void writeAll(void* data, bool flush = true);
-	void flushAll();
-	void updateAll();
-	size_t size;
-	size_t minAlignment;
-	VkBuffer b = nullptr;
-	VkDeviceMemory dm = nullptr;
-	void* mappedPtr = nullptr;
-	const LogicalDevice& d;
-};
-class VertexBuffer: public Buffer
-{
-  public:
-	VertexBuffer(const LogicalDevice& d, size_t size, void* data = nullptr);
-};
-
-class VertexAttribute
-{
-  public:
-	VertexAttribute();
-	void addAttribute(uint size, VkFormat);
-	template<typename T> void addAttributeByType() {
-		addLocation(sizeof(T), _toFormat::val<T>());
-	}
-	std::vector<VkVertexInputAttributeDescription> attributes;
-	std::vector<VkVertexInputBindingDescription> bindingPoints;
-	uint strideSize = 0;
-	void addBindingPoint(uint fromAttributeIndex, uint toAttributeIndex);
-	VkPipelineVertexInputStateCreateInfo getStructForPipeline();
-};
-
-class FrameBuffer
-{
-  public:
-	FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 size,
-	  std::vector<ImageView*> attachments, uint layers = 1);
-	FrameBuffer(const FrameBuffer&) = delete;
-	FrameBuffer(FrameBuffer&& other) noexcept;
-	~FrameBuffer();
-	VkFramebuffer fb = nullptr;
-	const LogicalDevice& d;
-};
-
-
-static bool _loadedPreInitData = false;
-static std::vector<VkLayerProperties> _layersAvailable;
-static std::vector<VkExtensionProperties> _extensionsAvailable;
-static std::list<PhysicalDevice> _physicalDevices;
-static OSRenderSurface* _OSSurface;
-static std::vector<const char*> _layersEnabled;
-static std::vector<const char*> _extensionsEnabled;
-static VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
-static VkInstance _vk = nullptr;
-static LogicalDevice* _renderDevice = nullptr;
-static uint32_t glfwExtensionCount;
 constexpr const std::pair<const char*, uint> LAYERS[] = {
   {"VK_LAYER_KHRONOS_validation", 0u},
 };
-
 constexpr const std::pair<const char*, uint> EXTENSIONS[] = {
   {"VK_EXT_debug_utils", 0u}, {"VK_EXT_validation_features", 0u},
   //{"VK_EXT_debug_report", 0u},
 };
-
 constexpr const char* DEVICE_EXTENSIONS[] = {
   "VK_KHR_swapchain",
 };
+static VkInstance _vk = nullptr;
+
 LogicalDevice::LogicalDevice(
   const PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
   pd(p) {
 	static const float One = 1.0f;
+	queueIndex = queueFamilyIndex;
 	std::array<VkDeviceQueueCreateInfo, 1> queueInfo{};
 	queueInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	queueInfo[0].queueFamilyIndex = queueFamilyIndex;
@@ -393,6 +95,7 @@ LogicalDevice::LogicalDevice(
 }
 LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept: pd(o.pd) {
 	queue = o.queue;
+	queueIndex = o.queueIndex;
 	d = o.d;
 	o.d = nullptr;
 }
@@ -400,6 +103,7 @@ LogicalDevice::~LogicalDevice() {
 	if (swapChain) swapChain.reset();
 	if (d) vkDestroyDevice(d, nullptr);
 }
+
 PhysicalDevice::PhysicalDevice(
   VkPhysicalDevice _d, OSRenderSurface* renderSurface) {
 	d = _d;
@@ -515,6 +219,7 @@ LogicalDevice* PhysicalDevice::makeDevice(
 PhysicalDevice::~PhysicalDevice() {
 	// Nothing to do here for now
 }
+
 OSRenderSurface::OSRenderSurface() {
 	if (glfwCreateWindowSurface(_vk,
 		  (GLFWwindow*)events::ThreadEvents::getGLFWWindow(), nullptr, &surface)
@@ -526,6 +231,7 @@ OSRenderSurface::OSRenderSurface() {
 OSRenderSurface::~OSRenderSurface() {
 	vkDestroySurfaceKHR(_vk, surface, nullptr);
 }
+
 SwapChainSupport::SwapChainSupport(
   const PhysicalDevice& pd, const OSRenderSurface& s) {
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pd.d, s.surface, &capabilities);
@@ -551,6 +257,8 @@ VkSurfaceFormatKHR SwapChainSupport::getFormat() const {
 }
 VkPresentModeKHR SwapChainSupport::getPresentMode(
   bool preferRelaxedVBlank) const {
+	return VK_PRESENT_MODE_IMMEDIATE_KHR;
+
 	if (preferRelaxedVBlank
 		&& std::find(presentModes.begin(), presentModes.end(),
 			 VK_PRESENT_MODE_FIFO_RELAXED_KHR)
@@ -570,11 +278,12 @@ uvec2 SwapChainSupport::getSwapChainSize(uvec2 ps) const {
 	  capabilities.maxImageExtent.width, capabilities.maxImageExtent.height};
 	return glm::max(min, glm::min(max, ps));
 }
+
 SwapChain::SwapChain(const OSRenderSurface& surface, const SwapChainSupport& sp,
   const LogicalDevice& device, uvec2 preferredSize, bool transparentWindow):
   d(device) {
 	surfaceFormat = sp.getFormat();
-	auto presentMode = sp.getPresentMode(true);
+	auto presentMode = sp.getPresentMode();
 	pixelSize = sp.getSwapChainSize(preferredSize);
 	uint32_t bufferCount = std::min(sp.capabilities.maxImageCount - 1,
 							 sp.capabilities.minImageCount + 2 - 1)
@@ -640,6 +349,7 @@ ImageView::ImageView(ImageView&& other) noexcept: d(other.d) {
 ImageView::~ImageView() {
 	if (imgView != nullptr) vkDestroyImageView(d.d, imgView, nullptr);
 }
+
 ShaderCompiled::ShaderCompiled(const LogicalDevice& device, ShaderType st,
   const std::string_view& file_name):
   d(device) {
@@ -691,6 +401,7 @@ VkPipelineShaderStageCreateInfo ShaderCompiled::getCreateInfo() const {
 	sInfo.pName = "main";
 	return sInfo;
 }
+
 RenderPass::RenderPass(const LogicalDevice& device): d(device) {}
 RenderPass::RenderPass(RenderPass&& o) noexcept: d(o.d) {
 	rp = o.rp;
@@ -721,6 +432,8 @@ void RenderPass::complete() {
 	  .pAttachments = attachmentTypes.data(),
 	  .subpassCount = (uint)subpassDes.size(),
 	  .pSubpasses = subpassDes.data(),
+	  .dependencyCount = (uint)subpassDependencies.size(),
+	  .pDependencies = subpassDependencies.data(),
 	};
 	if (vkCreateRenderPass(d.d, &renderPassInfo, nullptr, &rp) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create render pass!");
@@ -731,41 +444,24 @@ RenderPass::~RenderPass() {
 }
 
 ShaderPipeline::ShaderPipeline(const LogicalDevice& device): d(device) {}
-
 ShaderPipeline::ShaderPipeline(ShaderPipeline&& other) noexcept: d(other.d) {}
-
 ShaderPipeline::~ShaderPipeline() {
 	if (pl != nullptr) vkDestroyPipelineLayout(d.d, pl, nullptr);
 	if (p != nullptr) vkDestroyPipeline(d.d, p, nullptr);
 }
-
 void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
-  VkViewport viewport, const RenderPass& renderPass) {
+  VertexAttribute& va, VkViewport viewport, const RenderPass& renderPass) {
 	std::vector<VkPipelineShaderStageCreateInfo> sInfos;
 	sInfos.reserve(shaderModules.size());
 	for (auto& sm : shaderModules) sInfos.emplace_back(sm->getCreateInfo());
 
-	VkPipelineVertexInputStateCreateInfo vertInputBinding{};
-	VkVertexInputBindingDescription bindingDescription{};
-	bindingDescription.binding = 0;
-	bindingDescription.stride = sizeof(vec2);
-	bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	VkVertexInputAttributeDescription attributeDescription{};
-	attributeDescription.binding = 0;
-	attributeDescription.location = 0;
-	attributeDescription.format = VK_FORMAT_R32G32_SFLOAT;
-	attributeDescription.offset = 0;
-	vertInputBinding.sType =
-	  VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertInputBinding.vertexBindingDescriptionCount = 1;
-	vertInputBinding.pVertexBindingDescriptions = &bindingDescription;
-	vertInputBinding.vertexAttributeDescriptionCount = 1;
-	vertInputBinding.pVertexAttributeDescriptions = &attributeDescription;
+	VkPipelineVertexInputStateCreateInfo vertInputBinding =
+	  va.getStructForPipeline();
 
 	VkPipelineInputAssemblyStateCreateInfo vertInputType{};
 	vertInputType.sType =
 	  VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	vertInputType.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	vertInputType.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 	vertInputType.primitiveRestartEnable = VK_FALSE;
 
 	VkPipelineViewportStateCreateInfo viewportState{};
@@ -865,6 +561,84 @@ void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
 	}
 }
 
+CommendPool::CommendPool(const LogicalDevice& device): d(device) {
+	VkCommandPoolCreateInfo poolInfo{};
+	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	poolInfo.queueFamilyIndex = d.queueIndex;
+	poolInfo.flags = 0;	 // Optional
+	if (vkCreateCommandPool(d.d, &poolInfo, nullptr, &cp) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create command pool!");
+	}
+}
+CommendPool::CommendPool(CommendPool&& other) noexcept: d(other.d) {
+	cp = other.cp;
+	other.cp = nullptr;
+}
+CommendPool::~CommendPool() {
+	if (cp != nullptr) vkDestroyCommandPool(d.d, cp, nullptr);
+}
+
+CommendBuffer::CommendBuffer(const CommendPool& pool): cp(pool) {
+	VkCommandBufferAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.commandPool = cp.cp;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandBufferCount = 1;
+	if (vkAllocateCommandBuffers(cp.d.d, &allocInfo, &cb) != VK_SUCCESS) {
+		throw std::runtime_error("failed to allocate command buffer!");
+	}
+}
+CommendBuffer::CommendBuffer(CommendBuffer&& other) noexcept: cp(other.cp) {
+	cb = other.cb;
+	other.cb = nullptr;
+}
+CommendBuffer::~CommendBuffer() {
+	if (cb != nullptr) vkFreeCommandBuffers(cp.d.d, cp.cp, 1, &cb);
+}
+void CommendBuffer::startRecording(Flags<CommendBufferUsage> usage) {
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = (uint)usage;
+	beginInfo.pInheritanceInfo = nullptr;
+	if (vkBeginCommandBuffer(cb, &beginInfo) != VK_SUCCESS) {
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+}
+void CommendBuffer::cmdBeginRender(
+  const RenderPass& rp, const FrameBuffer& fb, vec4 bgColor) {
+	VkRenderPassBeginInfo rpCmdInfo{};
+	rpCmdInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	rpCmdInfo.renderPass = rp.rp;
+	rpCmdInfo.framebuffer = fb.fb;
+	rpCmdInfo.renderArea.offset = {0, 0};
+	rpCmdInfo.renderArea.extent = {fb.size.x, fb.size.y};
+	rpCmdInfo.clearValueCount = 1;
+	VkClearValue v{};
+	v.color.float32[0] = bgColor.r;
+	v.color.float32[1] = bgColor.g;
+	v.color.float32[2] = bgColor.b;
+	v.color.float32[3] = bgColor.a;
+	rpCmdInfo.pClearValues = &v;
+	vkCmdBeginRenderPass(cb, &rpCmdInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+void CommendBuffer::cmdBind(const ShaderPipeline& p) {
+	vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, p.p);
+}
+void CommendBuffer::cmdBind(
+  const VertexBuffer& vb, uint bindingPoint, size_t offset) {
+	vkCmdBindVertexBuffers(cb, bindingPoint, 1, &vb.b, &offset);
+}
+void CommendBuffer::cmdDraw(
+  size_t vCount, size_t iCount, size_t vOffset, size_t iOffset) {
+	vkCmdDraw(cb, vCount, iCount, vOffset, iOffset);
+}
+void CommendBuffer::cmdEndRender() { vkCmdEndRenderPass(cb); }
+void CommendBuffer::endRecording() {
+	if (vkEndCommandBuffer(cb) != VK_SUCCESS) {
+		throw std::runtime_error("failed to record command buffer!");
+	}
+}
+
 inline void _makeBuffer(const LogicalDevice& d, VkBuffer& out,
   VkDeviceMemory& outdm, const VkBufferCreateInfo& cInfo) {
 	if (vkCreateBuffer(d.d, &cInfo, nullptr, &out) != VK_SUCCESS) {
@@ -888,7 +662,6 @@ inline void _makeBuffer(const LogicalDevice& d, VkBuffer& out,
 	}
 	vkBindBufferMemory(d.d, out, outdm, 0);
 }
-
 Buffer::Buffer(
   const LogicalDevice& device, size_t s, Flags<BufferUseType> usage):
   d(device) {
@@ -993,11 +766,38 @@ VertexBuffer::VertexBuffer(const LogicalDevice& d, size_t size, void* data):
   Buffer(d, size) {
 	if (data != nullptr) writeAll(data);
 }
-
+VertexAttribute::VertexAttribute() {}
+void VertexAttribute::addAttribute(
+  uint bindingPoint, uint size, VkFormat format) {
+	auto& d = attributes.emplace_back();
+	d.location = attributes.size() - 1;
+	d.binding = bindingPoint;
+	d.format = format;
+	d.offset = strideSize;
+	strideSize += size;
+}
+void VertexAttribute::addBindingPoint(uint stride, BufferInputRate rate) {
+	auto& b = bindingPoints.emplace_back();
+	b.binding = bindingPoints.size() - 1;
+	b.inputRate = (VkVertexInputRate)rate;
+	b.stride = stride;
+}
+VkPipelineVertexInputStateCreateInfo VertexAttribute::getStructForPipeline() {
+	for (auto& bp : bindingPoints)
+		if (bp.stride == uint(-1)) bp.stride = strideSize;
+	VkPipelineVertexInputStateCreateInfo vis{};
+	vis.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vis.pVertexAttributeDescriptions = attributes.data();
+	vis.pVertexBindingDescriptions = bindingPoints.data();
+	vis.vertexAttributeDescriptionCount = attributes.size();
+	vis.vertexBindingDescriptionCount = bindingPoints.size();
+	return vis;
+}
 
 FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp,
-  uvec2 size, std::vector<ImageView*> attachments, uint layers):
+  uvec2 nSize, std::vector<ImageView*> attachments, uint layers):
   d(device) {
+	size = nSize;
 	std::vector<VkImageView> att;
 	att.reserve(attachments.size());
 	for (auto& iv : attachments) att.push_back(iv->imgView);
@@ -1015,11 +815,26 @@ FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp,
 }
 FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
 	fb = other.fb;
+	size = other.size;
 	other.fb = nullptr;
 }
 FrameBuffer::~FrameBuffer() {
 	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
 }
+
+
+
+static bool _loadedPreInitData = false;
+static std::vector<VkLayerProperties> _layersAvailable;
+static std::vector<VkExtensionProperties> _extensionsAvailable;
+static std::list<PhysicalDevice> _physicalDevices;
+static OSRenderSurface* _OSSurface;
+static std::vector<const char*> _layersEnabled;
+static std::vector<const char*> _extensionsEnabled;
+static VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
+static LogicalDevice* _renderDevice = nullptr;
+static uint32_t glfwExtensionCount;
+
 
 inline void preInit() {
 	_loadedPreInitData = true;
@@ -1197,8 +1012,12 @@ bool vk::requestExtension(const char* name, uint minVersion) {
 static RenderPass* _renderPass = nullptr;
 static ShaderPipeline* _pipeline = nullptr;
 static VertexBuffer* _vertBuff = nullptr;
-static std::list<ImageView> _swapchainViews{};
-static std::list<FrameBuffer> _frameBuffer{};
+static std::vector<ImageView> _swapchainViews{};
+static std::vector<FrameBuffer> _frameBuffers{};
+static VkSemaphore _imageAvailableSemaphore;
+static VkSemaphore _renderFinishedSemaphore;
+static CommendPool* _commendPool = nullptr;
+static std::vector<CommendBuffer> _commendBuffers{};
 
 const float testVert[]{
   0.5,
@@ -1232,18 +1051,24 @@ void vk::init() {
 	ShaderCompiled fragShad(
 	  *_renderDevice, ShaderType::Frag, "cshader/point.cfrag");
 	_renderPass = new RenderPass(*_renderDevice);
-	VkAttachmentDescription ad{
-	  .format = _renderDevice->swapChain->surfaceFormat.format,
-	  .samples = VK_SAMPLE_COUNT_1_BIT,
-	  .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-	  .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-	  .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-	  .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-	  .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-	  .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-	};
-	_renderPass->attachmentTypes.push_back(ad);
+	auto& ad = _renderPass->attachmentTypes.emplace_back();
+	ad.format = _renderDevice->swapChain->surfaceFormat.format;
+	ad.samples = VK_SAMPLE_COUNT_1_BIT;
+	ad.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	ad.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	ad.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	ad.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	ad.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ad.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 	_renderPass->subpasses.emplace_back(1, 0);
+	auto& sd = _renderPass->subpassDependencies.emplace_back();
+	sd.srcSubpass = VK_SUBPASS_EXTERNAL;
+	sd.dstSubpass = 0;
+	sd.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	sd.srcAccessMask = 0;
+	sd.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	sd.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
 	_renderPass->complete();
 	_pipeline = new ShaderPipeline(*_renderDevice);
 	std::vector<const ShaderCompiled*> pointShad;
@@ -1258,27 +1083,99 @@ void vk::init() {
 	  .minDepth = 0,
 	  .maxDepth = 0,
 	};
-	_pipeline->complete(pointShad, viewport, *_renderPass);
+	VertexAttribute va{};
+	va.addAttributeByType<vec2>();
+	va.addBindingPoint();
+	_pipeline->complete(pointShad, va, viewport, *_renderPass);
 	assert(_pipeline->p != nullptr);
 
 	// Make swapchain framebuffer
-	for (uint i = 0; i < _renderDevice->swapChain->swapChainImages.size(); i++) {
-		_swapchainViews.push_back(_renderDevice->swapChain->getChainImageView(i));
-		std::vector<ImageView*>b;
+	_swapchainViews.reserve(_renderDevice->swapChain->swapChainImages.size());
+	_frameBuffers.reserve(_renderDevice->swapChain->swapChainImages.size());
+	for (uint i = 0; i < _renderDevice->swapChain->swapChainImages.size();
+		 i++) {
+		_swapchainViews.push_back(
+		  _renderDevice->swapChain->getChainImageView(i));
+		std::vector<ImageView*> b;
 		b.emplace_back(&_swapchainViews.back());
-		_frameBuffer.emplace_back(
+		_frameBuffers.emplace_back(
 		  *_renderDevice, *_renderPass, _renderDevice->swapChain->pixelSize, b);
 	}
-
 	// Make vertex buffer
 	_vertBuff = new VertexBuffer(
 	  *_renderDevice, sizeof(testVert), (void*)std::data(testVert));
-}
 
+	// Make commend pool & buffers
+	_commendPool = new CommendPool(*_renderDevice);
+	for (uint i = 0; i < _renderDevice->swapChain->swapChainImages.size();
+		 i++) {
+		auto& cb = _commendBuffers.emplace_back(*_commendPool);
+		cb.startRecording(CommendBufferUsage::ParallelSubmit);
+		cb.cmdBeginRender(
+		 *_renderPass, _frameBuffers.at(i), vec4(1., 0., 0., 0.));
+		cb.cmdBind(*_pipeline);
+		cb.cmdBind(*_vertBuff);
+		cb.cmdDraw(std::size(testVert) / 2);
+		cb.cmdEndRender();
+		cb.endRecording();
+	}
+
+	// Make sync objects
+	VkSemaphoreCreateInfo semaphoreInfo{};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+	if (vkCreateSemaphore(
+		  _renderDevice->d, &semaphoreInfo, nullptr, &_imageAvailableSemaphore)
+		  != VK_SUCCESS
+		|| vkCreateSemaphore(_renderDevice->d, &semaphoreInfo, nullptr,
+			 &_renderFinishedSemaphore)
+			 != VK_SUCCESS) {
+		throw std::runtime_error("failed to create semaphores!");
+	}
+}
+void vk::tick() {
+	uint32_t imageIndex;
+	auto code =
+	  vkAcquireNextImageKHR(_renderDevice->d, _renderDevice->swapChain->sc, 0u,
+		_imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+	if (code != VK_SUCCESS) {
+		return;
+	}
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+	VkSemaphore waitSemaphores[] = {_imageAvailableSemaphore};
+	VkPipelineStageFlags waitStages[] = {
+	  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = waitSemaphores;
+	submitInfo.pWaitDstStageMask = waitStages;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &_commendBuffers.at(imageIndex).cb;
+	VkSemaphore signalSemaphores[] = {_renderFinishedSemaphore};
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = signalSemaphores;
+	if (vkQueueSubmit(_renderDevice->queue, 1, &submitInfo, VK_NULL_HANDLE)
+		!= VK_SUCCESS) {
+		throw std::runtime_error("failed to submit draw command buffer!");
+	}
+	VkPresentInfoKHR presentInfo{};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = signalSemaphores;
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = &_renderDevice->swapChain->sc;
+	presentInfo.pImageIndices = &imageIndex;
+	vkQueuePresentKHR(_renderDevice->queue, &presentInfo);
+}
 void vk::end() {
 	logger("VK Interface end.\n");
+	vkDeviceWaitIdle(_renderDevice->d);
+	vkDestroySemaphore(_renderDevice->d, _renderFinishedSemaphore, nullptr);
+	vkDestroySemaphore(_renderDevice->d, _imageAvailableSemaphore, nullptr);
+	_commendBuffers.clear();
+	if (_commendPool != nullptr) delete _commendPool;
 	if (_vertBuff != nullptr) delete _vertBuff;
-	_frameBuffer.clear();
+	_frameBuffers.clear();
 	_swapchainViews.clear();
 	if (_renderPass != nullptr) delete _renderPass;
 	if (_pipeline != nullptr) delete _pipeline;

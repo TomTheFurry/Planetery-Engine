@@ -14,6 +14,7 @@ namespace vk {
 
 
 	void init();  // request all needed extension/layers before call!
+	void tick();
 	void end();
 
 	namespace device {

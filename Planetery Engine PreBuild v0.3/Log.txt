@@ -68,10 +68,19 @@
 [;0m  [90m-[39mAll init done. Ready to sync with other threads.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 763ns (964497), Event tps: 81
+[;0m  [90m-[39mAverage Tick speed: 1.885000us (11522), Event tps: 143
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 773ns (968408), Event tps: 83
+[;0m  [90m-[39mAverage Tick speed: 1.763000us (11161), Event tps: 19
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 1.728000us (11460), Event tps: 14
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 1.876000us (11899), Event tps: 55
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 1.731000us (11955), Event tps: 0
 
 [0;4;97mThreadEvent:
 [;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m

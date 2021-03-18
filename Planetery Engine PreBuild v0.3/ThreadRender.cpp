@@ -194,6 +194,9 @@ static void _main() {
 				events::ThreadEvents::swapBuffer();	 // Will block and wait for
 													 // screen updates (v-sync)
 #endif
+#ifdef USE_VULKAN
+				vk::tick();
+#endif
 			}
 		}
 	} catch (const char* e) {

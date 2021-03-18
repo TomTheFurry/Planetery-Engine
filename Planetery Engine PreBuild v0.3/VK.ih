@@ -1,0 +1,331 @@
+#pragma once
+#pragma warning(disable: 26812)
+
+#include "DefineMath.h"
+
+#include "VK.h"
+
+#include "DefineUtil.h"
+
+namespace _toFormat {
+	template<typename T> VkFormat val() {}
+	template<> constexpr VkFormat val<float>() { return VK_FORMAT_R32_SFLOAT; }
+	template<> constexpr VkFormat val<vec2>() {
+		return VK_FORMAT_R32G32_SFLOAT;
+	}
+	template<> constexpr VkFormat val<vec3>() {
+		return VK_FORMAT_R32G32B32_SFLOAT;
+	}
+	template<> constexpr VkFormat val<vec4>() {
+		return VK_FORMAT_R32G32B32A32_SFLOAT;
+	}
+	template<> constexpr VkFormat val<double>() { return VK_FORMAT_R64_SFLOAT; }
+	template<> constexpr VkFormat val<dvec2>() {
+		return VK_FORMAT_R64G64_SFLOAT;
+	}
+	template<> constexpr VkFormat val<dvec3>() {
+		return VK_FORMAT_R64G64B64_SFLOAT;
+	}
+	template<> constexpr VkFormat val<dvec4>() {
+		return VK_FORMAT_R64G64B64A64_SFLOAT;
+	}
+	template<> constexpr VkFormat val<uint>() { return VK_FORMAT_R32_UINT; }
+	template<> constexpr VkFormat val<uvec2>() { return VK_FORMAT_R32G32_UINT; }
+	template<> constexpr VkFormat val<uvec3>() {
+		return VK_FORMAT_R32G32B32_UINT;
+	}
+	template<> constexpr VkFormat val<uvec4>() {
+		return VK_FORMAT_R32G32B32A32_UINT;
+	}
+	template<> constexpr VkFormat val<int>() { return VK_FORMAT_R32_SINT; }
+	template<> constexpr VkFormat val<ivec2>() { return VK_FORMAT_R32G32_SINT; }
+	template<> constexpr VkFormat val<ivec3>() {
+		return VK_FORMAT_R32G32B32_SINT;
+	}
+	template<> constexpr VkFormat val<ivec4>() {
+		return VK_FORMAT_R32G32B32A32_SINT;
+	}
+}
+using namespace vk;
+
+enum class MemoryProperties : uint {
+	local = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+	mappable = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+	coherent = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	cached = VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
+	lazy = VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT,
+};
+DECLARE_FLAG_TYPE(MemoryProperties);
+enum class BufferUseType : uint {
+	TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+	TransferDst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	UniformTexel = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
+	StorageTexel = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT,
+	Uniform = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+	Storage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+	Index = VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	Vertex = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	IndirectDraw = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+	All = 511,
+};
+DECLARE_FLAG_TYPE(BufferUseType);
+enum class CommendBufferUsage : uint {
+	Streaming = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+	RenderPassOwned = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
+	ParallelSubmit = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+};
+DECLARE_FLAG_TYPE(CommendBufferUsage);
+enum class BufferInputRate {
+	PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
+	PerInstance = VK_VERTEX_INPUT_RATE_INSTANCE,
+};
+enum class ShaderType {
+	Vert,
+	Geom,
+	Frag,
+};
+inline VkShaderStageFlagBits _getVal(ShaderType st) {
+	switch (st) {
+	case ShaderType::Vert: return VK_SHADER_STAGE_VERTEX_BIT;
+	case ShaderType::Geom: return VK_SHADER_STAGE_GEOMETRY_BIT;
+	case ShaderType::Frag: return VK_SHADER_STAGE_FRAGMENT_BIT;
+	}
+	assert(false);
+}
+
+class PhysicalDevice;
+class LogicalDevice;
+class OSRenderSurface;
+class SwapChainSupport;
+class SwapChain;
+class ImageView;
+class CommendBuffer;
+class FrameBuffer;
+class VertexAttribute;
+class VertexBuffer;
+typedef uint QueueFamilyIndex;
+class SwapChainSupport
+{
+  public:
+	SwapChainSupport() = default;
+	SwapChainSupport(const PhysicalDevice& pd, const OSRenderSurface& surface);
+	VkSurfaceFormatKHR getFormat() const;
+	VkPresentModeKHR getPresentMode(bool preferRelaxedVBlank = false) const;
+	uvec2 getSwapChainSize(uvec2 preferredSize = uvec2(uint(-1))) const;
+	VkSurfaceCapabilitiesKHR capabilities{};
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
+};
+
+class PhysicalDevice
+{
+  public:
+	PhysicalDevice(
+	  VkPhysicalDevice _d, OSRenderSurface* renderSurface = nullptr);
+	PhysicalDevice(const PhysicalDevice&) = delete;
+	PhysicalDevice(PhysicalDevice&&) noexcept;
+	VkPhysicalDevice d;
+	VkPhysicalDeviceProperties properties;
+	VkPhysicalDeviceFeatures features;
+	VkPhysicalDeviceMemoryProperties memProperties;
+	std::vector<VkQueueFamilyProperties> queueFamilies;
+	std::list<LogicalDevice> devices;
+	int rating;
+	bool meetRequirements;
+	SwapChainSupport swapChain;
+	OSRenderSurface* renderOut = nullptr;
+	QueueFamilyIndex getQueueFamily(
+	  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
+	uint getMemoryTypeIndex(
+	  uint bitFilter, Flags<MemoryProperties> requirement) const;
+	LogicalDevice* makeDevice(
+	  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
+	VkPhysicalDevice operator->() { return d; }
+	bool operator==(const PhysicalDevice& other) const { return d == other.d; }
+	std::weak_ordering operator<=>(const PhysicalDevice& other) const {
+		return rating <=> other.rating;
+	}
+	~PhysicalDevice();
+};
+class LogicalDevice
+{
+  public:
+	LogicalDevice(const PhysicalDevice& pd, QueueFamilyIndex queueFamilyIndex);
+	LogicalDevice(const LogicalDevice&) = delete;
+	LogicalDevice(LogicalDevice&&) noexcept;
+	VkDevice d;
+	VkQueue queue;
+	QueueFamilyIndex queueIndex;
+	std::unique_ptr<SwapChain> swapChain;
+	VkDevice operator->() { return d; }
+	~LogicalDevice();
+	const PhysicalDevice& pd;
+};
+class OSRenderSurface
+{
+  public:
+	OSRenderSurface();
+	OSRenderSurface(const OSRenderSurface&) = delete;
+	OSRenderSurface(OSRenderSurface&&) = delete;
+	VkSurfaceKHR surface = nullptr;
+	VkSurfaceKHR operator->() { return surface; }
+	~OSRenderSurface();
+};
+class SwapChain
+{
+  public:
+	SwapChain(const OSRenderSurface& surface, const SwapChainSupport& sp,
+	  const LogicalDevice& device, uvec2 preferredSize,
+	  bool transparentWindow = false);
+	SwapChain(const SwapChain&) = delete;
+	SwapChain(SwapChain&&) = delete;
+	const LogicalDevice& d;
+	VkSwapchainKHR sc;
+	VkSurfaceFormatKHR surfaceFormat;
+	uvec2 pixelSize;
+	std::vector<VkImage> swapChainImages;
+	ImageView getChainImageView(uint index);
+	~SwapChain();
+};
+
+class ImageView
+{
+  public:
+	ImageView(const LogicalDevice& d, VkImageViewCreateInfo createInfo);
+	ImageView(const ImageView&) = delete;
+	ImageView(ImageView&& other) noexcept;
+	ImageView& operator=(const ImageView&) = delete;
+	ImageView& operator=(ImageView&&) = default;
+	~ImageView();
+	VkImageView imgView;
+	const LogicalDevice& d;
+};
+
+class ShaderCompiled
+{
+  public:
+	ShaderCompiled(const LogicalDevice& d, ShaderType shaderType,
+	  const std::string_view& file_name);
+	ShaderCompiled(const ShaderCompiled&) = delete;
+	ShaderCompiled(ShaderCompiled&& other) noexcept;
+	~ShaderCompiled();
+	VkPipelineShaderStageCreateInfo getCreateInfo() const;
+	ShaderType shaderType;
+	VkShaderModule sm;
+	const LogicalDevice& d;
+};
+
+class RenderPass
+{
+  public:
+	RenderPass(const LogicalDevice& d);
+	RenderPass(const RenderPass& d) = delete;
+	RenderPass(RenderPass&& d) noexcept;
+	~RenderPass();
+	void complete();
+	VkRenderPass rp = nullptr;
+	std::vector<VkAttachmentDescription> attachmentTypes;
+	std::vector<std::vector<uint>> subpasses;
+	std::vector<VkSubpassDependency> subpassDependencies;
+	const LogicalDevice& d;
+};
+
+class ShaderPipeline
+{
+  public:
+	ShaderPipeline(const LogicalDevice& device);
+	ShaderPipeline(const ShaderPipeline&) = delete;
+	ShaderPipeline(ShaderPipeline&& other) noexcept;
+	~ShaderPipeline();
+	void complete(std::vector<const ShaderCompiled*> shaderModules,
+	  VertexAttribute& va, VkViewport viewport, const RenderPass& renderPass);
+	VkPipeline p = nullptr;
+	VkPipelineLayout pl = nullptr;
+	const LogicalDevice& d;
+};
+
+class CommendPool
+{
+  public:
+	CommendPool(const LogicalDevice& device);
+	CommendPool(const CommendPool&) = delete;
+	CommendPool(CommendPool&& other) noexcept;
+	~CommendPool();
+	VkCommandPool cp = nullptr;
+	const LogicalDevice& d;
+};
+class CommendBuffer
+{
+  public:
+	CommendBuffer(const CommendPool& pool);
+	CommendBuffer(const CommendBuffer&) = delete;
+	CommendBuffer(CommendBuffer&& other) noexcept;
+	~CommendBuffer();
+	void startRecording(Flags<CommendBufferUsage> usage);
+	void cmdBeginRender(
+	  const RenderPass& rp, const FrameBuffer& fb, vec4 bgColor);
+	void cmdBind(const ShaderPipeline& cb);
+	void cmdBind(const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
+	void cmdDraw(
+	  size_t vCount, size_t iCount = 1, size_t vOffset = 0, size_t iOffset = 0);
+	void cmdEndRender();
+	void endRecording();
+	VkCommandBuffer cb = nullptr;
+	const CommendPool& cp;
+};
+class Buffer
+{
+  public:
+	Buffer(const LogicalDevice& d, VkBufferCreateInfo bufferInfo);
+	Buffer(const LogicalDevice& d, size_t size,
+	  Flags<BufferUseType> usage = BufferUseType::All);
+	Buffer(const Buffer&) = delete;
+	Buffer(Buffer&& other) noexcept;
+	~Buffer();
+	void write(size_t size, size_t offset, void* data, bool flush = true);
+	void flush(size_t size, size_t offset);
+	void update(size_t size, size_t offset);
+	void writeAll(void* data, bool flush = true);
+	void flushAll();
+	void updateAll();
+	size_t size;
+	size_t minAlignment;
+	VkBuffer b = nullptr;
+	VkDeviceMemory dm = nullptr;
+	void* mappedPtr = nullptr;
+	const LogicalDevice& d;
+};
+class VertexBuffer: public Buffer
+{
+  public:
+	VertexBuffer(const LogicalDevice& d, size_t size, void* data = nullptr);
+};
+
+class VertexAttribute
+{
+  public:
+	VertexAttribute();
+	void addAttribute(uint bindingPoint, uint size, VkFormat format);
+	template<typename T> void addAttributeByType(uint bindingPoint = 0) {
+		addAttribute(bindingPoint, sizeof(T), _toFormat::val<T>());
+	}
+	void addBindingPoint(uint stride = uint(-1),
+	  BufferInputRate rate = BufferInputRate::PerVertex);
+	std::vector<VkVertexInputAttributeDescription> attributes;
+	std::vector<VkVertexInputBindingDescription> bindingPoints;
+	uint strideSize = 0;
+	VkPipelineVertexInputStateCreateInfo getStructForPipeline();
+};
+
+class FrameBuffer
+{
+  public:
+	FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+	  std::vector<ImageView*> attachments, uint layers = 1);
+	FrameBuffer(const FrameBuffer&) = delete;
+	FrameBuffer(FrameBuffer&& other) noexcept;
+	~FrameBuffer();
+	uvec2 size;
+	VkFramebuffer fb = nullptr;
+	const LogicalDevice& d;
+};

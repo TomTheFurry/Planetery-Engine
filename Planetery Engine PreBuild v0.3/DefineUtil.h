@@ -16,6 +16,7 @@ template<typename T> class Flags
 		using value = std::underlying_type<__type>::type; \
 		value _v;                                         \
 	  public:                                             \
+		Flags() { _v = 0; }                               \
 		Flags(__type f) { _v = static_cast<value>(f); }   \
 		Flags(value f) { _v = f; }                        \
 		explicit operator value() { return _v; }          \

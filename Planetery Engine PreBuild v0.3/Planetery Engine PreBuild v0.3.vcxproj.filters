@@ -119,6 +119,9 @@
     <ClInclude Include="GLFW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VK.ih">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
