@@ -24,9 +24,14 @@
 #	error No default system dpi value is set! Please add it!
 #endif
 
+#ifdef USE_VULKAN
+#include "VK.h"
+#endif	// USE_VULKAN
+
+
 using namespace events;
 
-constexpr vec2 windowInitSize = {1520, 800};
+constexpr uvec2 windowInitSize = {1520, 800};
 
 struct _KeyEvent {
 	KeyEventFunction func;
@@ -110,6 +115,7 @@ static void window_pos_callback(GLFWwindow* _, int x, int y) {
 	}
 }
 static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
+	vk::notifyOutdatedSwapchain();
 	_framebufferSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
 		pair.second.flags.fetch_or(

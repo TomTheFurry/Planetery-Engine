@@ -8,14 +8,19 @@ namespace vk {
 	const uint* getExtensionVersion(const char* name);	// may return nullptr
 	bool requestLayer(const char* name, uint minVersion = 0);
 	bool requestExtension(const char* name, uint minVersion = 0);
-	
+
 	void requestDeviceExtension(const char* name, bool optional = false);
 
-
+	struct OutdatedSwapchainException {};
 
 	void init();  // request all needed extension/layers before call!
-	void tick();
-	void end();
+	bool drawFrame(void (*drawFunc)()); // Render Thread only
+	void checkStatus() noexcept(false);	 // throws OutdatedSwapchainException
+	void end(void (*cleanupFunc)());
+
+	void notifyOutdatedSwapchain(); // Can be called by any frame
+
+	void testSwitch();
 
 	namespace device {
 		class PhysicalDevice;
@@ -36,4 +41,3 @@ namespace vk {
 	}
 
 }
-

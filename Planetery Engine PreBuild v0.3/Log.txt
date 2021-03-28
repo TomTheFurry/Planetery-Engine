@@ -18,41 +18,8 @@
 [;0m  [90m-[39mVulkan: Reading runtime values...
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAvalible VK Layers: 
-[;0m  [;0m  [90m-[39m4202638: VK_LAYER_NV_optimus - NVIDIA Optimus layer
-[;0m  [;0m  [90m-[39m4198531: VK_LAYER_OW_OVERLAY - Overwolf Overlay Layer
-[;0m  [;0m  [90m-[39m4202632: VK_LAYER_VALVE_steam_overlay - Steam Overlay Layer
-[;0m  [;0m  [90m-[39m4202632: VK_LAYER_VALVE_steam_fossilize - Steam Pipeline Caching Layer
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_api_dump - LunarG API dump layer
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_device_simulation - LunarG device simulation layer
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_gfxreconstruct - GFXReconstruct Capture Layer Version 0.9.6
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_KHRONOS_synchronization2 - Khronos Synchronization2 layer
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_KHRONOS_validation - Khronos Validation Layer
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_monitor - Execution Monitoring Layer
-[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_screenshot - LunarG image capture layer
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAvalible VK Extensions: 
-[;0m  [;0m  [90m-[39m1:VK_KHR_device_group_creation
-[;0m  [;0m  [90m-[39m1:VK_KHR_external_fence_capabilities
-[;0m  [;0m  [90m-[39m1:VK_KHR_external_memory_capabilities
-[;0m  [;0m  [90m-[39m1:VK_KHR_external_semaphore_capabilities
-[;0m  [;0m  [90m-[39m2:VK_KHR_get_physical_device_properties2
-[;0m  [;0m  [90m-[39m1:VK_KHR_get_surface_capabilities2
-[;0m  [;0m  [90m-[39m25:VK_KHR_surface
-[;0m  [;0m  [90m-[39m1:VK_KHR_surface_protected_capabilities
-[;0m  [;0m  [90m-[39m6:VK_KHR_win32_surface
-[;0m  [;0m  [90m-[39m9:VK_EXT_debug_report
-[;0m  [;0m  [90m-[39m2:VK_EXT_debug_utils
-[;0m  [;0m  [90m-[39m4:VK_EXT_swapchain_colorspace
-[;0m  [;0m  [90m-[39m1:VK_NV_external_memory_capabilities
-[;0m  [;0m  [90m-[39m9:VK_EXT_debug_report
-[;0m  [;0m  [90m-[39m1:VK_EXT_debug_utils
-[;0m  [;0m  [90m-[39m2:VK_EXT_validation_features
-
-[0;4;97mThreadRender:
 [;0m  [90m-[39mVulkan: Scanning Graphic Cards...
-[;0m  GeForce GTX 1060 3GB... Usable. Rating: 7662
+[;0m  [;0m  [90m-[39mGeForce GTX 1060 3GB... Usable. Rating: 7663.317383
 
 [0;4;97mThreadRender:
 [;0m  [90m-[39mVK graphics init done.
@@ -68,19 +35,79 @@
 [;0m  [90m-[39mAll init done. Ready to sync with other threads.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.885000us (11522), Event tps: 143
+[;0m  [90m-[39mAverage Tick speed: 16.666098ms (62), Event tps: 113
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.763000us (11161), Event tps: 19
+[;0m  [90m-[39mAverage Tick speed: 18.032753ms (55), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.728000us (11460), Event tps: 14
+[;0m  [90m-[39mAverage Tick speed: 19.422430ms (52), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.876000us (11899), Event tps: 55
+[;0m  [90m-[39mAverage Tick speed: 23.000938ms (46), Event tps: 0
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 1.731000us (11955), Event tps: 0
+[;0m  [90m-[39mAverage Tick speed: 17.757673ms (57), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646513ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.645400ms (60), Event tps: 5
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646566ms (60), Event tps: 11
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646303ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.647055ms (60), Event tps: 2
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646606ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.644276ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646961ms (60), Event tps: 5
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.641593ms (60), Event tps: 1
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.645333ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.645865ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646853ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646758ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646763ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646918ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646611ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646980ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.646596ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.647626ms (60), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 16.645410ms (60), Event tps: 0
 
 [0;4;97mThreadEvent:
 [;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m

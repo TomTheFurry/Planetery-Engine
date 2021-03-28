@@ -148,7 +148,9 @@ static void _main() {
 				gl::target->clearColor(vec4(1.0f));
 #endif
 
-
+				#ifdef USE_VULKAN
+				while (!vk::drawFrame([]() {})) {};
+#endif
 
 				// do jobs
 				for (auto& h : _renderJobs) {
@@ -183,6 +185,7 @@ static void _main() {
 					eventTickCount = events::ThreadEvents::counter.exchange(0);
 					logger("Average Tick speed: ", nanoSec(roller.get()), " (",
 					  tickCount, "), Event tps: ", eventTickCount, "\n");
+					vk::testSwitch();
 					nsDeltaPerSec -= NS_PER_S;
 					tps = tickCount;
 					// fpsBox.clear();
@@ -194,9 +197,7 @@ static void _main() {
 				events::ThreadEvents::swapBuffer();	 // Will block and wait for
 													 // screen updates (v-sync)
 #endif
-#ifdef USE_VULKAN
-				vk::tick();
-#endif
+
 			}
 		}
 	} catch (const char* e) {
@@ -213,7 +214,7 @@ static void _main() {
 		gl::end();
 #endif
 #ifdef USE_VULKAN
-		vk::end();
+		vk::end([]() {});
 #endif
 		logger("Thread normally stopped.\n");
 	} catch (...) { events::ThreadEvents::panic(std::current_exception()); }

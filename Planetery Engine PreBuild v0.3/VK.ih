@@ -130,9 +130,8 @@ class PhysicalDevice
 	VkPhysicalDeviceMemoryProperties memProperties;
 	std::vector<VkQueueFamilyProperties> queueFamilies;
 	std::list<LogicalDevice> devices;
-	int rating;
+	float rating;
 	bool meetRequirements;
-	SwapChainSupport swapChain;
 	OSRenderSurface* renderOut = nullptr;
 	QueueFamilyIndex getQueueFamily(
 	  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
@@ -141,10 +140,12 @@ class PhysicalDevice
 	LogicalDevice* makeDevice(
 	  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
 	VkPhysicalDevice operator->() { return d; }
+	const VkPhysicalDevice operator->() const { return d; }
 	bool operator==(const PhysicalDevice& other) const { return d == other.d; }
-	std::weak_ordering operator<=>(const PhysicalDevice& other) const {
+	std::partial_ordering operator<=>(const PhysicalDevice& other) const {
 		return rating <=> other.rating;
 	}
+	SwapChainSupport getSwapChainSupport() const;
 	~PhysicalDevice();
 };
 class LogicalDevice
@@ -157,10 +158,14 @@ class LogicalDevice
 	VkQueue queue;
 	QueueFamilyIndex queueIndex;
 	std::unique_ptr<SwapChain> swapChain;
+	void makeSwapChain(uvec2 size = uvec2(-1));
+	void remakeSwapChain(uvec2 size = uvec2(-1));
 	VkDevice operator->() { return d; }
+	const VkDevice operator->() const { return d; }
 	~LogicalDevice();
 	const PhysicalDevice& pd;
 };
+
 class OSRenderSurface
 {
   public:
@@ -169,23 +174,8 @@ class OSRenderSurface
 	OSRenderSurface(OSRenderSurface&&) = delete;
 	VkSurfaceKHR surface = nullptr;
 	VkSurfaceKHR operator->() { return surface; }
+	const VkSurfaceKHR operator->() const { return surface; }
 	~OSRenderSurface();
-};
-class SwapChain
-{
-  public:
-	SwapChain(const OSRenderSurface& surface, const SwapChainSupport& sp,
-	  const LogicalDevice& device, uvec2 preferredSize,
-	  bool transparentWindow = false);
-	SwapChain(const SwapChain&) = delete;
-	SwapChain(SwapChain&&) = delete;
-	const LogicalDevice& d;
-	VkSwapchainKHR sc;
-	VkSurfaceFormatKHR surfaceFormat;
-	uvec2 pixelSize;
-	std::vector<VkImage> swapChainImages;
-	ImageView getChainImageView(uint index);
-	~SwapChain();
 };
 
 class ImageView
@@ -200,6 +190,26 @@ class ImageView
 	VkImageView imgView;
 	const LogicalDevice& d;
 };
+
+class SwapChain
+{
+  public:
+	SwapChain(const OSRenderSurface& surface, const LogicalDevice& device,
+	  uvec2 preferredSize, bool transparentWindow = false);
+	SwapChain(const SwapChain&) = delete;
+	SwapChain(SwapChain&&) = delete;
+	bool rebuildSwapChain(uvec2 preferredSize, bool transparentWindow = false);
+	const LogicalDevice& d;
+	const OSRenderSurface& sf;
+	VkSwapchainKHR sc;
+	VkSurfaceFormatKHR surfaceFormat;
+	uvec2 pixelSize;
+	std::vector<VkImage> swapChainImages;
+	ImageView getChainImageView(uint index);
+	~SwapChain();
+};
+
+
 
 class ShaderCompiled
 {
@@ -265,9 +275,10 @@ class CommendBuffer
 	void cmdBeginRender(
 	  const RenderPass& rp, const FrameBuffer& fb, vec4 bgColor);
 	void cmdBind(const ShaderPipeline& cb);
-	void cmdBind(const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
+	void cmdBind(
+	  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
 	void cmdDraw(
-	  size_t vCount, size_t iCount = 1, size_t vOffset = 0, size_t iOffset = 0);
+	  uint vCount, uint iCount = 1, uint vOffset = 0, uint iOffset = 0);
 	void cmdEndRender();
 	void endRecording();
 	VkCommandBuffer cb = nullptr;
@@ -328,4 +339,38 @@ class FrameBuffer
 	uvec2 size;
 	VkFramebuffer fb = nullptr;
 	const LogicalDevice& d;
+};
+
+class RenderTick
+{
+	struct CmdStage {
+		const CommendBuffer& cb;
+		uint waitFor;
+		VkPipelineStageFlags waitType;
+		uint signalTo;
+	};
+  public:
+	RenderTick(const LogicalDevice& d, uint syncPointCount, uint startPoint,
+	  uint endPoint);
+	void addCmdStage(const CommendBuffer& cb, uint waitFor,
+	  VkPipelineStageFlags waitType, uint signalTo);
+	void send();
+	void notifyOutdated();
+	bool isOutdated() const { return outdated; }
+	bool isStarted() const { return _waitingForFence; }
+	uint getImageIndex() const { return imageIndex; }
+	bool isCompleted() const;
+	bool waitForCompletion(
+	  ulint timeout = -1) const;  // return false for timeout
+	void forceKill();
+	~RenderTick();	// Will wait for completion
+	const LogicalDevice& d;
+  private:
+	bool _waitingForFence;
+	std::vector<VkFence> _fences;
+	std::vector<VkSemaphore> _semaphores;
+	std::vector<CmdStage> _cmdStages;
+	uint imageIndex;
+	uint _endSync;
+	bool outdated;
 };

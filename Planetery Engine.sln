@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Planetery Engine PreBuild v0.3", "Planetery Engine PreBuild v0.3\Planetery Engine PreBuild v0.3.vcxproj", "{D9F59AE5-8270-4A72-9177-599EFBDC7153}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{CF695DC8-C5DE-42EB-AA70-B7875C058800}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{D9F59AE5-8270-4A72-9177-599EFBDC7153}.Release|x64.Build.0 = Release|x64
 		{D9F59AE5-8270-4A72-9177-599EFBDC7153}.Release|x86.ActiveCfg = Release|Win32
 		{D9F59AE5-8270-4A72-9177-599EFBDC7153}.Release|x86.Build.0 = Release|Win32
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Debug|x64.ActiveCfg = Debug|x64
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Debug|x64.Build.0 = Debug|x64
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Debug|x86.ActiveCfg = Debug|Win32
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Debug|x86.Build.0 = Debug|Win32
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Release|x64.ActiveCfg = Release|x64
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Release|x64.Build.0 = Release|x64
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Release|x86.ActiveCfg = Release|Win32
+		{CF695DC8-C5DE-42EB-AA70-B7875C058800}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
