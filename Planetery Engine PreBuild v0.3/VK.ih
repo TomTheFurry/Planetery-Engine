@@ -48,15 +48,15 @@ namespace _toFormat {
 }
 using namespace vk;
 
-enum class MemoryProperties : uint {
-	local = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-	mappable = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-	coherent = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-	cached = VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
-	lazy = VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT,
+constexpr auto CommendPoolTypeCount = 3;
+enum class CommendPoolType : uint {
+	Default = 0,
+	Shortlived,
+	Resetable,
+	MAX_ENUM
 };
-DECLARE_FLAG_TYPE(MemoryProperties);
 enum class BufferUseType : uint {
+	None = 0,
 	TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 	TransferDst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 	UniformTexel = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT,
@@ -69,11 +69,22 @@ enum class BufferUseType : uint {
 	All = 511,
 };
 DECLARE_FLAG_TYPE(BufferUseType);
+enum class MemoryFeature : uint {
+	None = 0,
+	IndirectWritable = 1,
+	IndirectCopyable = 2,
+	Mappable = 4,
+	Coherent = 8,
+	CoherentMappable = Coherent | Mappable,
+};
+DECLARE_FLAG_TYPE(MemoryFeature);
 enum class CommendBufferUsage : uint {
+	None = 0,
 	Streaming = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 	RenderPassOwned = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
 	ParallelSubmit = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
 };
+
 DECLARE_FLAG_TYPE(CommendBufferUsage);
 enum class BufferInputRate {
 	PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
@@ -103,6 +114,9 @@ class CommendBuffer;
 class FrameBuffer;
 class VertexAttribute;
 class VertexBuffer;
+class RenderTick;
+class CommendPool;
+class Buffer;
 typedef uint QueueFamilyIndex;
 class SwapChainSupport
 {
@@ -135,8 +149,7 @@ class PhysicalDevice
 	OSRenderSurface* renderOut = nullptr;
 	QueueFamilyIndex getQueueFamily(
 	  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
-	uint getMemoryTypeIndex(
-	  uint bitFilter, Flags<MemoryProperties> requirement) const;
+	uint getMemoryTypeIndex(uint bitFilter, Flags<MemoryFeature> feature) const;
 	LogicalDevice* makeDevice(
 	  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
 	VkPhysicalDevice operator->() { return d; }
@@ -151,19 +164,21 @@ class PhysicalDevice
 class LogicalDevice
 {
   public:
-	LogicalDevice(const PhysicalDevice& pd, QueueFamilyIndex queueFamilyIndex);
+	LogicalDevice(PhysicalDevice& pd, QueueFamilyIndex queueFamilyIndex);
 	LogicalDevice(const LogicalDevice&) = delete;
 	LogicalDevice(LogicalDevice&&) noexcept;
 	VkDevice d;
 	VkQueue queue;
 	QueueFamilyIndex queueIndex;
 	std::unique_ptr<SwapChain> swapChain;
+	std::vector<CommendPool> commendPools;
 	void makeSwapChain(uvec2 size = uvec2(-1));
 	void remakeSwapChain(uvec2 size = uvec2(-1));
+	CommendPool& getCommendPool(CommendPoolType type);
 	VkDevice operator->() { return d; }
 	const VkDevice operator->() const { return d; }
 	~LogicalDevice();
-	const PhysicalDevice& pd;
+	PhysicalDevice& pd;
 };
 
 class OSRenderSurface
@@ -181,25 +196,25 @@ class OSRenderSurface
 class ImageView
 {
   public:
-	ImageView(const LogicalDevice& d, VkImageViewCreateInfo createInfo);
+	ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo);
 	ImageView(const ImageView&) = delete;
 	ImageView(ImageView&& other) noexcept;
 	ImageView& operator=(const ImageView&) = delete;
 	ImageView& operator=(ImageView&&) = default;
 	~ImageView();
 	VkImageView imgView;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 
 class SwapChain
 {
   public:
-	SwapChain(const OSRenderSurface& surface, const LogicalDevice& device,
+	SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
 	  uvec2 preferredSize, bool transparentWindow = false);
 	SwapChain(const SwapChain&) = delete;
 	SwapChain(SwapChain&&) = delete;
 	bool rebuildSwapChain(uvec2 preferredSize, bool transparentWindow = false);
-	const LogicalDevice& d;
+	LogicalDevice& d;
 	const OSRenderSurface& sf;
 	VkSwapchainKHR sc;
 	VkSurfaceFormatKHR surfaceFormat;
@@ -214,7 +229,7 @@ class SwapChain
 class ShaderCompiled
 {
   public:
-	ShaderCompiled(const LogicalDevice& d, ShaderType shaderType,
+	ShaderCompiled(LogicalDevice& d, ShaderType shaderType,
 	  const std::string_view& file_name);
 	ShaderCompiled(const ShaderCompiled&) = delete;
 	ShaderCompiled(ShaderCompiled&& other) noexcept;
@@ -222,13 +237,13 @@ class ShaderCompiled
 	VkPipelineShaderStageCreateInfo getCreateInfo() const;
 	ShaderType shaderType;
 	VkShaderModule sm;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 
 class RenderPass
 {
   public:
-	RenderPass(const LogicalDevice& d);
+	RenderPass(LogicalDevice& d);
 	RenderPass(const RenderPass& d) = delete;
 	RenderPass(RenderPass&& d) noexcept;
 	~RenderPass();
@@ -237,13 +252,13 @@ class RenderPass
 	std::vector<VkAttachmentDescription> attachmentTypes;
 	std::vector<std::vector<uint>> subpasses;
 	std::vector<VkSubpassDependency> subpassDependencies;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 
 class ShaderPipeline
 {
   public:
-	ShaderPipeline(const LogicalDevice& device);
+	ShaderPipeline(LogicalDevice& device);
 	ShaderPipeline(const ShaderPipeline&) = delete;
 	ShaderPipeline(ShaderPipeline&& other) noexcept;
 	~ShaderPipeline();
@@ -251,23 +266,23 @@ class ShaderPipeline
 	  VertexAttribute& va, VkViewport viewport, const RenderPass& renderPass);
 	VkPipeline p = nullptr;
 	VkPipelineLayout pl = nullptr;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 
 class CommendPool
 {
   public:
-	CommendPool(const LogicalDevice& device);
+	CommendPool(LogicalDevice& device, CommendPoolType type);
 	CommendPool(const CommendPool&) = delete;
 	CommendPool(CommendPool&& other) noexcept;
 	~CommendPool();
 	VkCommandPool cp = nullptr;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 class CommendBuffer
 {
   public:
-	CommendBuffer(const CommendPool& pool);
+	CommendBuffer(CommendPool& pool);
 	CommendBuffer(const CommendBuffer&) = delete;
 	CommendBuffer(CommendBuffer&& other) noexcept;
 	~CommendBuffer();
@@ -279,37 +294,53 @@ class CommendBuffer
 	  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
 	void cmdDraw(
 	  uint vCount, uint iCount = 1, uint vOffset = 0, uint iOffset = 0);
+	void cmdCopyBuffer(const Buffer& src, Buffer& dst, size_t size,
+	  size_t srcOffset = 0, size_t dstOffset = 0);
 	void cmdEndRender();
 	void endRecording();
 	VkCommandBuffer cb = nullptr;
-	const CommendPool& cp;
+	CommendPool& cp;
 };
+
+
 class Buffer
 {
   public:
-	Buffer(const LogicalDevice& d, VkBufferCreateInfo bufferInfo);
-	Buffer(const LogicalDevice& d, size_t size,
-	  Flags<BufferUseType> usage = BufferUseType::All);
+	Buffer(LogicalDevice& d, size_t size,
+	  Flags<MemoryFeature> neededFeature = MemoryFeature::None,
+	  Flags<BufferUseType> usage = BufferUseType::None);
 	Buffer(const Buffer&) = delete;
 	Buffer(Buffer&& other) noexcept;
 	~Buffer();
-	void write(size_t size, size_t offset, void* data, bool flush = true);
+	void* map();
+	void* map(size_t size, size_t offset);
+	void flush();
 	void flush(size_t size, size_t offset);
-	void update(size_t size, size_t offset);
-	void writeAll(void* data, bool flush = true);
-	void flushAll();
-	void updateAll();
+	void unmap();
+	void cmdIndirectWrite(RenderTick& rt, CommendBuffer& cp, void* data);
+	void cmdIndirectWrite(RenderTick& rt, CommendBuffer& cp, size_t size,
+	  size_t offset, void* data);
+	Buffer& getStagingBuffer(RenderTick& rt);
+	Buffer& getStagingBuffer(RenderTick& rt, size_t size);
+	void blockingIndirectWrite(const void* data);
+	void blockingIndirectWrite(CommendPool& cp, const void* data);
+	void blockingIndirectWrite(size_t size, size_t offset, const void* data);
+	void blockingIndirectWrite(
+	  CommendPool& cp, size_t size, size_t offset, const void* data);
+	//TODO: Make a remake() function
 	size_t size;
 	size_t minAlignment;
+	Flags<MemoryFeature> feature;
 	VkBuffer b = nullptr;
 	VkDeviceMemory dm = nullptr;
 	void* mappedPtr = nullptr;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 class VertexBuffer: public Buffer
 {
   public:
-	VertexBuffer(const LogicalDevice& d, size_t size, void* data = nullptr);
+	VertexBuffer(LogicalDevice& d, size_t size,
+	  Flags<MemoryFeature> neededFeature = MemoryFeature::None);
 };
 
 class VertexAttribute
@@ -331,14 +362,14 @@ class VertexAttribute
 class FrameBuffer
 {
   public:
-	FrameBuffer(const LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+	FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
 	  std::vector<ImageView*> attachments, uint layers = 1);
 	FrameBuffer(const FrameBuffer&) = delete;
 	FrameBuffer(FrameBuffer&& other) noexcept;
 	~FrameBuffer();
 	uvec2 size;
 	VkFramebuffer fb = nullptr;
-	const LogicalDevice& d;
+	LogicalDevice& d;
 };
 
 class RenderTick
@@ -350,8 +381,8 @@ class RenderTick
 		uint signalTo;
 	};
   public:
-	RenderTick(const LogicalDevice& d, uint syncPointCount, uint startPoint,
-	  uint endPoint);
+	RenderTick(
+	  LogicalDevice& d, uint syncPointCount, uint startPoint, uint endPoint);
 	void addCmdStage(const CommendBuffer& cb, uint waitFor,
 	  VkPipelineStageFlags waitType, uint signalTo);
 	void send();
@@ -362,14 +393,19 @@ class RenderTick
 	bool isCompleted() const;
 	bool waitForCompletion(
 	  ulint timeout = -1) const;  // return false for timeout
+	Buffer& makeStagingBuffer(size_t size);
+	CommendBuffer& makeSingleUseCommendBuffer(CommendPool& cp);
 	void forceKill();
 	~RenderTick();	// Will wait for completion
-	const LogicalDevice& d;
+
+	LogicalDevice& d;
   private:
 	bool _waitingForFence;
 	std::vector<VkFence> _fences;
 	std::vector<VkSemaphore> _semaphores;
 	std::vector<CmdStage> _cmdStages;
+	std::list<Buffer> _stagingBuffers;
+	std::list<CommendBuffer> _sigleUseCommendBuffer;
 	uint imageIndex;
 	uint _endSync;
 	bool outdated;

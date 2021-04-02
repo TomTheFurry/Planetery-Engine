@@ -66,7 +66,7 @@ constexpr const char* DEVICE_EXTENSIONS[] = {
 static VkInstance _vk = nullptr;
 
 LogicalDevice::LogicalDevice(
-  const PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
+  PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
   pd(p) {
 	static const float One = 1.0f;
 	queueIndex = queueFamilyIndex;
@@ -89,8 +89,12 @@ LogicalDevice::LogicalDevice(
 		throw "VulkanCreateGraphicalDeviceFailure";
 	}
 	vkGetDeviceQueue(d, queueFamilyIndex, 0, &queue);
+	commendPools.reserve(static_cast<uint>(CommendPoolType::MAX_ENUM));
+	for (uint i = 0; i < static_cast<uint>(CommendPoolType::MAX_ENUM); i++)
+		commendPools.emplace_back(*this, static_cast<CommendPoolType>(i));
 }
-LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept: pd(o.pd) {
+LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept:
+  pd(o.pd), commendPools(std::move(o.commendPools)) {
 	queue = o.queue;
 	queueIndex = o.queueIndex;
 	d = o.d;
@@ -112,8 +116,16 @@ void LogicalDevice::remakeSwapChain(uvec2 size) {
 		logger.closeMessage();
 	};
 }
+CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
+	if constexpr (DO_SAFETY_CHECK)
+		if (static_cast<uint>(type)
+			>= static_cast<uint>(CommendPoolType::MAX_ENUM))
+			throw "VulkanInvalidEnum";
+	return commendPools.at(static_cast<uint>(type));
+}
 LogicalDevice::~LogicalDevice() {
 	if (swapChain) swapChain.reset();
+	commendPools.clear();
 	if (d) vkDestroyDevice(d, nullptr);
 }
 
@@ -213,11 +225,20 @@ QueueFamilyIndex PhysicalDevice::getQueueFamily(
 	return uint(-1);
 }
 uint PhysicalDevice::getMemoryTypeIndex(
-  uint bitFilter, Flags<MemoryProperties> requirement) const {
+  uint bitFilter, Flags<MemoryFeature> feature) const {
+	uint requirement = 0;
+	if (feature.has(MemoryFeature::Mappable)) {
+		requirement |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		if (feature.has(MemoryFeature::Coherent)) {
+			requirement |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		} else {
+			requirement |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+		}
+	}
 	for (uint i = 0; i < memProperties.memoryTypeCount; i++) {
 		if ((bitFilter & (1 << i))
-			&& (memProperties.memoryTypes[i].propertyFlags & (uint)requirement)
-				 == (uint)requirement) {
+			&& (memProperties.memoryTypes[i].propertyFlags & requirement)
+				 == requirement) {
 			return i;
 		}
 	}
@@ -273,7 +294,7 @@ VkSurfaceFormatKHR SwapChainSupport::getFormat() const {
 }
 VkPresentModeKHR SwapChainSupport::getPresentMode(
   bool preferRelaxedVBlank) const {
-	// return VK_PRESENT_MODE_IMMEDIATE_KHR;
+	// return VK_PRESENT_MODE_MAILBOX_KHR;
 	if (preferRelaxedVBlank
 		&& std::find(presentModes.begin(), presentModes.end(),
 			 VK_PRESENT_MODE_FIFO_RELAXED_KHR)
@@ -294,8 +315,8 @@ uvec2 SwapChainSupport::getSwapChainSize(uvec2 ps) const {
 	return glm::max(min, glm::min(max, ps));
 }
 
-SwapChain::SwapChain(const OSRenderSurface& surface,
-  const LogicalDevice& device, uvec2 preferredSize, bool transparentWindow):
+SwapChain::SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
+  uvec2 preferredSize, bool transparentWindow):
   d(device),
   sf(surface) {
 	sc = nullptr;
@@ -364,8 +385,7 @@ SwapChain::~SwapChain() {
 	if (sc != nullptr) vkDestroySwapchainKHR(d.d, sc, nullptr);
 }
 
-ImageView::ImageView(const LogicalDevice& d, VkImageViewCreateInfo createInfo):
-  d(d) {
+ImageView::ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo): d(d) {
 	if (vkCreateImageView(d.d, &createInfo, nullptr, &imgView) != VK_SUCCESS) {
 		logger("Vulkan failed to make Image View form VkImage!\n");
 		throw "VulkanCreateImageViewFailure";
@@ -379,8 +399,8 @@ ImageView::~ImageView() {
 	if (imgView != nullptr) vkDestroyImageView(d.d, imgView, nullptr);
 }
 
-ShaderCompiled::ShaderCompiled(const LogicalDevice& device, ShaderType st,
-  const std::string_view& file_name):
+ShaderCompiled::ShaderCompiled(
+  LogicalDevice& device, ShaderType st, const std::string_view& file_name):
   d(device) {
 	shaderType = st;
 	std::vector<char> fBuffer;
@@ -431,7 +451,7 @@ VkPipelineShaderStageCreateInfo ShaderCompiled::getCreateInfo() const {
 	return sInfo;
 }
 
-RenderPass::RenderPass(const LogicalDevice& device): d(device) {}
+RenderPass::RenderPass(LogicalDevice& device): d(device) {}
 RenderPass::RenderPass(RenderPass&& o) noexcept: d(o.d) {
 	rp = o.rp;
 	o.rp = nullptr;
@@ -472,7 +492,7 @@ RenderPass::~RenderPass() {
 	if (rp != nullptr) vkDestroyRenderPass(d.d, rp, nullptr);
 }
 
-ShaderPipeline::ShaderPipeline(const LogicalDevice& device): d(device) {}
+ShaderPipeline::ShaderPipeline(LogicalDevice& device): d(device) {}
 ShaderPipeline::ShaderPipeline(ShaderPipeline&& other) noexcept: d(other.d) {}
 ShaderPipeline::~ShaderPipeline() {
 	if (pl != nullptr) vkDestroyPipelineLayout(d.d, pl, nullptr);
@@ -590,13 +610,23 @@ void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
 	}
 }
 
-CommendPool::CommendPool(const LogicalDevice& device): d(device) {
+CommendPool::CommendPool(LogicalDevice& device, CommendPoolType type):
+  d(device) {
 	VkCommandPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	poolInfo.queueFamilyIndex = d.queueIndex;
-	poolInfo.flags = 0;	 // Optional
+	switch (type) {
+	case CommendPoolType::Default: poolInfo.flags = 0; break;
+	case CommendPoolType::Shortlived:
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+		break;
+	case CommendPoolType::Resetable:
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		break;
+	default: throw "VulkanInvalidEnum";
+	}
 	if (vkCreateCommandPool(d.d, &poolInfo, nullptr, &cp) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create command pool!");
+		throw "VulkanCreateCommandPoolFailed";
 	}
 }
 CommendPool::CommendPool(CommendPool&& other) noexcept: d(other.d) {
@@ -607,7 +637,7 @@ CommendPool::~CommendPool() {
 	if (cp != nullptr) vkDestroyCommandPool(d.d, cp, nullptr);
 }
 
-CommendBuffer::CommendBuffer(const CommendPool& pool): cp(pool) {
+CommendBuffer::CommendBuffer(CommendPool& pool): cp(pool) {
 	VkCommandBufferAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.commandPool = cp.cp;
@@ -661,6 +691,14 @@ void CommendBuffer::cmdDraw(
   uint vCount, uint iCount, uint vOffset, uint iOffset) {
 	vkCmdDraw(cb, vCount, iCount, vOffset, iOffset);
 }
+void CommendBuffer::cmdCopyBuffer(const Buffer& src, Buffer& dst, size_t size,
+  size_t srcOffset, size_t dstOffset) {
+	VkBufferCopy bInfo{};
+	bInfo.size = size;
+	bInfo.srcOffset = srcOffset;
+	bInfo.dstOffset = dstOffset;
+	vkCmdCopyBuffer(cb, src.b, dst.b, 1, &bInfo);
+}
 void CommendBuffer::cmdEndRender() { vkCmdEndRenderPass(cb); }
 void CommendBuffer::endRecording() {
 	if (vkEndCommandBuffer(cb) != VK_SUCCESS) {
@@ -668,50 +706,49 @@ void CommendBuffer::endRecording() {
 	}
 }
 
-inline void _makeBuffer(const LogicalDevice& d, VkBuffer& out,
-  VkDeviceMemory& outdm, const VkBufferCreateInfo& cInfo) {
-	if (vkCreateBuffer(d.d, &cInfo, nullptr, &out) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create buffer!");
-	}
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(d.d, out, &memRequirements);
-	Flags<MemoryProperties> memProp = MemoryProperties::mappable;
-	// memProp = memProp | MemoryProperties::coherent;
-	uint memTypeIndex =
-	  d.pd.getMemoryTypeIndex(memRequirements.memoryTypeBits, memProp);
-	if (memTypeIndex == uint(-1)) {
-		throw std::runtime_error("failed to create buffer!");
-	}
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = memTypeIndex;
-	if (vkAllocateMemory(d.d, &allocInfo, nullptr, &outdm) != VK_SUCCESS) {
-		throw std::runtime_error("failed to allocate buffer memory!");
-	}
-	vkBindBufferMemory(d.d, out, outdm, 0);
-}
-Buffer::Buffer(
-  const LogicalDevice& device, size_t s, Flags<BufferUseType> usage):
+Buffer::Buffer(LogicalDevice& device, size_t s,
+  Flags<MemoryFeature> neededFeature, Flags<BufferUseType> usage):
   d(device) {
 	size = s;
-	minAlignment = d.pd.properties.limits.nonCoherentAtomSize;
+	feature = neededFeature;
+	if (feature.has(MemoryFeature::Mappable)) {
+		if (feature.has(MemoryFeature::Coherent))
+			minAlignment = d.pd.properties.limits.nonCoherentAtomSize;
+		else
+			minAlignment = d.pd.properties.limits.minMemoryMapAlignment;
+	} else {
+		minAlignment = 1;
+	}
+	if (feature.has(MemoryFeature::IndirectCopyable)) {
+		usage.set(BufferUseType::TransferSrc);
+	}
+	if (feature.has(MemoryFeature::IndirectWritable)) {
+		usage.set(BufferUseType::TransferDst);
+	}
+
 	VkBufferCreateInfo bInfo{};
 	bInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bInfo.size = size;
 	bInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	bInfo.usage = (VkBufferUsageFlags)usage;
-	_makeBuffer(d, b, dm, bInfo);
-	vkMapMemory(d.d, dm, 0, size, 0, &mappedPtr);
-	assert(mappedPtr != nullptr);
-}
-Buffer::Buffer(const LogicalDevice& device, VkBufferCreateInfo bInfo):
-  d(device) {
-	size = bInfo.size;
-	minAlignment = d.pd.properties.limits.nonCoherentAtomSize;
-	_makeBuffer(d, b, dm, bInfo);
-	vkMapMemory(d.d, dm, 0, size, 0, &mappedPtr);
-	assert(mappedPtr != nullptr);
+	if (vkCreateBuffer(d.d, &bInfo, nullptr, &b) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create buffer!");
+	}
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(d.d, b, &memRequirements);
+	uint memTypeIndex =
+	  d.pd.getMemoryTypeIndex(memRequirements.memoryTypeBits, neededFeature);
+	// TODO: Add fallback
+	if (memTypeIndex == -1) throw "VulkanFailedToGetMemoryType";
+	// TODO: Fix allocator for custom allocation in PhysicalDevice
+	VkMemoryAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = memTypeIndex;
+	if (vkAllocateMemory(d.d, &allocInfo, nullptr, &dm) != VK_SUCCESS) {
+		throw std::runtime_error("failed to allocate buffer memory!");
+	}
+	vkBindBufferMemory(d.d, b, dm, 0);
 }
 Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
 	size = other.size;
@@ -719,32 +756,60 @@ Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
 	b = other.b;
 	dm = other.dm;
 	mappedPtr = other.mappedPtr;
+	feature = other.feature;
 	other.b = nullptr;
 	other.dm = nullptr;
 	other.mappedPtr = nullptr;
 }
 Buffer::~Buffer() {
-	if (mappedPtr != nullptr) vkUnmapMemory(d.d, dm);
 	if (b != nullptr) vkDestroyBuffer(d.d, b, nullptr);
 	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
 }
-void Buffer::write(size_t nSize, size_t offset, void* data, bool doFlush) {
-	assert(nSize + offset <= size);
-	assert(mappedPtr != nullptr);
-	memcpy((std::byte*)(mappedPtr) + offset, data, nSize);
-	if (doFlush) flush(nSize, offset);
+void* Buffer::map() {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::Mappable))
+			throw "VulkanBufferNotMappable";
+		if (mappedPtr != nullptr) throw "VulkanBufferAlreadyMapped";
+	}
+	vkMapMemory(d.d, dm, 0, VK_WHOLE_SIZE, 0, &mappedPtr);
+	return mappedPtr;
+}
+void* Buffer::map(size_t nSize, size_t offset) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
+		if (!feature.has(MemoryFeature::Mappable))
+			throw "VulkanBufferNotMappable";
+		if (mappedPtr != nullptr) throw "VulkanBufferAlreadyMapped";
+		if (nSize % minAlignment != 0) throw "VulkanBufferNotOnMinAlignment";
+		if (offset % minAlignment != 0) throw "VulkanBufferNotOnMinAlignment";
+	}
+	vkMapMemory(d.d, dm, offset, nSize, 0, &mappedPtr);
+	return mappedPtr;
+}
+void Buffer::flush() {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::Mappable))
+			throw "VulkanBufferNotMappable";
+		if (mappedPtr == nullptr) throw "VulkanBufferNotMapped";
+		if (feature.has(MemoryFeature::Coherent))
+			logger("Warning: Vulkan called flush() on coherent buffer.\n");
+	}
+	VkMappedMemoryRange r{};
+	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+	r.memory = dm;
+	r.offset = 0;
+	r.size = VK_WHOLE_SIZE;
+	vkFlushMappedMemoryRanges(d.d, 1, &r);
 }
 void Buffer::flush(size_t nSize, size_t offset) {
-	assert(nSize + offset <= size);
-	assert(mappedPtr != nullptr);
-	size_t offsetAlign = offset % minAlignment;
-	if (offsetAlign != 0) {
-		offset -= offsetAlign;
-		nSize += offsetAlign;
+	if constexpr (DO_SAFETY_CHECK) {
+		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
+		if (!feature.has(MemoryFeature::Mappable))
+			throw "VulkanBufferNotMappable";
+		if (mappedPtr == nullptr) throw "VulkanBufferNotMapped";
+		if (nSize % minAlignment != 0) throw "VulkanBufferNotOnMinAlignment";
+		if (offset % minAlignment != 0) throw "VulkanBufferNotOnMinAlignment";
 	}
-	size_t nSizeAlign = nSize % minAlignment;
-	if (nSizeAlign != 0) { nSize += minAlignment - nSizeAlign; }
-	if (offset == 0 && nSize >= size) { nSize = VK_WHOLE_SIZE; }
 	VkMappedMemoryRange r{};
 	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 	r.memory = dm;
@@ -752,49 +817,122 @@ void Buffer::flush(size_t nSize, size_t offset) {
 	r.offset = offset;
 	vkFlushMappedMemoryRanges(d.d, 1, &r);
 }
-void Buffer::update(size_t nSize, size_t offset) {
-	assert(nSize + offset <= size);
-	assert(mappedPtr != nullptr);
-	size_t offsetAlign = offset % minAlignment;
-	if (offsetAlign != 0) {
-		offset -= offsetAlign;
-		nSize += offsetAlign;
+void Buffer::unmap() {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::Mappable))
+			throw "VulkanBufferNotMappable";
+		if (mappedPtr == nullptr) throw "VulkanBufferNotMapped";
 	}
-	size_t nSizeAlign = nSize % minAlignment;
-	if (nSizeAlign != 0) { nSize += minAlignment - nSizeAlign; }
-	if (offset == 0 && nSize >= size) { nSize = VK_WHOLE_SIZE; }
-	VkMappedMemoryRange r{};
-	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
-	r.size = nSize;
-	r.offset = offset;
-	vkInvalidateMappedMemoryRanges(d.d, 1, &r);
-}
-void Buffer::writeAll(void* data, bool doFlush) {
-	memcpy(mappedPtr, data, size);
-	if (doFlush) flushAll();
-}
-void Buffer::flushAll() {
-	VkMappedMemoryRange r{};
-	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
-	r.size = VK_WHOLE_SIZE;
-	r.offset = 0;
-	vkFlushMappedMemoryRanges(d.d, 1, &r);
-}
-void Buffer::updateAll() {
-	VkMappedMemoryRange r{};
-	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
-	r.size = VK_WHOLE_SIZE;
-	r.offset = 0;
-	vkInvalidateMappedMemoryRanges(d.d, 1, &r);
+	vkUnmapMemory(d.d, dm);
 }
 
-VertexBuffer::VertexBuffer(const LogicalDevice& d, size_t size, void* data):
-  Buffer(d, size) {
-	if (data != nullptr) writeAll(data);
+void Buffer::cmdIndirectWrite(RenderTick& rt, CommendBuffer& cb, void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanBufferNotIndirectWritable";
+	}
+	auto& s = rt.makeStagingBuffer(size);
+	memcpy(s.map(), data, size);
+	s.unmap();
+	cb.cmdCopyBuffer(s, *this, size);
 }
+void Buffer::cmdIndirectWrite(
+  RenderTick& rt, CommendBuffer& cb, size_t nSize, size_t offset, void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanBufferNotIndirectWritable";
+		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
+	}
+	auto& s = rt.makeStagingBuffer(nSize);
+	memcpy(s.map(), data, nSize);
+	s.unmap();
+	cb.cmdCopyBuffer(s, *this, nSize, 0, offset);
+}
+Buffer& Buffer::getStagingBuffer(RenderTick& rt) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanBufferNotIndirectWritable";
+	}
+	return rt.makeStagingBuffer(size);
+}
+Buffer& Buffer::getStagingBuffer(RenderTick& rt, size_t nSize) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanBufferNotIndirectWritable";
+		if (nSize > size) throw "VulkanBufferOutOfRange";
+	}
+	return rt.makeStagingBuffer(size);
+}
+void Buffer::blockingIndirectWrite(const void* data) {
+	blockingIndirectWrite(d.getCommendPool(CommendPoolType::Shortlived), data);
+}
+void Buffer::blockingIndirectWrite(CommendPool& cp, const void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanBufferNotIndirectWritable";
+	}
+	auto sg = Buffer(
+	  d, size, MemoryFeature::Mappable | MemoryFeature::IndirectCopyable);
+	memcpy(sg.map(), data, size);
+	sg.flush();
+	sg.unmap();
+	auto cb = CommendBuffer(cp);
+	cb.startRecording(CommendBufferUsage::Streaming);
+	cb.cmdCopyBuffer(sg, *this, size);
+	cb.endRecording();
+	VkFenceCreateInfo fInfo{};
+	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	VkFence fence;
+	vkCreateFence(d.d, &fInfo, nullptr, &fence);
+	VkSubmitInfo sInfo{};
+	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	sInfo.waitSemaphoreCount = 0;
+	sInfo.commandBufferCount = 1;
+	sInfo.pCommandBuffers = &cb.cb;
+	sInfo.signalSemaphoreCount = 0;
+	vkQueueSubmit(d.queue, 1, &sInfo, fence);
+	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
+	vkDestroyFence(d.d, fence, nullptr);
+}
+void Buffer::blockingIndirectWrite(
+  size_t size, size_t offset, const void* data) {
+	blockingIndirectWrite(
+	  d.getCommendPool(CommendPoolType::Shortlived), size, offset, data);
+}
+void Buffer::blockingIndirectWrite(
+  CommendPool& cp, size_t nSize, size_t offset, const void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanBufferNotIndirectWritable";
+		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
+	}
+	auto sg = Buffer(
+	  d, nSize, MemoryFeature::Mappable | MemoryFeature::IndirectCopyable);
+	memcpy(sg.map(), data, nSize);
+	sg.flush();
+	sg.unmap();
+	auto cb = CommendBuffer(cp);
+	cb.startRecording(CommendBufferUsage::Streaming);
+	cb.cmdCopyBuffer(sg, *this, nSize, 0, offset);
+	cb.endRecording();
+	VkFenceCreateInfo fInfo{};
+	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	VkFence fence;
+	vkCreateFence(d.d, &fInfo, nullptr, &fence);
+	VkSubmitInfo sInfo{};
+	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	sInfo.waitSemaphoreCount = 0;
+	sInfo.commandBufferCount = 1;
+	sInfo.pCommandBuffers = &cb.cb;
+	sInfo.signalSemaphoreCount = 0;
+	vkQueueSubmit(d.queue, 1, &sInfo, fence);
+	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
+	vkDestroyFence(d.d, fence, nullptr);
+}
+
+VertexBuffer::VertexBuffer(
+  LogicalDevice& d, size_t size, Flags<MemoryFeature> neededFeature):
+  Buffer(d, size, neededFeature, BufferUseType::Vertex) {}
 VertexAttribute::VertexAttribute() {}
 void VertexAttribute::addAttribute(
   uint bindingPoint, uint size, VkFormat format) {
@@ -823,8 +961,8 @@ VkPipelineVertexInputStateCreateInfo VertexAttribute::getStructForPipeline() {
 	return vis;
 }
 
-FrameBuffer::FrameBuffer(const LogicalDevice& device, RenderPass& rp,
-  uvec2 nSize, std::vector<ImageView*> attachments, uint layers):
+FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+  std::vector<ImageView*> attachments, uint layers):
   d(device) {
 	size = nSize;
 	std::vector<VkImageView> att;
@@ -852,7 +990,7 @@ FrameBuffer::~FrameBuffer() {
 }
 
 RenderTick::RenderTick(
-  const LogicalDevice& ld, uint spCount, uint startPoint, uint endPoint):
+  LogicalDevice& ld, uint spCount, uint startPoint, uint endPoint):
   d(ld) {
 	_waitingForFence = false;
 	_semaphores.resize(spCount);
@@ -891,6 +1029,7 @@ void RenderTick::send() {
 		submitInfo.pCommandBuffers = &s.cb.cb;
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = &_semaphores.at(s.signalTo);
+		//TODO: Submit them all at once
 		if (vkQueueSubmit(d.queue, 1, &submitInfo, _fences.at(i))
 			!= VK_SUCCESS) {
 			outdated = true;
@@ -928,6 +1067,13 @@ bool RenderTick::waitForCompletion(ulint timeout) const {
 			  d.d, (uint)_fences.size(), _fences.data(), VK_TRUE, timeout)
 			== VK_SUCCESS);
 }
+Buffer& RenderTick::makeStagingBuffer(size_t size) {
+	return _stagingBuffers.emplace_back(
+	  d, size, MemoryFeature::Mappable | MemoryFeature::IndirectCopyable);
+}
+CommendBuffer& RenderTick::makeSingleUseCommendBuffer(CommendPool& cp) {
+	return _sigleUseCommendBuffer.emplace_back(cp);
+}
 void RenderTick::forceKill() {}
 RenderTick::~RenderTick() {
 	while (!waitForCompletion()) {};
@@ -935,6 +1081,7 @@ RenderTick::~RenderTick() {
 	for (auto& f : _fences) vkDestroyFence(d.d, f, nullptr);
 	for (auto& s : _semaphores) vkDestroySemaphore(d.d, s, nullptr);
 }
+
 
 
 
@@ -1130,7 +1277,6 @@ static std::vector<ImageView> _swapchainViews{};
 static std::vector<FrameBuffer> _frameBuffers{};
 static VkSemaphore _imageAvailableSemaphore;
 static VkSemaphore _renderFinishedSemaphore;
-static CommendPool* _commendPool = nullptr;
 static std::vector<CommendBuffer> _commendBuffers{};
 constexpr auto MAX_FRAMES_IN_FLIGHT = 2;
 static std::array<RenderTick*, MAX_FRAMES_IN_FLIGHT> _renderFrames{nullptr};
@@ -1253,13 +1399,12 @@ void vk::init() {
 	makeRenderingLogicalDevice();
 	// Make SwapChain and pipeline
 	loadSwapchain();
-	// Make commend pool
-	_commendPool = new CommendPool(*_renderDevice);
 
 	// Test programe
 	// Make vertex buffer
 	_vertBuff = new VertexBuffer(
-	  *_renderDevice, sizeof(testVert), (void*)std::data(testVert));
+	  *_renderDevice, sizeof(testVert), MemoryFeature::IndirectWritable);
+	_vertBuff->blockingIndirectWrite((void*)std::data(testVert));
 }
 
 bool vk::drawFrame(void (*drawFunc)()) {
@@ -1280,8 +1425,8 @@ bool vk::drawFrame(void (*drawFunc)()) {
 			  _renderDevice->swapChain->swapChainImages.size());
 			for (uint i = 0;
 				 i < _renderDevice->swapChain->swapChainImages.size(); i++) {
-				auto& cb = _commendBuffers.emplace_back(*_commendPool);
-				cb.startRecording(CommendBufferUsage::ParallelSubmit);
+				auto& cb = _commendBuffers.emplace_back(_renderDevice->getCommendPool(CommendPoolType::Default));
+				cb.startRecording(CommendBufferUsage::None);
 				cb.cmdBeginRender(
 				  *_renderPass, _frameBuffers.at(i), vec4(1., 0., 0., 0.));
 				cb.cmdBind(*_pipeline);
@@ -1320,14 +1465,11 @@ void vk::checkStatus() noexcept(false) {
 void vk::end(void (*cleanupFunc)()) {
 	logger("VK Interface end.\n");
 	unloadSwapchain();
-
 	cleanupFunc();
 	// testPrograme
 	_commendBuffers.clear();
 	if (_vertBuff != nullptr) delete _vertBuff;
 	// testPrograme end
-
-	if (_commendPool != nullptr) delete _commendPool;
 	_physicalDevices.clear();
 	if (_OSSurface != nullptr) delete _OSSurface;
 	if (_debugMessenger)
@@ -1342,9 +1484,9 @@ void vk::notifyOutdatedSwapchain() {
 static bool useA = true;
 void vk::testSwitch() {
 	if (useA) {
-		_vertBuff->writeAll((void*)std::data(testVert2));
+		_vertBuff->blockingIndirectWrite((void*)std::data(testVert2));
 	} else {
-		_vertBuff->writeAll((void*)std::data(testVert));
+		_vertBuff->blockingIndirectWrite((void*)std::data(testVert));
 	}
 	useA = !useA;
 }
