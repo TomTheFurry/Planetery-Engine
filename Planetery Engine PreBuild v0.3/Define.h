@@ -3,6 +3,7 @@
 
 #define USE_VULKAN
 //#define USE_OPENGL
+#define SAFETY_CHECK
 
 typedef unsigned int uint;
 typedef unsigned long long int ulint;
@@ -55,4 +56,10 @@ template<typename T> std::string byte(T B) {
 constexpr bool IS_DEBUG_MODE = true;
 #else
 constexpr bool IS_DEBUG_MODE = false;
+#endif
+
+#ifdef SAFETY_CHECK
+constexpr bool DO_SAFETY_CHECK = true;
+#else
+constexpr bool DO_SAFETY_CHECK = false;
 #endif
