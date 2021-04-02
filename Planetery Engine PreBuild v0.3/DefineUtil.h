@@ -7,23 +7,63 @@
 
 #include "Define.h"
 
+
 // typesafe flag decil
-template<typename T> class Flags
-{};
-#define DECLARE_FLAG_TYPE(__type)                         \
-	template<> class Flags<__type>                        \
-	{                                                     \
-		using value = std::underlying_type<__type>::type; \
-		value _v;                                         \
-	  public:                                             \
-		Flags() { _v = 0; }                               \
-		Flags(__type f) { _v = static_cast<value>(f); }   \
-		Flags(value f) { _v = f; }                        \
-		explicit operator value() { return _v; }          \
-		Flags operator|(Flags b) { return _v | b._v; }    \
-		Flags operator&(Flags b) { return _v & b._v; }    \
-		Flags operator^(Flags b) { return _v ^ b._v; }    \
+template<typename FlagType> class Flags
+{
+	using value = std::underlying_type<FlagType>::type;
+	value _v;
+  public:
+	Flags() { _v = 0; }
+	Flags(FlagType f) { _v = static_cast<value>(f); }
+	Flags(value f) { _v = f; }
+	explicit operator value() { return _v; }
+	operator bool() { return _v != 0; }
+	Flags operator|(Flags b) { return _v | b._v; }
+	Flags operator|(FlagType f) { return _v | static_cast<value>(f); }
+	Flags operator&(Flags b) { return _v & b._v; }
+	Flags operator&(FlagType f) { return _v & static_cast<value>(f); }
+	Flags operator^(Flags b) { return _v ^ b._v; }
+	Flags operator^(FlagType f) { return _v ^ static_cast<value>(f); }
+
+	Flags& operator|=(Flags b) { return (_v |= b._v, *this); }
+	Flags& operator|=(FlagType f) {
+		return (_v |= static_cast<value>(f), *this);
 	}
+	Flags& operator&=(Flags b) { return (_v &= b._v, *this); }
+	Flags& operator&=(FlagType f) {
+		return (_v &= static_cast<value>(f), *this);
+	}
+	Flags& operator^=(Flags b) { return (_v ^= b._v, *this); }
+	Flags& operator^=(FlagType f) {
+		return (_v ^= static_cast<value>(f), *this);
+	}
+	bool has(Flags b) { return _v & b._v; }
+	bool has(FlagType f) { return _v & static_cast<value>(f); }
+	Flags& set(Flags b) { return (_v |= b._v, *this); }
+	Flags& set(FlagType f) { return (_v |= static_cast<value>(f), *this); }
+	Flags& unset(Flags b) { return (_v |= ~b._v, *this); }
+	Flags& unset(FlagType f) { return (_v |= ~static_cast<value>(f), *this); }
+};
+#define DECLARE_FLAG_TYPE(__type)                                    \
+	Flags<__type> operator|(__type l, __type r) {                    \
+		using value = std::underlying_type<__type>::type;          \
+		return Flags<__type>(static_cast<value>(l) | static_cast<value>(r)); \
+	}                                                                \
+	Flags<__type> operator&(__type l, __type r) {                    \
+		using value = std::underlying_type<__type>::type;          \
+		return Flags<__type>(static_cast<value>(l) & static_cast<value>(r)); \
+	}                                                                \
+	Flags<__type> operator^(__type l, __type r) {                    \
+		using value = std::underlying_type<__type>::type;          \
+		return Flags<__type>(static_cast<value>(l) ^ static_cast<value>(r)); \
+	}                                                                \
+	Flags<__type> operator~(__type r) {                              \
+		using value = std::underlying_type<__type>::type;          \
+		return Flags<__type>(~static_cast<value>(r));                        \
+	}
+
+
 template<typename T> typename Flags<T>::value operator|(T a, T b) {
 	return a | b;
 }
