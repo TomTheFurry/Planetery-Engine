@@ -4,7 +4,8 @@
 #define USE_VULKAN
 //#define USE_OPENGL
 #define SAFETY_CHECK
-
+typedef unsigned short usint;
+typedef signed short sint;
 typedef unsigned int uint;
 typedef unsigned long long int ulint;
 typedef long long int lint;
