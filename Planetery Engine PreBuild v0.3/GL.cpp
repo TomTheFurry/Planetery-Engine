@@ -702,7 +702,7 @@ void gl::RenderTarget::setViewport(uint x, uint y, uint width, uint height) {
 void gl::RenderTarget::clearColor(vec4 color, bool clearDepth) {
 	activateFrameBuffer();
 	glClearColor(color.r, color.g, color.b, color.a);
-	glClear(GL_COLOR_BUFFER_BIT | (clearDepth & GL_DEPTH_BUFFER_BIT));
+	glClear(GL_COLOR_BUFFER_BIT | (clearDepth ? GL_DEPTH_BUFFER_BIT : 0));
 }
 
 void RenderTarget::drawArrays(GeomType mode, uint first, size_t count) {
