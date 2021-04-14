@@ -1,17 +1,19 @@
-#define DECLARE_FLAG_TYPE(__type)                                    \
-	Flags<__type> operator|(__type l, __type r) {                    \
-		using value = std::underlying_type<FlagType>::type;          \
-		return Flags(static_cast<value>(l) | static_cast<value>(r)); \
-	}                                                                \
-	Flags<__type> operator&(__type l, __type r) {                    \
-		using value = std::underlying_type<FlagType>::type;          \
-		return Flags(static_cast<value>(l) & static_cast<value>(r)); \
-	}                                                                \
-	Flags<__type> operator^(__type l, __type r) {                    \
-		using value = std::underlying_type<FlagType>::type;          \
-		return Flags(static_cast<value>(l) ^ static_cast<value>(r)); \
-	}                                                                \
-	Flags<__type> operator~(__type r) {                              \
-		using value = std::underlying_type<FlagType>::type;          \
-		return Flags(~static_cast<value>(l));                        \
+#define DECLARE_FLAG_TYPE(__type)                                            \
+	Flags<__type> operator|(__type l, __type r) {                            \
+		using value = std::underlying_type<__type>::type;                    \
+		return Flags<__type>(static_cast<value>(l) | static_cast<value>(r)); \
+	}                                                                        \
+	Flags<__type> operator&(__type l, __type r) {                            \
+		using value = std::underlying_type<__type>::type;                    \
+		return Flags<__type>(static_cast<value>(l) & static_cast<value>(r)); \
+	}                                                                        \
+	Flags<__type> operator^(__type l, __type r) {                            \
+		using value = std::underlying_type<__type>::type;                    \
+		return Flags<__type>(static_cast<value>(l) ^ static_cast<value>(r)); \
+	}                                                                        \
+	Flags<__type> operator~(__type r) {                                      \
+		using value = std::underlying_type<__type>::type;                    \
+		return Flags<__type>(~static_cast<value>(r));                        \
 	}
+#define SAFETY_CHECK
+#define _DEFA
