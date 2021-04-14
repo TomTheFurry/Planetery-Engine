@@ -4,6 +4,11 @@
 
 #include "Define.h"
 
+//#define LIKELY [[likely]]
+//#define UNLIKELY [[unlikely]]
+#define LIKELY	 
+#define UNLIKELY 
+
 constexpr size_t DEFAULT_ALIGNMEMT = alignof(std::max_align_t);
 constexpr size_t DEFAULT_BLOCK_SIZE = 256;
 
@@ -11,20 +16,25 @@ constexpr size_t alignUpTo(size_t p, size_t a) {
 	return (p >= a && p % a == 0) ? p : (p + a - p % a);
 }
 
+[[noreturn]] inline void DetectedCritcalMemoryCorruption() {
+	perror("Unexpected Critcal Memory Corruption detected. Halting program...");
+	abort();
+}
+
 namespace pmr {
 	// exceptions
+	struct BadArgException {};
+
 	struct BadAllocException {
 		size_t requestedSize;
 		size_t requestedAlignment;
-		bool critical;
 	};
 	struct BadDeallocException {
 		void* requestedPtr;
 		size_t requestedSize;
 		size_t requestedAlignment;
-		bool critical;
 	};
-
+	struct CorruptedMemoryException {};
 
 
 
@@ -49,7 +59,7 @@ namespace pmr {
 
 		virtual void* do_allocate(size_t bytes, size_t alignment) final;
 		virtual void do_deallocate(
-		  void* p, size_t bytes, size_t alignment) final;
+		  void* p, size_t bytes, size_t alignment) noexcept final;
 		virtual bool do_is_equal(
 		  const MemoryResource& other) const noexcept final;
 
@@ -58,7 +68,8 @@ namespace pmr {
 			return do_allocate(bytes, alignment);
 		}
 
-		void deallocate(void* p, size_t bytes, size_t alignment = AlignSize) {
+		void deallocate(
+		  void* p, size_t bytes, size_t alignment = AlignSize) noexcept {
 			do_deallocate(p, bytes, alignment);
 		}
 
@@ -66,7 +77,7 @@ namespace pmr {
 			do_is_equal(other);
 		}
 
-		virtual ~StackMemoryResource() final;
+		virtual ~StackMemoryResource() noexcept final;
 
 		void release();
 
@@ -148,8 +159,7 @@ namespace pmr {
 		_blockSize = blockSize;
 		if ((_blockSize & (AlignSize - 1)) != 0)
 			_blockSize = (_blockSize & ~(AlignSize - 1)) + AlignSize;
-		if (_blockSize < 2 * sizeof(void*) + AlignSize)
-			throw "pmr::InvalidArgs";
+		if (_blockSize < 2 * sizeof(void*) + AlignSize) throw BadArgException{};
 		assert(_blockSize % sizeof(size_t) == 0);
 		assert(_blockSize >= DEFAULT_BLOCK_SIZE);
 		_stackPtr = (Byte*)_upstream->allocate(
@@ -159,7 +169,7 @@ namespace pmr {
 		_stackPtr += alignUpTo(sizeof(Byte*), AlignSize);
 		_currentBlockTop = _stackPtr + _blockSize;
 	}
-	_DEFCTOR::~StackMemoryResource() {
+	_DEFCTOR::~StackMemoryResource() noexcept {
 		release();
 		Byte** base = reinterpret_cast<Byte**>(
 		  _currentBlockTop - _blockSize - alignUpTo(sizeof(Byte*), AlignSize));
@@ -187,39 +197,46 @@ namespace pmr {
 	_DEFA size_t _DEFB::blockSize() const { return _blockSize; }
 
 	_DEFA void* _DEFB::do_allocate(size_t bytes, size_t alignment) {
-		if (bytes == 0) return _stackPtr;
-		if (alignment <= AlignSize && bytes <= _blockSize) {
+		if (bytes == 0) UNLIKELY
+			return _stackPtr;
+		if (alignment <= AlignSize && bytes <= _blockSize) LIKELY {
 			// Align requested data size
 			if ((bytes & (AlignSize - 1)) != 0)
 				bytes = (bytes & ~(AlignSize - 1)) + AlignSize;
-			assert(bytes % AlignSize == 0);
-			// Save and move up stack pointer
+
+			// alloc a place for data
 			Byte* r = _stackPtr;
-			_stackPtr += bytes;
-			if (_stackPtr > _currentBlockTop) {
-				// block out of space. Call upstream alloc for new block
+			if (_stackPtr + bytes > _currentBlockTop) UNLIKELY {
+				// block does not have enough space. Call upstream alloc. Should
+				// be able to safely throw bad alloc without corrupting memory.
 				Byte* newBlock = (Byte*)_upstream->allocate(
 				  _blockSize + sizeof(Byte*)
 					+ alignUpTo(sizeof(Byte*), AlignSize),
 				  AlignSize);
+				// setup the correct top of new block and place last block's
+				// stack ptr to bottom of new block
 				*reinterpret_cast<Byte**>(_currentBlockTop) = r;
 				*reinterpret_cast<Byte**>(newBlock) = _currentBlockTop;
+				// assign the data pos at after the bottom ptr;
 				r = newBlock + alignUpTo(sizeof(Byte*), AlignSize);
 				_currentBlockTop = r + _blockSize;
-				_stackPtr = r + bytes;
 			}
+			// assign the stack ptr to top of data
+			_stackPtr = r + bytes;
 			return r;
-		} else
-			throw BadAllocException{bytes, alignment, false};
+		} else [[unlikely]]
+			throw BadAllocException{bytes, alignment};
 	}
-	_DEFA void _DEFB::do_deallocate(void* p, size_t bytes, size_t alignment) {
-		if (bytes == 0) return;
-		if (alignment <= AlignSize && bytes <= _blockSize) {
+	_DEFA void _DEFB::do_deallocate(
+	  void* p, size_t bytes, size_t alignment) noexcept {
+		if (bytes == 0) UNLIKELY
+			return;
+		if (alignment <= AlignSize && bytes <= _blockSize) LIKELY {
 			// Align requested data size
 			if ((bytes & (AlignSize - 1)) != 0)
 				bytes = (bytes & ~(AlignSize - 1)) + AlignSize;
-			assert(bytes % AlignSize == 0);
-			if (_stackPtr == _currentBlockTop - _blockSize) {
+
+			if (_stackPtr == _currentBlockTop - _blockSize) UNLIKELY {
 				// Dealloc blocks and return to previous block
 				Byte* base = _currentBlockTop - _blockSize
 						   - alignUpTo(sizeof(Byte*), AlignSize);
@@ -229,15 +246,15 @@ namespace pmr {
 				  _blockSize + sizeof(Byte*)
 					+ alignUpTo(sizeof(Byte*), AlignSize),
 				  AlignSize);
-			} else if (_stackPtr < _currentBlockTop - _blockSize)
-				throw BadDeallocException(p, bytes, alignment, true);
-			else if (_stackPtr - bytes != p) {
-				throw BadDeallocException(p, bytes, alignment, true);
 			}
-			// Move back stack pointer
-			_stackPtr -= bytes;
-		} else
-			throw BadDeallocException(p, bytes, alignment, false);
+
+			if (_stackPtr == reinterpret_cast<Byte*>(p) + bytes) LIKELY {
+				// Move back stack pointer
+				_stackPtr = reinterpret_cast<Byte*>(p);
+				return;
+			}
+		}
+		DetectedCritcalMemoryCorruption();	// No Return
 	}
 	_DEFA bool _DEFB::do_is_equal(const MemoryResource& other) const noexcept {
 		return &other == this;

@@ -7,29 +7,19 @@
 #include <stack>
 #include <functional>
 #include <ostream>
+#include <exception>
 
 TEST(StackMemoryResource, BasicUsage)
 {
-	ASSERT_EQ(alignUpTo(12, 8), 16);
-	ASSERT_EQ(alignUpTo(11, 8), 16);
-	ASSERT_EQ(alignUpTo(12, 4), 12);
-	ASSERT_EQ(alignUpTo(3, 8), 8);
-
-	ASSERT_ANY_THROW(pmr::StackMemoryResource<> smr{ (size_t)0 });
-
-	pmr::StackMemoryResource<sizeof(uint)> smr{10000};
-	pmr::pmrAllocator<uint, pmr::StackMemoryResource<sizeof(uint)>> alloc(&smr);
-
 	std::hash<uint> hasher;
-	
+	pmr::StackMemoryResource<sizeof(uint)> smr{ 10000, pmr::get_default_resource() };
+	pmr::pmrAllocator<uint, pmr::StackMemoryResource<sizeof(uint)>> alloc(&smr);
 	struct TestAlloc {
 		uint value;
 		size_t size;
 		uint* ptr;
 	};
-
 	std::deque<TestAlloc> backStack{};
-
 	auto allocFunc = [&](size_t c) {
 		for (size_t i = 0; i < c; i++) {
 			TestAlloc& p = backStack.emplace_back();
@@ -75,7 +65,30 @@ TEST(StackMemoryResource, BasicUsage)
 	allocFunc(5000);
 	smr.release();
 	ASSERT_DEATH(deallocFunc(1), "");
-
 }
-
+TEST(StackMemoryResource, SafeInvalidUsage)
+{
+	EXPECT_THROW(pmr::StackMemoryResource<> smr{ (size_t)0 }, pmr::BadArgException);
+	{
+		pmr::StackMemoryResource<8> smr{ 1000 };
+		void* p;
+		ASSERT_NO_THROW(p = smr.allocate(12));
+		EXPECT_THROW(smr.allocate(-1), pmr::BadAllocException);
+		EXPECT_THROW(smr.allocate(1, 16), pmr::BadAllocException);
+		ASSERT_NO_FATAL_FAILURE(smr.deallocate(p, 12));
+	}
+	{
+		EXPECT_THROW(pmr::StackMemoryResource<8> smrBad{ pmr::null_memory_resource() }, std::bad_alloc);
+		auto mem = new char[1000];
+		auto lrm = pmr::MonotonicResource(mem, 1000, pmr::null_memory_resource());
+		pmr::StackMemoryResource<8> smrGood(100,&lrm);
+		void* p;
+		ASSERT_THROW(while (true) p = (char*)smrGood.allocate(10), std::bad_alloc);
+		EXPECT_NO_THROW(smrGood.deallocate(p, 10));
+		EXPECT_NO_THROW(p=smrGood.allocate(10));
+		ASSERT_THROW(smrGood.allocate(10), std::bad_alloc);
+		EXPECT_NO_THROW(smrGood.release());
+		EXPECT_NO_THROW(smrGood.allocate(19));
+	}
+}
 
