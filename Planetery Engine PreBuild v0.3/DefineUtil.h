@@ -4,8 +4,16 @@
 #include <vector>
 #include <list>
 #include <chrono>
-
+#include <memory_resource>
+#include <set>
+#include <initializer_list>
 #include "Define.h"
+
+#ifdef SAFETY_CHECK
+#	include <typeinfo>
+#	include "Logger.h"
+#endif
+
 
 
 // typesafe flag decil
@@ -45,21 +53,21 @@ template<typename FlagType> class Flags
 	Flags& unset(Flags b) { return (_v |= ~b._v, *this); }
 	Flags& unset(FlagType f) { return (_v |= ~static_cast<value>(f), *this); }
 };
-#define DECLARE_FLAG_TYPE(__type)                                    \
-	Flags<__type> operator|(__type l, __type r) {                    \
-		using value = std::underlying_type<__type>::type;          \
+#define DECLARE_FLAG_TYPE(__type)                                            \
+	Flags<__type> operator|(__type l, __type r) {                            \
+		using value = std::underlying_type<__type>::type;                    \
 		return Flags<__type>(static_cast<value>(l) | static_cast<value>(r)); \
-	}                                                                \
-	Flags<__type> operator&(__type l, __type r) {                    \
-		using value = std::underlying_type<__type>::type;          \
+	}                                                                        \
+	Flags<__type> operator&(__type l, __type r) {                            \
+		using value = std::underlying_type<__type>::type;                    \
 		return Flags<__type>(static_cast<value>(l) & static_cast<value>(r)); \
-	}                                                                \
-	Flags<__type> operator^(__type l, __type r) {                    \
-		using value = std::underlying_type<__type>::type;          \
+	}                                                                        \
+	Flags<__type> operator^(__type l, __type r) {                            \
+		using value = std::underlying_type<__type>::type;                    \
 		return Flags<__type>(static_cast<value>(l) ^ static_cast<value>(r)); \
-	}                                                                \
-	Flags<__type> operator~(__type r) {                              \
-		using value = std::underlying_type<__type>::type;          \
+	}                                                                        \
+	Flags<__type> operator~(__type r) {                                      \
+		using value = std::underlying_type<__type>::type;                    \
 		return Flags<__type>(~static_cast<value>(r));                        \
 	}
 
@@ -67,6 +75,9 @@ template<typename FlagType> class Flags
 template<typename T> typename Flags<T>::value operator|(T a, T b) {
 	return a | b;
 }
+
+template<typename T>
+concept trivalType = std::is_trivial_v<T>;
 
 namespace util {
 
@@ -150,5 +161,35 @@ namespace util {
 		};
 	};
 
+	template<typename Resource,
+	  typename Alloc = std::pmr::polymorphic_allocator<std::byte>>
+	class PMRPair: public Alloc
+	{
+	  protected:
+		Resource r;
+	  public:
+		PMRPair(auto... args):
+		  r(std::forward<decltype(args)>(args)...), Alloc(&r) {}
+	};
+
+	class MBRPool : PMRPair<std::pmr::monotonic_buffer_resource>
+	{
+	  public:
+		MBRPool(size_t initSize):
+		  PMRPair(initSize) {}
+		MBRPool(const MBRPool&) = delete;
+		template<trivalType T> T* make(std::initializer_list<T> t) {
+			auto ptr = PMRPair::allocate_object<T>(t.size());
+			std::copy(t.begin(), t.end(), ptr);
+		}
+		template<trivalType T> T* make(T t) {
+			auto ptr = PMRPair::allocate_object<T>(1);
+			*ptr = t;
+			return ptr;
+		}
+		template<trivalType T> T* alloc(size_t n = 1) {
+			return PMRPair::allocate_object<T>(n);
+		}
+	};
 
 }
