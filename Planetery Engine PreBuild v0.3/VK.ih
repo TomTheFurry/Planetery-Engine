@@ -6,9 +6,13 @@
 #include "VK.h"
 
 #include "DefineUtil.h"
+#include <stack>
+#include <list>
+#include <memory_resource>
+#include <span>
 
 namespace _toFormat {
-	template<typename T> VkFormat val() {}
+	template<typename T> constexpr VkFormat val() {}
 	template<> constexpr VkFormat val<float>() { return VK_FORMAT_R32_SFLOAT; }
 	template<> constexpr VkFormat val<vec2>() {
 		return VK_FORMAT_R32G32_SFLOAT;
@@ -46,6 +50,16 @@ namespace _toFormat {
 		return VK_FORMAT_R32G32B32A32_SINT;
 	}
 }
+namespace _toIndexTpye {
+	template<typename T> constexpr VkIndexType val() {}
+	template<> constexpr VkIndexType val<uint>() {
+		return VK_INDEX_TYPE_UINT32;
+	}
+	template<> constexpr VkIndexType val<usint>() {
+		return VK_INDEX_TYPE_UINT16;
+	}
+}
+
 using namespace vk;
 
 constexpr auto CommendPoolTypeCount = 3;
@@ -55,6 +69,19 @@ enum class CommendPoolType : uint {
 	Resetable,
 	MAX_ENUM
 };
+enum class UniformDataType : uint {
+	UniformBuffer = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+	StorageBuffer = VkDescriptorType::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+	Sampler = VkDescriptorType::VK_DESCRIPTOR_TYPE_SAMPLER,
+};
+
+enum class UniformPoolType : uint {
+	None = 0,
+	Resetable = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+	Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
+	HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
+};
+DECLARE_FLAG_TYPE(UniformPoolType);
 enum class BufferUseType : uint {
 	None = 0,
 	TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -84,25 +111,20 @@ enum class CommendBufferUsage : uint {
 	RenderPassOwned = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
 	ParallelSubmit = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
 };
-
 DECLARE_FLAG_TYPE(CommendBufferUsage);
+enum class ShaderType : uint {
+	None = 0,
+	Vert = VK_SHADER_STAGE_VERTEX_BIT,
+	Geom = VK_SHADER_STAGE_GEOMETRY_BIT,
+	Frag = VK_SHADER_STAGE_FRAGMENT_BIT,
+	All = VK_SHADER_STAGE_ALL,
+};
+DECLARE_FLAG_TYPE(ShaderType);
+
 enum class BufferInputRate {
 	PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
 	PerInstance = VK_VERTEX_INPUT_RATE_INSTANCE,
 };
-enum class ShaderType {
-	Vert,
-	Geom,
-	Frag,
-};
-inline VkShaderStageFlagBits _getVal(ShaderType st) {
-	switch (st) {
-	case ShaderType::Vert: return VK_SHADER_STAGE_VERTEX_BIT;
-	case ShaderType::Geom: return VK_SHADER_STAGE_GEOMETRY_BIT;
-	case ShaderType::Frag: return VK_SHADER_STAGE_FRAGMENT_BIT;
-	}
-	assert(false);
-}
 
 class PhysicalDevice;
 class LogicalDevice;
@@ -114,6 +136,7 @@ class CommendBuffer;
 class FrameBuffer;
 class VertexAttribute;
 class VertexBuffer;
+class IndexBuffer;
 class RenderTick;
 class CommendPool;
 class Buffer;
@@ -139,8 +162,12 @@ class PhysicalDevice
 	PhysicalDevice(const PhysicalDevice&) = delete;
 	PhysicalDevice(PhysicalDevice&&) noexcept;
 	VkPhysicalDevice d;
-	VkPhysicalDeviceProperties properties;
-	VkPhysicalDeviceFeatures features;
+	VkPhysicalDeviceFeatures2 features10;
+	VkPhysicalDeviceVulkan11Features features11;
+	VkPhysicalDeviceVulkan12Features features12;
+	VkPhysicalDeviceProperties2 properties10;
+	VkPhysicalDeviceVulkan11Properties properties11;
+	VkPhysicalDeviceVulkan12Properties properties12;
 	VkPhysicalDeviceMemoryProperties memProperties;
 	std::vector<VkQueueFamilyProperties> queueFamilies;
 	std::list<LogicalDevice> devices;
@@ -193,6 +220,37 @@ class OSRenderSurface
 	~OSRenderSurface();
 };
 
+class TimelineSemaphore
+{
+  public:
+	TimelineSemaphore(LogicalDevice& d, ulint initValue);
+	TimelineSemaphore(const TimelineSemaphore&) = delete;
+	TimelineSemaphore(TimelineSemaphore&& o) noexcept;
+	~TimelineSemaphore();
+	VkSemaphore sp;
+	LogicalDevice& d;
+};
+class Semaphore
+{
+  public:
+	Semaphore(LogicalDevice& d, bool isSet = false);
+	Semaphore(const Semaphore&) = delete;
+	Semaphore(Semaphore&& o) noexcept;
+	~Semaphore();
+	VkSemaphore sp;
+	LogicalDevice& d;
+};
+class Fence
+{
+  public:
+	Fence(LogicalDevice& d, bool signaled = false);
+	Fence(const Fence&) = delete;
+	Fence(Fence&& o) noexcept;
+	~Fence();
+	VkFence fc;
+	LogicalDevice& d;
+};
+
 class ImageView
 {
   public:
@@ -222,6 +280,57 @@ class SwapChain
 	std::vector<VkImage> swapChainImages;
 	ImageView getChainImageView(uint index);
 	~SwapChain();
+};
+
+struct UniformLayoutBinding {
+	uint bindPoint;
+	UniformDataType type;
+	uint count;
+	Flags<ShaderType> shader = ShaderType::All;
+};
+
+class UniformLayout
+{
+  public:
+	UniformLayout(
+	  LogicalDevice& d, std::span<const UniformLayoutBinding> bindings);
+	UniformLayout(const UniformLayout&) = delete;
+	UniformLayout(UniformLayout&& other) noexcept;
+	~UniformLayout();
+	VkDescriptorSetLayout dsl;
+	LogicalDevice& d;
+};
+
+class UniformPool
+{
+  public:
+	struct Size {
+		UniformDataType type;
+		uint n;
+	};
+	UniformPool(LogicalDevice& d, const UniformLayoutBinding& refSize,
+	  uint refCount,
+	  Flags<UniformPoolType> requirement = UniformPoolType::None);
+	UniformPool(LogicalDevice& d, std::span<const Size> size,
+	  Flags<UniformPoolType> requirement = UniformPoolType::None);
+	UniformPool(const UniformPool&) = delete;
+	UniformPool(UniformPool&& other) noexcept;
+	~UniformPool();
+	VkDescriptorPool dp;
+	LogicalDevice& d;
+};
+
+class UniformSet
+{
+  public:
+	UniformSet(UniformPool& up, const UniformLayout& ul);
+	static std::vector<UniformSet> makeBatch(
+	  std::span<const UniformLayout> uls);
+	UniformSet(const UniformSet&) = delete;
+	UniformSet(UniformSet&& other) noexcept;
+	~UniformSet();
+	VkDescriptorSet ds;
+	LogicalDevice& d;
 };
 
 
@@ -292,8 +401,12 @@ class CommendBuffer
 	void cmdBind(const ShaderPipeline& cb);
 	void cmdBind(
 	  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
+	void cmdBind(const IndexBuffer& ib,
+	  VkIndexType dataType = _toIndexTpye::val<uint>(), size_t offset = 0);
 	void cmdDraw(
 	  uint vCount, uint iCount = 1, uint vOffset = 0, uint iOffset = 0);
+	void cmdDrawIndexed(uint indCount, uint insCount = 1, uint indOffset = 0,
+	  uint vertOffset = 0, uint insOffset = 0);
 	void cmdCopyBuffer(const Buffer& src, Buffer& dst, size_t size,
 	  size_t srcOffset = 0, size_t dstOffset = 0);
 	void cmdEndRender();
@@ -305,10 +418,11 @@ class CommendBuffer
 
 class Buffer
 {
+	void _setup();
   public:
 	Buffer(LogicalDevice& d, size_t size,
 	  Flags<MemoryFeature> neededFeature = MemoryFeature::None,
-	  Flags<BufferUseType> usage = BufferUseType::None);
+	  Flags<BufferUseType> neededUsage = BufferUseType::None);
 	Buffer(const Buffer&) = delete;
 	Buffer(Buffer&& other) noexcept;
 	~Buffer();
@@ -327,10 +441,11 @@ class Buffer
 	void blockingIndirectWrite(size_t size, size_t offset, const void* data);
 	void blockingIndirectWrite(
 	  CommendPool& cp, size_t size, size_t offset, const void* data);
-	//TODO: Make a remake() function
+	// TODO: Make a remake() function
 	size_t size;
 	size_t minAlignment;
 	Flags<MemoryFeature> feature;
+	Flags<BufferUseType> usage;
 	VkBuffer b = nullptr;
 	VkDeviceMemory dm = nullptr;
 	void* mappedPtr = nullptr;
@@ -340,8 +455,29 @@ class VertexBuffer: public Buffer
 {
   public:
 	VertexBuffer(LogicalDevice& d, size_t size,
-	  Flags<MemoryFeature> neededFeature = MemoryFeature::None);
+	  Flags<MemoryFeature> neededFeature = MemoryFeature::None,
+	  Flags<BufferUseType> neededUsage = BufferUseType::None):
+	  Buffer(d, size, neededFeature, neededUsage | BufferUseType::Vertex) {}
 };
+
+class IndexBuffer: public Buffer
+{
+  public:
+	IndexBuffer(LogicalDevice& d, size_t size,
+	  Flags<MemoryFeature> neededFeature = MemoryFeature::None,
+	  Flags<BufferUseType> neededUsage = BufferUseType::None):
+	  Buffer(d, size, neededFeature, neededUsage | BufferUseType::Index) {}
+};
+
+class UniformBuffer: public Buffer
+{
+  public:
+	UniformBuffer(LogicalDevice& d, size_t size,
+	  Flags<MemoryFeature> neededFeature = MemoryFeature::None,
+	  Flags<BufferUseType> neededUsage = BufferUseType::None):
+	  Buffer(d, size, neededFeature, neededUsage | BufferUseType::Uniform) {}
+};
+
 
 class VertexAttribute
 {
@@ -372,19 +508,36 @@ class FrameBuffer
 	LogicalDevice& d;
 };
 
+typedef ulint SyncNumber;
+struct SyncLine;
+struct SyncPoint {
+	SyncNumber syncNumber;
+	SyncLine* syncLine;
+	SyncPoint next();
+};
+struct SyncLine {
+	TimelineSemaphore sp;
+	SyncNumber topNumber;
+	SyncPoint next() { return SyncPoint{++topNumber, this}; }
+	SyncPoint top() { return SyncPoint(topNumber, this); }
+};
+inline SyncPoint SyncPoint::next() { return syncLine->next(); }
+
+constexpr size_t RENDERTICK_INITIAL_MBR_SIZE = 512;
 class RenderTick
 {
-	struct CmdStage {
-		const CommendBuffer& cb;
-		uint waitFor;
-		VkPipelineStageFlags waitType;
-		uint signalTo;
-	};
   public:
-	RenderTick(
-	  LogicalDevice& d, uint syncPointCount, uint startPoint, uint endPoint);
-	void addCmdStage(const CommendBuffer& cb, uint waitFor,
-	  VkPipelineStageFlags waitType, uint signalTo);
+	RenderTick(LogicalDevice& d);
+	RenderTick(const RenderTick&) = delete;
+	RenderTick(RenderTick&&) = delete;
+	SyncPoint makeSyncLine(SyncNumber initialValue = 0);
+	void addCmdStage(CommendBuffer& cb, const std::vector<SyncPoint>& signalTo,
+	  const std::vector<SyncPoint>& waitFor,
+	  const std::vector<VkPipelineStageFlags>& waitType);
+	SyncPoint getTopSyncPoint();
+	void addSyncPointToLayer();
+	void pushSyncPointStack(SyncPoint syncPoint);
+	SyncPoint popSyncPointStack();	// return layerEndingSyncPoint
 	void send();
 	void notifyOutdated();
 	bool isOutdated() const { return outdated; }
@@ -401,12 +554,59 @@ class RenderTick
 	LogicalDevice& d;
   private:
 	bool _waitingForFence;
-	std::vector<VkFence> _fences;
-	std::vector<VkSemaphore> _semaphores;
-	std::vector<CmdStage> _cmdStages;
+	Fence _completionFence;
+	Semaphore _acquireSemaphore;
+	Semaphore _presentSemaphore;
+	util::MBRPool _submitPools;
+	std::list<SyncLine> _syncLines;
+	std::stack<SyncPoint> _syncPointStack;
+	std::vector<VkSubmitInfo> _cmdStages;
 	std::list<Buffer> _stagingBuffers;
 	std::list<CommendBuffer> _sigleUseCommendBuffer;
 	uint imageIndex;
-	uint _endSync;
 	bool outdated;
 };
+
+// inline def
+
+
+
+
+
+// Buffer
+inline Buffer::Buffer(LogicalDevice& device, size_t s,
+  Flags<MemoryFeature> neededFeature, Flags<BufferUseType> neededUsage):
+  d(device) {
+	size = s;
+	feature = neededFeature;
+	usage = neededUsage;
+	if (feature.has(MemoryFeature::Mappable)) {
+		if (feature.has(MemoryFeature::Coherent))
+			minAlignment =
+			  d.pd.properties10.properties.limits.nonCoherentAtomSize;
+		else
+			minAlignment =
+			  d.pd.properties10.properties.limits.minMemoryMapAlignment;
+	} else {
+		minAlignment = 1;
+	}
+	if (feature.has(MemoryFeature::IndirectCopyable)) {
+		usage.set(BufferUseType::TransferSrc);
+	}
+	if (feature.has(MemoryFeature::IndirectWritable)) {
+		usage.set(BufferUseType::TransferDst);
+	}
+	_setup();
+}
+inline Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
+	size = other.size;
+	minAlignment = other.minAlignment;
+	b = other.b;
+	dm = other.dm;
+	mappedPtr = other.mappedPtr;
+	feature = other.feature;
+	usage = other.usage;
+	other.b = nullptr;
+	other.dm = nullptr;
+	other.mappedPtr = nullptr;
+}

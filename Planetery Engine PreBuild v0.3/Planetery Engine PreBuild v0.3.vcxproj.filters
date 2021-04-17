@@ -16,6 +16,9 @@
     <Filter Include="Header Files\utils">
       <UniqueIdentifier>{f5a7ad3b-c39a-466c-9eb8-e98561225b5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Vulkan">
+      <UniqueIdentifier>{3a190832-7d2a-4798-8fcd-964dfd8320e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -116,17 +119,17 @@
     <ClInclude Include="DefineUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VK.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GLFW.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VK.ih">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MemoryResource.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="VK.ih">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VK.h">
+      <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,101 @@
+[0;4;97mMainThread:
+[;0m  [90m-[39mStarting core event thread...
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread started.
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mWaiting for core thread end...
+
+[0;4;97mThreadRender:
+[;0m  [;0m  [90m-[39mThread created
+[;0m  [;0m  [90m-[39mIniting graphic API....
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVK Interface init.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVulkan: Reading runtime values...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAvalible VK Layers: 
+[;0m  [;0m  [90m-[39m4202664: VK_LAYER_NV_optimus - NVIDIA Optimus layer
+[;0m  [;0m  [90m-[39m4198531: VK_LAYER_OW_OVERLAY - Overwolf Overlay Layer
+[;0m  [;0m  [90m-[39m4202632: VK_LAYER_VALVE_steam_overlay - Steam Overlay Layer
+[;0m  [;0m  [90m-[39m4202632: VK_LAYER_VALVE_steam_fossilize - Steam Pipeline Caching Layer
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_api_dump - LunarG API dump layer
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_device_simulation - LunarG device simulation layer
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_gfxreconstruct - GFXReconstruct Capture Layer Version 0.9.6
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_KHRONOS_synchronization2 - Khronos Synchronization2 layer
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_KHRONOS_validation - Khronos Validation Layer
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_monitor - Execution Monitoring Layer
+[;0m  [;0m  [90m-[39m4202666: VK_LAYER_LUNARG_screenshot - LunarG image capture layer
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAvalible VK Extensions: 
+[;0m  [;0m  [90m-[39m1:VK_KHR_device_group_creation
+[;0m  [;0m  [90m-[39m23:VK_KHR_display
+[;0m  [;0m  [90m-[39m1:VK_KHR_external_fence_capabilities
+[;0m  [;0m  [90m-[39m1:VK_KHR_external_memory_capabilities
+[;0m  [;0m  [90m-[39m1:VK_KHR_external_semaphore_capabilities
+[;0m  [;0m  [90m-[39m1:VK_KHR_get_display_properties2
+[;0m  [;0m  [90m-[39m2:VK_KHR_get_physical_device_properties2
+[;0m  [;0m  [90m-[39m1:VK_KHR_get_surface_capabilities2
+[;0m  [;0m  [90m-[39m25:VK_KHR_surface
+[;0m  [;0m  [90m-[39m1:VK_KHR_surface_protected_capabilities
+[;0m  [;0m  [90m-[39m6:VK_KHR_win32_surface
+[;0m  [;0m  [90m-[39m9:VK_EXT_debug_report
+[;0m  [;0m  [90m-[39m2:VK_EXT_debug_utils
+[;0m  [;0m  [90m-[39m4:VK_EXT_swapchain_colorspace
+[;0m  [;0m  [90m-[39m1:VK_NV_external_memory_capabilities
+[;0m  [;0m  [90m-[39m9:VK_EXT_debug_report
+[;0m  [;0m  [90m-[39m1:VK_EXT_debug_utils
+[;0m  [;0m  [90m-[39m2:VK_EXT_validation_features
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVulkan: Scanning Graphic Cards...
+[;0m  [;0m  [90m-[39mNVIDIA GeForce GTX 1060 3GB... Usable. Rating: 7663.317383
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVK graphics init done.
+[;0m   Now init fonts...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mFont init done. Now loading shader...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading renderer...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAll init done. Ready to sync with other threads.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 925.160000us (1067), Event tps: 191
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 919.600000us (382), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 906.211000us (1078), Event tps: 0
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mThread stopping...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVK Interface end.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mThread normally stopped.
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mRender thread stopped.[31m\n[39m
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread ended.
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mExiting...
+

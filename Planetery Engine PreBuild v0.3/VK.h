@@ -14,7 +14,7 @@ namespace vk {
 	struct OutdatedSwapchainException {};
 
 	void init();  // request all needed extension/layers before call!
-	bool drawFrame(void (*drawFunc)()); // Render Thread only
+	template<typename Func> bool drawFrame(Func f);  // Render Thread only
 	void checkStatus() noexcept(false);	 // throws OutdatedSwapchainException
 	void end(void (*cleanupFunc)());
 
@@ -40,4 +40,22 @@ namespace vk {
 		class Commeend;
 	}
 
+	void _prepareFrame();
+	void _sendFrame();
+	void _resetOutdatedFrame();
+	void _testDraw();
+}
+
+
+template<typename Func> bool vk::drawFrame(Func func) {
+	try {
+		_prepareFrame();
+		func();
+		_testDraw();
+		_sendFrame();
+		return true;
+	} catch (OutdatedSwapchainException) {
+		_resetOutdatedFrame();
+		return false;
+	}
 }
