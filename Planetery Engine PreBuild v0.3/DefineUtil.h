@@ -25,14 +25,14 @@ template<typename FlagType> class Flags
 	Flags() { _v = 0; }
 	Flags(FlagType f) { _v = static_cast<value>(f); }
 	Flags(value f) { _v = f; }
-	explicit operator value() { return _v; }
-	operator bool() { return _v != 0; }
-	Flags operator|(Flags b) { return _v | b._v; }
-	Flags operator|(FlagType f) { return _v | static_cast<value>(f); }
-	Flags operator&(Flags b) { return _v & b._v; }
-	Flags operator&(FlagType f) { return _v & static_cast<value>(f); }
-	Flags operator^(Flags b) { return _v ^ b._v; }
-	Flags operator^(FlagType f) { return _v ^ static_cast<value>(f); }
+	explicit operator value() const { return _v; }
+	operator bool() const { return _v != 0; }
+	Flags operator|(Flags b) const { return _v | b._v; }
+	Flags operator|(FlagType f) const { return _v | static_cast<value>(f); }
+	Flags operator&(Flags b) const { return _v & b._v; }
+	Flags operator&(FlagType f) const { return _v & static_cast<value>(f); }
+	Flags operator^(Flags b) const { return _v ^ b._v; }
+	Flags operator^(FlagType f) const { return _v ^ static_cast<value>(f); }
 
 	Flags& operator|=(Flags b) { return (_v |= b._v, *this); }
 	Flags& operator|=(FlagType f) {
@@ -46,8 +46,8 @@ template<typename FlagType> class Flags
 	Flags& operator^=(FlagType f) {
 		return (_v ^= static_cast<value>(f), *this);
 	}
-	bool has(Flags b) { return _v & b._v; }
-	bool has(FlagType f) { return _v & static_cast<value>(f); }
+	bool has(Flags b) const { return _v & b._v; }
+	bool has(FlagType f) const { return _v & static_cast<value>(f); }
 	Flags& set(Flags b) { return (_v |= b._v, *this); }
 	Flags& set(FlagType f) { return (_v |= static_cast<value>(f), *this); }
 	Flags& unset(Flags b) { return (_v |= ~b._v, *this); }
