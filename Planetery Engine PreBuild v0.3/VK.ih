@@ -140,6 +140,7 @@ class IndexBuffer;
 class RenderTick;
 class CommendPool;
 class Buffer;
+class UniformSet;
 typedef uint QueueFamilyIndex;
 class SwapChainSupport
 {
@@ -292,32 +293,50 @@ struct UniformLayoutBinding {
 class UniformLayout
 {
   public:
+	struct Size {
+		UniformDataType type;
+		uint n;
+	};
 	UniformLayout(
-	  LogicalDevice& d, std::span<const UniformLayoutBinding> bindings);
+	  LogicalDevice& d, Viewable<const UniformLayoutBinding> auto bindings);
 	UniformLayout(const UniformLayout&) = delete;
 	UniformLayout(UniformLayout&& other) noexcept;
 	~UniformLayout();
+	std::span<const Size> getSizes() const;
 	VkDescriptorSetLayout dsl;
 	LogicalDevice& d;
+  private:
+	std::vector<Size> _size;
+	void _prepare()
+	void _addOne();
 };
 
 class UniformPool
 {
   public:
-	struct Size {
-		UniformDataType type;
-		uint n;
-	};
-	UniformPool(LogicalDevice& d, const UniformLayoutBinding& refSize,
-	  uint refCount,
-	  Flags<UniformPoolType> requirement = UniformPoolType::None);
-	UniformPool(LogicalDevice& d, std::span<const Size> size,
+	UniformPool(LogicalDevice& d, std::span<const UniformLayout::Size> size, uint setCount,
 	  Flags<UniformPoolType> requirement = UniformPoolType::None);
 	UniformPool(const UniformPool&) = delete;
 	UniformPool(UniformPool&& other) noexcept;
 	~UniformPool();
+	UniformSet allocNewSet(const UniformLayout& ul);
+	std::vector<UniformSet> allocNewSet(std::span<const UniformLayout> uls);
 	VkDescriptorPool dp;
 	LogicalDevice& d;
+};
+class LinkedUniformPool : UniformPool
+{
+  public:
+	LinkedUniformPool(LogicalDevice& d, const UniformLayout& ul,
+	  uint setCount,
+	  Flags<UniformPoolType> requirement = UniformPoolType::None);
+	LinkedUniformPool(const LinkedUniformPool&) = delete;
+	LinkedUniformPool(LinkedUniformPool&& other) noexcept;
+	~LinkedUniformPool();
+	UniformSet allocNewSet();
+	std::vector<UniformSet> allocNewSet(uint count);
+
+	const UniformLayout& ul;
 };
 
 class UniformSet
@@ -332,8 +351,6 @@ class UniformSet
 	VkDescriptorSet ds;
 	LogicalDevice& d;
 };
-
-
 
 class ShaderCompiled
 {

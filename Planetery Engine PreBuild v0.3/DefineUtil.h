@@ -14,6 +14,69 @@
 #	include "Logger.h"
 #endif
 
+template<typename T>
+concept Iterator = std::input_or_output_iterator<T>;
+
+template<class ContainerType>
+concept Container = requires(ContainerType a, const ContainerType b) {
+	requires std::regular<ContainerType>;
+	requires std::swappable<ContainerType>;
+	requires std::destructible<typename ContainerType::value_type>;
+	requires std::same_as<typename ContainerType::reference,
+	  typename ContainerType::value_type&>;
+	requires std::same_as<typename ContainerType::const_reference,
+	  const typename ContainerType::value_type&>;
+	requires std::forward_iterator<typename ContainerType::iterator>;
+	requires std::forward_iterator<typename ContainerType::const_iterator>;
+	requires std::signed_integral<typename ContainerType::difference_type>;
+	requires std::same_as<typename ContainerType::difference_type,
+	  typename std::iterator_traits<
+		typename ContainerType::iterator>::difference_type>;
+	requires std::same_as<typename ContainerType::difference_type,
+	  typename std::iterator_traits<
+		typename ContainerType::const_iterator>::difference_type>;
+	{ a.begin() } -> std::same_as<typename ContainerType::iterator>;
+	{ a.end() } -> std::same_as<typename ContainerType::iterator>;
+	{ b.begin() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ b.end() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ a.cbegin() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ a.cend() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ a.size() } -> std::same_as<typename ContainerType::size_type>;
+	{ a.max_size() } -> std::same_as<typename ContainerType::size_type>;
+	{ a.empty() } -> std::same_as<bool>;
+};
+
+static_assert(Container<std::vector<uint>>);
+static_assert(!Container<uint>);
+
+template<Iterator Iter> class View
+{
+	Iter _begin;
+	Iter _end;
+  public:
+	View(Iter begin, Iter end) {
+		_begin = begin;
+		_end = end;
+	}
+	View(Container auto& c) {
+		_begin = c.begin();
+		_end = c.end();
+	}
+	View(const Container auto& c) {
+		_begin = c.cbegin();
+		_end = c.cend();
+	}
+	Iter begin() { return _begin; }
+	Iter end() { return _end; }
+};
+template<typename T, typename V>
+concept Viewable = requires(V v) {
+	{ v.begin() } -> std::forward_iterator;
+	{ v.end() } -> Iterator;
+	requires std::sentinel_for<decltype(v.end()), decltype(v.begin())>;
+	requires std::convertible_to<decltype(*v.begin()), T>;
+
+};
 
 
 // typesafe flag decil
@@ -172,11 +235,10 @@ namespace util {
 		  r(std::forward<decltype(args)>(args)...), Alloc(&r) {}
 	};
 
-	class MBRPool : PMRPair<std::pmr::monotonic_buffer_resource>
+	class MBRPool: PMRPair<std::pmr::monotonic_buffer_resource>
 	{
 	  public:
-		MBRPool(size_t initSize):
-		  PMRPair(initSize) {}
+		MBRPool(size_t initSize): PMRPair(initSize) {}
 		MBRPool(const MBRPool&) = delete;
 		template<trivalType T> T* make(std::initializer_list<T> t) {
 			auto ptr = PMRPair::allocate_object<T>(t.size());
@@ -191,5 +253,77 @@ namespace util {
 			return PMRPair::allocate_object<T>(n);
 		}
 	};
+	template<typename T> class RepeatIterator
+	{
+	  public:
+		using value_type = T;
+		RepeatIterator() = default;
+		RepeatIterator(const T& obj, size_t pos = 0) {
+			static_assert(std::random_access_iterator<RepeatIterator>);
+			_pos = pos;
+			_ptr = &obj;
+		}
+		RepeatIterator(const T* ptr, size_t pos = 0) {
+			_pos = pos;
+			_ptr = ptr;
+		};
+		const T& operator*() const { return *_ptr; }
+		const T* operator->() const { return _ptr; }
+		const T& operator[](lint _) const { return *_ptr; }
+		RepeatIterator& operator++() {
+			_pos++;
+			return *this;
+		}
+		RepeatIterator operator++(int) {
+			auto copy = RepeatIterator(*this);
+			++_pos;
+			return copy;
+		}
+		RepeatIterator& operator--() {
+			_pos--;
+			return *this;
+		}
+		RepeatIterator operator--(int) {
+			auto copy = RepeatIterator(*this);
+			--_pos;
+			return copy;
+		}
+		bool operator==(const RepeatIterator& rhs) const {
+			return (_ptr == rhs._ptr && _pos == rhs._pos);
+		}
+		std::partial_ordering operator<=>(const RepeatIterator& rhs) const {
+			if (_ptr != rhs._ptr) return std::partial_ordering::unordered;
+			return _pos <=> rhs._pos;
+		}
+		lint operator-(const RepeatIterator& rhs) const {
+			return _pos - rhs._pos;
+		}
+		RepeatIterator operator+(lint p) const {
+			return RepeatIterator(_ptr, _pos + p);
+		}
+		RepeatIterator operator-(lint p) const {
+			return RepeatIterator(_ptr, _pos - p);
+		}
+		RepeatIterator& operator+=(lint p) {
+			_pos += p;
+			return *this;
+		}
+		RepeatIterator& operator-=(lint p) {
+			_pos -= p;
+			return *this;
+		}
+		friend RepeatIterator operator+(lint lhs, const RepeatIterator& rhs) {
+			return RepeatIterator(rhs._ptr, rhs._pos + lhs);
+		}
+		friend RepeatIterator operator-(lint lhs, const RepeatIterator& rhs) {
+			return RepeatIterator(rhs._ptr, rhs._pos - lhs);
+		}
+	  private:
+		const T* _ptr;
+		size_t _pos;
+	};
 
+	auto makeRepeatedView(const auto& t, size_t n = 1) {
+		return View(RepeatIterator(t), RepeatIterator(t, n));
+	}
 }

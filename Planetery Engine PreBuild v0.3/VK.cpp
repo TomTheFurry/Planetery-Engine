@@ -14,6 +14,7 @@
 #include <fstream>
 #include <glfw/glfw3.h>
 #include <signal.h>
+#include <map>
 
 VkResult __cdecl vkCreateDebugUtilsMessengerEXT(VkInstance instance,
   const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
@@ -483,6 +484,7 @@ UniformLayout::UniformLayout(
   LogicalDevice& device, std::span<const UniformLayoutBinding> bindings):
   d(device) {
 	std::vector<VkDescriptorSetLayoutBinding> b;
+	std::map<VkDescriptorType, uint> s;
 	b.resize(bindings.size());
 	uint i = 0;
 	for (auto& bind : bindings) {
@@ -490,6 +492,7 @@ UniformLayout::UniformLayout(
 		b[i].descriptorCount = bind.count;
 		b[i].descriptorType = static_cast<VkDescriptorType>(bind.type);
 		b[i].stageFlags = bind.shader;
+		s[b[i].descriptorType]++;
 		i++;
 	}
 	VkDescriptorSetLayoutCreateInfo dInfo{};
@@ -497,6 +500,9 @@ UniformLayout::UniformLayout(
 	dInfo.pBindings = b.data();
 	dInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	vkCreateDescriptorSetLayout(d.d, &dInfo, nullptr, &dsl);
+	_size.reserve(s.size());
+	for (auto p : s) {
+		_size.emplace_back(p.first, p.second);}
 }
 UniformLayout::UniformLayout(UniformLayout&& o) noexcept: d(o.d) {
 	dsl = o.dsl;
@@ -505,6 +511,46 @@ UniformLayout::UniformLayout(UniformLayout&& o) noexcept: d(o.d) {
 UniformLayout::~UniformLayout() {
 	if (dsl != nullptr) vkDestroyDescriptorSetLayout(d.d, dsl, nullptr);
 }
+
+std::span<const UniformLayout::Size> UniformLayout::getSizes() const {
+	return std::span<const Size>(_size);
+}
+
+
+
+
+UniformPool::UniformPool(LogicalDevice& device,
+  std::span<const UniformLayout::Size> size,
+  uint setCount, Flags<UniformPoolType> requirement) : d(device) {
+
+}
+
+UniformSet UniformPool::allocNewSet(const UniformLayout& ul) {
+	return UniformSet(*this, ul);
+}
+
+
+LinkedUniformPool::LinkedUniformPool(LogicalDevice& device,
+  const UniformLayout& refSet, uint setCount,
+  Flags<UniformPoolType> requirement):
+  UniformPool(device, refSet.getSizes(), setCount, requirement),
+  ul(refSet) {}
+
+UniformSet LinkedUniformPool::allocNewSet() {
+	return UniformSet(*this, ul); }
+
+std::vector<UniformSet> LinkedUniformPool::allocNewSet(uint count) {
+	return UniformSet::makeBatch(util::makeRepeatingSpan(ul,count));
+}
+
+
+
+
+
+
+
+
+
 
 ShaderCompiled::ShaderCompiled(
   LogicalDevice& device, ShaderType st, const std::string_view& file_name):
