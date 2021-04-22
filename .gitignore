@@ -341,3 +341,5 @@ healthchecksdb
 /Matrix Playaround/include/glm/out/build/x64-Debug
 /Multithread Playaround/include/glm/out/build/x64-Debug
 /Planetery Engine Playaround/include/glm/out/build/x64-Debug
+/sharedInclude/glm/out/build/x64-Debug
+/sharedInclude/physX/compiler/cmake/out/build/x64-Debug

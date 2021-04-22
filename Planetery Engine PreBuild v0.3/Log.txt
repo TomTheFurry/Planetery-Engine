@@ -80,16 +80,7 @@
 [;0m  [90m-[39mGL: Loading shader flatRectFilledBorder...
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 2.470021ms (55), Event tps: 154
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 283.605000us (60), Event tps: 63
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 263.236000us (60), Event tps: 17
-
-[0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 265.558000us (60), Event tps: 143
+[;0m  [90m-[39mAverage Tick speed: 3.648428ms (50), Event tps: 510
 
 [0;4;97mThreadEvent:
 [;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
