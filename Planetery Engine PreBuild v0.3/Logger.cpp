@@ -1,52 +1,15 @@
-module;
-
-#include <string>
-#include <iostream>
+#include "Logger.h"
+#include "Define.h"
 #include <vector>
-#include <unordered_map>
-#include <mutex>
+#include <iostream>
+#include <sstream>
 #include <fstream>
-#include "ConsoleFormat.h"
-
-export module Logger;
-
-export class Log {
-public:
-	void newThread();
-	void closeThread();
-	void newThread(std::string&& str);
-	void closeThread(std::string&& str);
-	void newLayer();
-	void closeLayer();
-	void newMessage();
-	void closeMessage();
-	void newMessage(std::string&& str);
-	void closeMessage(std::string&& str);
-	std::ostream& operator<<(auto t) { return(getStream() << t); }
-	Log();
-	template <typename T, typename ...Args>
-	void _loopStream(T t, Args... a) {
-		*this << std::forward<T>(t);
-		this->_loopStream(a...);
-	}
-	template <typename T>
-	void _loopStream(T t) {
-		*this << std::forward<T>(t);
-	}
-	template <typename ...Args>
-	void operator()(Args... a) {
-		this->newLayer();
-		this->_loopStream(a...);
-		this->closeLayer();
-	}
-private:
-	std::ostream& getStream();
-};
-
-module :private;
-import Def;
-import MultiStream;
-import MultilineString;
+#include <mutex>
+#include <unordered_map>
+#include <thread>
+#include <chrono>
+#include "MultiStream.h"
+#include "MultilineString.h"
 
 #define LOGGER_DEFAULT_THREAD_NAME "UnknownThread"+format({BRIGHT COLOR_RED})+toStr(std::this_thread::get_id())
 #define LOGGER_DEFAULT_THREAD_NAME_FORMAT format({RESET_ALL,UNDERLINE,BRIGHT COLOR_WHITE})
@@ -55,6 +18,7 @@ import MultilineString;
 #define LOGGER_NEWLINE_PADDING std::string(FORMAT_RESET)+"  "
 #define LOGGER_MAX_LINE_WIDTH size_t(100) //set -1 as infinate
 //WARN: This causes bugs. Many bugs. the MultiLineString impimentation needs to redo.
+
 
 std::string& replaceStringInPlace(std::string&& subject, const std::string& search,
     const std::string& replace) {
@@ -122,7 +86,7 @@ namespace Logger {
         std::ostream& getStream();
     };
     static std::unordered_map<std::thread::id, SingleThread> threads{};
-    static std::ofstream fs{ "log.txt" };
+    static std::ofstream fs{"log.txt"};
     static std::mutex writeLock{};
     static MultiStream outStream{};
 }
@@ -153,8 +117,8 @@ Logger::LogLayerContainer::~LogLayerContainer() {
 
 MultilineString Logger::LogLayerContainer::str() const {
     if (childs.empty()) return MultilineString();
-    MultilineString ms{ childs[0]->str(),LOGGER_MAX_LINE_WIDTH };
-    for (size_t i = 1; i < childs.size(); i++) {
+    MultilineString ms{childs[0]->str(),LOGGER_MAX_LINE_WIDTH};
+    for (size_t i = 1; i<childs.size(); i++) {
         ms << childs[i]->str();
     }
     ms.padLeft(LOGGER_NEWLINE_PADDING);
@@ -168,8 +132,8 @@ Logger::LogLayerBase* Logger::LogLayerContainer::getBack() {
 
 bool Logger::LogLayerContainer::push(LogLayerBase* object) {
     if (closed) return false;
-    for (size_t i = childs.size(); i != 0; i--) {
-        if (childs[i - 1]->push(object)) return true;
+    for (size_t i = childs.size(); i!=0; i--) {
+        if (childs[i-1]->push(object)) return true;
     }
     childs.push_back(object);
     return true;
@@ -185,7 +149,7 @@ bool Logger::LogLayerContainer::pop() {
 Logger::LogLayerString::LogLayerString() : string() {}
 
 MultilineString Logger::LogLayerString::str() const {
-    return MultilineString(format({ BRIGHT COLOR_BLACK }) + "-" + format({ COLOR_DEFAULT }) + string.str(), -1);
+    return MultilineString(format({BRIGHT COLOR_BLACK})+"-"+format({COLOR_DEFAULT})+string.str());
 }
 
 Logger::LogLayerBase* Logger::LogLayerString::getBack() {
@@ -213,8 +177,7 @@ Logger::SingleThread::SingleThread(
 void Logger::SingleThread::newLayer() {
     if (messages.empty()) {
         messages.emplace_back();
-    }
-    else {
+    } else {
         if (!messages.back().data.push(new LogLayerContainer())) {
             messages.emplace_back();
         }
@@ -250,7 +213,7 @@ void Logger::SingleThread::newMessage(std::string&& str) {
 }
 
 void Logger::SingleThread::closeMessage(std::string&& str) {
-    if (messages.back().name != str) throw "Logger: TopMessage not the correct one!";
+    if (messages.back().name!=str) throw "Logger: TopMessage not the correct one!";
     lock.lock();
     output << LOGGER_MESSAGE_START << messages.back() << LOGGER_MESSAGE_END;
     //output << name << ":\n" << messages.back() << "\n";
@@ -262,7 +225,7 @@ void Logger::SingleThread::closeMessage(std::string&& str) {
 std::ostream& Logger::SingleThread::getStream() {
     auto back = (messages.back().data.getBack());
     auto* pt = dynamic_cast<LogLayerString*>(back);
-    if (pt == nullptr) {
+    if (pt==nullptr) {
         auto backContainer = dynamic_cast<LogLayerContainer*>(back);
         auto newString = new LogLayerString();
         if (!backContainer->push(newString)) throw "Logger: Failed to insert new string!";
@@ -278,7 +241,7 @@ void Log::newThread() {
 
 void Log::closeThread() {
     auto i = Logger::threads.erase(std::this_thread::get_id());
-    if (i != 1) throw "Logger: Thread already closed.";
+    if (i!=1) throw "Logger: Thread already closed.";
 }
 
 void Log::newThread(std::string&& str) {
@@ -328,3 +291,6 @@ Log::Log() {
 std::ostream& Log::getStream() {
     return Logger::threads.at(std::this_thread::get_id()).getStream();
 }
+
+extern Log logger = Log{};
+

@@ -1,14 +1,10 @@
-module;
-
-#include <string>
-#include <algorithm>
+#pragma once
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <functional>
 
-export module MultiStream;
-
-export class MultiStream : public std::ostream {
+class MultiStream : public std::ostream {
     struct MultiBuffer : public std::streambuf {
         void addBuffer(std::streambuf* buf) {
             bufs.push_back(buf);

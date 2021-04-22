@@ -99,7 +99,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +117,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +135,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,7 +153,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,53 +164,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\sharedInclude\glad\glad.c" />
-    <ClCompile Include="GLM.ixx" />
+    <ClCompile Include="DefineThreadSync.cpp" />
+    <ClCompile Include="font.cpp" />
+    <ClCompile Include="GL.cpp" />
+    <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MultilineString.ixx" />
-    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="MultilineString.cpp" />
+    <ClCompile Include="StringBox.cpp" />
+    <ClCompile Include="ThreadEvents.cpp" />
+    <ClCompile Include="ThreadMain.cpp" />
+    <ClCompile Include="ThreadRender.cpp" />
+    <ClCompile Include="UTF.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h" />
-    <ClCompile Include="Def.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="DefMath.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="DefThread.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="Font.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="GL.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
+    <ClInclude Include="Define.h" />
+    <ClInclude Include="DefineMath.h" />
+    <ClInclude Include="DefineThreadSync.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="GL.h" />
     <ClInclude Include="GUI.h" />
-    <ClCompile Include="Logger.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="MultiStream.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="RollingAverage.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StringBox.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="ThreadEvents.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="ThreadMain.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="ThreadRender.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
-    <ClCompile Include="UTF.ixx">
-      <FileType>CppHeader</FileType>
-    </ClCompile>
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="MultilineString.h" />
+    <ClInclude Include="MultiStream.h" />
+    <ClInclude Include="RollingAverage.h" />
+    <ClInclude Include="StringBox.h" />
+    <ClInclude Include="ThreadEvents.h" />
+    <ClInclude Include="ThreadMain.h" />
+    <ClInclude Include="ThreadRender.h" />
+    <ClInclude Include="UTF.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

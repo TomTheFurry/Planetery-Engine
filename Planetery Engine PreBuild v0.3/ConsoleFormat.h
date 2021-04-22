@@ -1,4 +1,3 @@
-#pragma once
 //Format word for console out
 
 #define FORMAT_START "\033["
@@ -35,3 +34,4 @@ inline std::string format(const std::initializer_list<char> list) {
 	}
 	return (str += FORMAT_END);
 }
+#pragma once

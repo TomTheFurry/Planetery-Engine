@@ -4,30 +4,51 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
+#include <tuple>
 #include <functional>
 #include <string_view>
+#include "UTF.h"
 
 #define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
-#define CHARCODE_8_UNKNOWN_CHAR '?'
-#define CHARCODE_8_ONKNOWN_OBJECT '?'
-#define CHARCODE_16_UNKNOWN_CHAR char16_t(0xFFFD)
-#define CHARCODE_16_ONKNOWN_OBJECT char16_t(0xFFFC)
-#define CHARCODE_32_UNKNOWN_CHAR char32_t(0x0000FFFD)
-#define CHARCODE_32_ONKNOWN_OBJECT char32_t(0x0000FFFC)
-#define CHARCODE_NEXTLINE '\n'
-
+constexpr auto CHARCODE_8_UNKNOWN_CHAR = '?';
+constexpr auto CHARCODE_8_ONKNOWN_OBJECT = '?';
+constexpr auto CHARCODE_16_UNKNOWN_CHAR = char16_t(0xFFFD);
+constexpr auto CHARCODE_16_ONKNOWN_OBJECT = char16_t(0xFFFC);
+constexpr auto CHARCODE_32_UNKNOWN_CHAR = char32_t(0x0000FFFD);
+constexpr auto CHARCODE_32_ONKNOWN_OBJECT = char32_t(0x0000FFFC);
+constexpr auto CHARCODE_NEXTLINE = '\n';
+constexpr uint TAB_SPACE = 4;
 
 namespace font {
 	using GlyphId = uint;
+	constexpr float DONT_RENDER_CHAR = 0.f;
+	constexpr float DEFAULT_SCALE = 1.f;
+
+	template <typename Iter>
+	concept CharTypeIter = requires(Iter a) {
+		{*a} -> std::convertible_to<char32_t>;
+	};
+
 	class FontSet;
 	class FontFace;
 
 	struct FontFaceData {
 		FontFace* _font;
 		float lineHeight;
+		float maxDescend;
+		float maxAccend;
+		float maxLeft;
+		float maxRight;
+		vec2 maxAdvance;
+		float underlinePosition; //the center of the line
+		float underlineThickness;
 	};
 	struct GlyphData {
 		GlyphId gId;
+		float descend;
+		float accend;
+		float left;
+		float right;
 		vec2 advance; //relative to screen size
 		vec2 textureResolutionScale; // >1 = enlarge, <1 = minifly
 	};
@@ -36,31 +57,30 @@ namespace font {
 		const FontFaceData* face;
 		const GlyphData* glyph;
 	};
-	struct _RenderData {
+	struct RenderData {
 		GlyphId gId;
 		vec2 pos;
 	};
-
-	//return value:            float: scale of char           vec2: pos of char    
-	using PositionFunction = std::function<std::pair<float,vec2>(Data)>;
-	constexpr float DONT_RENDER_CHAR = 0.f;
-	constexpr float DEFAULT_SCALE = 1.f; 
-
-	template <typename T>
-	concept CharType = requires(T t) {
-		{t} -> std::convertible_to<char32_t>;
+	class Reader {
+	public:
+		Reader(float fontSize);
+		std::vector<std::pair<FontFaceData, std::vector<GlyphData>>> fontData{};
+		std::vector<std::tuple<char32_t, uint, uint>> chars{};
+		std::vector<std::pair<FontFace*, std::vector<GlyphId>>> indexLookup{};
+		std::map<char32_t, std::pair<uint, uint>> cacheCharMap{};
+		Reader& operator<<(char32_t c);
+	private:
+		float _fontSize;
 	};
 
-	template <typename Iter>
-	concept CharTypeIter = requires(Iter a) {
-		{*a} -> std::convertible_to<char32_t>;
-	};
+	typedef std::vector<std::vector<RenderData>> Output;
+	typedef std::function<void(Reader& data, Output& output)> FullStringFunction;
 
 	extern void init();
 	extern void close();
 
 	extern std::vector<const std::string*> getAllFontSets();
-	extern const std::vector<std::string> getAllFontStyles();
+	extern std::vector<std::string> getAllFontStyles();
 	extern bool addFont(const std::string& fontSetName, const std::string& fileLocation, const std::vector<std::string>& style = {});
 	extern bool linkFallbackFont(const std::string& fontSet, const std::string& fallbackFontSet);
 	extern bool useFont(const std::string& fontSet = {}); //leave empty as default
@@ -74,131 +94,66 @@ namespace font {
 	extern FontFaceData getFontFaceData(FontFace* fontFace, float pointSize);
 	extern GlyphData getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize);
 	extern void renderRequiredGlyph();
-	extern void _renderBatch(FontFace* f, std::vector<_RenderData> d, float pointSize);
-	extern std::pair<FontFace*, GlyphId> getGlyphFromChar(char32_t c);
-	
+	extern void _renderBatch(FontFace* f, std::vector<RenderData> d, float pointSize);
+	extern std::pair<FontFace*, GlyphId> getGlyphFromChar(char32_t c, char32_t replacementChar);
+
 	template <CharTypeIter Iter>
-	static void drawChar(Iter it, Iter itEnd, float pointSize, PositionFunction func) {
-		std::unordered_map<FontFace*, std::vector<_RenderData>> glyphsToRender{};
-		std::map<FontFace*, FontFaceData> fonts{};
-		std::map<std::pair<FontFaceData*, GlyphId>, GlyphData> glyphs{};
-		std::map<char32_t, std::pair<FontFaceData*, GlyphData*>> cacheMap{};
-		for (; it!=itEnd; it++) {
-			auto cache = cacheMap.lower_bound(char32_t(*it));
-			if (cache==cacheMap.end() || cache->first!=*it) {
-				auto pair = getGlyphFromChar(*it); //OPTI: cache the char->FontSet w/ gId pair in FontSet
-				if (pair.first==nullptr) //Font/Glyph set is NOT found, use BACKUPCHARCODE
-					pair = getGlyphFromChar(CHARCODE_32_UNKNOWN_CHAR);
-				FontFaceData* font = nullptr;
-				GlyphData* glyph = nullptr;
-				if (pair.first != nullptr) {
-					auto fontIt = fonts.lower_bound(pair.first);
-					if (fontIt==fonts.end() || fontIt->first!=pair.first) {
-						fontIt = fonts.emplace_hint(fontIt, pair.first, getFontFaceData(pair.first, pointSize));
-					}
-					font = &fontIt->second;
-					auto glyphIt = glyphs.lower_bound(std::make_pair(font, pair.second));
-					if (glyphIt==glyphs.end() || glyphIt->first!=std::make_pair(font, pair.second)) {
-						glyphIt = glyphs.emplace_hint(glyphIt, std::make_pair(font, pair.second), getGlyphData(pair.first, pair.second, pointSize));
-					}
-					glyph = &glyphIt->second;
-				}
-				cache = cacheMap.emplace_hint(cache, *it, std::make_pair(font, glyph));
-			}
-			if (cache->second.first==nullptr) {
-				continue;
-			}
-			auto& p = cache->second;
-			auto result = func(Data{char32_t(*it),p.first,p.second});
-			if (result.first!=DONT_RENDER_CHAR)
-				glyphsToRender[p.first->_font].emplace_back(_RenderData{p.second->gId ,result.second});
+	static void drawChar(Iter it, Iter itEnd, float pointSize, FullStringFunction func) {
+		Reader stringReader(pointSize);
+		while (it!=itEnd) stringReader << *(it++);
+		renderRequiredGlyph(); //reRender Glyphs that needs higher resolution
+		//Call user function
+		Output output{};
+		func(stringReader, output);
+		//Finally render char
+		if (output.size() > stringReader.indexLookup.size()) throw "Invalid output from FullStringFunction() call in font::drawChar()!";
+		for (uint i = 0; i<output.size(); i++) {
+			_renderBatch(stringReader.indexLookup.at(i).first, output.at(i), pointSize);
+		}
+	}
+
+	extern void _drawStringFunction(Reader& r, Output& output, vec2 topLeftPos, vec2 maxSize);
+	template <CharTypeIter Iter>
+	static void drawString(Iter it, Iter itEnd, float pointSize, vec2 topLeftPos, vec2 maxSize) {
+		vec2 drawHead = vec2(-1, 1);
+		float maxLineHeight = -1;
+		
+		Reader stringReader(pointSize);
+		stringReader << U' '; //Add space reading request
+		while (it!=itEnd) {
+			stringReader << *(it++);
 		}
 		renderRequiredGlyph(); //reRender Glyphs that needs higher resolution
+		//Do Pos Function
+		Output output{};
+		_drawStringFunction(stringReader, output, topLeftPos, maxSize);
+
 		//Finally render char
-		for (auto& font : glyphsToRender) {
-			_renderBatch(font.first, font.second, pointSize);
+		if (output.size() > stringReader.indexLookup.size()) throw "Invalid output from FullStringFunction() call in font::drawChar()!";
+		for (uint i = 0; i<output.size(); i++) {
+			_renderBatch(stringReader.indexLookup.at(i).first, output.at(i), pointSize);
 		}
 	}
+	extern void _drawStringCentreFunction(Reader& r, Output& output, vec2 topLeftPos, vec2 maxSize);
+	template <CharTypeIter Iter>
+	static void drawStringLineCentre(Iter it, Iter itEnd, float pointSize, vec2 topLeftPos, vec2 maxSize) {
+		vec2 drawHead = vec2(-1, 1);
+		float maxLineHeight = -1;
 
-	static void drawString(const std::string& string, float pointSize, vec2 position, float maxWidth) {
-		vec2 drawHead = position;
-		float lineHeight = 0;
+		Reader stringReader(pointSize);
+		stringReader << U' '; //Add space reading request
+		while (it!=itEnd) {
+			stringReader << *(it++);
+		}
+		renderRequiredGlyph(); //reRender Glyphs that needs higher resolution
+		//Do Pos Function
+		Output output{};
+		_drawStringCentreFunction(stringReader, output, topLeftPos, maxSize);
 
-		drawChar(string.begin(), string.end(), pointSize,
-			[&](Data d) {
-				if (d.charCode=='\n') {
-					drawHead.x = position.x;
-					drawHead.y -= lineHeight;
-					lineHeight = 0;
-					return std::make_pair(0.f, vec2(0));
-				}
-				drawHead.x += d.glyph->advance.x;
-				if (drawHead.x > position.x+maxWidth) {
-					drawHead.x = position.x;
-					drawHead.y -= lineHeight;
-				}
-				if (d.face->lineHeight > lineHeight) lineHeight = d.face->lineHeight;
-				return std::make_pair(1.f, drawHead);
-			}
-		);
-	}
-	static void drawString(const std::string& string, float pointSize, vec2 position) {
-		vec2 drawHead = position;
-		float lineHeight = 0;
-
-		drawChar(string.begin(), string.end(), pointSize,
-			[&](Data d) {
-				if (d.charCode=='\n') {
-					drawHead.x = position.x;
-					drawHead.y -= lineHeight;
-					lineHeight = 0;
-					return std::make_pair(0.f, vec2(0));
-				}
-				if (d.face->lineHeight > lineHeight) lineHeight = d.face->lineHeight;
-				drawHead.x += d.glyph->advance.x;
-				return std::make_pair(1.f, drawHead);
-			}
-		);
-	}
-	static void drawString(const std::wstring& string, float pointSize, vec2 position, float maxWidth) {
-		vec2 drawHead = position;
-		float lineHeight = 0;
-
-		drawChar(string.begin(), string.end(), pointSize,
-			[&](Data d) {
-				if (d.charCode=='\n') {
-					drawHead.x = position.x;
-					drawHead.y -= lineHeight;
-					lineHeight = 0;
-					return std::make_pair(0.f, vec2(0));
-				}
-				drawHead.x += d.glyph->advance.x;
-				if (drawHead.x > position.x+maxWidth) {
-					drawHead.x = position.x;
-					drawHead.y -= lineHeight;
-				}
-				if (d.face->lineHeight > lineHeight) lineHeight = d.face->lineHeight;
-				return std::make_pair(1.f, drawHead);
-			}
-		);
-	}
-	static void drawString(const std::wstring& string, float pointSize, vec2 position) {
-		vec2 drawHead = position;
-		float lineHeight = 0;
-
-		drawChar(string.begin(), string.end(), pointSize,
-			[&](Data d) {
-				if (d.charCode=='\n') {
-					drawHead.x = position.x;
-					drawHead.y -= lineHeight;
-					lineHeight = 0;
-					return std::make_pair(0.f, vec2(0));
-				}
-				if (d.face->lineHeight > lineHeight) lineHeight = d.face->lineHeight;
-				drawHead.x += d.glyph->advance.x;
-				return std::make_pair(1.f, drawHead);
-			}
-		);
+		//Finally render char
+		if (output.size() > stringReader.indexLookup.size()) throw "Invalid output from FullStringFunction() call in font::drawChar()!";
+		for (uint i = 0; i<output.size(); i++) {
+			_renderBatch(stringReader.indexLookup.at(i).first, output.at(i), pointSize);
+		}
 	}
 }
-

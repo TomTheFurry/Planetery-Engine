@@ -1,10 +1,15 @@
-﻿
-import Logger;
-import ThreadEvents;
-import ThreadRender;
-import Font;
-import GL;
-import StringBox;
+﻿#include "Logger.h"
+#include "ThreadEvents.h"
+#include "ThreadRender.h"
+#include "Font.h"
+#include "GL.h"
+#include "StringBox.h"
+
+#include <thread>
+#include <iostream>
+#include <chrono>
+#include <atomic>
+
 
 
 const char*const UTF_8_TEST_STRING = reinterpret_cast<const char*const>(u8"English: The quick brown fox jumps over the lazy dog.\n\

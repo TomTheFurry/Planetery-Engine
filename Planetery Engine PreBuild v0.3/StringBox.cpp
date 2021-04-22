@@ -1,65 +1,17 @@
-module;
+#include "StringBox.h"
+#include "Logger.h"
+#include "GL.h"
+#include "Font.h"
+#include "UTF.h"
 
-#include <string>
-#include <iostream>
-#include <sstream>
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-
-export module StringBox;
-import Def;
-import DefMath;
-import GL;
-
-export class StringBox {
-public:
-	StringBox();
-	vec2 pos; //normalized (-1 - 1)
-	vec4 backgroundColor;
-	vec4 borderColor;
-	vec2 borderThickness;
-	void render();
-	std::string str() const;
-	void str(const std::string& string);
-	void str(std::string&& string);
-	void clear();
-
-	void setSize(vec2 size); //true normalized length (0 - 1)
-	vec2 getSize() const; //true normalized length (0 - 1)
-	void setTextSize(float pointSize);
-	void notifyPPIChanged();
-	void setLineCenter(bool v);
-
-	template <typename T>
-	StringBox& operator<< (T&& t) {
-		_change = true;
-		_ss<<(std::forward<T>(t));
-		return *this;
-	}
-
-protected:
-	vec2 size; //true normalized length (0 - 1)
-	bool _change;
-	bool _isLineCentre;
-	float _pointSize;
-	vec2 _ppi;
-	uvec2 _textureSize;
-	gl::Texture2D* _tex;
-	gl::FrameBuffer* _fbo;
-	std::ostringstream _ss;
-};
-
-module :private;
-import Logger;
-import Font;
-import UTF;
 
 static gl::RenderTarget* _targetText = nullptr;
 
 StringBox::StringBox() : _ss() {
 	pos = vec2(0, 0);
-	backgroundColor = vec4(0.05, 0.07, 0.2, 0.98);
-	borderColor = vec4(0.01, 0.015, 0.03, 1.0);
+	backgroundColor = vec4(0.05,0.07,0.2,0.98);
+	borderColor = vec4(0.01,0.015,0.03,1.0);
 	borderThickness = vec2(0.01);
 	size = vec2(0, 0);
 	_ppi = vec2(0, 0);
@@ -76,13 +28,13 @@ void StringBox::render() {
 		//logger("ReRendering...\n");
 		//render text here
 		_ppi = gl::target->pixelPerInch;
-		_textureSize = uvec2(glm::ceil(vec2(gl::target->viewport.z, gl::target->viewport.w) * size));
-		if (_textureSize.x <= 0 || _textureSize.y <= 0) {
+		_textureSize = uvec2(glm::ceil(vec2(gl::target->viewport.z, gl::target->viewport.w)*size));
+		if (_textureSize.x<=0 || _textureSize.y<=0) {
 			_change = false;
 			return;
 		}
 
-		if (_targetText == nullptr) {
+		if (_targetText==nullptr) {
 			_targetText = new gl::RenderTarget();
 		}
 		if (_fbo == nullptr)
@@ -96,35 +48,32 @@ void StringBox::render() {
 		_tex->setFormat(GL_R8, _textureSize.x, _textureSize.y, 1);
 		_tex->setTextureSamplingFilter(gl::Texture::SamplingFilter::linear, gl::Texture::SamplingFilter::linear);
 		_fbo->attach(_tex, GL_COLOR_ATTACHMENT0, 0);
-		Swapper _{ gl::target, _targetText };
+		Swapper _{gl::target, _targetText};
 
 		gl::target->activateFrameBuffer();
 		glClearColor(1, 1, 1, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
-		std::string _str{ str() };
+		std::string _str{str()};
 		vec2 drawHead = vec2(-1, 1);
 		float maxLineHeight = -1;
 		if (_isLineCentre) {
 			font::drawStringLineCentre(utf::beginOfUTF8(_str), utf::endOfUTF8(_str), _pointSize, vec2(-1, 1), vec2(2, 2));
-		}
-		else {
+		} else {
 			font::drawString(utf::beginOfUTF8(_str), utf::endOfUTF8(_str), _pointSize, vec2(-1, 1), vec2(2, 2));
 		}
 		_change = false; //disable this to make it always refeashing
 	}
 	//use render texture here
-	float wOverH = float(gl::target->viewport.z) / float(gl::target->viewport.w);
-	vec2 trueThick = vec2(borderThickness.x / wOverH, borderThickness.y);
-	if (borderThickness == vec2(0)) {
-		gl::drawRectangles({ gl::GLRect{.pos = pos, .size = size * 2.f} }, backgroundColor)->release();
+	float wOverH = float(gl::target->viewport.z)/float(gl::target->viewport.w);
+	vec2 trueThick = vec2(borderThickness.x/wOverH, borderThickness.y);
+	if (borderThickness==vec2(0)) {
+		gl::drawRectangles({gl::GLRect{.pos = pos, .size = size*2.f}}, backgroundColor)->release();
+	} else if (backgroundColor==vec4(0)) {
+		gl::drawRectanglesBorder({gl::GLRect{.pos = pos-trueThick, .size = (size+trueThick)*2.f}}, trueThick, borderColor)->release();
+	} else {
+		gl::drawRectanglesFilledBorder({gl::GLRect{.pos = pos-trueThick, .size = (size+trueThick)*2.f}}, backgroundColor, trueThick, borderColor)->release();
 	}
-	else if (backgroundColor == vec4(0)) {
-		gl::drawRectanglesBorder({ gl::GLRect{.pos = pos - trueThick, .size = (size + trueThick) * 2.f} }, trueThick, borderColor)->release();
-	}
-	else {
-		gl::drawRectanglesFilledBorder({ gl::GLRect{.pos = pos - trueThick, .size = (size + trueThick) * 2.f} }, backgroundColor, trueThick, borderColor)->release();
-	}
-	gl::drawTexR8Rectangle(_tex, gl::GLRect{ .pos = pos, .size = size * 2.f }, vec4(0.f, 0.2f, 0.f, 1.f))->release();
+	gl::drawTexR8Rectangle(_tex, gl::GLRect{.pos = pos, .size = size*2.f}, vec4(0.f, 0.2f, 0.f, 1.f))->release();
 }
 
 std::string StringBox::str() const {
@@ -165,4 +114,3 @@ void StringBox::setLineCenter(bool v) {
 	_isLineCentre = v;
 	_change = true;
 }
-

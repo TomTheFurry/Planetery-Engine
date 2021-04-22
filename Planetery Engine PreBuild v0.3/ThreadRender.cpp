@@ -1,61 +1,23 @@
-module;
+﻿#include "Logger.h"
 
-#include <functional>
-#include <atomic>
+#include "ThreadRender.h"
+
+#include "ThreadEvents.h"
+
+#include "RollingAverage.h"
+#include "Font.h"
+#include "StringBox.h"
+
 #include <thread>
+#include <atomic>
 #include <condition_variable>
 #include <chrono>
 #include <mutex>
+
 #include <exception>
+
+#include "GL.h"
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-
-export module ThreadRender;
-import Def;
-import DefMath;
-import DefThread;
-
-export namespace render {
-	enum class State {
-		init,
-		paused,
-		normal,
-		requestStop,
-		complete
-	};
-	using RenderFunction = std::function<void()>;
-	struct RenderHandle {
-		RenderFunction func;
-		std::atomic<bool> requestDelete = false;
-	};
-	class ThreadRender {
-	public:
-		//thread control
-		static void start(const char*(*callback)(void));
-		static void requestStop(); //stop thread (with cleanup)
-		static void pause(); //pause thread (for maybe debug?)
-		static void unpause(); //unpause thread
-		//for owner
-		static void join(); //join thread
-		static void join(uint nsTimeout); //join thread
-
-		//for all thread
-		static State getState();
-		static RenderHandle* newRenderHandle(RenderFunction func);
-
-		//for render func in render handle
-
-	};
-}
-
-module :private;
-import Logger;
-import ThreadEvents;
-import RollingAverage;
-import Font;
-import StringBox;
-import GL;
-
 
 using namespace render;
 
@@ -64,7 +26,7 @@ using namespace render;
 static void APIENTRY glDebugOutput(
 	GLenum source, GLenum type, uint id, GLenum severity,
 	GLsizei length, const char* message, const void* userParam) {
-	if (id == 131185 || id == 131204 || id == 131169) return; //7: deprecated behavior warning
+	if (id == 131185 || id == 131204 || id == 131169 ) return; //7: deprecated behavior warning
 	logger.newMessage("GLError");
 	logger << "--------OPENGL ERROR--------\n";
 	logger << "Error id " << std::to_string(id) << ": " << message << "\n";
@@ -153,7 +115,7 @@ static void _main() {
 		}
 		logger("glad init success.\n Now init GL graphics...\n");
 
-		uvec2 windowSize{ events::ThreadEvents::getFramebufferSize() };
+		uvec2 windowSize{events::ThreadEvents::getFramebufferSize()};
 		glEnable(GL_FRAMEBUFFER_SRGB);
 		glEnable(GL_MULTISAMPLE);
 		if (IS_DEBUG_MODE) {
@@ -192,9 +154,9 @@ static void _main() {
 		uint eventTickCount = 0;
 		StringBox fpsBox{};
 		fpsBox.str("FPS Counter");
-		fpsBox.pos = vec2{ -0.9, 0.5 };
+		fpsBox.pos = vec2{-0.9, 0.5};
 		fpsBox.setTextSize(72.f);
-		fpsBox.setSize(vec2{ 0.3,0.2 });
+		fpsBox.setSize(vec2{0.3,0.2});
 
 		while (_state.load(std::memory_order_relaxed) != State::requestStop) { //does not have to instantly respond
 			if (_state.load(std::memory_order_relaxed) == State::paused) {
@@ -204,8 +166,7 @@ static void _main() {
 				tickCount = 0;
 				nsDeltaPerSec = 0;
 				tickTimerB = std::chrono::high_resolution_clock::now();
-			}
-			else {
+			} else {
 				hotTickTimerB = std::chrono::high_resolution_clock::now();
 				//poll event flags
 				events::ThreadEvents::pollFlags();
@@ -216,7 +177,7 @@ static void _main() {
 					if (!h.renderHandlesEmpty.exchange(true, std::memory_order_relaxed)) {
 						static std::vector<RenderHandle*>* vec = new std::vector<RenderHandle*>{};
 						{
-							std::lock_guard _{ h.mxRenderHandles };
+							std::lock_guard _{h.mxRenderHandles};
 							std::swap(vec, h.newRenderHanles);
 						}
 						_renderJobs.insert(_renderJobs.end(), vec->begin(), vec->end());
@@ -235,20 +196,18 @@ static void _main() {
 					gl::target->pixelPerInch = events::ThreadEvents::getPixelPerInch();
 					fpsBox.notifyPPIChanged();
 				}
-
+				
 				gl::target->activateFrameBuffer();
-				if (flips) { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); }
-				else { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); }
+				if (flips) { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); } else { glClearColor(1.0f, 1.0f, 1.0f, 1.0f); }
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 				//do jobs
 				for (auto& h : _renderJobs) {
-					if (h != nullptr) {
+					if (h!=nullptr) {
 						if (h->requestDelete) {
 							delete h;
 							h = nullptr;
-						}
-						else {
+						} else {
 							h->func();
 						}
 					}
@@ -284,8 +243,7 @@ static void _main() {
 				events::ThreadEvents::swapBuffer(); //Will block and wait for screen updates (v-sync)
 			}
 		}
-	}
-	catch (const char* e) {
+	} catch (const char* e) {
 		logger("Uncaught Exception!! ", e);
 		events::ThreadEvents::panic(std::current_exception());
 	} //catch (...) {
@@ -296,8 +254,7 @@ static void _main() {
 	try {
 		font::close();
 		gl::end();
-	}
-	catch (...) {
+	} catch (...) {
 		events::ThreadEvents::panic(std::current_exception());
 	}
 	logger.closeThread("ThreadRender");
@@ -345,13 +302,12 @@ void ThreadRender::join() {
 }
 
 void render::ThreadRender::join(uint nsTimeout) {
-	std::unique_lock _{ mx };
-	bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed) == State::complete; });
+	std::unique_lock _{mx};
+	bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed)==State::complete; });
 	if (success) {
 		_thread->join();
 		delete _thread;
-	}
-	else {
+	} else {
 		logger("ThreadRender join request timed out. Inore thread. (Will cause memory leaks)\n");
 	}
 
@@ -363,13 +319,12 @@ State ThreadRender::getState() {
 
 RenderHandle* render::ThreadRender::newRenderHandle(RenderFunction func) {
 	auto& t = _threads[std::this_thread::get_id()];
-	auto ptr = new RenderHandle{ func };
+	auto ptr = new RenderHandle{func};
 	{
-		std::lock_guard _{ t.mxRenderHandles };
+		std::lock_guard _{t.mxRenderHandles};
 		t.newRenderHanles->push_back(ptr);
 	}
 	t.renderHandlesEmpty.store(false, std::memory_order_relaxed);
 	return ptr;
 }
-
 

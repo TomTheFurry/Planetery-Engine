@@ -1,216 +1,19 @@
-module;
+#include "Define.h"
 
-#include <utility>
-#include <functional>
-#include <exception>
+#include "ThreadEvents.h"
+
+#include "Logger.h"
+#include "ThreadRender.h"
+
 #include <thread>
 #include <atomic>
 #include <condition_variable>
 #include <chrono>
 #include <mutex>
-#include <glfw/glfw3.h>
 #include <system_error>
-#include "ConsoleFormat.h"
-#include <assert.h>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
 
-export module ThreadEvents;
-import Def;
-import DefMath;
-import DefThread;
 
-export namespace events {
-	enum class State {
-		init,
-		paused,
-		normal,
-		requestStop,
-		complete
-	};
-	namespace KeyCode {
-		enum KeyCode {
-			unkown = -1,
-			null = 0,
-			space = 32,
-			apostrophe = 39,
-			comma = 44,
-			minus,
-			period,
-			slash,
-			num0 = 48,
-			num1, num2, num3,
-			num4, num5, num6,
-			num7, num8, num9,
-			semicolon = 59,
-			equal = 61,
-			a = 65,
-			b, c, d, e, f, g,
-			h, i, j, k, l, m, n,
-			o, p, q, r, s, t,
-			u, v, w, x, y, z,
-			leftBracket = 91,
-			backSlash,
-			rightBracket,
-			graveAccent = 96,
-			world1 = 161, //?? WTF is this key?
-			world2,
-			escape = 256,
-			enter,
-			tab,
-			backspace,
-			insert,
-			deleteKey,
-			arrowRight = 262,
-			arrowLeft,
-			arrowDown,
-			arrowUp,
-			pageUp = 266,
-			pageDown,
-			home,
-			end,
-			capsLock = 280,
-			scrollLock,
-			numLock,
-			printScreen,
-			pause,
-			F1 = 290,
-			F2, F3, F4, F5,
-			F6, F7, F8, F9,
-			F10, F11, F12, F13,
-			F14, F15, F16, F17,
-			F18, F19, F20, F21,
-			F22, F23, F24, F25,
-			numpad0 = 320,
-			numpad1, numpad2,
-			numpad3, numpad4,
-			numpad5, numpad6,
-			numpad7, numpad8,
-			numpad9,
-			numpadDecimal = 330,
-			numpadDivide,
-			numpadMultiply,
-			numpadSubtract,
-			numpadAdd,
-			numpadEnter,
-			numpadEqual,
-			leftShift = 340,
-			leftControl,
-			leftAlt,
-			leftSuper,
-			rightShift = 344,
-			rightControl,
-			rightAlt,
-			rightSuper,
-			menu = 348
-		};
-	}
-	enum class KeyAction {
-		null = -1,
-		release = 0,
-		press = 1,
-		repeat = 2
-	};
-	namespace KeyModFlag {
-		enum KeyModFlag {
-			null = 0,
-			matchShift = 1,
-			matchControl = 2,
-			matchAlt = 4,
-			matchSuper = 8,
-			matchCapsLock = 16,
-			matchNumLock = 32,
-			shift = 64,
-			control = 128,
-			alt = 256,
-			super = 512,
-			capsLock = 1024,
-			numLock = 2048
-		};
-	}
-	class KeyModFlags {
-		uint _flag;
-	public:
-		KeyModFlags(uint flags) : _flag(std::move(flags)) {}
-		bool get(uint flag) {
-			return bool(_flag & flag);
-		}
-		void set(uint flag) {
-			_flag |= flag;
-		}
-		void unset(uint flag) {
-			_flag &= ~flag;
-		}
-		uint get() {
-			return _flag;
-		}
-	};
-	using KeyEventFunction = std::function<void(int, KeyAction, KeyModFlags)>;
-	enum class FullScreenMode {
-		windowed,
-		fullscreen,
-		windowedFullscreen
-	};
-	class ThreadEvents {
-	public:
-		static std::atomic<uint> counter;
-		//called ONLY by main thread
-		static void start(); //split thread
-		static void requestStop(); //stop thread (with cleanup)
-		static void pause(); //pause thread (for maybe debug?)
-		static void unpause(); //unpause thread
-		static void join(); //join thread
-		static void join(uint nsTimeout); //join thread
-
-		//called ONLY by child thread
-		static void panic(std::exception_ptr eptr); //report critical exception
-		static void log(std::exception_ptr eptr); //report non critical exception
-		
-		//called ONLY by render thread
-		static void swapBuffer();
-
-		//called ONLY by event thread (inline function)
-		static void setWindowedInline();
-		static void setFullScreenInline();
-		static void setWindowedFullScreenInline();
-		static FullScreenMode getFullScreenModeInline();
-
-		//for all thread
-		//getter
-		static State getState();
-
-		static void pollFlags(); //update flag for value changes
-
-		static bool isWindowResized();
-		static uvec2 getWindowSize();
-		static uvec2 getFramebufferSize();
-
-		static bool isWindowMoved();
-		static ivec2 getWindowPos();
-
-		static vec2 getPixelPerInch(); //effected by both windowMoved & windowResized
-		static bool isMouseMoved();
-		static uvec2 getMousePos();
-
-		//settings
-		static void closeWindow();
-		static void setWindowed();
-		static void setFullScreen();
-		static void setWindowedFullscreen();
-
-		//window key event (NON BLOCKING, so the actual binding and unbinding WILL be delayed)
-		[[nodiscard]] static void addKeyEventCallback(KeyEventFunction f, int keyCode = KeyCode::null,
-			KeyAction keyAction = KeyAction::null, KeyModFlags keyModFlags = KeyModFlags(KeyModFlag::null)); //Unchangable
-		[[nodiscard]] static void addInlineKeyEventCallback(KeyEventFunction f, int keyCode = KeyCode::null,
-			KeyAction keyAction = KeyAction::null, KeyModFlags keyModFlags = KeyModFlags(KeyModFlag::null)); //Unchangable
-
-		static bool pollEvents(); //return true if there are events
-	};
-}
-
-module: private;
-import Logger;
-import ThreadRender;
+#include <glfw/glfw3.h>
 
 #define WINDOW_MIN_WIDTH 400
 #define WINDOW_MIN_HEIGHT 300
@@ -225,7 +28,7 @@ import ThreadRender;
 
 using namespace events;
 
-constexpr vec2 windowInitSize = { 1520,800 };
+constexpr vec2 windowInitSize = {1520,800};
 
 struct _KeyEvent {
 	KeyEventFunction func;
@@ -258,35 +61,35 @@ struct _Thread {
 	std::atomic<_Flags> flags = _Flags(-1);
 };
 
-static std::atomic<State> _state{ State::init };
+static std::atomic<State> _state{State::init};
 static std::thread* _thread = nullptr;
 static GLFWwindow* _window = nullptr;
 static GLFWmonitor* _targetMonitor = nullptr;
-static std::atomic<vec2> _pixelPerInch{ vec2(0,0) };
-static std::atomic<uvec2> _framebufferSize{ uvec2(0,0) };
-static std::atomic<uvec2> _windowSize{ uvec2(0,0) };
-static std::atomic<ivec2> _windowPos{ ivec2(0,0) };
-static std::atomic<uvec2> _mousePos{ uvec2(0,0) };
+static std::atomic<vec2> _pixelPerInch {vec2(0,0)};
+static std::atomic<uvec2> _framebufferSize {uvec2(0,0)};
+static std::atomic<uvec2> _windowSize {uvec2(0,0)};
+static std::atomic<ivec2> _windowPos {ivec2(0,0)};
+static std::atomic<uvec2> _mousePos {uvec2(0,0)};
 static FullScreenMode _fullScreenMode = FullScreenMode::windowed;
 static std::atomic<FullScreenMode> _fullScreenModeTarget = FullScreenMode::windowed;
 static std::atomic<bool> _fullScreenModeChangeRequest = false;
-static uvec2 _windowedSize{ uvec2(0,0) };
-static ivec2 _windowedPos{ ivec2(0,0) };
+static uvec2 _windowedSize{uvec2(0,0)};
+static ivec2 _windowedPos{ivec2(0,0)};
 static std::exception_ptr _eptr{}; //BUG: err... atomic eptr????
 static std::mutex mx{};
 static std::condition_variable cv{};
 static std::unordered_map<std::thread::id, _Thread> _threads{};
 static std::unordered_map<std::thread::id, std::vector<_KeyEvent>> _eventsToAdd{};
 static std::vector<_KeyCallback> _activeCallbacks{};
-std::atomic<uint> ThreadEvents::counter{ 0 };
+std::atomic<uint> ThreadEvents::counter{0};
 
 static void glfwErrorCallback(int errorCode, const char* text) {
 	logger.newMessage("GLFWError");
-	logger << format({ BACKGROUND COLOR_RED }) << "GLFW ERROR:\n";
-	logger(format({ COLOR_RED }), "Error", format({ COLOR_DEFAULT }), " Code: ", format({ BRIGHT COLOR_WHITE }), std::to_string(errorCode), "\n");
+	logger << format({BACKGROUND COLOR_RED}) << "GLFW ERROR:\n";
+	logger(format({COLOR_RED}), "Error", format({COLOR_DEFAULT}), " Code: ", format({BRIGHT COLOR_WHITE}), std::to_string(errorCode), "\n");
 	logger(std::string(text), "\n");
 	if (errorCode == 65543) {
-		logger << format({ BACKGROUND COLOR_RED, BRIGHT COLOR_WHITE }) << "This software requires OpenGL Version 4.6 or higher!\n";
+		logger << format({BACKGROUND COLOR_RED, BRIGHT COLOR_WHITE}) << "This software requires OpenGL Version 4.6 or higher!\n";
 	}
 	logger.closeMessage("GLFWError");
 }
@@ -309,8 +112,8 @@ static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
 	}
 }
 static void mouse_pos_callback(GLFWwindow* _, double x, double y) {
-	if (x < 0 || y < 0) return;
-	_mousePos.store(uvec2{ x,y }, std::memory_order_release);
+	if (x<0 || y<0) return;
+	_mousePos.store(uvec2{x,y}, std::memory_order_release);
 	for (auto& pair : _threads) {
 		pair.second.flags.fetch_or(_flag::mouseMoved, std::memory_order_relaxed);
 	}
@@ -332,18 +135,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		assert(false); //throw on debug mode
 	}
 
-	uint flags{ (uint)mods };
+	uint flags{(uint)mods};
 
 	for (auto& c : _activeCallbacks) {
-		if ((c.keyAction == KeyAction::null || c.keyAction == k) &&
-			(c.keyCode == KeyCode::null || c.keyCode == key || c.keyCode == -scancode) &&
-			((flags ^ (c.keyModFlags.get() >> 6) & c.keyModFlags.get()) == 0)) {
+		if ((c.keyAction==KeyAction::null || c.keyAction == k) &&
+			(c.keyCode==KeyCode::null || c.keyCode == key || c.keyCode == -scancode) &&
+			((flags ^ (c.keyModFlags.get()>>6) & c.keyModFlags.get()) == 0)) {
 			if (c.id == std::this_thread::get_id()) {
-				c.func(key, k, flags << 6);
-			}
-			else {
+				c.func(key, k, flags<<6);
+			} else {
 				auto& v = _eventsToAdd[c.id]; //WILL modify/add entries to map
-				v.emplace_back(_KeyEvent{ c.func,key,k,flags << 6 });
+				v.emplace_back(_KeyEvent{c.func,key,k,flags<<6});
 			}
 		}
 	}
@@ -429,24 +231,24 @@ static void _main() {
 		_targetMonitor = glfwGetPrimaryMonitor();
 		_window = glfwCreateWindow(windowW, windowH, "Project Planetery Engine", useFullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 		if (_window == NULL) {
-			logger(format({ COLOR_RED }), "Failed to create GLFW windows.\n");
+			logger(format({COLOR_RED}), "Failed to create GLFW windows.\n");
 			glfwTerminate();
 			throw "GLFW init failed";
 		}
 		{
 			int x, y;
 			glfwGetFramebufferSize(_window, &x, &y);
-			_framebufferSize.store(uvec2{ x,y });
+			_framebufferSize.store(uvec2{x,y});
 			glfwGetWindowSize(_window, &x, &y);
-			_windowSize.store(uvec2{ x,y });
+			_windowSize.store(uvec2{x,y});
 			glfwGetWindowPos(_window, &x, &y);
-			_windowPos.store(ivec2{ x,y });
+			_windowPos.store(ivec2{x,y});
 			double dx, dy;
 			glfwGetCursorPos(_window, &dx, &dy);
-			_mousePos.store(uvec2{ dx,dy });
+			_mousePos.store(uvec2{dx,dy});
 			float fx, fy;
 			glfwGetMonitorContentScale(_targetMonitor, &fx, &fy);
-			_pixelPerInch.store(vec2(SYS_DEFAULT_DPI) * vec2(fx, fy), std::memory_order_relaxed);
+			_pixelPerInch.store(vec2(SYS_DEFAULT_DPI)*vec2(fx, fy), std::memory_order_relaxed);
 		}
 
 		glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback); //Main thread only
@@ -468,9 +270,9 @@ static void _main() {
 			return (const char*)glfwGetProcAddress;
 			});
 
-		while (!glfwWindowShouldClose(_window) || _state.load(std::memory_order_relaxed) == State::requestStop) {
+		while (!glfwWindowShouldClose(_window) || _state.load(std::memory_order_relaxed)==State::requestStop) {
 			ThreadEvents::counter++;
-
+			
 			//Process request
 			if (_fullScreenModeChangeRequest.exchange(false, std::memory_order_release)) {
 				auto newMode = _fullScreenModeTarget.load(std::memory_order_acquire);
@@ -489,11 +291,11 @@ static void _main() {
 
 				//Since vector.size is not atomic/thread-safe, use additional atomic<uint> for size,
 				//WHICH MAY NOT CORRESPOND WITH THE ACTUAL SIZE.
-				if (d.CallbacksEmpty.load(std::memory_order_relaxed) == false) {
+				if (d.CallbacksEmpty.load(std::memory_order_relaxed)==false) {
 					static std::vector<_KeyCallback> vec{};
 					assert(vec.empty());
 					{
-						std::lock_guard _{ d.mxCallbacks };
+						std::lock_guard _{d.mxCallbacks};
 						d.CallbacksEmpty.store(true, std::memory_order_relaxed); //Set the size
 						d.newCallbacks->swap(vec);
 					}
@@ -514,12 +316,12 @@ static void _main() {
 				auto& vec = pair.second;
 				auto& t = _threads[pair.first]; //WILL add entries
 				{
-					std::lock_guard _{ t.mxEvents };
+					std::lock_guard _{t.mxEvents};
 					t.EventsEmpty.store(false, std::memory_order_relaxed);
 					t.events->insert(t.events->end(), vec.begin(), vec.end());
 				}
 			}
-
+			
 			//Fifth, cleanup
 			_eventsToAdd.clear();
 
@@ -529,24 +331,21 @@ static void _main() {
 		auto& eptr = _eptr;
 		if (eptr) {
 			logger("Critical unknown error in ThreadRender. Haiting...");
-		}
-		else {
+		} else {
 			logger("Window close request recived. Stopping render thread...");
 		}
 		_state.store(State::requestStop, std::memory_order_relaxed);
 		render::ThreadRender::requestStop();
 		render::ThreadRender::join(1000000000);
 		logger("Render thread stopped.");
-	}
-	catch (...) {
+	} catch (...) {
 		logger("Critical unknown error in ThreadEvents. Halting...\n");
 		_state.store(State::requestStop, std::memory_order_relaxed);
-		if (render::ThreadRender::getState() != render::State::init) {
+		if (render::ThreadRender::getState()!=render::State::init) {
 			render::ThreadRender::requestStop();
 			render::ThreadRender::join(1000000000);
 			logger("Render thread stopped.");
-		}
-		else {
+		} else {
 			logger("ThreadRender is not initiated.");
 			//BUG: Not gonna work if threadRender is running but before init set and threadEvents got error. However std::thread will also halt all child thread if not poperly closed...
 		}
@@ -557,11 +356,10 @@ static void _main() {
 }
 
 void ThreadEvents::start() {
-	if (_thread != nullptr) throw "ThreadEvents.start() called when thread already exist!";
+	if (_thread!=nullptr) throw "ThreadEvents.start() called when thread already exist!";
 	try {
 		_thread = new std::thread(_main);
-	}
-	catch (std::system_error e) {
+	} catch (std::system_error e) {
 		logger("Errror! ThreadEvents could not be started!\n", e.what());
 		//doErrorHandling
 		throw e;
@@ -597,13 +395,12 @@ void ThreadEvents::join() {
 }
 
 void ThreadEvents::join(uint nsTimeout) {
-	std::unique_lock _{ mx };
-	bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed) == State::complete; });
+	std::unique_lock _{mx};
+	bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed)==State::complete; });
 	if (success) {
 		_thread->join();
 		delete _thread;
-	}
-	else {
+	} else {
 		logger("ThreadEvents join request timed out. Inore thread. (Will cause memory leaks)\n");
 	}
 }
@@ -620,26 +417,25 @@ void ThreadEvents::swapBuffer() {
 }
 
 void ThreadEvents::setWindowedInline() {
-	if (_fullScreenMode != FullScreenMode::windowed) {
+	if (_fullScreenMode!=FullScreenMode::windowed) {
 		_unsetFullScreenMode(_fullScreenMode);
 		_setFullScreenMode(FullScreenMode::windowed);
 		_fullScreenMode = FullScreenMode::windowed;
 	}
 }
 void ThreadEvents::setFullScreenInline() {
-	if (_targetMonitor != NULL && _fullScreenMode != FullScreenMode::fullscreen) { //use NULL here as glfw returns null
+	if (_targetMonitor!=NULL && _fullScreenMode!=FullScreenMode::fullscreen) { //use NULL here as glfw returns null
 		_unsetFullScreenMode(_fullScreenMode);
 		_setFullScreenMode(FullScreenMode::fullscreen);
 		_fullScreenMode = FullScreenMode::fullscreen;
-	}
-	else if (_targetMonitor == NULL && _fullScreenMode != FullScreenMode::windowedFullscreen) { //use NULL here as glfw returns null
+	} else if (_targetMonitor==NULL && _fullScreenMode!=FullScreenMode::windowedFullscreen) { //use NULL here as glfw returns null
 		_unsetFullScreenMode(_fullScreenMode);
 		_setFullScreenMode(FullScreenMode::windowedFullscreen);
 		_fullScreenMode = FullScreenMode::windowedFullscreen;
 	}
 }
 void ThreadEvents::setWindowedFullScreenInline() {
-	if (_fullScreenMode != FullScreenMode::windowedFullscreen) {
+	if (_fullScreenMode!=FullScreenMode::windowedFullscreen) {
 		_unsetFullScreenMode(_fullScreenMode);
 		_setFullScreenMode(FullScreenMode::windowedFullscreen);
 		_fullScreenMode = FullScreenMode::windowedFullscreen;
@@ -704,27 +500,27 @@ void events::ThreadEvents::setWindowedFullscreen() {
 void events::ThreadEvents::addKeyEventCallback(KeyEventFunction f, int keyCode, KeyAction keyAction, KeyModFlags keyModFlags) {
 	auto& t = _threads[std::this_thread::get_id()]; //WILL add entries
 	{
-		std::lock_guard _{ t.mxCallbacks };
-		t.newCallbacks->emplace_back(_KeyCallback{ f, keyCode, keyAction, keyModFlags, std::this_thread::get_id() });
+		std::lock_guard _{t.mxCallbacks};
+		t.newCallbacks->emplace_back(_KeyCallback{f, keyCode, keyAction, keyModFlags, std::this_thread::get_id()});
 	}
 	t.CallbacksEmpty.store(false, std::memory_order_relaxed);
 }
 void events::ThreadEvents::addInlineKeyEventCallback(KeyEventFunction f, int keyCode, KeyAction keyAction, KeyModFlags keyModFlags) {
 	auto& t = _threads[std::this_thread::get_id()]; //WILL add entries
 	{
-		std::lock_guard _{ t.mxCallbacks };
-		t.newCallbacks->emplace_back(_KeyCallback{ f, keyCode, keyAction, keyModFlags, _thread->get_id() });
+		std::lock_guard _{t.mxCallbacks};
+		t.newCallbacks->emplace_back(_KeyCallback{f, keyCode, keyAction, keyModFlags, _thread->get_id()});
 	}
 	t.CallbacksEmpty.store(false, std::memory_order_relaxed);
 }
 
 bool events::ThreadEvents::pollEvents() {
 	auto t = _threads.find(std::this_thread::get_id());
-	if (t == _threads.end() || t->second.EventsEmpty.load(std::memory_order_relaxed))
+	if (t==_threads.end() || t->second.EventsEmpty.load(std::memory_order_relaxed))
 		return false;
 	static std::vector<_KeyEvent>* events = new std::vector<_KeyEvent>{};
 	{
-		std::lock_guard _{ t->second.mxEvents };
+		std::lock_guard _{t->second.mxEvents};
 		std::swap(events, t->second.events);
 		t->second.EventsEmpty.store(true, std::memory_order_relaxed);
 	}
