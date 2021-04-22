@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Matrix Playaround/include/glm/out/build/x64-Debug
+/Multithread Playaround/include/glm/out/build/x64-Debug
+/Planetery Engine Playaround/include/glm/out/build/x64-Debug
