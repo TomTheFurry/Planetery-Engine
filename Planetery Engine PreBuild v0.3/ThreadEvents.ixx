@@ -1,14 +1,8 @@
-#pragma once
+export module ThreadEvents;
+import Define;
+import std.core;
 
-#include "Define.h"
-#include "DefineMath.h"
-#include <exception>
-#include <atomic>
-#include <mutex>
-#include <functional>
-#include "DefineThreadSync.h"
-
-namespace events {
+export namespace events {
 	enum class State {
 		init,
 		paused,
@@ -18,7 +12,7 @@ namespace events {
 	};
 	namespace KeyCode {
 		enum KeyCode {
-			unkown = -1,
+			unkown = -1, //TAG: Hey old me... unk'n'own!!!
 			null = 0,
 			space = 32,
 			apostrophe = 39,
@@ -153,7 +147,7 @@ namespace events {
 		//called ONLY by child thread
 		static void panic(std::exception_ptr eptr); //report critical exception
 		static void log(std::exception_ptr eptr); //report non critical exception
-		
+
 		//called ONLY by render thread
 		static void swapBuffer();
 

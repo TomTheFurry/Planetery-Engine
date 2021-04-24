@@ -1,11 +1,12 @@
-#pragma once
-#include "DefineMath.h"
-#include "Font.h"
-#include <iostream>
-#include <sstream>
-#include "GL.h"
+module;
 
-class StringBox {
+export module StringBox;
+import std.core;
+import Define;
+import Font;
+import GL;
+
+export class StringBox {
 public:
 	StringBox();
 	vec2 pos; //normalized (-1 - 1)
@@ -24,12 +25,31 @@ public:
 	void notifyPPIChanged();
 	void setLineCenter(bool v);
 
+	/*MODULE HOTFIX:
 	template <typename T>
 	StringBox& operator<< (T&& t) {
 		_change = true;
-		_ss<<(std::forward<T>(t));
+		_ss << (std::forward<T>(t));
+		return *this;
+	}*/
+
+	template <typename T>
+	requires std::convertible_to<T, std::string>
+		StringBox& operator<< (T&& t) {
+		_change = true;
+		_ss += t;
 		return *this;
 	}
+	template <typename T>
+	requires !std::convertible_to<T, std::string>
+	StringBox& operator<< (T&& t) {
+		_change = true;
+		_ss += std::to_string(t);
+		return *this;
+	}
+
+
+	//MODULE HOTFIX
 
 protected:
 	vec2 size; //true normalized length (0 - 1)
@@ -40,6 +60,9 @@ protected:
 	uvec2 _textureSize;
 	gl::Texture2D* _tex;
 	gl::FrameBuffer* _fbo;
-	std::ostringstream _ss;
+	//MODULE HOTFIX:
+	//std::ostringstream _ss;
+	std::string _ss;
+	//MODULE HOTFIX
 };
 

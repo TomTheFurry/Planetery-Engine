@@ -1,16 +1,29 @@
-﻿#include "font.h"
-#include "GL.h"
-#include "ThreadEvents.h"
-#include "Logger.h"
-
-#include <set>
-#include <unordered_map>
+﻿module;
 #include <glad/glad.h>
 #include <freetype/freetype.h>
-#include <shelf-pack.hpp>
-#include <array>
+#include <glm/glm.hpp>
+module Font;
+import std.core;
+import Define;
+import GL;
+import Logger;
 
-using namespace font;
+#include <shelf-packModulize.h>
+
+//#include "ThreadEvents.h"
+
+#define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
+
+constexpr auto CHARCODE_8_UNKNOWN_CHAR = '?';
+constexpr auto CHARCODE_8_ONKNOWN_OBJECT = '?';
+constexpr auto CHARCODE_16_UNKNOWN_CHAR = char16_t(0xFFFD);
+constexpr auto CHARCODE_16_ONKNOWN_OBJECT = char16_t(0xFFFC);
+constexpr auto CHARCODE_32_UNKNOWN_CHAR = char32_t(0x0000FFFD);
+constexpr auto CHARCODE_32_ONKNOWN_OBJECT = char32_t(0x0000FFFC);
+constexpr auto CHARCODE_NEXTLINE = '\n';
+constexpr uint TAB_SPACE = 4;
+
+namespace font {
 
 FT_Library ftLib{};
 
@@ -82,18 +95,18 @@ public:
 };
 
 //TODO: invalidate all FontSet.cachedStyleMap on changing _style.
-static std::array<std::string, sizeof(Style)*8> _style;
-static std::vector<FontSet*> _fontSets;
-static FontSet* _targetFont = nullptr;
-static FontSet* _defaultFont = nullptr;
-static Style _targetStyle = 0;
-static gl::ShaderProgram* _textShader = nullptr;
-static gl::VertexAttributeArray* _vao = nullptr;
-static gl::VertexBuffer* _vbo = nullptr;
-static const std::array<const uint, 14> _size {{2, 4, 6, 8, 12, 16, 20, 24, 36, 48, 60, 72, 144, 288}};
-static std::array<uint, 7> _texSize{{1024, 4096, 16384, 65536, 262144, 1048576, uint(-1)}};
-static uint MAXTEXTURESIZE = 0;
-static FT_Library _ftLib = nullptr;
+std::array<std::string, sizeof(Style)*8> _style;
+std::vector<FontSet*> _fontSets;
+FontSet* _targetFont = nullptr;
+FontSet* _defaultFont = nullptr;
+Style _targetStyle = 0;
+gl::ShaderProgram* _textShader = nullptr;
+gl::VertexAttributeArray* _vao = nullptr;
+gl::VertexBuffer* _vbo = nullptr;
+const std::array<const uint, 14> _size {{2, 4, 6, 8, 12, 16, 20, 24, 36, 48, 60, 72, 144, 288}};
+std::array<uint, 7> _texSize{{1024, 4096, 16384, 65536, 262144, 1048576, uint(-1)}};
+uint maxTextureSize = 0;
+FT_Library _ftLib = nullptr;
 constexpr uint GLYP_SPRITE_BORDER_WIDTH = 2;
 thread_local std::unordered_map<FontFace*, std::unordered_map<GlyphId, uint>>_requireRender{};
 static constexpr const std::array _dChar{
@@ -211,11 +224,16 @@ Reader& Reader::operator<<(char32_t c) {
 
 
 
-
 void font::init() {
-	MAXTEXTURESIZE = gl::getMaxTextureSize();
-	auto it = std::lower_bound(_texSize.begin(), _texSize.end(), MAXTEXTURESIZE);
-	*it = MAXTEXTURESIZE;
+	maxTextureSize = gl::getMaxTextureSize();
+	//MODULE HOTFIX:
+	//auto it = std::lower_bound(_texSize.begin(), _texSize.end(), maxTextureSize);
+	auto it = _texSize.begin();
+	while (it != _texSize.end() && *it <= maxTextureSize) it++;
+	it--;
+	//END OF HOTFIX
+
+	*it = maxTextureSize;
 	while (*(++it)!=uint(-1)) {
 		*it = uint(-1);
 	}
@@ -269,7 +287,7 @@ std::vector<const std::string*> font::getAllFontSets() {
 }
 std::vector<std::string> font::getAllFontStyles() {
 	//wil return empty string...
-	return std::vector(std::begin(_style), std::end(_style));
+	return std::vector<std::string>((_style).begin(), (_style).end());
 }
 bool font::addFont(const std::string& fontSetName, const std::string& fileLocation, const std::vector<std::string>& style) {
 	logger("Loading font file: ", fileLocation, "...\n");
@@ -458,62 +476,77 @@ FontFaceData font::getFontFaceData(FontFace* fontFace, float pointSize) {
 GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) { //5 (1,1) -> (5,5)
 	auto& g = fontFace->glyphs[gId];
 
-	if (fontFace->texturePPI==vec2{0}) 
+	if (fontFace->texturePPI == vec2{ 0 })
 		fontFace->texturePPI = gl::target->pixelPerInch;
 	// >1 = enlarge (not enough resolution),  <1 = minify (enough resolution)
 	//NOTE: Divade by zero may cause issue if not using IEEE float!
-	vec2 textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
-	float& higherValue = textureRelativeScale.x>textureRelativeScale.y ? textureRelativeScale.x : textureRelativeScale.y;
+	vec2 textureRelativeScale = (pointSize * gl::target->pixelPerInch) / (float(g._renderedPointSize) * fontFace->texturePPI);
+	float& higherValue = textureRelativeScale.x > textureRelativeScale.y ? textureRelativeScale.x : textureRelativeScale.y;
 	if (textureRelativeScale.x > textureRelativeScale.y) {
-		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.x>1)) {
-			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.x/fontFace->texturePPI.x)));
-			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
-			if (sizeIt==_size.end()) sizeIt--;
+		if (g._renderedPointSize != _size.back() && (g._renderedPointSize == 0 || textureRelativeScale.x > 1)) {
+			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.x / fontFace->texturePPI.x)));
+			
+			//MODULE HOTFIX:
+			//auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
+			auto sizeIt = _size.begin();
+			while (sizeIt != _size.end() && *sizeIt <= targetSize) sizeIt++;
+			sizeIt--;
+			//MODULE HOTFIX
+
+			if (sizeIt == _size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;
 			_requireRender[fontFace].emplace(gId, *sizeIt);
 			//recaculate scale
-			textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
-		}
-	} else {
-		if (g._renderedPointSize!=_size.back() && (g._renderedPointSize==0 || textureRelativeScale.y>1)) {
-			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.y/fontFace->texturePPI.y)));
-			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
-			if (sizeIt==_size.end()) sizeIt--;
-			g._renderedPointSize = *sizeIt;
-			_requireRender[fontFace].emplace(gId, *sizeIt);
-			//recaculate scale
-			textureRelativeScale = (pointSize*gl::target->pixelPerInch) / (float(g._renderedPointSize)*fontFace->texturePPI);
+			textureRelativeScale = (pointSize * gl::target->pixelPerInch) / (float(g._renderedPointSize) * fontFace->texturePPI);
 		}
 	}
-	assert(textureRelativeScale.x<=1 && textureRelativeScale.y<=1);
+	else {
+		if (g._renderedPointSize != _size.back() && (g._renderedPointSize == 0 || textureRelativeScale.y > 1)) {
+			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.y / fontFace->texturePPI.y)));
+			
+			//MODULE HOTFIX:
+			//auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
+			auto sizeIt = _size.begin();
+			while (sizeIt != _size.end() && *sizeIt <= targetSize) sizeIt++;
+			sizeIt--;
+			//MODULE HOTFIX
+
+			if (sizeIt == _size.end()) sizeIt--;
+			g._renderedPointSize = *sizeIt;
+			_requireRender[fontFace].emplace(gId, *sizeIt);
+			//recaculate scale
+			textureRelativeScale = (pointSize * gl::target->pixelPerInch) / (float(g._renderedPointSize) * fontFace->texturePPI);
+		}
+	}
+	assert(textureRelativeScale.x <= 1 && textureRelativeScale.y <= 1);
 
 	auto result = GlyphData{
 		.gId = gId,
-		.descend = float(int(g._sizeUnit.y)-int(g._bearingUnit.y))/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
-		.accend = float(g._bearingUnit.y)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.y/gl::target->viewport.w*2.f,
-		.left = float(g._bearingUnit.x)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.x/gl::target->viewport.z*2.f,
-		.right = float(int(g._sizeUnit.x)-int(g._bearingUnit.x))/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch.x/gl::target->viewport.z*2.f,
-		.advance = gl::target->normalizeLength(vec2(g._advanceUnit)/float(fontFace->_unitPerEM)*pointSize/72.f*gl::target->pixelPerInch),
+		.descend = float(int(g._sizeUnit.y) - int(g._bearingUnit.y)) / float(fontFace->_unitPerEM) * pointSize / 72.f * gl::target->pixelPerInch.y / gl::target->viewport.w * 2.f,
+		.accend = float(g._bearingUnit.y) / float(fontFace->_unitPerEM) * pointSize / 72.f * gl::target->pixelPerInch.y / gl::target->viewport.w * 2.f,
+		.left = float(g._bearingUnit.x) / float(fontFace->_unitPerEM) * pointSize / 72.f * gl::target->pixelPerInch.x / gl::target->viewport.z * 2.f,
+		.right = float(int(g._sizeUnit.x) - int(g._bearingUnit.x)) / float(fontFace->_unitPerEM) * pointSize / 72.f * gl::target->pixelPerInch.x / gl::target->viewport.z * 2.f,
+		.advance = gl::target->normalizeLength(vec2(g._advanceUnit) / float(fontFace->_unitPerEM) * pointSize / 72.f * gl::target->pixelPerInch),
 		.textureResolutionScale = textureRelativeScale
 	};
 #ifdef FONT_ASSERT_BREAKING
-	assert(result.gId!=-1);
-	assert(result.advance.x>-2 && result.advance.x<2);
-	assert(result.advance.y>-2 && result.advance.y<2);
-	assert(result.descend>=-1 && result.descend<1);
-	assert(result.accend>=-1 && result.accend<1);
-	assert(result.left>=-1 && result.left<1);
-	assert(result.right>=-1 && result.right<1);
+	assert(result.gId != -1);
+	assert(result.advance.x > -2 && result.advance.x < 2);
+	assert(result.advance.y > -2 && result.advance.y < 2);
+	assert(result.descend >= -1 && result.descend < 1);
+	assert(result.accend >= -1 && result.accend < 1);
+	assert(result.left >= -1 && result.left < 1);
+	assert(result.right >= -1 && result.right < 1);
 #endif
 	return result;
-}
+	}
 void font::renderRequiredGlyph() {
 	struct alignas(vec2) glGlyph {
 		//uint gId = -1;
-		uvec2 origin = {0,0}; //Texture origin (pixel)
-		uvec2 size = {0,0}; //Texture size (pixel)
-		vec2 emBearing = {0,0}; //bearing (in em size)
-		vec2 emSize = {0,0}; //size (relative to the em square)
+		uvec2 origin = { 0,0 }; //Texture origin (pixel)
+		uvec2 size = { 0,0 }; //Texture size (pixel)
+		vec2 emBearing = { 0,0 }; //bearing (in em size)
+		vec2 emSize = { 0,0 }; //size (relative to the em square)
 	};
 	struct alignas(uint) glData {
 		uint identifier = 43; //New identifier: textRender v 1.1
@@ -534,11 +567,12 @@ void font::renderRequiredGlyph() {
 		glData* ssboData;
 		if (font->ssbo == nullptr) {
 			font->ssbo = new gl::ShaderStorageBuffer();
-			font->ssbo->setFormatAndData(sizeof(glData)+sizeof(glGlyph)*font->glyphs.size(), GL_MAP_WRITE_BIT);
+			font->ssbo->setFormatAndData(sizeof(glData) + sizeof(glGlyph) * font->glyphs.size(), GL_MAP_WRITE_BIT);
 			ssboData = (glData*)font->ssbo->map(gl::MapAccess::WriteOnly);
 			ssboData->identifier = 43;
 			ssboData->size = font->glyphs.size();
-		} else {
+		}
+		else {
 			ssboData = (glData*)font->ssbo->map(gl::MapAccess::WriteOnly);
 		}
 
@@ -555,28 +589,28 @@ void font::renderRequiredGlyph() {
 			uint& _pointSize = gPair.second;
 			auto& g = ssboData->glyphs[gPair.first];
 			//g.gId = gPair.first;
-			uvec2 pixelSize = uvec2(ceil(float(_pointSize)*font->texturePPI.x/72.f), ceil(float(_pointSize)* font->texturePPI.y/72.f));
+			uvec2 pixelSize = uvec2(ceil(float(_pointSize) * font->texturePPI.x / 72.f), ceil(float(_pointSize) * font->texturePPI.y / 72.f));
 			pixelSize *= 2; //Subsampling rate
 			FT_Set_Pixel_Sizes(font->face, pixelSize.x, pixelSize.y);
 			if (FT_Load_Glyph(font->face, _glyph._gId, FT_LOAD_DEFAULT)) {
 				logger("Warning: Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " failed to load. Skipping...");
-				g.origin = uvec2{0,0};
-				g.size = uvec2{0,0};
-				g.emBearing = vec2{0,0};
-				g.emSize = vec2{0,0};
+				g.origin = uvec2{ 0,0 };
+				g.size = uvec2{ 0,0 };
+				g.emBearing = vec2{ 0,0 };
+				g.emSize = vec2{ 0,0 };
 				continue;
 			}if (FT_Render_Glyph(font->face->glyph, FT_RENDER_MODE_NORMAL)) { //change this for color rendering)) {
 				logger("Warning: Glyph id ", gPair.first, " at ", font->face->family_name, " ", font->face->style_name, " failed to render. Skipping...");
-				g.origin = uvec2{0,0};
-				g.size = uvec2{0,0};
-				g.emBearing = vec2{0,0};
-				g.emSize = vec2{0,0};
+				g.origin = uvec2{ 0,0 };
+				g.size = uvec2{ 0,0 };
+				g.emBearing = vec2{ 0,0 };
+				g.emSize = vec2{ 0,0 };
 				continue;
 			}
-			g.size = uvec2{font->face->glyph->bitmap.width, font->face->glyph->bitmap.rows};
-			g.emBearing = vec2{vec2(_glyph._bearingUnit)/float(font->_unitPerEM)};
-			g.emSize = vec2(vec2(_glyph._sizeUnit)/float(font->_unitPerEM));
-			if (g.size.x==0 || g.size.y==0) {
+			g.size = uvec2{ font->face->glyph->bitmap.width, font->face->glyph->bitmap.rows };
+			g.emBearing = vec2{ vec2(_glyph._bearingUnit) / float(font->_unitPerEM) };
+			g.emSize = vec2(vec2(_glyph._sizeUnit) / float(font->_unitPerEM));
+			if (g.size.x == 0 || g.size.y == 0) {
 				continue; //a glyph that's empty (like space:' ')
 			}
 
@@ -585,11 +619,11 @@ void font::renderRequiredGlyph() {
 				//do resize
 				uint oldSize = shelf.width();
 				while (bin == nullptr) {
-					if (shelf.width() == MAXTEXTURESIZE) break;
+					if (shelf.width() == maxTextureSize) break;
 					//get new size
 					uint i;
-					for (i = 0; i<_texSize.size(); i++) {
-						if (_texSize[i]>shelf.width()) break;
+					for (i = 0; i < _texSize.size(); i++) {
+						if (_texSize[i] > shelf.width()) break;
 					}
 
 					shelf.resize(_texSize[i], _texSize[i]); //????
@@ -600,17 +634,17 @@ void font::renderRequiredGlyph() {
 					bool successful = shelf.resize(oldSize, oldSize);
 					assert(successful);
 					logger("Max texture size reached. Font glyph sprite map creation failed. Skipping glyph sprite...\n");
-					g.origin = uvec2{0,0};
-					g.size = uvec2{0,0};
-					g.emBearing = vec2{0,0};
-					g.emSize = vec2{0,0};
+					g.origin = uvec2{ 0,0 };
+					g.size = uvec2{ 0,0 };
+					g.emBearing = vec2{ 0,0 };
+					g.emSize = vec2{ 0,0 };
 					continue;
 				}
 				//resize texture
-				assert(font->texture!=nullptr);
+				assert(font->texture != nullptr);
 				gl::Texture2D* newTexture = new gl::Texture2D();
 				newTexture->setFormat(GL_R8, shelf.width(), shelf.width(), 1);
-				newTexture->cloneData(font->texture, uvec2{0}, uvec2{oldSize}, 0);
+				newTexture->cloneData(font->texture, uvec2{ 0 }, uvec2{ oldSize }, 0);
 				font->texture->release();
 				font->texture = newTexture;
 				font->texture->setTextureSamplingFilter(gl::Texture::SamplingFilter::linear, gl::Texture::SamplingFilter::linear);
@@ -628,16 +662,16 @@ void font::renderRequiredGlyph() {
 }
 void font::_renderBatch(FontFace* f, std::vector<RenderData> d, float pointSize) {
 	if (d.empty()) return;
-	Swapper _{gl::target->vao, _vao};
-	Swapper __{gl::target->useBlend, true};
-	Swapper ___{gl::target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}};
-	Swapper ____{gl::target->spo, _textShader};
+	Swapper _{ gl::target->vao, _vao };
+	Swapper __{ gl::target->useBlend, true };
+	Swapper ___{ gl::target->blendFunc, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA} };
+	Swapper ____{ gl::target->spo, _textShader };
 	gl::target->spo->use();
-	gl::target->spo->setUniform("emSize", gl::target->normalizeLength((pointSize/72.f)*gl::target->pixelPerInch));
-	gl::target->spo->setUniform("texColor", vec4(0.0,0.0,0.0,1.0));
+	gl::target->spo->setUniform("emSize", gl::target->normalizeLength((pointSize / 72.f) * gl::target->pixelPerInch));
+	gl::target->spo->setUniform("texColor", vec4(0.0, 0.0, 0.0, 1.0));
 	gl::target->bind(f->ssbo);
 	gl::target->bind(f->texture, 0);
-	_vbo->setFormatAndData(sizeof(RenderData)*d.size(), 0, d.data());
+	_vbo->setFormatAndData(sizeof(RenderData) * d.size(), 0, d.data());
 	gl::target->drawArrays(gl::GeomType::Points, 0, d.size());
 	_vbo->release();
 	_vbo = new gl::VertexBuffer();
@@ -686,7 +720,7 @@ inline CharFlags _charDecode(char32_t c, MultiCharState& s) {
 	case U'\t':
 		f.noRender = true;
 		[[fallthrough]];
-	case U'\t'+CONTROL_PICTURES:
+	case U'\t' + CONTROL_PICTURES:
 	case _dChar[U'\t']:
 		f.tab = true;
 		break;
@@ -694,7 +728,7 @@ inline CharFlags _charDecode(char32_t c, MultiCharState& s) {
 	case U'\n':
 		f.noRender = true;
 		[[fallthrough]];
-	case U'\n'+CONTROL_PICTURES:
+	case U'\n' + CONTROL_PICTURES:
 	case _dChar[U'\n']:
 		if (!s.windowsSkipNextLine)
 			f.nextLine = true;
@@ -703,7 +737,7 @@ inline CharFlags _charDecode(char32_t c, MultiCharState& s) {
 	case U'\v':
 		f.noRender = true;
 		[[fallthrough]];
-	case U'\v'+CONTROL_PICTURES:
+	case U'\v' + CONTROL_PICTURES:
 	case _dChar[U'\v']:
 		f.nextLine = true;
 		break;
@@ -711,7 +745,7 @@ inline CharFlags _charDecode(char32_t c, MultiCharState& s) {
 	case U'\f':
 		f.noRender = true;
 		[[fallthrough]];
-	case U'\f'+CONTROL_PICTURES:
+	case U'\f' + CONTROL_PICTURES:
 	case _dChar[U'\f']:
 		f.nextLine = true;
 		break;
@@ -719,7 +753,7 @@ inline CharFlags _charDecode(char32_t c, MultiCharState& s) {
 	case U'\r':
 		f.noRender = true;
 		[[fallthrough]];
-	case U'\r'+CONTROL_PICTURES:
+	case U'\r' + CONTROL_PICTURES:
 	case _dChar[U'\r']:
 		f.nextLine = true;
 		break;
@@ -734,7 +768,7 @@ inline CharFlags _charDecode(char32_t c, MultiCharState& s) {
 	case U'\u009f':
 		f.noRender = true;
 		[[fallthrough]];
-	case U'\u009f'+CONTROL_PICTURES:
+	case U'\u009f' + CONTROL_PICTURES:
 		f.controlCommend = true;
 		break;
 
@@ -750,10 +784,10 @@ void font::_drawStringFunction(Reader& r, Output& output, vec2 topLeftPos, vec2 
 	output.reserve(r.fontData.size());
 	float maxAccend = 0;
 	float lineHeight = 0;
-	for (uint i = 0; i<r.fontData.size(); i++) {
+	for (uint i = 0; i < r.fontData.size(); i++) {
 		output.emplace_back();
-		if (r.fontData.at(i).first.maxAccend>maxAccend) maxAccend = r.fontData.at(i).first.maxAccend;
-		if (r.fontData.at(i).first.lineHeight>lineHeight) lineHeight = r.fontData.at(i).first.lineHeight;
+		if (r.fontData.at(i).first.maxAccend > maxAccend) maxAccend = r.fontData.at(i).first.maxAccend;
+		if (r.fontData.at(i).first.lineHeight > lineHeight) lineHeight = r.fontData.at(i).first.lineHeight;
 	}
 	auto charIt = r.chars.begin();
 	auto space = charIt++;
@@ -762,33 +796,33 @@ void font::_drawStringFunction(Reader& r, Output& output, vec2 topLeftPos, vec2 
 	vec2 drawHead = topLeftPos;
 	drawHead.y -= maxAccend;
 	MultiCharState s{};
-	while (charIt!=r.chars.end()) {
-		while (charIt!=r.chars.end()) {
+	while (charIt != r.chars.end()) {
+		while (charIt != r.chars.end()) {
 			char32_t c = std::get<0>(*charIt);
 			uint fontI = std::get<1>(*charIt);
 			uint glyphI = std::get<2>(*charIt);
 			font::GlyphId gId = r.indexLookup.at(fontI).second.at(glyphI);
-			if (drawHead.x+r.fontData.at(fontI).second.at(glyphI).right > topLeftPos.x+maxSize.x) goto NextLine;
-			
+			if (drawHead.x + r.fontData.at(fontI).second.at(glyphI).right > topLeftPos.x + maxSize.x) goto NextLine;
+
 			auto flag = _charDecode(c, s);
 
-			if (fontI!=-1 && !flag.noRender) {
-				if (drawHead.x-r.fontData.at(fontI).second.at(glyphI).left<topLeftPos.x)
+			if (fontI != -1 && !flag.noRender) {
+				if (drawHead.x - r.fontData.at(fontI).second.at(glyphI).left < topLeftPos.x)
 					drawHead.x += r.fontData.at(fontI).second.at(glyphI).left;
 				//gl::drawRectangle(nullptr, drawHead, vec2(0.01));
 				output.at(fontI).emplace_back(r.indexLookup.at(fontI).second.at(glyphI), drawHead);
 				drawHead.x += r.fontData.at(fontI).second.at(glyphI).advance.x;
 			}
 			if (flag.tab) {
-				drawHead.x += spaceAdvance*TAB_SPACE;
+				drawHead.x += spaceAdvance * TAB_SPACE;
 			}
 			charIt++;
 			if (flag.nextLine) break;
 		}
-NextLine:
+	NextLine:
 		drawHead.y -= lineHeight;
 		drawHead.x = topLeftPos.x;
-		if (drawHead.y+maxAccend<topLeftPos.y-maxSize.y) break; //out of space. drawing at below screen
+		if (drawHead.y + maxAccend < topLeftPos.y - maxSize.y) break; //out of space. drawing at below screen
 	}
 }
 
@@ -797,10 +831,10 @@ void font::_drawStringCentreFunction(Reader& r, Output& output, vec2 topLeftPos,
 	output.reserve(r.fontData.size());
 	float maxAccend = 0;
 	float lineHeight = 0;
-	for (uint i = 0; i<r.fontData.size(); i++) {
+	for (uint i = 0; i < r.fontData.size(); i++) {
 		output.emplace_back();
-		if (r.fontData.at(i).first.maxAccend>maxAccend) maxAccend = r.fontData.at(i).first.maxAccend;
-		if (r.fontData.at(i).first.lineHeight>lineHeight) lineHeight = r.fontData.at(i).first.lineHeight;
+		if (r.fontData.at(i).first.maxAccend > maxAccend) maxAccend = r.fontData.at(i).first.maxAccend;
+		if (r.fontData.at(i).first.lineHeight > lineHeight) lineHeight = r.fontData.at(i).first.lineHeight;
 	}
 	auto charIt = r.chars.begin();
 	auto space = charIt++;
@@ -812,49 +846,50 @@ void font::_drawStringCentreFunction(Reader& r, Output& output, vec2 topLeftPos,
 	currentLine.reserve(128);
 	MultiCharState s{};
 
-	while (charIt!=r.chars.end()) {
+	while (charIt != r.chars.end()) {
 		float lineLeftPos = 0;
 		float lineRightPos = 0;
-		while (charIt!=r.chars.end()) {
+		while (charIt != r.chars.end()) {
 			char32_t c = std::get<0>(*charIt);
 			uint fontI = std::get<1>(*charIt);
 			uint glyphI = std::get<2>(*charIt);
 			font::GlyphId gId = r.indexLookup.at(fontI).second.at(glyphI);
-			if (drawHead.x+r.fontData.at(fontI).second.at(glyphI).right > topLeftPos.x+maxSize.x) goto NextLine;
+			if (drawHead.x + r.fontData.at(fontI).second.at(glyphI).right > topLeftPos.x + maxSize.x) goto NextLine;
 
 			auto flag = _charDecode(c, s);
 
-			if (fontI!=-1 && !flag.noRender) {
+			if (fontI != -1 && !flag.noRender) {
 				auto& gData = r.fontData.at(fontI).second.at(glyphI);
-				if (drawHead.x-gData.left<topLeftPos.x)
+				if (drawHead.x - gData.left < topLeftPos.x)
 					drawHead.x += gData.left;
 				//gl::drawRectangle(nullptr, drawHead, vec2(0.01));
 				if (currentLine.empty()) {
-					lineLeftPos = drawHead.x-gData.left;
-					lineRightPos = drawHead.x+gData.right;
+					lineLeftPos = drawHead.x - gData.left;
+					lineRightPos = drawHead.x + gData.right;
 				}
-				if (drawHead.x-gData.left < lineLeftPos) lineLeftPos = drawHead.x-gData.left;
-				if (drawHead.x+gData.right > lineRightPos) lineRightPos = drawHead.x+gData.right;
+				if (drawHead.x - gData.left < lineLeftPos) lineLeftPos = drawHead.x - gData.left;
+				if (drawHead.x + gData.right > lineRightPos) lineRightPos = drawHead.x + gData.right;
 				currentLine.emplace_back(fontI, r.indexLookup.at(fontI).second.at(glyphI), drawHead);
 				drawHead.x += r.fontData.at(fontI).second.at(glyphI).advance.x;
 			}
 			if (flag.tab) {
-				drawHead.x += spaceAdvance*TAB_SPACE;
+				drawHead.x += spaceAdvance * TAB_SPACE;
 			}
 			charIt++;
 			if (flag.nextLine) break;
 		}
-NextLine:
+	NextLine:
 		drawHead.y -= lineHeight;
 		drawHead.x = topLeftPos.x;
 		{
-			float lineWidth = lineRightPos-lineLeftPos;
-			float xShift = lineLeftPos-topLeftPos.x+maxSize.x/2.f-lineWidth/2.f;
+			float lineWidth = lineRightPos - lineLeftPos;
+			float xShift = lineLeftPos - topLeftPos.x + maxSize.x / 2.f - lineWidth / 2.f;
 			for (auto& tuple : currentLine) {
-				output.at(std::get<0>(tuple)).emplace_back(std::get<1>(tuple), std::get<2>(tuple)+vec2(xShift, 0.f));
+				output.at(std::get<0>(tuple)).emplace_back(std::get<1>(tuple), std::get<2>(tuple) + vec2(xShift, 0.f));
 			}
 			currentLine.clear();
 		}
-		if (drawHead.y+maxAccend<topLeftPos.y-maxSize.y) break; //out of space. drawing at below screen
+		if (drawHead.y + maxAccend < topLeftPos.y - maxSize.y) break; //out of space. drawing at below screen
 	}
+}
 }

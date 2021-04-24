@@ -1,25 +1,10 @@
-#pragma once
-#include "Define.h"
-#include "DefineMath.h"
-#include <vector>
-#include <map>
-#include <unordered_map>
-#include <tuple>
-#include <functional>
-#include <string_view>
-#include "UTF.h"
+module;
 
-#define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
-constexpr auto CHARCODE_8_UNKNOWN_CHAR = '?';
-constexpr auto CHARCODE_8_ONKNOWN_OBJECT = '?';
-constexpr auto CHARCODE_16_UNKNOWN_CHAR = char16_t(0xFFFD);
-constexpr auto CHARCODE_16_ONKNOWN_OBJECT = char16_t(0xFFFC);
-constexpr auto CHARCODE_32_UNKNOWN_CHAR = char32_t(0x0000FFFD);
-constexpr auto CHARCODE_32_ONKNOWN_OBJECT = char32_t(0x0000FFFC);
-constexpr auto CHARCODE_NEXTLINE = '\n';
-constexpr uint TAB_SPACE = 4;
+export module Font;
+import Define;
+import std.core;
 
-namespace font {
+export namespace font {
 	using GlyphId = uint;
 	constexpr float DONT_RENDER_CHAR = 0.f;
 	constexpr float DEFAULT_SCALE = 1.f;
@@ -100,14 +85,14 @@ namespace font {
 	template <CharTypeIter Iter>
 	static void drawChar(Iter it, Iter itEnd, float pointSize, FullStringFunction func) {
 		Reader stringReader(pointSize);
-		while (it!=itEnd) stringReader << *(it++);
+		while (it != itEnd) stringReader << *(it++);
 		renderRequiredGlyph(); //reRender Glyphs that needs higher resolution
 		//Call user function
 		Output output{};
 		func(stringReader, output);
 		//Finally render char
 		if (output.size() > stringReader.indexLookup.size()) throw "Invalid output from FullStringFunction() call in font::drawChar()!";
-		for (uint i = 0; i<output.size(); i++) {
+		for (uint i = 0; i < output.size(); i++) {
 			_renderBatch(stringReader.indexLookup.at(i).first, output.at(i), pointSize);
 		}
 	}
@@ -117,10 +102,10 @@ namespace font {
 	static void drawString(Iter it, Iter itEnd, float pointSize, vec2 topLeftPos, vec2 maxSize) {
 		vec2 drawHead = vec2(-1, 1);
 		float maxLineHeight = -1;
-		
+
 		Reader stringReader(pointSize);
 		stringReader << U' '; //Add space reading request
-		while (it!=itEnd) {
+		while (it != itEnd) {
 			stringReader << *(it++);
 		}
 		renderRequiredGlyph(); //reRender Glyphs that needs higher resolution
@@ -130,7 +115,7 @@ namespace font {
 
 		//Finally render char
 		if (output.size() > stringReader.indexLookup.size()) throw "Invalid output from FullStringFunction() call in font::drawChar()!";
-		for (uint i = 0; i<output.size(); i++) {
+		for (uint i = 0; i < output.size(); i++) {
 			_renderBatch(stringReader.indexLookup.at(i).first, output.at(i), pointSize);
 		}
 	}
@@ -142,7 +127,7 @@ namespace font {
 
 		Reader stringReader(pointSize);
 		stringReader << U' '; //Add space reading request
-		while (it!=itEnd) {
+		while (it != itEnd) {
 			stringReader << *(it++);
 		}
 		renderRequiredGlyph(); //reRender Glyphs that needs higher resolution
@@ -152,7 +137,7 @@ namespace font {
 
 		//Finally render char
 		if (output.size() > stringReader.indexLookup.size()) throw "Invalid output from FullStringFunction() call in font::drawChar()!";
-		for (uint i = 0; i<output.size(); i++) {
+		for (uint i = 0; i < output.size(); i++) {
 			_renderBatch(stringReader.indexLookup.at(i).first, output.at(i), pointSize);
 		}
 	}

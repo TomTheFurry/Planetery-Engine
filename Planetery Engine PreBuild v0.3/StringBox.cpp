@@ -1,10 +1,14 @@
-#include "StringBox.h"
-#include "Logger.h"
-#include "GL.h"
-#include "Font.h"
-#include "UTF.h"
-
+module;
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+module StringBox;
+
+import std.core;
+import Define;
+import Font;
+import Util;
+import GL;
+import Logger;
 
 static gl::RenderTarget* _targetText = nullptr;
 
@@ -77,21 +81,34 @@ void StringBox::render() {
 }
 
 std::string StringBox::str() const {
-	return _ss.str();
+	//MODULE HOTFIX:
+	//return _ss.str();
+	return _ss;
+	//MODULE HOTFIX
 }
 void StringBox::str(const std::string& string) {
 	_change = true;
-	_ss.str(string);
+	//MODULE HOTFIX:
+	//_ss.str(string);
+	_ss = string;
+	//MODULE HOTFIX
 }
-void StringBox::str(std::string&& string) {
+void StringBox::str(std::string&& string)
+{
 	_change = true;
-	_ss.str(std::move(string));
+	//MODULE HOTFIX:
+	//_ss.str(std::move(string));
+	_ss = std::move(string);
+	//MODULE HOTFIX
 }
 
 void StringBox::clear() {
 	_change = true;
-	_ss.str(std::string());
+	//MODULE HOTFIX:
+	//_ss.str(std::string());
+	//_ss.clear();
 	_ss.clear();
+	//MODULE HOTFIX
 }
 
 void StringBox::setSize(vec2 s) {

@@ -1,11 +1,9 @@
-#pragma once
-#include "Define.h"
-#include "DefineMath.h"
-#include "DefineThreadSync.h"
-#include <atomic>
-#include <functional>
+export module ThreadRender;
+import std.core;
+import std.threading;
+import Define;
 
-namespace render {
+export namespace render {
 	enum class State {
 		init,
 		paused,
@@ -21,7 +19,7 @@ namespace render {
 	class ThreadRender {
 	public:
 		//thread control
-		static void start(const char*(*callback)(void));
+		static void start(const char* (*callback)(void));
 		static void requestStop(); //stop thread (with cleanup)
 		static void pause(); //pause thread (for maybe debug?)
 		static void unpause(); //unpause thread

@@ -71,22 +71,18 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)\sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\lib;$(SolutionDir)\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)\sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\lib;$(SolutionDir)\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)\sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\lib;$(SolutionDir)\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)\sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\lib;$(SolutionDir)\sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -99,17 +95,22 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
+      <ErrorReporting>Send</ErrorReporting>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkStatus>true</LinkStatus>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -117,6 +118,10 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
+      <ErrorReporting>Send</ErrorReporting>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,6 +129,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkStatus>true</LinkStatus>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -135,17 +142,22 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
+      <ErrorReporting>Send</ErrorReporting>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkStatus>true</LinkStatus>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -153,6 +165,10 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
+      <ErrorReporting>Send</ErrorReporting>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,40 +176,31 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw\glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkStatus>true</LinkStatus>
+      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\sharedInclude\glad\glad.c" />
-    <ClCompile Include="DefineThreadSync.cpp" />
+    <ClCompile Include="Define.ixx" />
     <ClCompile Include="font.cpp" />
+    <ClCompile Include="Font.ixx" />
     <ClCompile Include="GL.cpp" />
-    <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="GL.ixx" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Logger.ixx" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MultilineString.cpp" />
     <ClCompile Include="StringBox.cpp" />
+    <ClCompile Include="StringBox.ixx" />
     <ClCompile Include="ThreadEvents.cpp" />
-    <ClCompile Include="ThreadMain.cpp" />
+    <ClCompile Include="ThreadEvents.ixx" />
     <ClCompile Include="ThreadRender.cpp" />
-    <ClCompile Include="UTF.cpp" />
+    <ClCompile Include="ThreadRender.ixx" />
+    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Util.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h" />
-    <ClInclude Include="Define.h" />
-    <ClInclude Include="DefineMath.h" />
-    <ClInclude Include="DefineThreadSync.h" />
-    <ClInclude Include="font.h" />
-    <ClInclude Include="GL.h" />
-    <ClInclude Include="GUI.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="MultilineString.h" />
-    <ClInclude Include="MultiStream.h" />
-    <ClInclude Include="RollingAverage.h" />
-    <ClInclude Include="StringBox.h" />
-    <ClInclude Include="ThreadEvents.h" />
-    <ClInclude Include="ThreadMain.h" />
-    <ClInclude Include="ThreadRender.h" />
-    <ClInclude Include="UTF.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

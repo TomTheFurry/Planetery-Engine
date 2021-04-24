@@ -1,23 +1,15 @@
-﻿#include "Logger.h"
-
-#include "ThreadRender.h"
-
-#include "ThreadEvents.h"
-
-#include "RollingAverage.h"
-#include "Font.h"
-#include "StringBox.h"
-
-#include <thread>
-#include <atomic>
-#include <condition_variable>
-#include <chrono>
-#include <mutex>
-
-#include <exception>
-
-#include "GL.h"
+﻿module;
 #include <glad/glad.h>
+module ThreadRender;
+import std.core;
+import std.threading;
+import Define;
+import Util;
+import GL;
+import Font;
+import StringBox;
+import ThreadEvents;
+import Logger;
 
 using namespace render;
 
@@ -224,6 +216,7 @@ static void _main() {
 				lint nsDelta = (tickTimerA - tickTimerB).count();
 				std::swap(tickTimerA, tickTimerB);
 				nsDeltaPerSec += nsDelta;
+
 
 				hotTickTimerA = std::chrono::high_resolution_clock::now();
 				auto hotSpan = (hotTickTimerA - hotTickTimerB).count();

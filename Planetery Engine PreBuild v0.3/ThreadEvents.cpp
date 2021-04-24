@@ -1,30 +1,23 @@
-#include "Define.h"
-
-#include "ThreadEvents.h"
-
-#include "Logger.h"
-#include "ThreadRender.h"
-
-#include <thread>
-#include <atomic>
-#include <condition_variable>
-#include <chrono>
-#include <mutex>
-#include <system_error>
-
-
+module;
+#include <assert.h>
 #include <glfw/glfw3.h>
-
+#include <glm/glm.hpp>
+#include "ConsoleFormat.h"
 #define WINDOW_MIN_WIDTH 400
 #define WINDOW_MIN_HEIGHT 300
 #define WINDOW_MAX_WIDTH GLFW_DONT_CARE
 #define WINDOW_MAX_HEIGHT GLFW_DONT_CARE
-
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define SYS_DEFAULT_DPI 96
 #else
 #error No default system dpi value is set! Please add it!
 #endif
+module ThreadEvents;
+import std.core;
+import std.threading;
+import Define;
+import ThreadRender;
+import Logger;
 
 using namespace events;
 
@@ -396,7 +389,12 @@ void ThreadEvents::join() {
 
 void ThreadEvents::join(uint nsTimeout) {
 	std::unique_lock _{mx};
-	bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed)==State::complete; });
+	//MODULE HOTFIX:
+	//bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed)==State::complete; });
+	bool success = true;
+	cv.wait(_);
+	//MODULE HOTFIX
+	
 	if (success) {
 		_thread->join();
 		delete _thread;

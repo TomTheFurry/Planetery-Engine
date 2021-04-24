@@ -25,13 +25,3 @@
 #define CROSS_OUT 108
 #define END 20+
 #define RESET_ALL 0
-inline std::string format(const std::initializer_list<char> list) {
-	std::string str{FORMAT_START};
-	str += std::to_string(int(*list.begin()));
-	for (auto it = list.begin()+1; it != list.end(); it++) {
-		str += FORMAT_MID;
-		str += std::to_string(int(*it));
-	}
-	return (str += FORMAT_END);
-}
-#pragma once

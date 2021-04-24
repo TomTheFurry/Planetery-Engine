@@ -1,15 +1,10 @@
-#include "Logger.h"
-#include "Define.h"
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <mutex>
-#include <unordered_map>
-#include <thread>
-#include <chrono>
-#include "MultiStream.h"
-#include "MultilineString.h"
+module;
+#include "ConsoleFormat.h"
+#include <ctime> //MOUDLE HOTFIX: Required if use std::chrono
+module Logger;
+import Util;
+import std.core;
+import std.threading;
 
 #define LOGGER_DEFAULT_THREAD_NAME "UnknownThread"+format({BRIGHT COLOR_RED})+toStr(std::this_thread::get_id())
 #define LOGGER_DEFAULT_THREAD_NAME_FORMAT format({RESET_ALL,UNDERLINE,BRIGHT COLOR_WHITE})
@@ -292,5 +287,5 @@ std::ostream& Log::getStream() {
     return Logger::threads.at(std::this_thread::get_id()).getStream();
 }
 
-extern Log logger = Log{};
+Log logger = Log{};
 

@@ -1,25 +1,24 @@
-#pragma once
-#include "Define.h"
-#include "DefineMath.h"
-#include <unordered_map>
-#include <map>
-#include <bitset>
+module;
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 
-namespace gl {
-	typedef uint GLEnum;
-	typedef uint GLflags;
+export module GL;
+import std.core;
+import Define;
 
-	enum class DataType {
-		Byte,
-		UnsignedByte,
-		Short,
-		UnsignedShort,
-		Int,
-		UnsignedInt,
-		HalfFloat,
-		Float,
-		Double,
-		Fixed //Fixed 16.16 unit
+export namespace gl {
+
+	enum class DataType : GLenum {
+		Byte = GL_BYTE,
+		UnsignedByte = GL_UNSIGNED_BYTE,
+		Short = GL_SHORT,
+		UnsignedShort = GL_UNSIGNED_SHORT,
+		Int = GL_INT,
+		UnsignedInt = GL_UNSIGNED_INT,
+		HalfFloat = GL_HALF_FLOAT,
+		Float = GL_FLOAT,
+		Double = GL_DOUBLE,
+		Fixed = GL_FIXED, //Fixed 16.16 unit
 		//Also has the (u)int-2-10-10-10-rev and 10f-11f-11f-11f-rev format unused
 	};
 
@@ -35,12 +34,12 @@ namespace gl {
 	private:
 		uint _refCount = 1;
 	};
-	enum class ShaderType {
-		Vertex,
-		Fragment,
-		Geometry,
-		TessControl,
-		TessEvaluation
+	enum class ShaderType : GLenum {
+		Vertex = GL_VERTEX_SHADER,
+		Fragment = GL_FRAGMENT_SHADER,
+		Geometry = GL_GEOMETRY_SHADER,
+		TessControl = GL_TESS_CONTROL_SHADER,
+		TessEvaluation = GL_TESS_EVALUATION_SHADER,
 	};
 	class Shader : virtual public Base {
 	public:
@@ -90,29 +89,29 @@ namespace gl {
 	private:
 		std::vector<Shader*> _sd;
 	};
-	extern ShaderProgram* makeShaderProgram(const char* fileName, bool hasGeomShader);
+	ShaderProgram* makeShaderProgram(const char* fileName, bool hasGeomShader);
 
 	namespace bufferFlags {
-		enum bufferFlags {
+		enum bufferFlags : GLenum {
 			None = 0,
-			MappingRead = 1,
-			MappingWrite = 2,
-			MappingPersistent = 64,
-			MappingCoherent = 128,
-			DynamicStorage = 256,
-			ClientStorage = 512
+			MappingRead = GL_MAP_READ_BIT,
+			MappingWrite = GL_MAP_WRITE_BIT,
+			MappingPersistent = GL_MAP_PERSISTENT_BIT,
+			MappingCoherent = GL_MAP_COHERENT_BIT,
+			DynamicStorage = GL_DYNAMIC_STORAGE_BIT,
+			ClientStorage = GL_CLIENT_STORAGE_BIT
 		};
 	}
-	enum class MapAccess {
-		ReadOnly,
-		WriteOnly,
-		ReadWrite,
+	enum class MapAccess : GLenum {
+		ReadOnly = GL_READ_ONLY,
+		WriteOnly = GL_WRITE_ONLY,
+		ReadWrite = GL_READ_WRITE,
 	};
 
 	class BufferBase : virtual public Base {
 	public:
 		BufferBase();
-		void setFormatAndData(size_t size, GLflags usageFlags, const void* data = nullptr);
+		void setFormatAndData(size_t size, GLenum usageFlags, const void* data = nullptr);
 		void editData(size_t size, const void* data, size_t atOffset = 0);
 		void* map(MapAccess access);
 		void* getMapPointer();
@@ -144,13 +143,13 @@ namespace gl {
 
 	class Texture : virtual public Base {
 	public:
-		enum class SamplingFilter {
-			linear,
-			nearest,
-			nearestLODNearest,
-			linearLODNearest,
-			nearestLODLinear,
-			linearLODLinear,
+		enum class SamplingFilter : GLenum {
+			linear = GL_LINEAR,
+			nearest = GL_NEAREST,
+			nearestLODNearest = GL_NEAREST_MIPMAP_NEAREST,
+			linearLODNearest = GL_LINEAR_MIPMAP_NEAREST,
+			nearestLODLinear = GL_NEAREST_MIPMAP_LINEAR,
+			linearLODLinear = GL_LINEAR_MIPMAP_LINEAR,
 		};
 		void setTextureSamplingFilter(SamplingFilter maximize, SamplingFilter minimize);
 	};
@@ -158,8 +157,8 @@ namespace gl {
 	class Texture2D : virtual public Texture {
 	public:
 		Texture2D();
-		void setFormat(GLEnum internalFormat, size_t width, size_t height, uint levels);
-		void setData(int x, int y, uint w, uint h, uint level, GLEnum dataFormat, DataType dataType, const void* data);
+		void setFormat(GLenum internalFormat, size_t width, size_t height, uint levels);
+		void setData(int x, int y, uint w, uint h, uint level, GLenum dataFormat, DataType dataType, const void* data);
 		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level);
 		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size, uint level, uvec2 targetPos, uint targetLevel);
 	protected:
@@ -169,34 +168,34 @@ namespace gl {
 	class RenderBuffer : virtual public Base {
 	public:
 		RenderBuffer();
-		void setFormat(GLEnum internalFormat, size_t width, size_t height);
+		void setFormat(GLenum internalFormat, size_t width, size_t height);
 	protected:
 		~RenderBuffer();
 	};
 	class FrameBuffer : virtual public Base {
 	public:
 		FrameBuffer();
-		void attach(RenderBuffer* rb, GLEnum attachmentPoint);
-		void attach(Texture* tx, GLEnum attachmentPoint, int level);
+		void attach(RenderBuffer* rb, GLenum attachmentPoint);
+		void attach(Texture* tx, GLenum attachmentPoint, int level);
 	protected:
 		~FrameBuffer();
 	private:
 		//std::vector<Base*> _rb;
 	};
 
-	enum class GeomType {
-		Points,
-		Lines,
-		LineLoops,
-		LineStrips,
-		AdjacentLines,
-		AdjacentLineStrips,
-		Triangles,
-		TriangleFans,
-		TriangleStrips,
-		AdjacentTriangles,
-		AdjacentTriangleStrips,
-		Patches
+	enum class GeomType : GLenum {
+		Points = GL_POINTS,
+		Lines = GL_LINES,
+		LineLoops = GL_LINE_LOOP,
+		LineStrips = GL_LINE_STRIP,
+		AdjacentLines = GL_LINES_ADJACENCY,
+		AdjacentLineStrips = GL_LINE_STRIP_ADJACENCY,
+		Triangles = GL_TRIANGLES,
+		TriangleFans = GL_TRIANGLE_FAN,
+		TriangleStrips = GL_TRIANGLE_STRIP,
+		AdjacentTriangles = GL_TRIANGLES_ADJACENCY,
+		AdjacentTriangleStrips = GL_TRIANGLE_STRIP_ADJACENCY,
+		Patches = GL_PATCHES,
 	};
 
 	class RenderTarget {
@@ -213,9 +212,9 @@ namespace gl {
 		bool useCull;
 		bool useStencil;
 		bool useMultisample;
-		GLEnum depthFunc;
-		std::pair<GLEnum, GLEnum> blendFunc;
-		GLEnum cullFace;
+		GLenum depthFunc;
+		std::pair<GLenum, GLenum> blendFunc;
+		GLenum cullFace;
 		uvec4 viewport;
 		vec2 pixelPerInch;
 		std::vector<Texture*> texUnit{};
@@ -232,11 +231,11 @@ namespace gl {
 		void activateFrameBuffer();
 		template <typename T>
 		T normalizePos(T v) {
-			return (v/T{viewport.z,viewport.w})*T{2}-T{1};
+			return (v / T{ viewport.z,viewport.w }) * T { 2 } - T{ 1 };
 		}
 		template <typename T>
 		T normalizeLength(T v) {
-			return (v/T{viewport.z,viewport.w})*T{2};
+			return (v / T{ viewport.z,viewport.w }) * T { 2 };
 		}
 
 		static RenderTarget* swapTarget(RenderTarget* target);
@@ -245,33 +244,33 @@ namespace gl {
 		void _use();
 	};
 
-	extern void init();
-	extern void end();
-	extern [[nodiscard]] uint getMaxTextureSize();
+	void init();
+	void end();
+	[[nodiscard]] uint getMaxTextureSize();
 
 	struct GLRect {
 		vec2 pos;
 		vec2 size;
 	};
-	[[nodiscard]] extern VertexBuffer* drawTexRectangle(Texture2D* tex, GLRect rect);
-	[[nodiscard]] extern VertexBuffer* drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
-	[[nodiscard]] extern VertexBuffer* drawRectangles(std::vector<GLRect> rects, vec4 color);
-	[[nodiscard]] extern VertexBuffer* drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor);
-	[[nodiscard]] extern VertexBuffer* drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor);
-	[[nodiscard]] extern VertexBuffer* drawLineStrip(std::vector<vec2> lines, vec4 color, float width);
-	extern void drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer);
-	extern void drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color);
-	extern void drawRectangles(VertexBuffer* rectBuffer, vec4 color);
-	extern void drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 borderColor);
-	extern void drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 borderWidth, vec4 borderColor);
-	extern void drawLineStrip(VertexBuffer* rectBuffer, vec4 color, float width);
+	[[nodiscard]] VertexBuffer* drawTexRectangle(Texture2D* tex, GLRect rect);
+	[[nodiscard]] VertexBuffer* drawTexR8Rectangle(Texture2D* tex, GLRect rect, vec4 color);
+	[[nodiscard]] VertexBuffer* drawRectangles(std::vector<GLRect> rects, vec4 color);
+	[[nodiscard]] VertexBuffer* drawRectanglesBorder(std::vector<GLRect> rects, vec2 borderWidth, vec4 borderColor);
+	[[nodiscard]] VertexBuffer* drawRectanglesFilledBorder(std::vector<GLRect> rects, vec4 color, vec2 borderWidth, vec4 borderColor);
+	[[nodiscard]] VertexBuffer* drawLineStrip(std::vector<vec2> lines, vec4 color, float width);
+	void drawTexRectangle(Texture2D* tex, VertexBuffer* rectBuffer);
+	void drawTexR8Rectangle(Texture2D* tex, VertexBuffer* rectBuffer, vec4 color);
+	void drawRectangles(VertexBuffer* rectBuffer, vec4 color);
+	void drawRectanglesBorder(VertexBuffer* rectBuffer, vec2 borderWidth, vec4 borderColor);
+	void drawRectanglesFilledBorder(VertexBuffer* rectBuffer, vec4 color, vec2 borderWidth, vec4 borderColor);
+	void drawLineStrip(VertexBuffer* rectBuffer, vec4 color, float width);
 	extern RenderTarget* target;
 
 	template <typename T>
 	static void bind(T* t) { target->bind(t); }
 }
 
-template <typename T>
+export template <typename T>
 class Swapper {
 	T _b;
 	T& _t;

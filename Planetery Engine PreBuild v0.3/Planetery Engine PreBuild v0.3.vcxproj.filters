@@ -13,95 +13,65 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Module Interfaces">
+      <UniqueIdentifier>{bea2dac1-8bff-4ec3-bde8-a4f9bee30994}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MultilineString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\sharedInclude\glad\glad.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="StringBox.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Define.ixx">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.ixx">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.ixx">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="GL.ixx">
+      <Filter>Module Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="GL.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Module Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefineThreadSync.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Font.ixx">
+      <Filter>Module Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="font.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Module Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="UTF.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ThreadEvents.ixx">
+      <Filter>Module Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="GUI.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ThreadEvents.cpp">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadRender.ixx">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadRender.cpp">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="StringBox.ixx">
+      <Filter>Module Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="StringBox.cpp">
+      <Filter>Module Interfaces</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ThreadRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Define.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultilineString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefineMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RollingAverage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StringBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadMain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefineThreadSync.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UTF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
