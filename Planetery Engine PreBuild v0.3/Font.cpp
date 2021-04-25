@@ -1,16 +1,19 @@
 ﻿module;
+#include <cstdlib>
 #include <glad/glad.h>
 #include <freetype/freetype.h>
-#include <glm/glm.hpp>
+#include <assert.h>
+//#include <shelf-pack.hpp>
+
 module Font;
 import std.core;
 import Define;
 import GL;
 import Logger;
 
-#include <shelf-packModulize.h>
 
-//#include "ThreadEvents.h"
+//#include <shelf-pack.hpp>
+#include <shelf-packModulize.h>
 
 #define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
 
@@ -226,12 +229,8 @@ Reader& Reader::operator<<(char32_t c) {
 
 void font::init() {
 	maxTextureSize = gl::getMaxTextureSize();
-	//MODULE HOTFIX:
-	//auto it = std::lower_bound(_texSize.begin(), _texSize.end(), maxTextureSize);
-	auto it = _texSize.begin();
-	while (it != _texSize.end() && *it <= maxTextureSize) it++;
-	it--;
-	//END OF HOTFIX
+	auto it = std::lower_bound(_texSize.begin(), _texSize.end(), maxTextureSize);
+
 
 	*it = maxTextureSize;
 	while (*(++it)!=uint(-1)) {
@@ -486,12 +485,7 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 		if (g._renderedPointSize != _size.back() && (g._renderedPointSize == 0 || textureRelativeScale.x > 1)) {
 			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.x / fontFace->texturePPI.x)));
 			
-			//MODULE HOTFIX:
-			//auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
-			auto sizeIt = _size.begin();
-			while (sizeIt != _size.end() && *sizeIt <= targetSize) sizeIt++;
-			sizeIt--;
-			//MODULE HOTFIX
+			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
 
 			if (sizeIt == _size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;
@@ -504,12 +498,7 @@ GlyphData font::getGlyphData(FontFace* fontFace, GlyphId gId, float pointSize) {
 		if (g._renderedPointSize != _size.back() && (g._renderedPointSize == 0 || textureRelativeScale.y > 1)) {
 			uint targetSize = uint(ceil(pointSize * (gl::target->pixelPerInch.y / fontFace->texturePPI.y)));
 			
-			//MODULE HOTFIX:
-			//auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
-			auto sizeIt = _size.begin();
-			while (sizeIt != _size.end() && *sizeIt <= targetSize) sizeIt++;
-			sizeIt--;
-			//MODULE HOTFIX
+			auto sizeIt = std::lower_bound(_size.begin(), _size.end(), targetSize);
 
 			if (sizeIt == _size.end()) sizeIt--;
 			g._renderedPointSize = *sizeIt;

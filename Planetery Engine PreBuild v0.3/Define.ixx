@@ -1,10 +1,12 @@
 module;
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <cmath>
 export module Define;
 import std.core;
 
 export {
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 	typedef unsigned int uint;
 	typedef unsigned long long int ulint;
 	typedef long long int lint;

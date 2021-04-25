@@ -1,7 +1,6 @@
 module;
 #include <assert.h>
 #include <glfw/glfw3.h>
-#include <glm/glm.hpp>
 #include "ConsoleFormat.h"
 #define WINDOW_MIN_WIDTH 400
 #define WINDOW_MIN_HEIGHT 300
@@ -389,12 +388,8 @@ void ThreadEvents::join() {
 
 void ThreadEvents::join(uint nsTimeout) {
 	std::unique_lock _{mx};
-	//MODULE HOTFIX:
-	//bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed)==State::complete; });
-	bool success = true;
-	cv.wait(_);
-	//MODULE HOTFIX
-	
+	bool success = cv.wait_for(_, std::chrono::nanoseconds(nsTimeout), []() {return _state.load(std::memory_order_relaxed)==State::complete; });
+
 	if (success) {
 		_thread->join();
 		delete _thread;

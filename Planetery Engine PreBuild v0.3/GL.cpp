@@ -1,15 +1,11 @@
 module;
+#include <assert.h>
 #include <glad/glad.h>
-//#include <glfw/glfw3.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "ConsoleFormat.h"
 module GL;
+
 import Define;
 import Logger;
-
-
 
 namespace gl {
 
@@ -172,29 +168,18 @@ namespace gl {
 		glDeleteProgram(id);
 	}
 
-	//static_assert(false);
 	constexpr const char* SHADER_PATH = "shader/";
 	static std::string _tryRead(const char* fileName, const char* pointName) {
 		std::string result;
 		std::ifstream file;
-		//std::stringstream strStream;
-		//file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-		//file.open(SHADER_PATH + (fileName + std::string(pointName)));
-
-		//strStream << file.rdbuf();
-		//result = strStream.str();
-		//MODULE HOTFIX
-		file.exceptions(std::ifstream::badbit);
-		file.open(SHADER_PATH + (fileName + std::string(pointName)), std::ios_base::in | std::ios_base::ate);
-		ulint size = file.tellg();
-		file.seekg(0, file.beg);
-		result.resize((size_t)(size)+1); //To ensure there's a null terminator
-		file.read(result.data(), size);
-		assert(file);
-		if (file.bad()) throw "File Read Critical Error";
-		if (file.fail() && !file.eof()) throw "File Read Bad Error";
-
+		std::stringstream strStream;
+		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		file.open(SHADER_PATH + (fileName + std::string(pointName)));
+		strStream << file.rdbuf();
+		result = strStream.str();
 		file.close();
+		if (file.bad()) throw "File Read Fail Error";
+		if (file.fail() && !file.eof()) throw "File Read Fail Error";
 		return result;
 	}
 

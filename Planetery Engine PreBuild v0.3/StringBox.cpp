@@ -1,6 +1,5 @@
 module;
 #include <glad/glad.h>
-#include <glm/glm.hpp>
 module StringBox;
 
 import std.core;
@@ -81,34 +80,22 @@ void StringBox::render() {
 }
 
 std::string StringBox::str() const {
-	//MODULE HOTFIX:
-	//return _ss.str();
-	return _ss;
-	//MODULE HOTFIX
+	return _ss.str();
 }
 void StringBox::str(const std::string& string) {
 	_change = true;
-	//MODULE HOTFIX:
-	//_ss.str(string);
-	_ss = string;
-	//MODULE HOTFIX
+	_ss.str(string);
 }
 void StringBox::str(std::string&& string)
 {
 	_change = true;
-	//MODULE HOTFIX:
-	//_ss.str(std::move(string));
-	_ss = std::move(string);
-	//MODULE HOTFIX
+	_ss.str(std::move(string));
 }
 
 void StringBox::clear() {
 	_change = true;
-	//MODULE HOTFIX:
-	//_ss.str(std::string());
-	//_ss.clear();
+	_ss.str(std::string());
 	_ss.clear();
-	//MODULE HOTFIX
 }
 
 void StringBox::setSize(vec2 s) {

@@ -1,3 +1,4 @@
+module;
 export module Util;
 import std.core;
 import std.threading;
@@ -140,14 +141,14 @@ export namespace utf {
 	template <UTFUnevenCharType C>
 	class UTFIterator {
 	public:
-		//using iterator_category = std::forward_iterator_tag;
-		//using difference_type = ptrdiff_t; //should be diff of size_t, but...
-		//using pointer_type = const C*;
-		//using value_type = char_cp;
-		//using reference = const char_cp&;
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t; //should be diff of size_t, but...
+		using pointer_type = const C*;
+		using value_type = char_cp;
+		using reference = const char_cp&;
 		UTFIterator() = default;
 		UTFIterator(const C* ptr) : _ptr(ptr) {
-			//static_assert(std::forward_iterator<UTFIterator>); //MODULE HOTFIX
+			static_assert(std::forward_iterator<UTFIterator>);
 			auto p = getCodePoint(ptr);
 			_nextUnit = p.first;
 			_currentCodePoint = p.second;

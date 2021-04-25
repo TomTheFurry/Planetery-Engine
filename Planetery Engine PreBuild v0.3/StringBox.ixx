@@ -25,31 +25,12 @@ public:
 	void notifyPPIChanged();
 	void setLineCenter(bool v);
 
-	/*MODULE HOTFIX:
 	template <typename T>
 	StringBox& operator<< (T&& t) {
 		_change = true;
 		_ss << (std::forward<T>(t));
 		return *this;
-	}*/
-
-	template <typename T>
-	requires std::convertible_to<T, std::string>
-		StringBox& operator<< (T&& t) {
-		_change = true;
-		_ss += t;
-		return *this;
 	}
-	template <typename T>
-	requires !std::convertible_to<T, std::string>
-	StringBox& operator<< (T&& t) {
-		_change = true;
-		_ss += std::to_string(t);
-		return *this;
-	}
-
-
-	//MODULE HOTFIX
 
 protected:
 	vec2 size; //true normalized length (0 - 1)
@@ -60,9 +41,6 @@ protected:
 	uvec2 _textureSize;
 	gl::Texture2D* _tex;
 	gl::FrameBuffer* _fbo;
-	//MODULE HOTFIX:
-	//std::ostringstream _ss;
-	std::string _ss;
-	//MODULE HOTFIX
+	std::ostringstream _ss;
 };
 

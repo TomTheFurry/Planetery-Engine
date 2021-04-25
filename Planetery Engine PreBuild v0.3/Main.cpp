@@ -1,5 +1,4 @@
 ﻿
-#include <glm/glm.hpp>
 import std.core;
 import Define;
 import Logger;
