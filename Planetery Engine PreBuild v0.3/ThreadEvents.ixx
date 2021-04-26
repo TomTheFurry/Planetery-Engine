@@ -1,18 +1,18 @@
-#pragma once
+export module ThreadEvents;
+import Define;
+import std.core;
 
-#include "Define.h"
-#include "DefineMath.h"
-#include <exception>
-#include <atomic>
-#include <mutex>
-#include <functional>
-#include "DefineThreadSync.h"
-
-namespace events {
-	enum class State { init, paused, normal, requestStop, complete };
+export namespace events {
+	enum class State {
+		init,
+		paused,
+		normal,
+		requestStop,
+		complete
+	};
 	namespace KeyCode {
 		enum KeyCode {
-			unkown = -1,
+			unkown = -1, //TAG: Hey old me... unk'n'own!!!
 			null = 0,
 			space = 32,
 			apostrophe = 39,

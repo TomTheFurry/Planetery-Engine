@@ -1,27 +1,25 @@
-#pragma once
-#include "Define.h"
-#include "DefineMath.h"
-#include <unordered_map>
-#include <map>
-#include <bitset>
+module;
+#include <glad/glad.h>
+#include <glfw/glfw3.h>
 
-namespace gl {
-	typedef uint GLEnum;
-	typedef uint GLflags;
+export module GL;
+import std.core;
+import Define;
 
-	enum class DataType {
-		Byte,
-		UnsignedByte,
-		Short,
-		UnsignedShort,
-		Int,
-		UnsignedInt,
-		HalfFloat,
-		Float,
-		Double,
-		Fixed  // Fixed 16.16 unit
-		// Also has the (u)int-2-10-10-10-rev and 10f-11f-11f-11f-rev format
-		// unused
+export namespace gl {
+
+	enum class DataType : GLenum {
+		Byte = GL_BYTE,
+		UnsignedByte = GL_UNSIGNED_BYTE,
+		Short = GL_SHORT,
+		UnsignedShort = GL_UNSIGNED_SHORT,
+		Int = GL_INT,
+		UnsignedInt = GL_UNSIGNED_INT,
+		HalfFloat = GL_HALF_FLOAT,
+		Float = GL_FLOAT,
+		Double = GL_DOUBLE,
+		Fixed = GL_FIXED, //Fixed 16.16 unit
+		//Also has the (u)int-2-10-10-10-rev and 10f-11f-11f-11f-rev format unused
 	};
 
 	class Base
@@ -37,12 +35,12 @@ namespace gl {
 	  private:
 		uint _refCount = 1;
 	};
-	enum class ShaderType {
-		Vertex,
-		Fragment,
-		Geometry,
-		TessControl,
-		TessEvaluation
+	enum class ShaderType : GLenum {
+		Vertex = GL_VERTEX_SHADER,
+		Fragment = GL_FRAGMENT_SHADER,
+		Geometry = GL_GEOMETRY_SHADER,
+		TessControl = GL_TESS_CONTROL_SHADER,
+		TessEvaluation = GL_TESS_EVALUATION_SHADER,
 	};
 	class Shader: virtual public Base
 	{
@@ -110,28 +108,27 @@ namespace gl {
 	  const char* fileName, bool hasGeomShader);
 
 	namespace bufferFlags {
-		enum bufferFlags {
+		enum bufferFlags : GLenum {
 			None = 0,
-			MappingRead = 1,
-			MappingWrite = 2,
-			MappingPersistent = 64,
-			MappingCoherent = 128,
-			DynamicStorage = 256,
-			ClientStorage = 512
+			MappingRead = GL_MAP_READ_BIT,
+			MappingWrite = GL_MAP_WRITE_BIT,
+			MappingPersistent = GL_MAP_PERSISTENT_BIT,
+			MappingCoherent = GL_MAP_COHERENT_BIT,
+			DynamicStorage = GL_DYNAMIC_STORAGE_BIT,
+			ClientStorage = GL_CLIENT_STORAGE_BIT
 		};
 	}
-	enum class MapAccess {
-		ReadOnly,
-		WriteOnly,
-		ReadWrite,
+	enum class MapAccess : GLenum {
+		ReadOnly = GL_READ_ONLY,
+		WriteOnly = GL_WRITE_ONLY,
+		ReadWrite = GL_READ_WRITE,
 	};
 
 	class BufferBase: virtual public Base
 	{
 	  public:
 		BufferBase();
-		void setFormatAndData(
-		  size_t size, GLflags usageFlags, const void* data = nullptr);
+		void setFormatAndData(size_t size, GLenum usageFlags, const void* data = nullptr);
 		void editData(size_t size, const void* data, size_t atOffset = 0);
 		void* map(MapAccess access);
 		void* getMapPointer();
@@ -168,16 +165,15 @@ namespace gl {
 		~VertexAttributeArray();
 	};
 
-	class Texture: virtual public Base
-	{
-	  public:
-		enum class SamplingFilter {
-			linear,
-			nearest,
-			nearestLODNearest,
-			linearLODNearest,
-			nearestLODLinear,
-			linearLODLinear,
+	class Texture : virtual public Base {
+	public:
+		enum class SamplingFilter : GLenum {
+			linear = GL_LINEAR,
+			nearest = GL_NEAREST,
+			nearestLODNearest = GL_NEAREST_MIPMAP_NEAREST,
+			linearLODNearest = GL_LINEAR_MIPMAP_NEAREST,
+			nearestLODLinear = GL_NEAREST_MIPMAP_LINEAR,
+			linearLODLinear = GL_LINEAR_MIPMAP_LINEAR,
 		};
 		void setTextureSamplingFilter(
 		  SamplingFilter maximize, SamplingFilter minimize);
@@ -188,9 +184,9 @@ namespace gl {
 	  public:
 		Texture2D();
 		void setFormat(
-		  GLEnum internalFormat, size_t width, size_t height, uint levels);
+		  GLenum internalFormat, size_t width, size_t height, uint levels);
 		void setData(int x, int y, uint w, uint h, uint level,
-		  GLEnum dataFormat, DataType dataType, const void* data);
+		  GLenum dataFormat, DataType dataType, const void* data);
 		Texture2D* cloneData(
 		  const Texture2D* source, uvec2 pos, uvec2 size, uint level);
 		Texture2D* cloneData(const Texture2D* source, uvec2 pos, uvec2 size,
@@ -203,7 +199,7 @@ namespace gl {
 	{
 	  public:
 		RenderBuffer();
-		void setFormat(GLEnum internalFormat, size_t width, size_t height);
+		void setFormat(GLenum internalFormat, size_t width, size_t height);
 	  protected:
 		~RenderBuffer();
 	};
@@ -211,27 +207,27 @@ namespace gl {
 	{
 	  public:
 		FrameBuffer();
-		void attach(RenderBuffer* rb, GLEnum attachmentPoint);
-		void attach(Texture* tx, GLEnum attachmentPoint, int level);
+		void attach(RenderBuffer* rb, GLenum attachmentPoint);
+		void attach(Texture* tx, GLenum attachmentPoint, int level);
 	  protected:
 		~FrameBuffer();
 	  private:
 		// std::vector<Base*> _rb;
 	};
 
-	enum class GeomType {
-		Points,
-		Lines,
-		LineLoops,
-		LineStrips,
-		AdjacentLines,
-		AdjacentLineStrips,
-		Triangles,
-		TriangleFans,
-		TriangleStrips,
-		AdjacentTriangles,
-		AdjacentTriangleStrips,
-		Patches
+	enum class GeomType : GLenum {
+		Points = GL_POINTS,
+		Lines = GL_LINES,
+		LineLoops = GL_LINE_LOOP,
+		LineStrips = GL_LINE_STRIP,
+		AdjacentLines = GL_LINES_ADJACENCY,
+		AdjacentLineStrips = GL_LINE_STRIP_ADJACENCY,
+		Triangles = GL_TRIANGLES,
+		TriangleFans = GL_TRIANGLE_FAN,
+		TriangleStrips = GL_TRIANGLE_STRIP,
+		AdjacentTriangles = GL_TRIANGLES_ADJACENCY,
+		AdjacentTriangleStrips = GL_TRIANGLE_STRIP_ADJACENCY,
+		Patches = GL_PATCHES,
 	};
 
 	class RenderTarget
@@ -249,9 +245,9 @@ namespace gl {
 		bool useCull;
 		bool useStencil;
 		bool useMultisample;
-		GLEnum depthFunc;
-		std::pair<GLEnum, GLEnum> blendFunc;
-		GLEnum cullFace;
+		GLenum depthFunc;
+		std::pair<GLenum, GLenum> blendFunc;
+		GLenum cullFace;
 		uvec4 viewport;
 		vec2 pixelPerInch;
 		std::vector<Texture*> texUnit{};
@@ -284,9 +280,9 @@ namespace gl {
 		void _use();
 	};
 
-	extern void init();
-	extern void end();
-	extern [[nodiscard]] uint getMaxTextureSize();
+	void init();
+	void end();
+	[[nodiscard]] uint getMaxTextureSize();
 
 	struct GLRect {
 		vec2 pos;
@@ -320,7 +316,7 @@ namespace gl {
 	template<typename T> static void bind(T* t) { target->bind(t); }
 }
 
-template<typename T> class Swapper
+export template<typename T> class Swapper
 {
 	T _b;
 	T& _t;

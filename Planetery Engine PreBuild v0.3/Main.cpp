@@ -1,20 +1,12 @@
-﻿#include "Logger.h"
-#include "ThreadEvents.h"
-#include "ThreadRender.h"
-//#include "Font.h"
-#ifdef USE_OPENGL
-#	include "GL.h"
-#endif
-#ifdef USE_VULKAN
-#	include "VK.h"
-#endif
-//#include "StringBox.h"
-
-#include <thread>
-#include <iostream>
-#include <chrono>
-#include <atomic>
-
+﻿
+import std.core;
+import Define;
+import Logger;
+import ThreadEvents;
+import ThreadRender;
+import Font;
+import GL;
+import StringBox;
 
 
 

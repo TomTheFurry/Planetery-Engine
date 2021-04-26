@@ -1,15 +1,10 @@
-#include "Logger.h"
-
-#include "GL.h"
-
+module;
 #include <assert.h>
-#include <vector>
-#include <fstream>
-#include <sstream>
-
 #include <glad/glad.h>
 #include <glfw/glfw3.h>
-#include <glm/gtc/type_ptr.hpp>
+
+module GL;
+import Logger;
 
 static void APIENTRY glDebugOutput(GLenum source, GLenum type, uint id,
   GLenum severity, GLsizei length, const char* message, const void* userParam) {
@@ -94,9 +89,9 @@ struct _state {
 	bool useCull = false;
 	bool useStencil = false;
 	bool useMultisample = true;
-	GLEnum depthFunc = GL_LESS;
-	std::pair<GLEnum, GLEnum> blendFunc = std::make_pair(GL_ONE, GL_ZERO);
-	GLEnum cullFace = GL_BACK;
+	GLenum depthFunc = GL_LESS;
+	std::pair<GLenum, GLenum> blendFunc = std::make_pair(GL_ONE, GL_ZERO);
+	GLenum cullFace = GL_BACK;
 	uvec4 viewport = uvec4{0, 0, 1920, 1080};
 	vec2 pixelPerInch = vec2{0, 0};
 	std::vector<Texture*> texUnit{};
@@ -106,7 +101,7 @@ static _state state;
 static uint _maxTexUnit = 0;
 
 // Enum convertion
-GLEnum _val(DataType d) {
+GLenum _val(DataType d) {
 	switch (d) {
 	case gl::DataType::Byte: return GL_BYTE;
 	case gl::DataType::UnsignedByte: return GL_UNSIGNED_BYTE;
@@ -121,7 +116,7 @@ GLEnum _val(DataType d) {
 	default: throw "Invalid gl::DataType Enum";
 	}
 }
-GLEnum _val(ShaderType s) {
+GLenum _val(ShaderType s) {
 	switch (s) {
 	case gl::ShaderType::Vertex: return GL_VERTEX_SHADER;
 	case gl::ShaderType::Fragment: return GL_FRAGMENT_SHADER;
@@ -131,7 +126,7 @@ GLEnum _val(ShaderType s) {
 	default: throw "Invalid gl::ShaderType Enum";
 	}
 }
-GLEnum _val(GeomType g) {
+GLenum _val(GeomType g) {
 	switch (g) {
 	case gl::GeomType::Points: return GL_POINTS;
 	case gl::GeomType::Lines: return GL_LINES;
@@ -149,7 +144,7 @@ GLEnum _val(GeomType g) {
 	default: throw "Invalid gl::GeomType Enum";
 	}
 }
-GLEnum _val(Texture::SamplingFilter s) {
+GLenum _val(Texture::SamplingFilter s) {
 	switch (s) {
 	case gl::Texture::SamplingFilter::linear: return GL_LINEAR;
 	case gl::Texture::SamplingFilter::nearest: return GL_NEAREST;
@@ -164,7 +159,7 @@ GLEnum _val(Texture::SamplingFilter s) {
 	default: throw "Invalid gl::Texture::SamplingFilter Enum";
 	}
 }
-GLEnum _val(MapAccess m) {
+GLenum _val(MapAccess m) {
 	switch (m) {
 	case gl::MapAccess::ReadOnly: return GL_READ_ONLY;
 	case gl::MapAccess::WriteOnly: return GL_WRITE_ONLY;
@@ -515,7 +510,7 @@ BufferBase::BufferBase() {
 	glCreateBuffers(1, &id);
 }
 void gl::BufferBase::setFormatAndData(
-  size_t size, GLflags usageFlags, const void* data) {
+  size_t size, GLenum usageFlags, const void* data) {
 	_size = size;
 	glNamedBufferStorage(id, size, data, usageFlags);
 }
@@ -599,11 +594,11 @@ void gl::Texture::setTextureSamplingFilter(
 // Texture2D
 Texture2D::Texture2D() { glCreateTextures(GL_TEXTURE_2D, 1, &id); }
 void Texture2D::setFormat(
-  GLEnum internalFormat, size_t width, size_t height, uint levels) {
+  GLenum internalFormat, size_t width, size_t height, uint levels) {
 	glTextureStorage2D(id, levels, internalFormat, width, height);
 }
 void gl::Texture2D::setData(int x, int y, uint w, uint h, uint level,
-  GLEnum dataFormat, DataType dataType, const void* data) {
+  GLenum dataFormat, DataType dataType, const void* data) {
 	glTextureSubImage2D(
 	  id, level, x, y, w, h, dataFormat, _val(dataType), data);
 }
@@ -625,20 +620,20 @@ Texture2D::~Texture2D() { glDeleteTextures(1, &id); }
 // RenderBuffer
 RenderBuffer::RenderBuffer() { glCreateRenderbuffers(1, &id); }
 void gl::RenderBuffer::setFormat(
-  GLEnum internalFormat, size_t width, size_t height) {
+  GLenum internalFormat, size_t width, size_t height) {
 	glNamedRenderbufferStorage(id, internalFormat, width, height);
 }
 RenderBuffer::~RenderBuffer() { glDeleteRenderbuffers(1, &id); }
 
 // FrameBuffer
 FrameBuffer::FrameBuffer() { glCreateFramebuffers(1, &id); }
-void FrameBuffer::attach(RenderBuffer* rb, GLEnum attachmentPoint) {
+void FrameBuffer::attach(RenderBuffer* rb, GLenum attachmentPoint) {
 	glNamedFramebufferRenderbuffer(
 	  id, attachmentPoint, GL_RENDERBUFFER, rb->id);
 	// rb->addLink();
 	//_rb.push_back(rb);
 }
-void FrameBuffer::attach(Texture* tx, GLEnum attachmentPoint, int level) {
+void FrameBuffer::attach(Texture* tx, GLenum attachmentPoint, int level) {
 	glNamedFramebufferTexture(id, attachmentPoint, tx->id, level);
 	// tx->addLink();
 	//_rb.push_back(tx);

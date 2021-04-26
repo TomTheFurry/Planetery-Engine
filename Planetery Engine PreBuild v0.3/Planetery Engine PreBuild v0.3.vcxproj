@@ -60,18 +60,18 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;$(SolutionDir)lib;$(SolutionDir)sharedInclude;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">
-    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;$(SolutionDir)lib;$(SolutionDir)sharedInclude;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;C:\Users\tomle\source\repos\Planetery Engine\lib;C:\Users\tomle\source\repos\Planetery Engine\sharedInclude;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;$(SolutionDir)lib;$(SolutionDir)sharedInclude;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -80,6 +80,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <GenerateSourceDependencies>true</GenerateSourceDependencies>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,6 +95,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <GenerateSourceDependencies>true</GenerateSourceDependencies>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,6 +109,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,41 +118,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\sharedInclude\glad\glad.c" />
-    <ClCompile Include="DefineThreadSync.cpp" />
-    <ClCompile Include="DefineUtil.cpp" />
+    <ClCompile Include="Define.ixx" />
     <ClCompile Include="font.cpp" />
+    <ClCompile Include="Font.ixx" />
     <ClCompile Include="GL.cpp" />
-    <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="GL.ixx" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Logger.ixx" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MultilineString.cpp" />
     <ClCompile Include="StringBox.cpp" />
+    <ClCompile Include="StringBox.ixx" />
     <ClCompile Include="ThreadEvents.cpp" />
-    <ClCompile Include="ThreadMain.cpp" />
+    <ClCompile Include="ThreadEvents.ixx" />
     <ClCompile Include="ThreadRender.cpp" />
-    <ClCompile Include="UTF.cpp" />
+    <ClCompile Include="ThreadRender.ixx" />
+    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Util.ixx" />
     <ClCompile Include="VK.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h" />
-    <ClInclude Include="Define.h" />
-    <ClInclude Include="DefineMath.h" />
-    <ClInclude Include="DefineThreadSync.h" />
-    <ClInclude Include="DefineUtil.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="GL.h" />
     <ClInclude Include="GLFW.h" />
-    <ClInclude Include="GUI.h" />
-    <ClInclude Include="Logger.h" />
+    <ClInclude Include="Marco.h" />
     <ClInclude Include="MemoryResource.h" />
-    <ClInclude Include="MultilineString.h" />
-    <ClInclude Include="MultiStream.h" />
-    <ClInclude Include="RollingAverage.h" />
     <ClInclude Include="StringBox.h" />
     <ClInclude Include="ThreadEvents.h" />
-    <ClInclude Include="ThreadMain.h" />
     <ClInclude Include="ThreadRender.h" />
-    <ClInclude Include="UTF.h" />
     <ClInclude Include="VK.h" />
   </ItemGroup>
   <ItemGroup>

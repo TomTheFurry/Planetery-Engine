@@ -1,18 +1,30 @@
-﻿#include "font.h"
-#ifdef USE_OPENGL
-#	include "GL.h"
-
-#include "ThreadEvents.h"
-#include "Logger.h"
-#include "DefineUtil.h"
-
-#include <set>
-#include <unordered_map>
-#include <glad/glad.h>
+﻿module;
+#include <cmath>
+#include <cstdlib>
+#include "ConsoleFormat.h"
+#include <assert.h>
 #include <freetype/freetype.h>
-#include <shelf-pack.hpp>
-#include <array>
-#include <memory_resource>
+module Font;
+import std.core;
+import std.memory;
+import Define;
+import Util;
+import Logger;
+import ThreadEvents;
+import GL;
+#include <shelf-packModulize.h>
+
+#define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
+constexpr auto CHARCODE_8_UNKNOWN_CHAR = '?';
+constexpr auto CHARCODE_8_ONKNOWN_OBJECT = '?';
+constexpr auto CHARCODE_16_UNKNOWN_CHAR = char16_t(0xFFFD);
+constexpr auto CHARCODE_16_ONKNOWN_OBJECT = char16_t(0xFFFC);
+constexpr auto CHARCODE_32_UNKNOWN_CHAR = char32_t(0x0000FFFD);
+constexpr auto CHARCODE_32_ONKNOWN_OBJECT = char32_t(0x0000FFFC);
+constexpr auto CHARCODE_NEXTLINE = '\n';
+constexpr uint TAB_SPACE = 4;
+
+//#ifdef USE_OPENGL
 
 using namespace font;
 
@@ -1008,7 +1020,7 @@ NextLine:
 			break;	// out of space. drawing at below screen
 	}
 }
-#endif
-#ifdef USE_VULKAN
-#	include "VK.h"
-#endif
+//#endif
+//#ifdef USE_VULKAN
+//#	include "VK.h"
+//#endif

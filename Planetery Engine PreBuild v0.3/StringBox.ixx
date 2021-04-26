@@ -1,17 +1,13 @@
-#pragma once
-#include "DefineMath.h"
-#include "Font.h"
-#include <iostream>
-#include <sstream>
+module;
 
-namespace gl {
-	class Texture2D;
-	class FrameBuffer;
-}
+export module StringBox;
+import std.core;
+import Define;
+import Font;
+import GL;
 
-class StringBox
-{
-  public:
+export class StringBox {
+public:
 	StringBox();
 	vec2 pos;  // normalized (-1 - 1)
 	vec4 backgroundColor;

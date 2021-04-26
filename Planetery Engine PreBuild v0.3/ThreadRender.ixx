@@ -1,13 +1,18 @@
-#pragma once
-#include "Define.h"
-#include "DefineMath.h"
-#include "DefineThreadSync.h"
+module;
 #include "GLFW.h"
-#include <atomic>
-#include <functional>
+export module ThreadRender;
+import std.core;
+import std.threading;
+import Define;
 
-namespace render {
-	enum class State { init, paused, normal, requestStop, complete };
+export namespace render {
+	enum class State {
+		init,
+		paused,
+		normal,
+		requestStop,
+		complete
+	};
 	using RenderFunction = std::function<void()>;
 	struct RenderHandle {
 		RenderFunction func;

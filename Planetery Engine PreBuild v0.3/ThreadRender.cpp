@@ -1,27 +1,17 @@
-﻿#include "Logger.h"
-#include "ThreadRender.h"
-
-#ifdef USE_OPENGL
-#	include "GL.h"
-#endif
-#ifdef USE_VULKAN
-#	include "VK.h"
-#endif
-
-#include "ThreadEvents.h"
-
-#include "RollingAverage.h"
-//#include "Font.h"
-//#include "StringBox.h"
-
-#include <thread>
-#include <atomic>
-#include <condition_variable>
-#include <chrono>
-#include <mutex>
-
-#include <exception>
-
+﻿module;
+#include "Marco.h"
+#include "GLFW.h"
+#include <glad/glad.h>
+module ThreadRender;
+import std.core;
+import std.threading;
+import Define;
+import Util;
+import GL;
+import Font;
+import StringBox;
+import ThreadEvents;
+import Logger;
 
 
 using namespace render;
@@ -138,12 +128,12 @@ static void _main() {
 					gl::target->setViewport(0, 0, v.x, v.y);
 					gl::target->pixelPerInch =
 					  events::ThreadEvents::getPixelPerInch();
-					fpsBox.notifyPPIChanged();
+					//fpsBox.notifyPPIChanged();
 				}
 				if (events::ThreadEvents::isWindowMoved()) {
 					gl::target->pixelPerInch =
 					  events::ThreadEvents::getPixelPerInch();
-					fpsBox.notifyPPIChanged();
+					//fpsBox.notifyPPIChanged();
 				}
 				gl::target->clearColor(vec4(1.0f));
 #endif
@@ -189,7 +179,9 @@ static void _main() {
 						logger("Average Tick speed: ", nanoSec(roller.get()),
 						  " (", tickCount, "), Event tps: ", eventTickCount,
 						  "\n");
+						#ifdef USE_VULKAN
 						vk::testSwitch();
+						#endif
 						nsDeltaPerSec -= NS_PER_S;
 						tps = tickCount;
 						// fpsBox.clear();

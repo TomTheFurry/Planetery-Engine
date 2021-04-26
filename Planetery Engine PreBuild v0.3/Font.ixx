@@ -1,25 +1,10 @@
-#pragma once
-#include "Define.h"
-#include "DefineMath.h"
-#include <vector>
-#include <map>
-#include <unordered_map>
-#include <tuple>
-#include <functional>
-#include <string_view>
-#include "UTF.h"
+module;
 
-#define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
-constexpr auto CHARCODE_8_UNKNOWN_CHAR = '?';
-constexpr auto CHARCODE_8_ONKNOWN_OBJECT = '?';
-constexpr auto CHARCODE_16_UNKNOWN_CHAR = char16_t(0xFFFD);
-constexpr auto CHARCODE_16_ONKNOWN_OBJECT = char16_t(0xFFFC);
-constexpr auto CHARCODE_32_UNKNOWN_CHAR = char32_t(0x0000FFFD);
-constexpr auto CHARCODE_32_ONKNOWN_OBJECT = char32_t(0x0000FFFC);
-constexpr auto CHARCODE_NEXTLINE = '\n';
-constexpr uint TAB_SPACE = 4;
+export module Font;
+import Define;
+import std.core;
 
-namespace font {
+export namespace font {
 	using GlyphId = uint;
 	constexpr float DONT_RENDER_CHAR = 0.f;
 	constexpr float DEFAULT_SCALE = 1.f;

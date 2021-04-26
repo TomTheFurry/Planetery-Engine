@@ -1,10 +1,13 @@
-#include "StringBox.h"
-#include "Logger.h"
-#ifdef USE_OPENGL
-#	include "GL.h"
-#	include "Font.h"
-#	include "UTF.h"
-#	include <glad/glad.h>
+module;
+#include <glad/glad.h>
+module StringBox;
+
+import std.core;
+import Define;
+import Font;
+import Util;
+import GL;
+import Logger;
 
 static gl::RenderTarget* _targetText = nullptr;
 
@@ -119,7 +122,3 @@ void StringBox::setLineCenter(bool v) {
 	_isLineCentre = v;
 	_change = true;
 }
-#endif
-#ifdef USE_VULKAN
-#	include "VK.h"
-#endif

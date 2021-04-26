@@ -19,77 +19,71 @@
     <Filter Include="Header Files\Vulkan">
       <UniqueIdentifier>{3a190832-7d2a-4798-8fcd-964dfd8320e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{c3563138-3153-442f-8db4-c1b6ce111492}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadRender.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MultilineString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\sharedInclude\glad\glad.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="StringBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefineThreadSync.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="font.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UTF.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefineUtil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VK.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Define.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GL.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="StringBox.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadEvents.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadRender.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="font.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GL.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="StringBox.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadEvents.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadRender.cpp">
+      <Filter>Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThreadRender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Define.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiStream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultilineString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefineMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RollingAverage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StringBox.h">
@@ -101,22 +95,7 @@
     <ClInclude Include="ThreadEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadMain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefineThreadSync.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UTF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefineUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GLFW.h">
@@ -130,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="VK.h">
       <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="Marco.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

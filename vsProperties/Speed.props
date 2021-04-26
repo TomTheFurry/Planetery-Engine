@@ -22,7 +22,6 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <FloatingPointModel>Fast</FloatingPointModel>
       <IntelJCCErratum>true</IntelJCCErratum>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <SDLCheck>false</SDLCheck>

@@ -1,6 +1,4 @@
 #pragma once
-#include "Define.h"
-
 
 #ifdef USE_VULKAN
 #	define GLFW_INCLUDE_NONE

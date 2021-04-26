@@ -1,17 +1,15 @@
-#include "Define.h"
-
-#include "ThreadEvents.h"
-
-#include "Logger.h"
-#include "ThreadRender.h"
+module;
+#include "Marco.h"
+#include "ConsoleFormat.h"
+#include <assert.h>
 #include "GLFW.h"
-
-#include <thread>
-#include <atomic>
-#include <condition_variable>
-#include <chrono>
-#include <mutex>
-#include <system_error>
+module ThreadEvents;
+import std.core;
+import std.threading;
+import Define;
+import Logger;
+import ThreadRender;
+import GL;
 
 #define WINDOW_MIN_WIDTH  400
 #define WINDOW_MIN_HEIGHT 300
@@ -115,7 +113,9 @@ static void window_pos_callback(GLFWwindow* _, int x, int y) {
 	}
 }
 static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
+	#ifdef USE_VULKAN
 	vk::notifyOutdatedSwapchain();
+	#endif
 	_framebufferSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
 		pair.second.flags.fetch_or(
