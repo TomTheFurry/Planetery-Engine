@@ -1,8 +1,8 @@
 ﻿module;
-#include <cmath>
-#include <cstdlib>
 #include "ConsoleFormat.h"
+#include <cstdlib>
 #include <assert.h>
+#include <glad/glad.h>
 #include <freetype/freetype.h>
 module Font;
 import std.core;
@@ -295,7 +295,7 @@ std::vector<const std::string*> font::getAllFontSets() {
 }
 std::vector<std::string> font::getAllFontStyles() {
 	// wil return empty string...
-	return std::vector(std::begin(_style), std::end(_style));
+	return std::vector<std::string>(std::begin(_style), std::end(_style));
 }
 bool font::addFont(const std::string& fontSetName,
   const std::string& fileLocation, const std::vector<std::string>& style) {

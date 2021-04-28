@@ -84,7 +84,7 @@ Japanese(Hiragana) :
 あさきゆめみじ　ゑひもせず(4))STRINGCAP");
 
 
-//static StringBox* listTest = nullptr;
+// static StringBox* listTest = nullptr;
 
 int main() {
 	logger.newThread("MainThread");
@@ -126,13 +126,13 @@ int main() {
 
 	events::ThreadEvents::addInlineKeyEventCallback(
 	  [](int keyCode, events::KeyAction action, events::KeyModFlags flags) {
-		  //listTest->pos += vec2(0, 0.1);
+		  // listTest->pos += vec2(0, 0.1);
 	  },
 	  events::KeyCode::s, events::KeyAction::repeat);
 
 	events::ThreadEvents::addInlineKeyEventCallback(
 	  [](int keyCode, events::KeyAction action, events::KeyModFlags flags) {
-		  //listTest->pos += vec2(0, -0.1);
+		  // listTest->pos += vec2(0, -0.1);
 	  },
 	  events::KeyCode::w, events::KeyAction::repeat);
 

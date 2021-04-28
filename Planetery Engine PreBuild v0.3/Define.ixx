@@ -1,5 +1,6 @@
 module;
 #include <cmath>
+#include "Marco.h"
 export module Define;
 import std.core;
 
@@ -7,6 +8,7 @@ export {
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+	typedef unsigned short usint;
 	typedef unsigned int uint;
 	typedef unsigned long long int ulint;
 	typedef long long int lint;
@@ -61,26 +63,39 @@ export {
 #else
 	constexpr bool IS_DEBUG_MODE = false;
 #endif
+#ifdef SAFETY_CHECK
+	constexpr bool DO_SAFETY_CHECK = true;
+#else
+	constexpr bool DO_SAFETY_CHECK = false;
+#endif
+#ifdef USE_VULKAN
+	constexpr bool USING_VULKAN = true;
+#else
+	constexpr bool USING_VULKAN = false;
+#endif
+#ifdef USE_OPENGL
+	constexpr bool USING_OPENGL = true;
+#else
+	constexpr bool USING_OPENGL = false;
+#endif
 }
 export std::string nanoSec(auto ns);
 export std::string sec(auto s);
 export std::string byte(auto B);
 
 std::string nanoSec(auto ns) {
-	if (ns < NS_PER_US)	return std::to_string(ns) + "ns";
-	if (ns < NS_PER_MS)	return std::to_string(ns / NS_PER_US_F) + "us";
-	if (ns < NS_PER_S)	return std::to_string(ns / NS_PER_MS_F) + "ms";
-	if (ns < NS_PER_M)	return std::to_string(ns / NS_PER_S_F) + "s";
-	if (ns < NS_PER_H)	return std::to_string(ns / NS_PER_M_F) + "min";
+	if (ns < NS_PER_US) return std::to_string(ns) + "ns";
+	if (ns < NS_PER_MS) return std::to_string(ns / NS_PER_US_F) + "us";
+	if (ns < NS_PER_S) return std::to_string(ns / NS_PER_MS_F) + "ms";
+	if (ns < NS_PER_M) return std::to_string(ns / NS_PER_S_F) + "s";
+	if (ns < NS_PER_H) return std::to_string(ns / NS_PER_M_F) + "min";
 	return std::to_string(ns / NS_PER_H_F) + "hour";
 }
-std::string sec(auto s) {
-	return nanoSec(s * NS_PER_S);
-}
+std::string sec(auto s) { return nanoSec(s * NS_PER_S); }
 std::string byte(auto B) {
-	if (B < B_PER_KB)	return std::to_string(B) + "B";
-	if (B < B_PER_MB)	return std::to_string(B / B_PER_KB_F) + "KB";
-	if (B < B_PER_GB)	return std::to_string(B / B_PER_MB_F) + "MB";
-	if (B < B_PER_TB)	return std::to_string(B / B_PER_GB_F) + "GB";
+	if (B < B_PER_KB) return std::to_string(B) + "B";
+	if (B < B_PER_MB) return std::to_string(B / B_PER_KB_F) + "KB";
+	if (B < B_PER_GB) return std::to_string(B / B_PER_MB_F) + "MB";
+	if (B < B_PER_TB) return std::to_string(B / B_PER_GB_F) + "GB";
 	return std::to_string(B / B_PER_TB_F) + "TB";
 }

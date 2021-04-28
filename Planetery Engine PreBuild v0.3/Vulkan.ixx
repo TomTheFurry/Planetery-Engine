@@ -1,9 +1,12 @@
-#pragma once
-#include <vector>
-#include <vulkan/vulkan.h>
-#include "Define.h"
+module;
+#include "Marco.h"
+#ifdef USE_VULKAN
+export module Vulkan;
+import: Internal;
+import std.core;
+import Define;
 
-namespace vk {
+export namespace vk {
 	const uint* getLayerVersion(const char* name);		// may return nullptr
 	const uint* getExtensionVersion(const char* name);	// may return nullptr
 	bool requestLayer(const char* name, uint minVersion = 0);
@@ -14,11 +17,11 @@ namespace vk {
 	struct OutdatedSwapchainException {};
 
 	void init();  // request all needed extension/layers before call!
-	template<typename Func> bool drawFrame(Func f);  // Render Thread only
+	template<typename Func> bool drawFrame(Func f);	 // Render Thread only
 	void checkStatus() noexcept(false);	 // throws OutdatedSwapchainException
 	void end(void (*cleanupFunc)());
 
-	void notifyOutdatedSwapchain(); // Can be called by any frame
+	void notifyOutdatedSwapchain();	 // Can be called by any frame
 
 	void testSwitch();
 
@@ -59,3 +62,7 @@ template<typename Func> bool vk::drawFrame(Func func) {
 		return false;
 	}
 }
+
+#else
+export module Vulkan;
+#endif

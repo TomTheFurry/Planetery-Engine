@@ -7,17 +7,22 @@ import std.core;
 import std.threading;
 import Define;
 import Util;
-import GL;
 import Font;
 import StringBox;
 import ThreadEvents;
 import Logger;
 
+#ifdef USE_OPENGL
+import GL;
+#endif
+#ifdef USE_VULKAN
+import Vulkan;
+#endif
+
 
 using namespace render;
 
 // GL Callback
-
 
 struct _Thread {
 	std::mutex mxRenderHandles{};
@@ -128,14 +133,14 @@ static void _main() {
 					gl::target->setViewport(0, 0, v.x, v.y);
 					gl::target->pixelPerInch =
 					  events::ThreadEvents::getPixelPerInch();
-					//fpsBox.notifyPPIChanged();
+					// fpsBox.notifyPPIChanged();
 				}
 				if (events::ThreadEvents::isWindowMoved()) {
 					gl::target->pixelPerInch =
 					  events::ThreadEvents::getPixelPerInch();
-					//fpsBox.notifyPPIChanged();
+					// fpsBox.notifyPPIChanged();
 				}
-				gl::target->clearColor(vec4(1.0f));
+				gl::target->clearColor(vec4(1.0f,0.8f,0.6f,1.0f));
 #endif
 
 #ifdef USE_VULKAN
@@ -179,9 +184,9 @@ static void _main() {
 						logger("Average Tick speed: ", nanoSec(roller.get()),
 						  " (", tickCount, "), Event tps: ", eventTickCount,
 						  "\n");
-						#ifdef USE_VULKAN
+#ifdef USE_VULKAN
 						vk::testSwitch();
-						#endif
+#endif
 						nsDeltaPerSec -= NS_PER_S;
 						tps = tickCount;
 						// fpsBox.clear();

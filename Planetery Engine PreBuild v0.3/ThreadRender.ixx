@@ -6,13 +6,7 @@ import std.threading;
 import Define;
 
 export namespace render {
-	enum class State {
-		init,
-		paused,
-		normal,
-		requestStop,
-		complete
-	};
+	enum class State { init, paused, normal, requestStop, complete };
 	using RenderFunction = std::function<void()>;
 	struct RenderHandle {
 		RenderFunction func;

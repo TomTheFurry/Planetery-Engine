@@ -36,7 +36,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>PGInstrument</WholeProgramOptimization>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -56,7 +56,6 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\vsProperties\Speed.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -81,6 +80,8 @@
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <GenerateSourceDependencies>true</GenerateSourceDependencies>
       <EnableModules>true</EnableModules>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -96,6 +97,8 @@
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <GenerateSourceDependencies>true</GenerateSourceDependencies>
       <EnableModules>true</EnableModules>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,6 +113,9 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <EnableModules>true</EnableModules>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
+      <DisableSpecificWarnings>5050</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,30 +134,56 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StringBox.cpp" />
     <ClCompile Include="StringBox.ixx" />
+    <ClCompile Include="TempFix\memory_resource.cpp">
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
+      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>
+      <BufferSecurityCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</BufferSecurityCheck>
+      <ControlFlowGuard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ControlFlowGuard>
+      <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</FunctionLevelLinking>
+      <GuardEHContMetadata Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GuardEHContMetadata>
+      <SupportJustMyCode Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SupportJustMyCode>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level1</WarningLevel>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MaxSpeed</Optimization>
+      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</InlineFunctionExpansion>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</ConformanceMode>
+      <EnforceTypeConversionRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnforceTypeConversionRules>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
+      <GenerateSourceDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateSourceDependencies>
+    </ClCompile>
     <ClCompile Include="ThreadEvents.cpp" />
     <ClCompile Include="ThreadEvents.ixx" />
     <ClCompile Include="ThreadRender.cpp" />
     <ClCompile Include="ThreadRender.ixx" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Util.ixx" />
-    <ClCompile Include="VK.cpp" />
+    <ClCompile Include="Vulkan.cpp" />
+    <ClCompile Include="Vulkan.ixx" />
+    <ClCompile Include="VulkanBuffer.cpp" />
+    <ClCompile Include="VulkanCommend.cpp" />
+    <ClCompile Include="VulkanDescriptor.cpp" />
+    <ClCompile Include="VulkanImage.cpp" />
+    <ClCompile Include="VulkanPipeline.cpp" />
+    <ClCompile Include="VulkanShader.cpp" />
+    <ClCompile Include="VulkanSync.cpp" />
+    <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanTick.cpp" />
+    <ClCompile Include="Vulkan_Enum.ixx" />
+    <ClCompile Include="Vulkan_Internal.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h" />
-    <ClInclude Include="font.h" />
-    <ClInclude Include="GL.h" />
     <ClInclude Include="GLFW.h" />
     <ClInclude Include="Marco.h" />
-    <ClInclude Include="MemoryResource.h" />
-    <ClInclude Include="StringBox.h" />
-    <ClInclude Include="ThreadEvents.h" />
-    <ClInclude Include="ThreadRender.h" />
-    <ClInclude Include="VK.h" />
+    <ClInclude Include="TempFix\internal_shared.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include="cpp.hint" />
-    <ClInclude Include="VK.ih">
+    <ClInclude Include="TempFix\memory_resource">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

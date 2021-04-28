@@ -13,14 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\utils">
-      <UniqueIdentifier>{f5a7ad3b-c39a-466c-9eb8-e98561225b5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Vulkan">
-      <UniqueIdentifier>{3a190832-7d2a-4798-8fcd-964dfd8320e8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Modules">
       <UniqueIdentifier>{c3563138-3153-442f-8db4-c1b6ce111492}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\TempFix">
+      <UniqueIdentifier>{1b944e11-0c29-405f-ad21-b5f4469dd47e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Vulkan">
+      <UniqueIdentifier>{b5e8962c-873f-464b-8c00-f5173fd2d406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\Vulkan\Class">
+      <UniqueIdentifier>{8dc23d9f-e982-44aa-ae37-5da535a06f74}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -29,9 +32,6 @@
     </ClCompile>
     <ClCompile Include="..\sharedInclude\glad\glad.c">
       <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VK.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Define.ixx">
       <Filter>Modules</Filter>
@@ -78,40 +78,64 @@
     <ClCompile Include="ThreadRender.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="TempFix\memory_resource.cpp">
+      <Filter>Header Files\TempFix</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan.cpp">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan.ixx">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan_Enum.ixx">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan_Internal.ixx">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanDevice.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanSync.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanImage.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanDescriptor.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanShader.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanPipeline.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanCommend.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanBuffer.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanTick.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ThreadRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StringBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GLFW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryResource.h">
-      <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="VK.ih">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="VK.h">
-      <Filter>Header Files\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="Marco.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TempFix\internal_shared.h">
+      <Filter>Header Files\TempFix</Filter>
+    </ClInclude>
+    <ClInclude Include="TempFix\memory_resource">
+      <Filter>Header Files\TempFix</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

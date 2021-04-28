@@ -3,16 +3,10 @@ import Define;
 import std.core;
 
 export namespace events {
-	enum class State {
-		init,
-		paused,
-		normal,
-		requestStop,
-		complete
-	};
+	enum class State { init, paused, normal, requestStop, complete };
 	namespace KeyCode {
 		enum KeyCode {
-			unkown = -1, //TAG: Hey old me... unk'n'own!!!
+			unkown = -1,  // TAG: Hey old me... unk'n'own!!!
 			null = 0,
 			space = 32,
 			apostrophe = 39,
@@ -157,6 +151,7 @@ export namespace events {
 	class KeyModFlags
 	{
 		uint _flag;
+
 	  public:
 		KeyModFlags(uint flags): _flag(std::move(flags)) {}
 		bool get(uint flag) { return bool(_flag & flag); }

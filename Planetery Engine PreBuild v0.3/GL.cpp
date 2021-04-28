@@ -1,7 +1,10 @@
 module;
+#include "Marco.h"
+#define USE_OPENGL	// Temp Compile Bypass so that I can still at least build
+#ifdef USE_OPENGL
 #include <assert.h>
 #include <glad/glad.h>
-#include <glfw/glfw3.h>
+#include "GLFW.h"
 
 module GL;
 import Logger;
@@ -1029,8 +1032,7 @@ void gl::drawLineStrip(VertexBuffer* lineBuffer, vec4 color, float width) {
 		  lineBuffer->getSize() / sizeof(vec2));
 	}
 }
-
-
-
-
 RenderTarget* gl::target = nullptr;
+#else
+module GL;
+#endif

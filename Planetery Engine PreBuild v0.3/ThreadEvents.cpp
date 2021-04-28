@@ -9,11 +9,16 @@ import std.threading;
 import Define;
 import Logger;
 import ThreadRender;
+#ifdef USE_OPENGL
 import GL;
+#endif
+#ifdef USE_VULKAN
+import Vulkan;
+#endif
 
-#define WINDOW_MIN_WIDTH  400
+#define WINDOW_MIN_WIDTH 400
 #define WINDOW_MIN_HEIGHT 300
-#define WINDOW_MAX_WIDTH  GLFW_DONT_CARE
+#define WINDOW_MAX_WIDTH GLFW_DONT_CARE
 #define WINDOW_MAX_HEIGHT GLFW_DONT_CARE
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
@@ -22,9 +27,6 @@ import GL;
 #	error No default system dpi value is set! Please add it!
 #endif
 
-#ifdef USE_VULKAN
-#include "VK.h"
-#endif	// USE_VULKAN
 
 
 using namespace events;
@@ -113,9 +115,9 @@ static void window_pos_callback(GLFWwindow* _, int x, int y) {
 	}
 }
 static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
-	#ifdef USE_VULKAN
+#ifdef USE_VULKAN
 	vk::notifyOutdatedSwapchain();
-	#endif
+#endif
 	_framebufferSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
 		pair.second.flags.fetch_or(
@@ -245,11 +247,11 @@ static void _main() {
 						: GLFW_TRUE);  // should openGL not check error?
 #endif
 #ifdef USE_VULKAN
-		//Vulkan Renderer settings
+		// Vulkan Renderer settings
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
-		//Base render settings
+		// Base render settings
 		glfwWindowHint(GLFW_SAMPLES, 4);  // gl sub sampling?
 		glfwWindowHint(GLFW_SRGB_CAPABLE,
 		  GLFW_TRUE);  // OpenGL can use sRGB color instead of RGB?
