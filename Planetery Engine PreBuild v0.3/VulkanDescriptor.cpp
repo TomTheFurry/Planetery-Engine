@@ -12,51 +12,51 @@ import Define;
 import Logger;
 using namespace vk;
 
-// UniformLayout::UniformLayout(...) ctor is a template function
+// DescriptorLayout::DescriptorLayout(...) ctor is a template function
 
-UniformLayout::UniformLayout(UniformLayout&& o) noexcept: d(o.d) {
+DescriptorLayout::DescriptorLayout(DescriptorLayout&& o) noexcept: d(o.d) {
 	dsl = o.dsl;
 	o.dsl = nullptr;
 }
-UniformLayout::~UniformLayout() {
+DescriptorLayout::~DescriptorLayout() {
 	if (dsl != nullptr) vkDestroyDescriptorSetLayout(d.d, dsl, nullptr);
 }
 
-std::span<const UniformLayout::Size> UniformLayout::getSizes() const {
+std::span<const DescriptorLayout::Size> DescriptorLayout::getSizes() const {
 	return std::span<const Size>(_size);
 }
 
-UniformPool::UniformPool(LogicalDevice& device,
-  std::span<const UniformLayout::Size> size, uint setCount,
+DescriptorPool::DescriptorPool(LogicalDevice& device,
+  std::span<const DescriptorLayout::Size> size, uint setCount,
   Flags<UniformPoolType> requirement):
   d(device) {}
 
-UniformSet UniformPool::allocNewSet(const UniformLayout& ul) {
-	return UniformSet(*this, ul);
+DescriptorSet DescriptorPool::allocNewSet(const DescriptorLayout& ul) {
+	return DescriptorSet(*this, ul);
 }
-UniformPool::~UniformPool() {
+DescriptorPool::~DescriptorPool() {
 	if (dp != nullptr) vkDestroyDescriptorPool(d.d, dp, nullptr);
 }
 
 
-LinkedUniformPool::LinkedUniformPool(LogicalDevice& device,
-  const UniformLayout& refSet, uint setCount,
+DescriptorContainer::DescriptorContainer(LogicalDevice& device,
+  const DescriptorLayout& refSet, uint setCount,
   Flags<UniformPoolType> requirement):
-  UniformPool(device, refSet.getSizes(), setCount, requirement),
+  DescriptorPool(device, refSet.getSizes(), setCount, requirement),
   ul(refSet) {}
 
-UniformSet LinkedUniformPool::allocNewSet() { return UniformSet(*this, ul); }
+DescriptorSet DescriptorContainer::allocNewSet() { return DescriptorSet(*this, ul); }
 
-std::vector<UniformSet> LinkedUniformPool::allocNewSet(uint count) {
+std::vector<DescriptorSet> DescriptorContainer::allocNewSet(uint count) {
 	auto v = util::makeRepeatingView(ul, count);
 	static_assert(Viewable<decltype(v)>);
-	return UniformSet::makeBatch(v);
+	return DescriptorSet::makeBatch(v);
 }
 
-UniformSet::UniformSet(UniformPool& up, const UniformLayout& ul): d(up.d) {
+DescriptorSet::DescriptorSet(DescriptorPool& up, const DescriptorLayout& ul): d(up.d) {
 	// TODO
 }
-UniformSet::~UniformSet() {
+DescriptorSet::~DescriptorSet() {
 	// if (ds != nullptr) vkDestroyDescriptorSet(d.d, ds, nullptr);
 }
 
