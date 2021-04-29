@@ -86,6 +86,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>VkLayer_utils.lib;vulkan-1.lib;glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Manifest />
   </ItemDefinitionGroup>

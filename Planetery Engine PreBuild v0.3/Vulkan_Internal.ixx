@@ -395,7 +395,7 @@ namespace vk {
 namespace vk {
 	struct DescriptorLayoutBinding {
 		uint bindPoint;
-		UniformDataType type;
+		DescriptorDataType type;
 		uint count;
 		Flags<ShaderType> shader = ShaderType::All;
 	};
@@ -403,18 +403,17 @@ namespace vk {
 	{
 	  public:
 		struct Size {
-			UniformDataType type;
+			DescriptorDataType type;
 			uint n;
 		};
 		DescriptorLayout(LogicalDevice& d,
-		  ViewableWith<const DescriptorLayoutBinding> auto bindings);
+		  ViewableWith<const DescriptorLayoutBinding&> auto bindings);
 		DescriptorLayout(const DescriptorLayout&) = delete;
 		DescriptorLayout(DescriptorLayout&& other) noexcept;
 		~DescriptorLayout();
 		std::span<const Size> getSizes() const;
 		VkDescriptorSetLayout dsl;
 		LogicalDevice& d;
-
 	  private:
 		std::vector<Size> _size;
 	};
@@ -423,13 +422,14 @@ namespace vk {
 	  public:
 		DescriptorPool(LogicalDevice& d,
 		  std::span<const DescriptorLayout::Size> size, uint setCount,
-		  Flags<UniformPoolType> requirement = UniformPoolType::None);
+		  Flags<DescriptorPoolType> requirement = DescriptorPoolType::None);
 		DescriptorPool(const DescriptorPool&) = delete;
 		DescriptorPool(DescriptorPool&& other) noexcept;
 		~DescriptorPool();
 		DescriptorSet allocNewSet(const DescriptorLayout& ul);
 		std::vector<DescriptorSet> allocNewSet(
-		  std::span<const DescriptorLayout> uls);
+		  ViewableWith<const DescriptorLayout&> auto uls);
+		Flags<vk::DescriptorPoolType> settings;
 		VkDescriptorPool dp;
 		LogicalDevice& d;
 	};
@@ -438,7 +438,7 @@ namespace vk {
 	  public:
 		DescriptorContainer(LogicalDevice& d, const DescriptorLayout& ul,
 		  uint setCount,
-		  Flags<UniformPoolType> requirement = UniformPoolType::None);
+		  Flags<DescriptorPoolType> requirement = DescriptorPoolType::None);
 		DescriptorContainer(const DescriptorContainer&) = delete;
 		DescriptorContainer(DescriptorContainer&& other) noexcept;
 		~DescriptorContainer();
@@ -449,18 +449,24 @@ namespace vk {
 	class DescriptorSet
 	{
 	  public:
-		DescriptorSet(DescriptorPool& up, const DescriptorLayout& ul);
+		DescriptorSet(DescriptorPool& dp, const DescriptorLayout& ul);
 		static std::vector<DescriptorSet> makeBatch(
+		  DescriptorPool& dp,
 		  ViewableWith<const DescriptorLayout&> auto uls);
+		DescriptorSet(DescriptorPool& dp, VkDescriptorSet ds);
 		DescriptorSet(const DescriptorSet&) = delete;
 		DescriptorSet(DescriptorSet&& other) noexcept;
 		~DescriptorSet();
 		VkDescriptorSet ds;
-		LogicalDevice& d;
+		DescriptorPool& dp;
 	};
 
+	inline VkDescriptorSetLayout _toDsl(const DescriptorLayout& dl) {
+		return dl.dsl;
+	}
+
 	DescriptorLayout::DescriptorLayout(LogicalDevice& d,
-	  ViewableWith<const DescriptorLayoutBinding> auto bindings) {
+	  ViewableWith<const DescriptorLayoutBinding&> auto bindings) {
 		std::vector<VkDescriptorSetLayoutBinding> b;
 		std::map<VkDescriptorType, uint> s;
 		b.resize(bindings.size());
@@ -481,9 +487,30 @@ namespace vk {
 		_size.reserve(s.size());
 		for (auto p : s) { _size.emplace_back(p.first, p.second); }
 	}
-	std::vector<DescriptorSet> DescriptorSet::makeBatch(
+	std::vector<DescriptorSet> vk::DescriptorPool::allocNewSet(
 	  ViewableWith<const DescriptorLayout&> auto uls) {
-		return std::vector<DescriptorSet>();
+		return DescriptorSet::makeBatch(*this, uls);
+	}
+	std::vector<DescriptorSet> DescriptorSet::makeBatch(
+	  DescriptorPool& dp,
+	  ViewableWith<const DescriptorLayout&> auto uls) {
+		auto tvw =
+		  View{uls.begin(), uls.end()}.pipeWith<decltype(&_toDsl), &_toDsl>();
+		std::vector<VkDescriptorSetLayout> dsls{tvw.begin(), tvw.end()};
+		std::vector<VkDescriptorSet> dss{};
+		dss.resize(dsls.size());
+
+		VkDescriptorSetAllocateInfo aInfo{};
+		aInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		aInfo.descriptorPool = dp.dp;
+		aInfo.descriptorSetCount = dsls.size();
+		aInfo.pSetLayouts = dsls.data();
+		vkAllocateDescriptorSets(dp.d.d, &aInfo, dss.data());
+
+		std::vector<DescriptorSet> result{};
+		result.reserve(dss.size());
+		for (auto ptr : dss) result.emplace_back(dp, ptr);
+		return result;
 	}
 }
 

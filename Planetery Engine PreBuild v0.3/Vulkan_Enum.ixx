@@ -63,13 +63,13 @@ export namespace vk {
 		Resetable,
 		MAX_ENUM
 	};
-	enum class UniformDataType : uint {
+	enum class DescriptorDataType : uint {
 		UniformBuffer = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 		StorageBuffer = VkDescriptorType::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 		Sampler = VkDescriptorType::VK_DESCRIPTOR_TYPE_SAMPLER,
 	};
 
-	enum class UniformPoolType : uint {
+	enum class DescriptorPoolType : uint {
 		None = 0,
 		Resetable = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
 		Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
@@ -118,7 +118,7 @@ export template<> class Flags<vk::BufferUseType>;
 export template<> class Flags<vk::MemoryFeature>;
 export template<> class Flags<vk::CommendBufferUsage>;
 export template<> class Flags<vk::ShaderType>;
-export template<> class Flags<vk::UniformPoolType>;
+export template<> class Flags<vk::DescriptorPoolType>;
 
 #else
 export module Vulkan:Enum;
