@@ -461,31 +461,77 @@ export template<typename V, typename T> concept ViewableWith = requires(V v) {
 	requires std::convertible_to<decltype(*v.begin()), T>;
 };
 
-export template<Iterator Iter> class View
+template<Iterator Iter> struct iterator_return {
+	using type = decltype(*(std::declval<Iter>()));
+};
+
+export template<typename BaseIt, typename Func, Func f>
+requires std::regular_invocable<Func,
+  typename iterator_return<BaseIt>::type> class ConvertedIterator: public BaseIt
 {
+  public:
+	using base_return_type = typename iterator_return<BaseIt>::type;
+	using value_type = std::invoke_result_t<Func, base_return_type>;
+	ConvertedIterator(): BaseIt() {}
+	ConvertedIterator(const ConvertedIterator&) = default;
+	ConvertedIterator(BaseIt it): BaseIt(it) {}
+	value_type operator*() const { return f(BaseIt::operator*()); }
+	ConvertedIterator& operator++() {
+		BaseIt::operator++();
+		return *this;
+	}
+	ConvertedIterator operator++(int) {
+		auto _b = *this;
+		BaseIt::operator++(0);
+		return _b;
+	}
+};
+
+export template<typename BaseIt, typename Func, Func func>
+requires std::invocable<Func,
+  typename iterator_return<BaseIt>::type> class CView
+{
+	typedef ConvertedIterator<BaseIt, decltype(func), func> Iter;
 	Iter _begin;
 	Iter _end;
-	size_t _size;
 
   public:
-	View(Iter begin, Iter end, size_t size) {
-		_begin = begin;
-		_end = end;
-		_size = size;
+	CView(BaseIt begin, BaseIt end): _begin(begin), _end(end) {}
+	template<NonConstContainer C> CView(C c) requires std::is_reference_v<C> {
+		_begin = c.begin();
+		_end = c.end();
 	}
+	template<ConstContainer C> CView(C c) requires std::is_reference_v<C> {
+		_begin = c.cbegin();
+		_end = c.cend();
+	}
+	Iter begin() { return _begin; }
+	Iter end() { return _end; }
+	template<typename FuncInner, FuncInner fin> auto pipeWith() {
+		return CView<Iter, FuncInner, fin>(_begin, _end);
+	}
+};
+
+export template<typename BaseIt> class View
+{
+	BaseIt _begin;
+	BaseIt _end;
+
+  public:
+	View(BaseIt begin, BaseIt end): _begin(begin), _end(end) {}
 	template<NonConstContainer C> View(C c) requires std::is_reference_v<C> {
 		_begin = c.begin();
 		_end = c.end();
-		_size = c.size();
 	}
 	template<ConstContainer C> View(C c) requires std::is_reference_v<C> {
 		_begin = c.cbegin();
 		_end = c.cend();
-		_size = c.size();
 	}
-	Iter begin() { return _begin; }
-	Iter end() { return _end; }
-	size_t size() { return _size; }
+	BaseIt begin() { return _begin; }
+	BaseIt end() { return _end; }
+	template<typename Func, Func f> auto pipeWith() {
+		return CView<BaseIt, Func, f>(_begin, _end);
+	}
 };
 
 export template<typename T> concept trivalType = std::is_trivial_v<T>;
@@ -653,6 +699,7 @@ export namespace util {
 			return PMRPair::allocate_object<T>(n);
 		}
 	};
+
 	template<typename T> class RepeatIterator
 	{
 	  public:
@@ -724,8 +771,9 @@ export namespace util {
 		size_t _pos;
 	};
 
-	auto makeRepeatingView(const auto& t, size_t n = 1) {
-		return View(RepeatIterator(&t), RepeatIterator(&t, n), n);
+	template<typename T> auto makeRepeatingView(const T& t, size_t n = 1) {
+		return View<RepeatIterator<T>>(
+		  RepeatIterator(&t), RepeatIterator(&t, n));
 	}
 }
 
