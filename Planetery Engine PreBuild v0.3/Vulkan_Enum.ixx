@@ -63,19 +63,19 @@ export namespace vk {
 		Resetable,
 		MAX_ENUM
 	};
-	enum class DescriptorDataType : uint {
-		UniformBuffer = VkDescriptorType::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		StorageBuffer = VkDescriptorType::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-		Sampler = VkDescriptorType::VK_DESCRIPTOR_TYPE_SAMPLER,
+	enum class DescriptorDataType : std::underlying_type_t<VkDescriptorType> {
+		UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		Sampler = VK_DESCRIPTOR_TYPE_SAMPLER,
 	};
 
-	enum class DescriptorPoolType : uint {
+	enum class DescriptorPoolType : VkDescriptorPoolCreateFlags {
 		None = 0,
 		Resetable = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
 		Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
 		HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 	};
-	enum class BufferUseType : uint {
+	enum class BufferUseType : VkBufferUsageFlags {
 		None = 0,
 		TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		TransferDst = VK_BUFFER_USAGE_TRANSFER_DST_BIT,
@@ -88,7 +88,7 @@ export namespace vk {
 		IndirectDraw = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
 		All = 511,
 	};
-	enum class MemoryFeature : uint {
+	enum class MemoryFeature {
 		None = 0,
 		IndirectWritable = 1,
 		IndirectCopyable = 2,
@@ -96,20 +96,20 @@ export namespace vk {
 		Coherent = 8,
 		CoherentMappable = Coherent | Mappable,
 	};
-	enum class CommendBufferUsage : uint {
+	enum class CommendBufferUsage : VkCommandBufferUsageFlags {
 		None = 0,
 		Streaming = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 		RenderPassOwned = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
 		ParallelSubmit = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
 	};
-	enum class ShaderType : uint {
+	enum class ShaderType : VkShaderStageFlags {
 		None = 0,
 		Vert = VK_SHADER_STAGE_VERTEX_BIT,
 		Geom = VK_SHADER_STAGE_GEOMETRY_BIT,
 		Frag = VK_SHADER_STAGE_FRAGMENT_BIT,
 		All = VK_SHADER_STAGE_ALL,
 	};
-	enum class BufferInputRate {
+	enum class BufferInputRate : std::underlying_type_t<VkVertexInputRate> {
 		PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
 		PerInstance = VK_VERTEX_INPUT_RATE_INSTANCE,
 	};
@@ -121,5 +121,5 @@ export template<> class Flags<vk::ShaderType>;
 export template<> class Flags<vk::DescriptorPoolType>;
 
 #else
-export module Vulkan:Enum;
+export module Vulkan: Enum;
 #endif
