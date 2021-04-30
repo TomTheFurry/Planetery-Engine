@@ -28,15 +28,7 @@ namespace vk {
 
 // DescriptorPool
 namespace vk {
-	DescriptorPool::DescriptorPool(LogicalDevice& device,
-	  std::span<const DescriptorLayout::Size> size, uint setCount,
-	  Flags<DescriptorPoolType> requirement):
-	  d(device) {
-		settings = requirement;
-	}
-	DescriptorSet DescriptorPool::allocNewSet(const DescriptorLayout& ul) {
-		return DescriptorSet(*this, ul);
-	}
+	// DescriptorPool::DescriptorPool(...) ctor is a template function
 	DescriptorPool::DescriptorPool(DescriptorPool&& o) noexcept: d(o.d) {
 		dp = o.dp;
 		o.dp = nullptr;
@@ -45,6 +37,9 @@ namespace vk {
 	DescriptorPool::~DescriptorPool() {
 		if (dp != nullptr) vkDestroyDescriptorPool(d.d, dp, nullptr);
 	}
+	DescriptorSet DescriptorPool::allocNewSet(const DescriptorLayout& ul) {
+		return DescriptorSet(*this, ul);
+	}
 }
 
 // DescriptorContainer
@@ -52,8 +47,14 @@ namespace vk {
 	DescriptorContainer::DescriptorContainer(LogicalDevice& device,
 	  const DescriptorLayout& refSet, uint setCount,
 	  Flags<DescriptorPoolType> requirement):
-	  DescriptorPool(device, refSet.getSizes(), setCount, requirement),
+	  DescriptorPool(device, setCount, refSet.getSizes(), requirement),
 	  ul(refSet) {}
+	DescriptorContainer::DescriptorContainer(DescriptorContainer&& o) noexcept:
+	  DescriptorPool(std::move(o)), ul(o.ul) {}
+	DescriptorContainer::~DescriptorContainer() = default;
+	DescriptorContainer::operator const DescriptorPool&() const {
+		return *this;
+	}
 	DescriptorSet DescriptorContainer::allocNewSet() {
 		return DescriptorSet(*this, ul);
 	}

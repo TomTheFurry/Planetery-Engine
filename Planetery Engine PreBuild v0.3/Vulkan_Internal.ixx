@@ -406,7 +406,7 @@ namespace vk {
 			DescriptorDataType type;
 			uint n;
 		};
-		DescriptorLayout(LogicalDevice& d,
+		inline DescriptorLayout(LogicalDevice& d,
 		  ViewableWith<const DescriptorLayoutBinding&> auto bindings);
 		DescriptorLayout(const DescriptorLayout&) = delete;
 		DescriptorLayout(DescriptorLayout&& other) noexcept;
@@ -420,8 +420,8 @@ namespace vk {
 	class DescriptorPool
 	{
 	  public:
-		DescriptorPool(LogicalDevice& d,
-		  std::span<const DescriptorLayout::Size> size, uint setCount,
+		  inline DescriptorPool(LogicalDevice& d, uint setCount,
+		  ViewableWith<const DescriptorLayout::Size&> auto size,
 		  Flags<DescriptorPoolType> requirement = DescriptorPoolType::None);
 		DescriptorPool(const DescriptorPool&) = delete;
 		DescriptorPool(DescriptorPool&& other) noexcept;
@@ -433,7 +433,7 @@ namespace vk {
 		VkDescriptorPool dp;
 		LogicalDevice& d;
 	};
-	class DescriptorContainer: DescriptorPool
+	class DescriptorContainer: protected DescriptorPool
 	{
 	  public:
 		DescriptorContainer(LogicalDevice& d, const DescriptorLayout& ul,
@@ -442,6 +442,7 @@ namespace vk {
 		DescriptorContainer(const DescriptorContainer&) = delete;
 		DescriptorContainer(DescriptorContainer&& other) noexcept;
 		~DescriptorContainer();
+		operator const DescriptorPool&() const;
 		DescriptorSet allocNewSet();
 		std::vector<DescriptorSet> allocNewSet(uint count);
 		const DescriptorLayout& ul;
@@ -450,22 +451,26 @@ namespace vk {
 	{
 	  public:
 		DescriptorSet(DescriptorPool& dp, const DescriptorLayout& ul);
-		static std::vector<DescriptorSet> makeBatch(
-		  DescriptorPool& dp,
-		  ViewableWith<const DescriptorLayout&> auto uls);
 		DescriptorSet(DescriptorPool& dp, VkDescriptorSet ds);
 		DescriptorSet(const DescriptorSet&) = delete;
 		DescriptorSet(DescriptorSet&& other) noexcept;
 		~DescriptorSet();
 		VkDescriptorSet ds;
 		DescriptorPool& dp;
+		static inline std::vector<DescriptorSet> makeBatch(
+		  DescriptorPool& dp, ViewableWith<const DescriptorLayout&> auto uls);
 	};
 
 	inline VkDescriptorSetLayout _toDsl(const DescriptorLayout& dl) {
 		return dl.dsl;
 	}
+	inline VkDescriptorPoolSize _toDps(const DescriptorLayout::Size& dl) {
+		return VkDescriptorPoolSize{
+		  .type = static_cast<VkDescriptorType>(dl.type),
+		  .descriptorCount = dl.n};
+	}
 
-	DescriptorLayout::DescriptorLayout(LogicalDevice& d,
+	inline DescriptorLayout::DescriptorLayout(LogicalDevice& d,
 	  ViewableWith<const DescriptorLayoutBinding&> auto bindings) {
 		std::vector<VkDescriptorSetLayoutBinding> b;
 		std::map<VkDescriptorType, uint> s;
@@ -487,11 +492,29 @@ namespace vk {
 		_size.reserve(s.size());
 		for (auto p : s) { _size.emplace_back(p.first, p.second); }
 	}
-	std::vector<DescriptorSet> vk::DescriptorPool::allocNewSet(
+	
+	inline vk::DescriptorPool::DescriptorPool(LogicalDevice& d, uint setCount,
+	  ViewableWith<const DescriptorLayout::Size&> auto size,
+	  Flags<DescriptorPoolType> requirement) :d(d) {
+		settings = requirement;
+		auto tView =
+		  View(size.begin(), size.end()).pipeWith<decltype(&_toDps), &_toDps>();
+		std::vector<VkDescriptorPoolSize> dps{tView.begin(), tView.end()};
+		VkDescriptorPoolCreateInfo cInfo{};
+		cInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		cInfo.flags = settings;
+		cInfo.maxSets = setCount;
+		cInfo.poolSizeCount = dps.size();
+		cInfo.pPoolSizes = dps.data();
+		vkCreateDescriptorPool(d.d, &cInfo, nullptr, &dp);
+	}
+
+	inline std::vector<DescriptorSet> DescriptorPool::allocNewSet(
 	  ViewableWith<const DescriptorLayout&> auto uls) {
 		return DescriptorSet::makeBatch(*this, uls);
 	}
-	std::vector<DescriptorSet> DescriptorSet::makeBatch(
+	
+	inline std::vector<DescriptorSet> DescriptorSet::makeBatch(
 	  DescriptorPool& dp,
 	  ViewableWith<const DescriptorLayout&> auto uls) {
 		auto tvw =
