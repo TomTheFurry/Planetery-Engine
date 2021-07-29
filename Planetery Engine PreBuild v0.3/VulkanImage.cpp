@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -53,6 +52,3 @@ FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
 FrameBuffer::~FrameBuffer() {
 	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
 }
-#else
-module Vulkan;
-#endif

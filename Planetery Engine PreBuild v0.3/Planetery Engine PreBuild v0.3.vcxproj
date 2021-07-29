@@ -187,6 +187,40 @@
     <ClInclude Include="TempFix\memory_resource">
       <FileType>Document</FileType>
     </ClInclude>
+    <None Include="shader\basic.frag">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glslc.exe --target-env=vulkan1.2 -O -o .%(Filename).spirv %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SPIR-V Compiler</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.%(Filename).spirv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <OutputItemType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">None</OutputItemType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">glslc.exe --target-env=vulkan1.2 -O -o .%(Filename).spirv %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">SPIR-V Compiler</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">.%(Filename).spirv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">false</LinkObjects>
+      <OutputItemType Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">None</OutputItemType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glslc.exe --target-env=vulkan1.2 -O -o .%(Filename).spirv %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SPIR-V Compiler</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.%(Filename).spirv</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <OutputItemType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">None</OutputItemType>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</TreatOutputAsContent>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">true</TreatOutputAsContent>
+      <TreatOutputAsContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatOutputAsContent>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\cshader</RootFolder>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">.\cshader</RootFolder>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">true</BuildInParallel>
+      <RootFolder Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\cshader</RootFolder>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
+    </None>
+    <None Include="shader\basic.vert">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="shader\point.frag" />
+    <None Include="shader\point.vert" />
+    <None Include="testUniform.frag" />
+    <None Include="testUniform.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include "GLFW.h"
@@ -365,6 +364,3 @@ ImageView SwapChain::getChainImageView(uint index) {
 SwapChain::~SwapChain() {
 	if (sc != nullptr) vkDestroySwapchainKHR(d.d, sc, nullptr);
 }
-#else
-module Vulkan;
-#endif

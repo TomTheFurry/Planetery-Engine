@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -58,6 +57,3 @@ Fence::Fence(Fence&& o) noexcept: d(o.d) {
 Fence::~Fence() {
 	if (fc != nullptr) vkDestroyFence(d.d, fc, nullptr);
 }
-#else
-module Vulkan;
-#endif

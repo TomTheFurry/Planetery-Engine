@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -66,6 +65,3 @@ VkPipelineShaderStageCreateInfo ShaderCompiled::getCreateInfo() const {
 	sInfo.pName = "main";
 	return sInfo;
 }
-#else
-module Vulkan;
-#endif

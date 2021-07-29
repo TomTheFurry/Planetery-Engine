@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -93,6 +92,10 @@ void CommendBuffer::cmdBind(
   const IndexBuffer& ib, VkIndexType dataType, size_t offset) {
 	vkCmdBindIndexBuffer(cb, ib.b, offset, dataType);
 }
+void CommendBuffer::cmdBind(const DescriptorSet& ds, const ShaderPipeline& p) {
+	vkCmdBindDescriptorSets(
+	  cb, VK_PIPELINE_BIND_POINT_GRAPHICS, p.pl, 0, 1, &ds.ds, 0, nullptr);
+}
 void CommendBuffer::cmdDraw(
   uint vCount, uint iCount, uint vOffset, uint iOffset) {
 	vkCmdDraw(cb, vCount, iCount, vOffset, iOffset);
@@ -115,6 +118,3 @@ void CommendBuffer::endRecording() {
 		throw std::runtime_error("failed to record command buffer!");
 	}
 }
-#else
-module Vulkan;
-#endif

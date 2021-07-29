@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 export module Vulkan: Enum;
@@ -119,7 +118,3 @@ export template<> class Flags<vk::MemoryFeature>;
 export template<> class Flags<vk::CommendBufferUsage>;
 export template<> class Flags<vk::ShaderType>;
 export template<> class Flags<vk::DescriptorPoolType>;
-
-#else
-export module Vulkan: Enum;
-#endif

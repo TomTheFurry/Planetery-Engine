@@ -3,9 +3,12 @@ module;
 #include "Marco.h"
 export module Define;
 import std.core;
+//import <glm/glm.hpp>;
+//import <glm/gtx/quaternion.hpp>;
+//import <glm/gtc/type_ptr.hpp>;
 
 export {
-#include <glm/glm.hpp>
+#include <glm/glm.hpp>;
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 	typedef unsigned short usint;

@@ -598,6 +598,11 @@ export namespace util {
 		ulint _time;
 	};
 
+	glm::vec4 transformHSV(glm::vec4 in,
+	  float h,// hue shift (in degrees)
+	  float s,
+	  float v
+	);
 
 	/// <summary>
 	/// Booby Trap the templated class. Call trigger() to trigger the trap. Call

@@ -1,6 +1,6 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
+#include <cstdlib>
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include "GLFW.h"
@@ -304,6 +304,8 @@ const uint testInd[]{
   3,
 };
 
+static DescriptorLayout* _dsl = nullptr;
+
 inline void loadSwapchain(bool remake = false) {
 	_newSwapchain = true;
 	_swapchainNotOutdated.test_and_set(std::memory_order_relaxed);
@@ -331,11 +333,19 @@ inline void loadSwapchain(bool remake = false) {
 	sd.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	_renderPass->complete();
 	ShaderCompiled vertShad(
-	  *_renderDevice, ShaderType::Vert, "cshader/point.cvert");
+	  *_renderDevice, ShaderType::Vert, "cshader/testUniform.cvert");
 	ShaderCompiled fragShad(
-	  *_renderDevice, ShaderType::Frag, "cshader/point.cfrag");
+	  *_renderDevice, ShaderType::Frag, "cshader/testUniform.cfrag");
+	// Make layouts
+	if (_dsl == nullptr) {
+		std::vector<DescriptorLayoutBinding> dslb{};
+		dslb.push_back(
+		  DescriptorLayoutBinding{0, DescriptorDataType::UniformBuffer, 1, Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag});
+		_dsl = new DescriptorLayout(*_renderDevice, dslb);
+	}
 	// Make Pipeline
 	_pipeline = new ShaderPipeline(*_renderDevice);
+	_pipeline->bind(*_dsl);
 	std::vector<const ShaderCompiled*> pointShad;
 	pointShad.reserve(2);
 	pointShad.push_back(&vertShad);
@@ -383,6 +393,13 @@ inline void recreateSwapchain() {
 	loadSwapchain(true);
 }
 
+static DescriptorContainer* _dpc = nullptr;
+inline void makeDescriptors() {
+	if (_dpc != nullptr) delete _dpc;
+	_dpc = new DescriptorContainer(
+	  *_renderDevice, *_dsl, 16, DescriptorPoolType::Dynamic);
+}
+
 void vk::init() {
 	logger("VK Interface init.\n");
 	// Checkin the default requested extensions and layers
@@ -396,7 +413,7 @@ void vk::init() {
 	// Create devices
 	scanPhysicalDevices();
 	makeRenderingLogicalDevice();
-	// Make SwapChain and pipeline
+	// Make SwapChain and pipeline and programs and layouts
 	loadSwapchain();
 	// Test programe
 	// Make vertex buffer
@@ -428,19 +445,40 @@ void vk::_sendFrame() {
 }
 void vk::_resetOutdatedFrame() { recreateSwapchain(); }
 
+static std::vector<DescriptorSet> _ds{};
+static std::vector<UniformBuffer> _ub{};
+static const glm::vec4 START_COLOR{0.f, 0.5f, 0.7f, 1.f};
+static glm::vec4 currentColor{1.f, 0.f, 1.f, 1.f};
+
 void vk::_testDraw() {
 	if (_newSwapchain) {
+		makeDescriptors();
+		uint swapChainImageSize =
+		  _renderDevice->swapChain->swapChainImages.size();
 		_commendBuffers.clear();
-		_commendBuffers.reserve(
-		  _renderDevice->swapChain->swapChainImages.size());
-		for (uint i = 0; i < _renderDevice->swapChain->swapChainImages.size();
-			 i++) {
+		_ds.clear();
+		_ub.clear();
+		_commendBuffers.reserve(swapChainImageSize);
+		_ds.reserve(swapChainImageSize);
+		_ub.reserve(swapChainImageSize);
+		for (uint i = 0; i < swapChainImageSize; i++) {
+			auto& ub = _ub.emplace_back(
+			  *_renderDevice, sizeof(START_COLOR), MemoryFeature::Mappable);
+			ub.directWrite(&START_COLOR);
+			auto& ds = _ds.emplace_back(_dpc->allocNewSet());
+			std::array<DescriptorSet::WriteData, 1> wd{
+				DescriptorSet::WriteData(&ub)};
+
+			ds.blockingWrite(0, DescriptorDataType::UniformBuffer, 1, 0, wd);
+
 			auto& cb = _commendBuffers.emplace_back(
 			  _renderDevice->getCommendPool(CommendPoolType::Default));
+
 			cb.startRecording(CommendBufferUsage::None);
 			cb.cmdBeginRender(
 			  *_renderPass, _frameBuffers.at(i), vec4(1., 0., 0., 0.));
 			cb.cmdBind(*_pipeline);
+			cb.cmdBind(ds, *_pipeline);
 			cb.cmdBind(*_vertBuff);
 			cb.cmdBind(*_indexBuff);
 			// cb.cmdDraw((uint)std::size(testVert) / 2);
@@ -449,6 +487,11 @@ void vk::_testDraw() {
 			cb.endRecording();
 		}
 	}
+
+	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
+
+	_ub[_currentRenderTick->getImageIndex()].directWrite(&currentColor);
+
 	_currentRenderTick->addCmdStage(
 	  _commendBuffers.at(_currentRenderTick->getImageIndex()), {}, {},
 	  {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
@@ -462,11 +505,15 @@ void vk::checkStatus() noexcept(false) {
 void vk::end(void (*cleanupFunc)()) {
 	logger("VK Interface end.\n");
 	unloadSwapchain();
-	cleanupFunc();
+	cleanupFunc(); //????
 	// testPrograme
 	_commendBuffers.clear();
+	_ub.clear();
+	_ds.clear();
 	if (_vertBuff != nullptr) delete _vertBuff;
 	if (_indexBuff != nullptr) delete _indexBuff;
+	if (_dpc != nullptr) delete _dpc;
+	if (_dsl != nullptr) delete _dsl;
 	// testPrograme end
 	_physicalDevices.clear();
 	if (_OSSurface != nullptr) delete _OSSurface;
@@ -488,7 +535,3 @@ void vk::testSwitch() {
 	}
 	useA = !useA;
 }
-
-#else
-module Vulkan;
-#endif

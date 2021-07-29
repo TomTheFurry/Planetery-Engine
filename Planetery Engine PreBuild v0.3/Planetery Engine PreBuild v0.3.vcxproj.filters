@@ -25,6 +25,9 @@
     <Filter Include="Modules\Vulkan\Class">
       <UniqueIdentifier>{8dc23d9f-e982-44aa-ae37-5da535a06f74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{a2feeae4-8107-4700-8565-7ef67f3f1833}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -78,9 +81,6 @@
     <ClCompile Include="ThreadRender.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="TempFix\memory_resource.cpp">
-      <Filter>Header Files\TempFix</Filter>
-    </ClCompile>
     <ClCompile Include="Vulkan.cpp">
       <Filter>Modules\Vulkan</Filter>
     </ClCompile>
@@ -120,6 +120,9 @@
     <ClCompile Include="VulkanTick.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
+    <ClCompile Include="TempFix\memory_resource.cpp">
+      <Filter>Header Files\TempFix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h">
@@ -142,6 +145,24 @@
     <None Include=".clang-format" />
     <None Include="cpp.hint">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\basic.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader\basic.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="testUniform.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="testUniform.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader\point.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader\point.vert">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

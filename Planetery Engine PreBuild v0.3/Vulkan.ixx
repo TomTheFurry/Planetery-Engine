@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 export module Vulkan;
 import: Internal;
 import std.core;
@@ -63,6 +62,3 @@ template<typename Func> bool vk::drawFrame(Func func) {
 	}
 }
 
-#else
-export module Vulkan;
-#endif

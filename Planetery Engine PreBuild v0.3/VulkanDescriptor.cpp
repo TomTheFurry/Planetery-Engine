@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -86,12 +85,9 @@ namespace vk {
 		o.ds = nullptr;
 	}
 	DescriptorSet::~DescriptorSet() {
+		//TODO: Keep track of whether clean up is required using only itself to fix static uninit error
 		if (ds != nullptr && dp.settings.has(DescriptorPoolType::Resetable)) {
 			vkFreeDescriptorSets(dp.d.d, dp.dp, 1, &ds);
 		}
 	}
 }
-
-#else
-module Vulkan;
-#endif

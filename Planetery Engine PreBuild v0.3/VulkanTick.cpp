@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -11,6 +10,8 @@ import std.core;
 import Define;
 import Logger;
 using namespace vk;
+
+constexpr int RENDERTICK_INITIAL_MBR_SIZE = 4;
 
 RenderTick::RenderTick(LogicalDevice& ld):
   d(ld), _completionFence(d), _presentSemaphore(d), _acquireSemaphore(d),
@@ -158,6 +159,3 @@ RenderTick::~RenderTick() {
 	while (!waitForCompletion()) {};
 	assert(isCompleted());
 }
-#else
-module Vulkan;
-#endif

@@ -143,3 +143,25 @@ ulint util::Timer::time() {
 			   (std::chrono::high_resolution_clock::now() - _start).count()
 		   : _time;
 }
+
+//Source: http://beesbuzz.biz/code/16-hsv-color-transforms
+glm::vec4 util::transformHSV(glm::vec4 in,	// color to transform
+  float h,							 // hue shift (in degrees)
+  float s,							 // saturation multiplier (scalar)
+  float v							 // value multiplier (scalar)
+) {
+	float vsu = v * s * cos(h * std::numbers::pi / 180);
+	float vsw = v * s * sin(h * std::numbers::pi / 180);
+	glm::vec4 ret{};
+	ret.r = (.299 * v + .701 * vsu + .168 * vsw) * in.r
+		  + (.587 * v - .587 * vsu + .330 * vsw) * in.g
+		  + (.114 * v - .114 * vsu - .497 * vsw) * in.b;
+	ret.g = (.299 * v - .299 * vsu - .328 * vsw) * in.r
+		  + (.587 * v + .413 * vsu + .035 * vsw) * in.g
+		  + (.114 * v - .114 * vsu + .292 * vsw) * in.b;
+	ret.b = (.299 * v - .300 * vsu + 1.25 * vsw) * in.r
+		  + (.587 * v - .588 * vsu - 1.05 * vsw) * in.g
+		  + (.114 * v + .886 * vsu - .203 * vsw) * in.b;
+	ret.a = in.a;
+	return ret;
+}

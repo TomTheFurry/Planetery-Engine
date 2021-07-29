@@ -1,6 +1,5 @@
 module;
 #include "Marco.h"
-#ifdef USE_VULKAN
 #	pragma warning(disable : 26812)
 #	include <vulkan/vulkan.h>
 #	include <assert.h>
@@ -99,6 +98,7 @@ void Buffer::unmap() {
 		if (!feature.has(MemoryFeature::Mappable))
 			throw "VulkanBufferNotMappable";
 		if (mappedPtr == nullptr) throw "VulkanBufferNotMapped";
+		mappedPtr = nullptr;
 	}
 	vkUnmapMemory(d.d, dm);
 }
@@ -150,9 +150,7 @@ void Buffer::blockingIndirectWrite(CommendPool& cp, const void* data) {
 	}
 	auto sg = Buffer(d, size,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectCopyable);
-	memcpy(sg.map(), data, size);
-	sg.flush();
-	sg.unmap();
+	sg.directWrite(data);
 	auto cb = CommendBuffer(cp);
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopyBuffer(sg, *this, size);
@@ -185,9 +183,7 @@ void Buffer::blockingIndirectWrite(
 	}
 	auto sg = Buffer(d, nSize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectCopyable);
-	memcpy(sg.map(), data, nSize);
-	sg.flush();
-	sg.unmap();
+	sg.directWrite(data);
 	auto cb = CommendBuffer(cp);
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopyBuffer(sg, *this, nSize, 0, offset);
@@ -206,6 +202,17 @@ void Buffer::blockingIndirectWrite(
 	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
 	vkDestroyFence(d.d, fence, nullptr);
 }
-#else
-module Vulkan;
-#endif
+void Buffer::directWrite(const void* data) { directWrite(size, 0, data); }
+
+void Buffer::directWrite(size_t nSize, size_t offset, const void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!feature.has(MemoryFeature::Mappable))
+			throw "VulkanBufferNotMappable";
+		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
+	}
+	memcpy(map(), data, nSize);
+	flush(); //FIXME: ????????? Is this needed?
+	unmap();
+}
+
+
