@@ -156,5 +156,5 @@ public:
 
     void render();
 	ShaderProgram* mode2;
-	const float cutout = 0.0f;
+	const float cutout = 500000.0f;
 };

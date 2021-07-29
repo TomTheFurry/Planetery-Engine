@@ -10,7 +10,7 @@ public:
 	vec2 windowSize = vec2(1920,1080);
 	float fov = 60.0f;
 	float nearView = 0.1f;
-	float farView = 1000.0f;
+	float farView = 500000.0f;
 	float windowRatio();
 	int targetTps = 60;
 	uint fileSeed = 0;

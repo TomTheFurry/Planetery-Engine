@@ -86,8 +86,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\tomle\source\repos\Planetery Engine\Planetery Engine Playaround\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\tomle\source\repos\Planetery Engine\Planetery Engine Playaround\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\tomle\source\repos\Planetery-Engine\Planetery Engine Playaround\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\tomle\source\repos\Planetery-Engine\Planetery Engine Playaround\include;$(LibraryPath)</LibraryPath>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -142,7 +142,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

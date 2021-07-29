@@ -119,10 +119,10 @@ float GridGalaxies::calUpdateTick(vec3 obj, vec3 mov, vec3 speed, float rad, flo
 			obj.x += rad;
 		}
 		else obj.x -= rad;
-		tx = std::max({
+		tx = std::max(std::max(
 			(-speed.x + sqrt(pow(speed.x, 2) + 2 * m * (obj.x - mov.x))) / m,
-			(-speed.x - sqrt(pow(speed.x, 2) + 2 * m * (obj.x - mov.x))) / m,
-			abs(mov.x - obj.x) / maxSpeed });
+			(-speed.x - sqrt(pow(speed.x, 2) + 2 * m * (obj.x - mov.x))) / m),
+			(double)abs(mov.x - obj.x) / maxSpeed);
 	}
 	if (!(tx >= 0)) {
 		tx = 0;
@@ -135,10 +135,10 @@ float GridGalaxies::calUpdateTick(vec3 obj, vec3 mov, vec3 speed, float rad, flo
 			obj.y += rad;
 		}
 		else obj.y -= rad;
-		ty = std::max({
+		ty = std::max(std::max(
 			(-speed.y + sqrt(pow(speed.y, 2) + 2 * m * (obj.y - mov.y))) / m,
-			(-speed.y - sqrt(pow(speed.y, 2) + 2 * m * (obj.y - mov.y))) / m,
-			abs(mov.y - obj.y) / maxSpeed });
+			(-speed.y - sqrt(pow(speed.y, 2) + 2 * m * (obj.y - mov.y))) / m),
+			(double)abs(mov.y - obj.y) / maxSpeed);
 	}
 	if (!(ty >= 0)) {
 		ty = 0;
@@ -151,10 +151,10 @@ float GridGalaxies::calUpdateTick(vec3 obj, vec3 mov, vec3 speed, float rad, flo
 			obj.z += rad;
 		}
 		else obj.z -= rad;
-		tz = std::max({
+		tz = std::max(std::max(
 			(-speed.z + sqrt(pow(speed.z, 2) + 2 * m * (obj.z - mov.z))) / m,
-			(-speed.z - sqrt(pow(speed.z, 2) + 2 * m * (obj.z - mov.z))) / m,
-			abs(mov.z - obj.z) / maxSpeed });
+			(-speed.z - sqrt(pow(speed.z, 2) + 2 * m * (obj.z - mov.z))) / m),
+			(double)abs(mov.z - obj.z) / maxSpeed);
 	}
 	if (!(tz >= 0)) {
 		tz = 0;
@@ -173,6 +173,8 @@ GridGalaxies::GridGalaxies(uint gridId) : TranslationTypeA(), GridBase() {
 void GridGalaxies::newData() {
 	gridRng = new SeededRng(global->worldManager->worldGenRng->next());
 	childGdIds.clear();
+
+	logger << "Generating new GridGalaxies...\n";
 
 	for (int i = 0; i < numOfCluster; i++) {
 		GalaxyCluster* cluster = new GalaxyCluster(gridRng->next(), this);
