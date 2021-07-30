@@ -27,6 +27,7 @@ export namespace vk {
 	// Image class:
 	class FrameBuffer;
 	class ImageView;
+	class Image;
 	// Commend class:
 	class CommendPool;
 	class CommendBuffer;
@@ -300,7 +301,27 @@ namespace vk {
 		ImageView& operator=(const ImageView&) = delete;
 		ImageView& operator=(ImageView&&) = default;
 		~ImageView();
-		VkImageView imgView;
+		VkImageView imgView = nullptr;
+		LogicalDevice& d;
+	};
+	class Image
+	{
+	  public:
+		Image(LogicalDevice& d, vec3 texSize, Flags<TextureFeature> texFeature,
+		  Flags<TextureUseType> texUsage, uint texDimension, VkFormat texFormat,
+		  uint mipLevels, uint layers,
+		  uint subsamples /*TODO: add imageLayout*/);
+		Image(const Image&) = delete;
+		Image(Image&& other) noexcept;
+		Image& operator=(const Image&) = delete;
+		Image& operator=(Image&&) = default;
+		~Image();
+		vec3 size;
+		uint dimension;
+		Flags<TextureFeature> feature;
+		Flags<TextureUseType> usage;
+		VkImage img = nullptr;
+		VkDeviceMemory dm = nullptr;
 		LogicalDevice& d;
 	};
 }

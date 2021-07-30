@@ -67,13 +67,24 @@ export namespace vk {
 		StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 		Sampler = VK_DESCRIPTOR_TYPE_SAMPLER,
 	};
-
 	enum class DescriptorPoolType : VkDescriptorPoolCreateFlags {
 		None = 0,
 		Resetable = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
 		Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
 		HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 	};
+	enum class TextureUseType : VkImageUsageFlags {
+		None = 0,
+		TransferSrc = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+		TransferDst = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+		ShaderSampling = VK_IMAGE_USAGE_SAMPLED_BIT,
+		ShaderStorage = VK_IMAGE_USAGE_STORAGE_BIT,
+		AttachmentColor = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		AttachmentDepthStencil = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+		AttachmentLazyAllocated = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
+		AttachmentInput = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+	};
+
 	enum class BufferUseType : VkBufferUsageFlags {
 		None = 0,
 		TransferSrc = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -87,6 +98,24 @@ export namespace vk {
 		IndirectDraw = VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
 		All = 511,
 	};
+
+	enum class TextureFeature : VkImageCreateFlags {
+		None = 0,
+		//VK_IMAGE_CREATE_SPARSE_BINDING_BIT,
+		//VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT,
+		//VK_IMAGE_CREATE_SPARSE_ALIASED_BIT,
+		MutableView = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
+		CubeView = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
+		AliasMemory = VK_IMAGE_CREATE_ALIAS_BIT,
+		// Provided by VK_VERSION_1_1
+		//VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
+		Array2DView = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT,
+		CompressedBlockView = VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT,
+		ViewUsageSupport = VK_IMAGE_CREATE_EXTENDED_USAGE_BIT,
+		Protected = VK_IMAGE_CREATE_PROTECTED_BIT,
+		DisjointPlane = VK_IMAGE_CREATE_DISJOINT_BIT,
+	};
+
 	enum class MemoryFeature {
 		None = 0,
 		IndirectWritable = 1,
@@ -112,8 +141,11 @@ export namespace vk {
 		PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
 		PerInstance = VK_VERTEX_INPUT_RATE_INSTANCE,
 	};
+
 }
+export template<> class Flags<vk::TextureUseType>;
 export template<> class Flags<vk::BufferUseType>;
+export template<> class Flags<vk::TextureFeature>;
 export template<> class Flags<vk::MemoryFeature>;
 export template<> class Flags<vk::CommendBufferUsage>;
 export template<> class Flags<vk::ShaderType>;

@@ -52,3 +52,58 @@ FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
 FrameBuffer::~FrameBuffer() {
 	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
 }
+
+Image::Image(LogicalDevice& d, vec3 texSize, Flags<TextureFeature> texFeature,
+  Flags<TextureUseType> texUsage, uint texDimension, VkFormat texFormat,
+  uint mipLevels, uint layers, uint subsamples): d(d) {
+	size = texSize;
+	feature = texFeature;
+	usage = texUsage;
+	dimension = texDimension;
+	// TODO: Add direct mappable image
+	VkImageCreateInfo iInfo{};
+	iInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	iInfo.flags = (VkImageCreateFlags)texFeature;
+	iInfo.imageType = texDimension - 1; //Hmm...
+	iInfo.format = texFormat;
+	iInfo.extent = VkExtent3D{texSize.x, texSize.y, texSize.z};
+	iInfo.mipLevels = mipLevels;
+	iInfo.arrayLayers = layers;
+	iInfo.samples = subsamples;
+	iInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	iInfo.usage = (VkImageUsageFlags)texUsage;
+	iInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	//iInfo.queueFamilyIndexCount;
+	//iInfo.pQueueFamilyIndices;
+	iInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+	if (vkCreateImage(d.d, &iInfo, nullptr, &img) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create image!");
+	}
+
+	VkMemoryRequirements memRequirements;
+	vkGetImageMemoryRequirements(d.d, img, &memRequirements);
+	uint memTypeIndex = d.pd.getMemoryTypeIndex(
+	  memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	// TODO: Add fallback
+	if (memTypeIndex == -1) throw "VulkanFailedToGetMemoryType";
+	// TODO: Fix allocator for custom allocation in PhysicalDevice
+	VkMemoryAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = memTypeIndex;
+	if (vkAllocateMemory(d.d, &allocInfo, nullptr, &dm) != VK_SUCCESS) {
+		throw std::runtime_error("failed to allocate buffer memory!");
+	}
+	vkBindImageMemory(d.d, img, dm, 0);
+
+
+}
+Image::Image(Image&& other) noexcept: d(other.d) {
+	img = other.img;
+	other.img = nullptr;
+}
+Image::~Image() {
+	if (img != nullptr) vkDestroyImage(d.d, img, nullptr);
+	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
+}
