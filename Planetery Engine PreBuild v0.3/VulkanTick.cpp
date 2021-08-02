@@ -149,7 +149,7 @@ bool RenderTick::waitForCompletion(ulint timeout) const {
 }
 Buffer& RenderTick::makeStagingBuffer(size_t size) {
 	return _stagingBuffers.emplace_back(d, size,
-	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectCopyable);
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 }
 CommendBuffer& RenderTick::makeSingleUseCommendBuffer(CommendPool& cp) {
 	return _sigleUseCommendBuffer.emplace_back(cp);

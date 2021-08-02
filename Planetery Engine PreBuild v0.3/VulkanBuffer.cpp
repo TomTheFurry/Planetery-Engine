@@ -37,6 +37,44 @@ void Buffer::_setup() {
 	vkBindBufferMemory(d.d, b, dm, 0);
 }
 
+Buffer::Buffer(LogicalDevice& device, size_t s,
+  Flags<MemoryFeature> neededFeature, Flags<BufferUseType> neededUsage):
+  d(device) {
+	size = s;
+	feature = neededFeature;
+	usage = neededUsage;
+	if (feature.has(MemoryFeature::Mappable)) {
+		if (feature.has(MemoryFeature::Coherent))
+			minAlignment =
+			  d.pd.properties10.properties.limits.nonCoherentAtomSize;
+		else
+			minAlignment =
+			  d.pd.properties10.properties.limits.minMemoryMapAlignment;
+	} else {
+		minAlignment = 1;
+	}
+	if (feature.has(MemoryFeature::IndirectReadable)) {
+		usage.set(BufferUseType::TransferSrc);
+	}
+	if (feature.has(MemoryFeature::IndirectWritable)) {
+		usage.set(BufferUseType::TransferDst);
+	}
+	_setup();
+}
+
+Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
+	size = other.size;
+	minAlignment = other.minAlignment;
+	b = other.b;
+	dm = other.dm;
+	mappedPtr = other.mappedPtr;
+	feature = other.feature;
+	usage = other.usage;
+	other.b = nullptr;
+	other.dm = nullptr;
+	other.mappedPtr = nullptr;
+}
+
 Buffer::~Buffer() {
 	if (b != nullptr) vkDestroyBuffer(d.d, b, nullptr);
 	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
@@ -111,7 +149,7 @@ void Buffer::cmdIndirectWrite(RenderTick& rt, CommendBuffer& cb, void* data) {
 	auto& s = rt.makeStagingBuffer(size);
 	memcpy(s.map(), data, size);
 	s.unmap();
-	cb.cmdCopyBuffer(s, *this, size);
+	cb.cmdCopy(s, *this, size);
 }
 void Buffer::cmdIndirectWrite(
   RenderTick& rt, CommendBuffer& cb, size_t nSize, size_t offset, void* data) {
@@ -123,7 +161,7 @@ void Buffer::cmdIndirectWrite(
 	auto& s = rt.makeStagingBuffer(nSize);
 	memcpy(s.map(), data, nSize);
 	s.unmap();
-	cb.cmdCopyBuffer(s, *this, nSize, 0, offset);
+	cb.cmdCopy(s, *this, nSize, 0, offset);
 }
 Buffer& Buffer::getStagingBuffer(RenderTick& rt) {
 	if constexpr (DO_SAFETY_CHECK) {
@@ -149,11 +187,11 @@ void Buffer::blockingIndirectWrite(CommendPool& cp, const void* data) {
 			throw "VulkanBufferNotIndirectWritable";
 	}
 	auto sg = Buffer(d, size,
-	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectCopyable);
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
 	auto cb = CommendBuffer(cp);
 	cb.startRecording(CommendBufferUsage::Streaming);
-	cb.cmdCopyBuffer(sg, *this, size);
+	cb.cmdCopy(sg, *this, size);
 	cb.endRecording();
 	VkFenceCreateInfo fInfo{};
 	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -182,11 +220,11 @@ void Buffer::blockingIndirectWrite(
 		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
 	}
 	auto sg = Buffer(d, nSize,
-	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectCopyable);
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
 	auto cb = CommendBuffer(cp);
 	cb.startRecording(CommendBufferUsage::Streaming);
-	cb.cmdCopyBuffer(sg, *this, nSize, 0, offset);
+	cb.cmdCopy(sg, *this, nSize, 0, offset);
 	cb.endRecording();
 	VkFenceCreateInfo fInfo{};
 	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -202,15 +240,14 @@ void Buffer::blockingIndirectWrite(
 	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
 	vkDestroyFence(d.d, fence, nullptr);
 }
-void Buffer::directWrite(const void* data) { directWrite(size, 0, data); }
+void Buffer::directWrite(const void* data) 	{
+	memcpy(map(), data, size);
+	flush(); //FIXME: ????????? Is this needed?
+	unmap();
+}
 
 void Buffer::directWrite(size_t nSize, size_t offset, const void* data) {
-	if constexpr (DO_SAFETY_CHECK) {
-		if (!feature.has(MemoryFeature::Mappable))
-			throw "VulkanBufferNotMappable";
-		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
-	}
-	memcpy(map(), data, nSize);
+	memcpy(map(nSize, offset), data, nSize);
 	flush(); //FIXME: ????????? Is this needed?
 	unmap();
 }

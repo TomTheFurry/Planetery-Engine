@@ -1,7 +1,7 @@
 module;
 #include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
+#pragma warning(disable : 26812)
+#include <vulkan/vulkan.h>
 export module Vulkan: Enum;
 import std.core;
 import Define;
@@ -73,6 +73,95 @@ export namespace vk {
 		Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
 		HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 	};
+
+	enum class PipelineStage : VkPipelineStageFlags {
+		None = VK_PIPELINE_STAGE_NONE_KHR,
+		TopOfPipe = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		DrawIndirect = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
+		VertexInput = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
+		ShaderVertex = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
+		ShaderTessControl = VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT,
+		ShaderTessEval = VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT,
+		ShaderGeometry = VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT,
+		ShaderFragment = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		FragmentEarlyTest = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+		FragmentLateTest = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+		OutputAttachmentColor = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		ShaderCompute = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+		Transfer = VK_PIPELINE_STAGE_TRANSFER_BIT,
+		BottomOfPipe = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		HostMemoryAccess = VK_PIPELINE_STAGE_HOST_BIT,
+		AnyGraphics = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
+		AnyCommands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+	};
+	enum class MemoryAccess : VkAccessFlags {
+		None = VK_ACCESS_NONE_KHR,
+		DrawIndirectRead = VK_ACCESS_INDIRECT_COMMAND_READ_BIT,
+		VertexInputIndexRead = VK_ACCESS_INDEX_READ_BIT,
+		VertexInputAttributeRead = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
+		ShaderUniformRead = VK_ACCESS_UNIFORM_READ_BIT,
+		AttachmentInputRead = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
+		ShaderAnyRead = VK_ACCESS_SHADER_READ_BIT,
+		ShaderAnyWrite = VK_ACCESS_SHADER_WRITE_BIT,
+		AttachmentColorRead = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
+		AttachmentColorWrite = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		AttachmentDepthStencilRead =
+		  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
+		AttachmentDepthStencilWrite =
+		  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+		TransferRead = VK_ACCESS_TRANSFER_READ_BIT,
+		TransferWrite = VK_ACCESS_TRANSFER_WRITE_BIT,
+		HostMemoryRead = VK_ACCESS_HOST_READ_BIT,
+		HostMemoryWrite = VK_ACCESS_HOST_WRITE_BIT,
+		AnyRead = VK_ACCESS_MEMORY_READ_BIT,
+		AnyWrite = VK_ACCESS_MEMORY_WRITE_BIT,
+	};
+
+	enum class TextureAspect {
+		Color,
+		Depth,
+		Stencil,
+		DepthStencil,
+	};
+	inline VkImageAspectFlags _toBase(TextureAspect v) {
+		switch (v) {
+		case TextureAspect::Color: return VK_IMAGE_ASPECT_COLOR_BIT;
+		case TextureAspect::Depth: return VK_IMAGE_ASPECT_DEPTH_BIT;
+		case TextureAspect::Stencil: return VK_IMAGE_ASPECT_STENCIL_BIT;
+		case TextureAspect::DepthStencil:
+			return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+		default: throw "VulkanInvalidTextureAspect";
+		}
+	}
+
+	enum class TextureActiveUseType : std::underlying_type_t<VkImageLayout> {
+		Undefined = VK_IMAGE_LAYOUT_UNDEFINED,
+		General = VK_IMAGE_LAYOUT_GENERAL,
+		AttachmentColor = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		AttachmentDepthStencil =
+		  VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		ReadOnlyAttachmentDepthStencil =
+		  VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+		ReadOnlyShader = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		TransferSrc = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		TransferDst = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		HostWritable = VK_IMAGE_LAYOUT_PREINITIALIZED,
+		// Provided by VK_VERSION_1_1
+		// VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL =
+		// 1000117000,
+		// VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL =
+		// 1000117001, Provided by VK_VERSION_1_2
+		// VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL = 1000241000,
+		// VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL = 1000241001,
+		// VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL = 1000241002,
+		// VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL = 1000241003,
+		// Provided by VK_KHR_swapchain
+		Present = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		// Provided by VK_KHR_synchronization2
+		ReadOnly = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR,
+		Attachment = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR,
+	};
+
 	enum class TextureUseType : VkImageUsageFlags {
 		None = 0,
 		TransferSrc = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
@@ -101,14 +190,14 @@ export namespace vk {
 
 	enum class TextureFeature : VkImageCreateFlags {
 		None = 0,
-		//VK_IMAGE_CREATE_SPARSE_BINDING_BIT,
-		//VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT,
-		//VK_IMAGE_CREATE_SPARSE_ALIASED_BIT,
+		// VK_IMAGE_CREATE_SPARSE_BINDING_BIT,
+		// VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT,
+		// VK_IMAGE_CREATE_SPARSE_ALIASED_BIT,
 		MutableView = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
 		CubeView = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
 		AliasMemory = VK_IMAGE_CREATE_ALIAS_BIT,
 		// Provided by VK_VERSION_1_1
-		//VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
+		// VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
 		Array2DView = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT,
 		CompressedBlockView = VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT,
 		ViewUsageSupport = VK_IMAGE_CREATE_EXTENDED_USAGE_BIT,
@@ -119,7 +208,7 @@ export namespace vk {
 	enum class MemoryFeature {
 		None = 0,
 		IndirectWritable = 1,
-		IndirectCopyable = 2,
+		IndirectReadable = 2,
 		Mappable = 4,
 		Coherent = 8,
 		CoherentMappable = Coherent | Mappable,
@@ -150,3 +239,5 @@ export template<> class Flags<vk::MemoryFeature>;
 export template<> class Flags<vk::CommendBufferUsage>;
 export template<> class Flags<vk::ShaderType>;
 export template<> class Flags<vk::DescriptorPoolType>;
+export template<> class Flags<vk::PipelineStage>;
+export template<> class Flags<vk::MemoryAccess>;

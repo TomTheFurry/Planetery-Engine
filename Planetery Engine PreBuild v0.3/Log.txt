@@ -1,0 +1,78 @@
+[0;4;97mMainThread:
+[;0m  [90m-[39mStarting core event thread...
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread started.
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mWaiting for core thread end...
+
+[0;4;97mThreadRender:
+[;0m  [;0m  [90m-[39mThread created
+[;0m  [;0m  [90m-[39mIniting graphic API....
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVK Interface init.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVulkan: Reading runtime values...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVulkan: Scanning Graphic Cards...
+[;0m  [;0m  [90m-[39mNVIDIA GeForce GTX 1060 3GB... Usable. Rating: 7663.317383
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVulkan: Reading file: cshader/testUniform.cvert(980B)...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVulkan: Reading file: cshader/testUniform.cfrag(536B)...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVK graphics init done.
+[;0m   Now init fonts...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mFont init done. Now loading shader...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mLoading renderer...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAll init done. Ready to sync with other threads.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.548000us (4776), Event tps: 71
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 255.875000us (3699), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 196.880000us (4261), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 202.551000us (4981), Event tps: 24
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.835000us (5398), Event tps: 68
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mThread stopping...
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mVK Interface end.
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mThread normally stopped.
+
+[0;4;97mThreadEvent:
+[;0m  [90m-[39mRender thread stopped.[31m\n[39m
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mcore thread ended.
+
+[0;4;97mMainThread:
+[;0m  [90m-[39mExiting...
+

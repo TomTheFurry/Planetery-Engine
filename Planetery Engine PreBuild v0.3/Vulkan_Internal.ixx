@@ -1,7 +1,7 @@
 module;
 #include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
+#pragma warning(disable : 26812)
+#include <vulkan/vulkan.h>
 export module Vulkan: Internal;
 import: Enum;
 import std.core;
@@ -239,43 +239,6 @@ namespace vk {
 		  Buffer(d, size, neededFeature, neededUsage | BufferUseType::Uniform) {
 		}
 	};
-	// Buffer
-	inline Buffer::Buffer(LogicalDevice& device, size_t s,
-	  Flags<MemoryFeature> neededFeature, Flags<BufferUseType> neededUsage):
-	  d(device) {
-		size = s;
-		feature = neededFeature;
-		usage = neededUsage;
-		if (feature.has(MemoryFeature::Mappable)) {
-			if (feature.has(MemoryFeature::Coherent))
-				minAlignment =
-				  d.pd.properties10.properties.limits.nonCoherentAtomSize;
-			else
-				minAlignment =
-				  d.pd.properties10.properties.limits.minMemoryMapAlignment;
-		} else {
-			minAlignment = 1;
-		}
-		if (feature.has(MemoryFeature::IndirectCopyable)) {
-			usage.set(BufferUseType::TransferSrc);
-		}
-		if (feature.has(MemoryFeature::IndirectWritable)) {
-			usage.set(BufferUseType::TransferDst);
-		}
-		_setup();
-	}
-	inline Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
-		size = other.size;
-		minAlignment = other.minAlignment;
-		b = other.b;
-		dm = other.dm;
-		mappedPtr = other.mappedPtr;
-		feature = other.feature;
-		usage = other.usage;
-		other.b = nullptr;
-		other.dm = nullptr;
-		other.mappedPtr = nullptr;
-	}
 }
 
 // Image class:
@@ -307,21 +270,48 @@ namespace vk {
 	class Image
 	{
 	  public:
-		Image(LogicalDevice& d, vec3 texSize, Flags<TextureFeature> texFeature,
-		  Flags<TextureUseType> texUsage, uint texDimension, VkFormat texFormat,
-		  uint mipLevels, uint layers,
-		  uint subsamples /*TODO: add imageLayout*/);
+		// Super ctor
+		Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
+		  VkFormat texFormat,
+		  Flags<TextureUseType> texUsage = TextureUseType::None,
+		  TextureActiveUseType startingUsage = TextureActiveUseType::Undefined,
+		  Flags<MemoryFeature> texMemFeature = MemoryFeature::None,
+		  Flags<TextureFeature> texFeature = TextureFeature::None,
+		  uint mipLevels = 1, uint layers = 1, uint subsamples = 1);
 		Image(const Image&) = delete;
 		Image(Image&& other) noexcept;
 		Image& operator=(const Image&) = delete;
 		Image& operator=(Image&&) = default;
 		~Image();
-		vec3 size;
+
+		void* map();
+		void* map(size_t size, size_t offset);
+		void flush();
+		void flush(size_t size, size_t offset);
+		void unmap();
+		void blockingIndirectWrite(const void* data);
+		void blockingIndirectWrite(
+		  size_t size, size_t offset, const void* data);
+		void directWrite(const void* data);
+		void directWrite(size_t size, size_t offset, const void* data);
+
+		void blockingTransformActiveUsage(TextureActiveUseType targetUsage);
+
+		// TODO: Check if below is okay with vkMinAlignment
+		size_t mappingMinAlignment;	 // size_t(-1) equals no mapping
+		size_t texMemorySize;
+		uvec3 size;
 		uint dimension;
+		uint mipLevels;
+		uint layers;
+		VkFormat format;
+		Flags<MemoryFeature> memFeature;
 		Flags<TextureFeature> feature;
 		Flags<TextureUseType> usage;
+		TextureActiveUseType activeUsage;
 		VkImage img = nullptr;
 		VkDeviceMemory dm = nullptr;
+		void* mappedPtr = nullptr;
 		LogicalDevice& d;
 	};
 }
@@ -353,14 +343,28 @@ namespace vk {
 		  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
 		void cmdBind(const IndexBuffer& ib,
 		  VkIndexType dataType = _toIndexTpye::val<uint>(), size_t offset = 0);
-		void cmdBind(const DescriptorSet& ds, const ShaderPipeline& p);	 // TODO: add multibinding
-		
+		void cmdBind(const DescriptorSet& ds,
+		  const ShaderPipeline& p);	 // TODO: add multibinding
+
+		void cmdChangeState(Image& target, TextureActiveUseType type,
+		  Flags<PipelineStage> srcStage, Flags<MemoryAccess> srcAccess,
+		  Flags<PipelineStage> dstStage, Flags<MemoryAccess> dstAccess);
+
 		void cmdDraw(
 		  uint vCount, uint iCount = 1, uint vOffset = 0, uint iOffset = 0);
 		void cmdDrawIndexed(uint indCount, uint insCount = 1,
 		  uint indOffset = 0, uint vertOffset = 0, uint insOffset = 0);
-		void cmdCopyBuffer(const Buffer& src, Buffer& dst, size_t size,
+		void cmdCopy(const Buffer& src, Buffer& dst, size_t size,
 		  size_t srcOffset = 0, size_t dstOffset = 0);
+		void cmdCopy(const Buffer& src, Image& dst, TextureAspect aspect,
+		  uvec3 inputSize, uvec3 copySize, ivec3 copyOffset = ivec3(0, 0, 0),
+		  size_t inputOffset = 0, uint mipLevel = 0, uint layerOffset = 0,
+		  uint layerCount = 1);
+		void cmdCopy(Image& src, Buffer& dst, TextureAspect aspect,
+		  uvec3 outputSize, uvec3 copySize, ivec3 copyOffset = ivec3(0, 0, 0),
+		  size_t outputOffset = 0, uint mipLevel = 0, uint layerOffset = 0,
+		  uint layerCount = 1);
+
 		void cmdEndRender();
 		void endRecording();
 		VkCommandBuffer cb = nullptr;
@@ -459,7 +463,7 @@ namespace vk {
 		VkDescriptorPool dp;
 		LogicalDevice& d;
 	};
-	//Auto-Fitting DescriptorPool
+	// Auto-Fitting DescriptorPool
 	class DescriptorContainer: protected DescriptorPool
 	{
 	  public:
@@ -474,10 +478,10 @@ namespace vk {
 		std::vector<DescriptorSet> allocNewSet(uint count);
 		const DescriptorLayout& ul;
 	};
-	template<typename T> concept WriteCmd = requires(T t) {
-		{ t.data }
-		->ViewableWith<const DescriptorSet::WriteData&>;
-		//requires std::same_as<T,
+	template<typename T>
+	concept WriteCmd = requires(T t) {
+		{ t.data } -> ViewableWith<const DescriptorSet::WriteData&>;
+		// requires std::same_as<T,
 		//  DescriptorSet::template CmdWrite<decltype(t.data)>>;
 	};
 	class DescriptorSet
@@ -498,14 +502,14 @@ namespace vk {
 				BufferType asBuffer;
 				ImageType asImage;
 			};
-			WriteData(const Buffer* buf, size_t off = 0,
-			  size_t len = VK_WHOLE_SIZE) {
+			WriteData(
+			  const Buffer* buf, size_t off = 0, size_t len = VK_WHOLE_SIZE) {
 				asBuffer.buffer = buf;
 				asBuffer.offset = off;
 				asBuffer.length = len;
 			}
-			WriteData(const ImageView* img, VkSampler s,
-			  VkImageLayout imgLayout) {
+			WriteData(
+			  const ImageView* img, VkSampler s, VkImageLayout imgLayout) {
 				asImage.imageView = img;
 				asImage.sampler = s;
 				asImage.imageLayout = imgLayout;
@@ -532,10 +536,10 @@ namespace vk {
 		DescriptorPool& dp;
 		static inline std::vector<DescriptorSet> makeBatch(
 		  DescriptorPool& dp, ViewableWith<const DescriptorLayout&> auto uls);
-		template<typename View> requires requires(View v) {
+		template<typename View>
+		requires requires(View v) {
 			requires Viewable<View>;
-			{ *v.begin() }
-			->WriteCmd;
+			{ *v.begin() } -> WriteCmd;
 		}
 		static inline void blockingWrite(LogicalDevice& d, View v);
 		inline void blockingWrite(uint bindPoint, DescriptorDataType type,
@@ -552,7 +556,8 @@ namespace vk {
 	}
 
 	inline DescriptorLayout::DescriptorLayout(LogicalDevice& d,
-	  ViewableWith<const DescriptorLayoutBinding&> auto bindings) : d(d) {
+	  ViewableWith<const DescriptorLayoutBinding&> auto bindings):
+	  d(d) {
 		std::vector<VkDescriptorSetLayoutBinding> b;
 		std::map<VkDescriptorType, uint> s;
 		b.resize(bindings.size());
@@ -572,7 +577,8 @@ namespace vk {
 		vkCreateDescriptorSetLayout(d.d, &dInfo, nullptr, &dsl);
 		_size.reserve(s.size());
 		for (auto p : s) {
-			_size.push_back(Size{static_cast<DescriptorDataType>(p.first), p.second});
+			_size.push_back(
+			  Size{static_cast<DescriptorDataType>(p.first), p.second});
 		}
 	}
 
@@ -619,10 +625,10 @@ namespace vk {
 		return result;
 	}
 
-	template<typename View> requires requires(View v) {
+	template<typename View>
+	requires requires(View v) {
 		requires Viewable<View>;
-		{ *v.begin() }
-		->WriteCmd;
+		{ *v.begin() } -> WriteCmd;
 	}
 	inline void vk::DescriptorSet::blockingWrite(LogicalDevice& d, View v) {
 		using WriteCmdT = decltype(*v.begin());
@@ -656,15 +662,14 @@ namespace vk {
 				cmdInfo.pImageInfo = nullptr;
 				cmdInfo.pBufferInfo = bInfo.data();
 				cmdInfo.pTexelBufferView = nullptr;
-			}
-				break;
+			} break;
 			case DescriptorDataType::Sampler: throw "NotImplemented"; break;
 			}
 			wds.push_back(cmdInfo);
 		}
-		//vkDeviceWaitIdle(d.d); //Unsure if needed
+		// vkDeviceWaitIdle(d.d); //Unsure if needed
 		vkUpdateDescriptorSets(d.d, wds.size(), wds.data(), 0, nullptr);
-		//vkDeviceWaitIdle(d.d); //Unsure if needed
+		// vkDeviceWaitIdle(d.d); //Unsure if needed
 	}
 	inline void vk::DescriptorSet::blockingWrite(uint bindPoint,
 	  DescriptorDataType type, uint count, uint offset,
