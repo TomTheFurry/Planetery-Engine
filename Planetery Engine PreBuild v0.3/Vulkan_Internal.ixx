@@ -258,6 +258,7 @@ namespace vk {
 	class ImageView
 	{
 	  public:
+		ImageView(LogicalDevice& d, const Image& img);
 		ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo);
 		ImageView(const ImageView&) = delete;
 		ImageView(ImageView&& other) noexcept;

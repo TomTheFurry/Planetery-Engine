@@ -22,6 +22,27 @@ size_t formatUnitSize(VkFormat format) {
 }
 
 
+ImageView::ImageView(LogicalDevice& d, const Image& img): d(d) {
+	VkImageViewCreateInfo cInfo{};
+	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	cInfo.image = img.img;
+	//FIXME: Hack for viewTpye value.
+	cInfo.viewType = (VkImageViewType)(img.dimension-1);
+	cInfo.format = img.format;
+	cInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	cInfo.subresourceRange.baseMipLevel = 0;
+	cInfo.subresourceRange.levelCount = img.mipLevels;
+	cInfo.subresourceRange.baseArrayLayer = 0;
+	cInfo.subresourceRange.layerCount = img.layers;
+	if (vkCreateImageView(d.d, &cInfo, nullptr, &imgView) != VK_SUCCESS) {
+		logger("Vulkan failed to make Image View form VkImage!\n");
+		throw "VulkanCreateImageViewFailure";
+	}
+}
 
 ImageView::ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo): d(d) {
 	if (vkCreateImageView(d.d, &createInfo, nullptr, &imgView) != VK_SUCCESS) {
