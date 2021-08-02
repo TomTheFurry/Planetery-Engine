@@ -245,19 +245,7 @@ void Image::blockingIndirectWrite(const void* data) {
 	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
 
 	cb.endRecording();
-	VkFenceCreateInfo fInfo{};
-	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	VkFence fence;
-	vkCreateFence(d.d, &fInfo, nullptr, &fence);
-	VkSubmitInfo sInfo{};
-	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	sInfo.waitSemaphoreCount = 0;
-	sInfo.commandBufferCount = 1;
-	sInfo.pCommandBuffers = &cb.cb;
-	sInfo.signalSemaphoreCount = 0;
-	vkQueueSubmit(d.queue, 1, &sInfo, fence);
-	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
-	vkDestroyFence(d.d, fence, nullptr);
+	cb.submit().wait();
 }
 
 void Image::blockingIndirectWrite(
@@ -276,19 +264,7 @@ void Image::blockingIndirectWrite(
 	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
 
 	cb.endRecording();
-	VkFenceCreateInfo fInfo{};
-	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	VkFence fence;
-	vkCreateFence(d.d, &fInfo, nullptr, &fence);
-	VkSubmitInfo sInfo{};
-	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	sInfo.waitSemaphoreCount = 0;
-	sInfo.commandBufferCount = 1;
-	sInfo.pCommandBuffers = &cb.cb;
-	sInfo.signalSemaphoreCount = 0;
-	vkQueueSubmit(d.queue, 1, &sInfo, fence);
-	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
-	vkDestroyFence(d.d, fence, nullptr);
+	cb.submit().wait();
 }
 void Image::directWrite(const void* data) {
 	memcpy(map(), data, texMemorySize);
@@ -312,18 +288,6 @@ void vk::Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 	  MemoryAccess::None, PipelineStage::BottomOfPipe, MemoryAccess::None);
 
 	cb.endRecording();
-	VkFenceCreateInfo fInfo{};
-	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	VkFence fence;
-	vkCreateFence(d.d, &fInfo, nullptr, &fence);
-	VkSubmitInfo sInfo{};
-	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	sInfo.waitSemaphoreCount = 0;
-	sInfo.commandBufferCount = 1;
-	sInfo.pCommandBuffers = &cb.cb;
-	sInfo.signalSemaphoreCount = 0;
-	vkQueueSubmit(d.queue, 1, &sInfo, fence);
-	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
-	vkDestroyFence(d.d, fence, nullptr);
+	cb.submit().wait();
 }
 

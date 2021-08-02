@@ -57,3 +57,8 @@ Fence::Fence(Fence&& o) noexcept: d(o.d) {
 Fence::~Fence() {
 	if (fc != nullptr) vkDestroyFence(d.d, fc, nullptr);
 }
+
+void vk::Fence::wait() {
+	//TODO: Add safety exit to prevent deadlock
+	vkWaitForFences(d.d, 1, &fc, VK_TRUE, -1);
+}

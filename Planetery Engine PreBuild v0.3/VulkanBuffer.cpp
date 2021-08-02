@@ -193,19 +193,7 @@ void Buffer::blockingIndirectWrite(CommendPool& cp, const void* data) {
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopy(sg, *this, size);
 	cb.endRecording();
-	VkFenceCreateInfo fInfo{};
-	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	VkFence fence;
-	vkCreateFence(d.d, &fInfo, nullptr, &fence);
-	VkSubmitInfo sInfo{};
-	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	sInfo.waitSemaphoreCount = 0;
-	sInfo.commandBufferCount = 1;
-	sInfo.pCommandBuffers = &cb.cb;
-	sInfo.signalSemaphoreCount = 0;
-	vkQueueSubmit(d.queue, 1, &sInfo, fence);
-	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
-	vkDestroyFence(d.d, fence, nullptr);
+	cb.submit().wait();
 }
 void Buffer::blockingIndirectWrite(
   size_t size, size_t offset, const void* data) {
@@ -226,19 +214,7 @@ void Buffer::blockingIndirectWrite(
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopy(sg, *this, nSize, 0, offset);
 	cb.endRecording();
-	VkFenceCreateInfo fInfo{};
-	fInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	VkFence fence;
-	vkCreateFence(d.d, &fInfo, nullptr, &fence);
-	VkSubmitInfo sInfo{};
-	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	sInfo.waitSemaphoreCount = 0;
-	sInfo.commandBufferCount = 1;
-	sInfo.pCommandBuffers = &cb.cb;
-	sInfo.signalSemaphoreCount = 0;
-	vkQueueSubmit(d.queue, 1, &sInfo, fence);
-	vkWaitForFences(d.d, 1, &fence, VK_TRUE, -1);
-	vkDestroyFence(d.d, fence, nullptr);
+	cb.submit().wait();
 }
 void Buffer::directWrite(const void* data) 	{
 	memcpy(map(), data, size);

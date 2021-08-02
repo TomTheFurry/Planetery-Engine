@@ -367,6 +367,7 @@ namespace vk {
 
 		void cmdEndRender();
 		void endRecording();
+		Fence submit();
 		VkCommandBuffer cb = nullptr;
 		CommendPool& cp;
 	};
@@ -381,6 +382,7 @@ namespace vk {
 		Fence(const Fence&) = delete;
 		Fence(Fence&& o) noexcept;
 		~Fence();
+		void wait();
 		VkFence fc;
 		LogicalDevice& d;
 	};

@@ -196,3 +196,15 @@ void CommendBuffer::endRecording() {
 		throw std::runtime_error("failed to record command buffer!");
 	}
 }
+
+Fence vk::CommendBuffer::submit() {
+	Fence fc{cp.d};
+	VkSubmitInfo sInfo{};
+	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	sInfo.waitSemaphoreCount = 0;
+	sInfo.commandBufferCount = 1;
+	sInfo.pCommandBuffers = &cb;
+	sInfo.signalSemaphoreCount = 0;
+	vkQueueSubmit(cp.d.queue, 1, &sInfo, fc.fc);
+	return fc;
+}
