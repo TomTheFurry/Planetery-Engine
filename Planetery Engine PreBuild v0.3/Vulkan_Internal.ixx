@@ -276,7 +276,6 @@ namespace vk {
 		Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 		  VkFormat texFormat,
 		  Flags<TextureUseType> texUsage = TextureUseType::None,
-		  TextureActiveUseType startingUsage = TextureActiveUseType::Undefined,
 		  Flags<MemoryFeature> texMemFeature = MemoryFeature::None,
 		  Flags<TextureFeature> texFeature = TextureFeature::None,
 		  uint mipLevels = 1, uint layers = 1, uint subsamples = 1);
@@ -320,9 +319,11 @@ namespace vk {
 	{
 	  public:
 		ImageSampler(LogicalDevice& d, SamplerFilter minFilter,
-		  SamplerFilter magFilter, SamplerClampMode clampModeX,
-		  SamplerClampMode clampModeY, SamplerClampMode clampModeZ,
-		  SamplerBorderColor borderColor, bool normalized = true,
+		  SamplerFilter magFilter,
+		  SamplerClampMode clampModeX = SamplerClampMode::BorderColor,
+		  SamplerClampMode clampModeY = SamplerClampMode::BorderColor,
+		  SamplerClampMode clampModeZ = SamplerClampMode::BorderColor,
+		  SamplerBorderColor borderColor = SamplerBorderColor::FloatTransparentBlack, bool normalized = true,
 		  SamplerMipmapMode mipmapMode = SamplerMipmapMode::Linear,
 		  float lodBias = 0, float minLod = 0, float maxLod = 0);
 		ImageSampler(const ImageSampler&) = delete;
@@ -691,13 +692,19 @@ namespace vk {
 				cmdInfo.pBufferInfo = bInfo.data();
 				cmdInfo.pTexelBufferView = nullptr;
 			} break;
+			case DescriptorDataType::Image:
 			case DescriptorDataType::Sampler:
+			case DescriptorDataType::ImageAndSampler:
 				auto& iInfo = iInfol.emplace_back();
 				iInfo.reserve(cmdInfo.descriptorCount);
 				for (WriteData d : cmd.data) {
 					iInfo.push_back(VkDescriptorImageInfo{
-					  .sampler = d.asImage.sampler!=nullptr ? d.asImage.sampler->smp : nullptr,
-					  .imageView = d.asImage.imageView!=nullptr ? d.asImage.imageView->imgView : nullptr,
+					  .sampler = d.asImage.sampler != nullptr
+								 ? d.asImage.sampler->smp
+								 : nullptr,
+					  .imageView = d.asImage.imageView != nullptr
+								   ? d.asImage.imageView->imgView
+								   : nullptr,
 					  .imageLayout = (VkImageLayout)d.asImage.imageActiveUsage,
 					});
 				}

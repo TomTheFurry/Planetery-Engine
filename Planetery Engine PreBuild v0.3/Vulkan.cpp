@@ -1,10 +1,15 @@
 module;
 #include "Marco.h"
 #include <cstdlib>
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include "GLFW.h"
-#	include <assert.h>
+#pragma warning(disable : 26812)
+#include <vulkan/vulkan.h>
+#include "GLFW.h"
+#include <assert.h>
+
+// Image loading using stb. Remove this when not testing!!!
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
 module Vulkan;
 import: Internal;
 import: Enum;
@@ -279,22 +284,44 @@ static std::atomic_flag _swapchainNotOutdated;
 const float testVert[]{
   0.5f,
   0.5f,
+  1.f,
+  1.f,
+
   -0.5f,
   0.5f,
+  0.f,
+  1.f,
+
   0.5f,
   -0.5f,
+  1.f,
+  0.f,
+
   -0.5f,
   -0.5f,
+  0.f,
+  0.f,
 };
 const float testVert2[]{
   0.2f,
   0.2f,
+  1.f,
+  1.f,
+
   -0.2f,
   0.2f,
+  0.f,
+  1.f,
+
   0.2f,
   -0.2f,
+  1.f,
+  0.f,
+
   -0.2f,
   -0.2f,
+  0.f,
+  0.f,
 };
 
 const uint testInd[]{
@@ -333,14 +360,17 @@ inline void loadSwapchain(bool remake = false) {
 	sd.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	_renderPass->complete();
 	ShaderCompiled vertShad(
-	  *_renderDevice, ShaderType::Vert, "cshader/testUniform.cvert");
+	  *_renderDevice, ShaderType::Vert, "cshader/testUniformAndTexture.vert.spv");
 	ShaderCompiled fragShad(
-	  *_renderDevice, ShaderType::Frag, "cshader/testUniform.cfrag");
+	  *_renderDevice, ShaderType::Frag, "cshader/testUniformAndTexture.frag.spv");
 	// Make layouts
 	if (_dsl == nullptr) {
 		std::vector<DescriptorLayoutBinding> dslb{};
 		dslb.push_back(
-		  DescriptorLayoutBinding{0, DescriptorDataType::UniformBuffer, 1, Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag});
+		  DescriptorLayoutBinding{0, DescriptorDataType::UniformBuffer, 1,
+			Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag});
+		dslb.push_back(DescriptorLayoutBinding{
+		  1, DescriptorDataType::ImageAndSampler, 1, ShaderType::Frag});
 		_dsl = new DescriptorLayout(*_renderDevice, dslb);
 	}
 	// Make Pipeline
@@ -359,6 +389,7 @@ inline void loadSwapchain(bool remake = false) {
 	  .maxDepth = 0,
 	};
 	VertexAttribute va{};
+	va.addAttributeByType<vec2>();
 	va.addAttributeByType<vec2>();
 	va.addBindingPoint();
 	_pipeline->complete(pointShad, va, viewport, *_renderPass);
@@ -393,12 +424,9 @@ inline void recreateSwapchain() {
 	loadSwapchain(true);
 }
 
-static DescriptorContainer* _dpc = nullptr;
-inline void makeDescriptors() {
-	if (_dpc != nullptr) delete _dpc;
-	_dpc = new DescriptorContainer(
-	  *_renderDevice, *_dsl, 16, DescriptorPoolType::Dynamic);
-}
+static Image* _imgTest = nullptr;
+static ImageView* _imgViewTest = nullptr;
+static ImageSampler* _imgSamplerBasic = nullptr;
 
 void vk::init() {
 	logger("VK Interface init.\n");
@@ -423,6 +451,23 @@ void vk::init() {
 	_indexBuff = new IndexBuffer(
 	  *_renderDevice, sizeof(testInd), MemoryFeature::IndirectWritable);
 	_indexBuff->blockingIndirectWrite((void*)std::data(testInd));
+
+	int texWidth, texHeight, texChannels;
+	stbi_uc* pixels = stbi_load("cshader/test.png", &texWidth, &texHeight,
+	  &texChannels, STBI_rgb_alpha);
+	VkDeviceSize imageSize = texWidth * texHeight * 4;
+	if (!pixels) throw "TEST_VulkanStbImageLoadFailure";
+
+	_imgTest = new Image(*_renderDevice, uvec3{texWidth, texHeight, 1}, 2,
+	  VK_FORMAT_R8G8B8A8_SRGB, TextureUseType::ShaderSampling, MemoryFeature::IndirectWritable);
+	assert(_imgTest.texMemorySize == imageSize);
+	_imgTest->blockingIndirectWrite(pixels);
+	stbi_image_free(pixels);
+	_imgTest->blockingTransformActiveUsage(TextureActiveUseType::ReadOnlyShader);
+
+	_imgViewTest = new ImageView(*_renderDevice, *_imgTest);
+	_imgSamplerBasic = new ImageSampler(
+	  *_renderDevice, SamplerFilter::Nearest, SamplerFilter::Linear);
 }
 
 static RenderTick* _currentRenderTick = nullptr;
@@ -448,13 +493,20 @@ void vk::_resetOutdatedFrame() { recreateSwapchain(); }
 static std::vector<DescriptorSet> _ds{};
 static std::vector<UniformBuffer> _ub{};
 static const glm::vec4 START_COLOR{0.f, 0.5f, 0.7f, 1.f};
-static glm::vec4 currentColor{1.f, 0.f, 1.f, 1.f};
+static glm::vec4 currentColor{1.f, 0.9f, 1.f, 1.f};
+
+static DescriptorContainer* _dpc = nullptr;
+inline void makeDescriptors(uint num) {
+	if (_dpc != nullptr) delete _dpc;
+	_dpc = new DescriptorContainer(
+	  *_renderDevice, *_dsl, num, DescriptorPoolType::Dynamic);
+}
 
 void vk::_testDraw() {
 	if (_newSwapchain) {
-		makeDescriptors();
 		uint swapChainImageSize =
 		  _renderDevice->swapChain->swapChainImages.size();
+		makeDescriptors(swapChainImageSize);
 		_commendBuffers.clear();
 		_ds.clear();
 		_ub.clear();
@@ -467,10 +519,15 @@ void vk::_testDraw() {
 			ub.directWrite(&START_COLOR);
 			auto& ds = _ds.emplace_back(_dpc->allocNewSet());
 			std::array<DescriptorSet::WriteData, 1> wd{
-				DescriptorSet::WriteData(&ub)};
+			  DescriptorSet::WriteData(&ub)};
+			std::array<DescriptorSet::WriteData, 1> wd2{
+			  DescriptorSet::WriteData(_imgViewTest, _imgSamplerBasic,
+				TextureActiveUseType::ReadOnlyShader)};
 
 			ds.blockingWrite(0, DescriptorDataType::UniformBuffer, 1, 0, wd);
+			ds.blockingWrite(1, DescriptorDataType::ImageAndSampler, 1, 0, wd2);
 
+			// CommendBuffers
 			auto& cb = _commendBuffers.emplace_back(
 			  _renderDevice->getCommendPool(CommendPoolType::Default));
 
@@ -482,13 +539,20 @@ void vk::_testDraw() {
 			cb.cmdBind(*_vertBuff);
 			cb.cmdBind(*_indexBuff);
 			// cb.cmdDraw((uint)std::size(testVert) / 2);
+
 			cb.cmdDrawIndexed(std::size(testInd));
 			cb.cmdEndRender();
 			cb.endRecording();
 		}
 	}
 
+	const float DELTA = 0.0001f;
+
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
+	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
+							   currentColor.y + DELTA, currentColor.z + DELTA}),
+		1.f);
+
 
 	_ub[_currentRenderTick->getImageIndex()].directWrite(&currentColor);
 
@@ -505,7 +569,7 @@ void vk::checkStatus() noexcept(false) {
 void vk::end(void (*cleanupFunc)()) {
 	logger("VK Interface end.\n");
 	unloadSwapchain();
-	cleanupFunc(); //????
+	cleanupFunc();	//????
 	// testPrograme
 	_commendBuffers.clear();
 	_ub.clear();
@@ -514,6 +578,9 @@ void vk::end(void (*cleanupFunc)()) {
 	if (_indexBuff != nullptr) delete _indexBuff;
 	if (_dpc != nullptr) delete _dpc;
 	if (_dsl != nullptr) delete _dsl;
+	if (_imgTest != nullptr) delete _imgTest;
+	if (_imgViewTest != nullptr) delete _imgViewTest;
+	if (_imgSamplerBasic != nullptr) delete _imgSamplerBasic;
 	// testPrograme end
 	_physicalDevices.clear();
 	if (_OSSurface != nullptr) delete _OSSurface;

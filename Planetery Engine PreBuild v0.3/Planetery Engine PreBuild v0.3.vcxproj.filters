@@ -164,5 +164,11 @@
     <None Include="shader\point.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="testUniformAndTexture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="testUniformAndTexture.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@ using namespace vk;
 
 size_t formatUnitSize(VkFormat format) {
 	switch (format) {
+	case VK_FORMAT_R8G8B8A8_SRGB:
 	case VK_FORMAT_R32_SFLOAT: return sizeof(float);
 	case VK_FORMAT_R32G32_SFLOAT: return sizeof(vec2);
 	case VK_FORMAT_R32G32B32_SFLOAT: return sizeof(vec3);
@@ -92,8 +93,7 @@ FrameBuffer::~FrameBuffer() {
 //------------------Image-----------------------
 //----------------------------------------------
 Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
-  VkFormat texFormat, Flags<TextureUseType> texUsage,
-  TextureActiveUseType startingUsage, Flags<MemoryFeature> texMemFeature,
+  VkFormat texFormat, Flags<TextureUseType> texUsage, Flags<MemoryFeature> texMemFeature,
   Flags<TextureFeature> texFeature, uint mipLevels, uint layers,
   uint subsamples):
   d(d) {
@@ -119,7 +119,9 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	memFeature = texMemFeature;
 	usage = texUsage;
 	dimension = texDimension;
-	activeUsage = startingUsage;
+	activeUsage = texMemFeature.has(MemoryFeature::Mappable)
+				  ? TextureActiveUseType::HostWritable
+				  : TextureActiveUseType::Undefined;
 	format = texFormat;
 	this->mipLevels = mipLevels;
 	this->layers = layers;
@@ -143,7 +145,7 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	iInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	// iInfo.queueFamilyIndexCount;
 	// iInfo.pQueueFamilyIndices;
-	iInfo.initialLayout = (VkImageLayout)startingUsage;
+	iInfo.initialLayout = (VkImageLayout)activeUsage;
 
 	if (vkCreateImage(d.d, &iInfo, nullptr, &img) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create image!");

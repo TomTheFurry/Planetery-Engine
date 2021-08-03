@@ -22,10 +22,10 @@
 [;0m  [;0m  [90m-[39mNVIDIA GeForce GTX 1060 3GB... Usable. Rating: 7663.317383
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mVulkan: Reading file: cshader/testUniform.cvert(980B)...
+[;0m  [90m-[39mVulkan: Reading file: cshader/testUniformAndTexture.vert.spv(964B)...
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mVulkan: Reading file: cshader/testUniform.cfrag(536B)...
+[;0m  [90m-[39mVulkan: Reading file: cshader/testUniformAndTexture.frag.spv(824B)...
 
 [0;4;97mThreadRender:
 [;0m  [90m-[39mVK graphics init done.
@@ -41,13 +41,5077 @@
 [;0m  [90m-[39mAll init done. Ready to sync with other threads.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 178.208000us (4456), Event tps: 184
+[;0m  [90m-[39mAverage Tick speed: 246.721000us (4615), Event tps: 12
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 178.423000us (4951), Event tps: 76
+[;0m  [90m-[39mAverage Tick speed: 179.308000us (5123), Event tps: 4
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 172.236000us (5330), Event tps: 27
+[;0m  [90m-[39mAverage Tick speed: 152.683000us (5676), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.276000us (5386), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.473000us (5385), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.285000us (5487), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.650000us (5739), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.380000us (5474), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.140000us (5715), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.685000us (5491), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.436000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.683000us (5497), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.038000us (5712), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.805000us (5426), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 216.041000us (5606), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.865000us (5488), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.661000us (5788), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.511000us (5519), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.466000us (5562), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 201.305000us (4902), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.595000us (5755), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.550000us (5532), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.235000us (5738), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.423000us (5473), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.433000us (5677), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.758000us (5470), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.216000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.345000us (5507), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.310000us (5706), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.141000us (5532), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.806000us (5812), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.475000us (5586), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.766000us (5836), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.261000us (5621), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.915000us (5879), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.466000us (5611), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.276000us (5871), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.478000us (5609), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.225000us (5809), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.916000us (5591), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.040000us (5815), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.501000us (5596), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 202.030000us (5760), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.130000us (5641), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.043000us (5690), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.490000us (5242), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.513000us (5775), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.193000us (5611), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.733000us (5729), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.660000us (5529), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.643000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.738000us (5633), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.638000us (5793), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.706000us (5599), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.780000us (5762), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.755000us (5668), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.783000us (5766), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.955000us (5599), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.678000us (5756), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.373000us (5564), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.570000us (5772), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.348000us (5619), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.903000us (5820), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.068000us (5596), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.023000us (5832), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.898000us (5610), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.248000us (5793), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.968000us (5568), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.446000us (5867), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.260000us (5609), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.978000us (5844), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.213000us (5634), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.566000us (5793), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.815000us (5576), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.298000us (5845), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.153000us (5578), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.216000us (5821), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.168000us (5634), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.070000us (5771), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.328000us (5621), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.311000us (5865), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.026000us (5579), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.970000us (5650), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 205.061000us (5557), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.191000us (5801), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.690000us (5596), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.948000us (5842), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.055000us (5643), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.890000us (5775), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.623000us (5575), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.210000us (5815), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.923000us (5549), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.730000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.705000us (5629), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.445000us (5806), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.443000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 198.573000us (5833), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.390000us (5541), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.861000us (5830), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.445000us (5591), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.946000us (5784), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.993000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.076000us (5835), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.435000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.698000us (5856), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.466000us (5625), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 211.991000us (5869), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 218.545000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.633000us (5920), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.026000us (5562), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.325000us (5747), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.280000us (5619), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.503000us (5777), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.835000us (5556), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.128000us (5822), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.040000us (5544), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 204.178000us (5770), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.065000us (5646), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.218000us (5819), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.540000us (5699), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.898000us (5850), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.775000us (5613), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.428000us (5834), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.395000us (5605), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.648000us (5734), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.918000us (5579), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.128000us (5850), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.053000us (5604), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 221.401000us (5819), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.148000us (5623), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.293000us (5739), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.120000us (5650), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.745000us (5849), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.493000us (5575), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.156000us (5302), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 228.858000us (5363), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.380000us (5140), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.741000us (4895), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.263000us (5833), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.706000us (5568), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.201000us (5661), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.318000us (5611), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 197.248000us (5898), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.143000us (5541), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.088000us (5945), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.866000us (5567), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.126000us (5785), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.335000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.773000us (5837), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.201000us (5595), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.775000us (5783), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.813000us (5572), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.523000us (5872), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.060000us (5607), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 201.720000us (5753), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.938000us (5607), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.756000us (5845), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.120000us (5613), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.295000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.653000us (5599), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.330000us (5730), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.141000us (5553), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.520000us (5760), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.928000us (5532), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.806000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.350000us (5577), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 209.725000us (5800), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.326000us (5626), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.156000us (5811), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.886000us (5604), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.028000us (5524), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.665000us (5211), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.871000us (5784), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.031000us (5605), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.338000us (5769), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.568000us (5614), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.876000us (5743), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.478000us (5657), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.241000us (5829), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.118000us (5637), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.571000us (5784), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.698000us (5651), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.531000us (5800), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.965000us (5577), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.680000us (5849), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.388000us (5662), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.643000us (5802), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.946000us (5521), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.828000us (5894), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.921000us (5524), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.376000us (5809), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.141000us (5622), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.435000us (5913), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.611000us (5569), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.291000us (5829), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.566000us (5554), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.953000us (5861), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.466000us (5611), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.453000us (5877), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.131000us (5618), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.475000us (5825), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.450000us (5542), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.191000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.086000us (5637), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.878000us (5806), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 253.630000us (5373), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.605000us (5249), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.188000us (5103), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.970000us (5561), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 205.395000us (5474), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.996000us (5224), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.258000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.795000us (5744), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 246.473000us (4953), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.250000us (5867), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.473000us (5577), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.391000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.523000us (5629), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.095000us (5809), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.648000us (5538), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.896000us (5740), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.458000us (5646), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.683000us (5789), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.960000us (5554), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.728000us (5924), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.960000us (5568), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.385000us (5761), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.948000us (5600), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.810000us (5826), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.948000us (5615), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.930000us (5796), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.873000us (5581), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.250000us (5798), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.310000us (5624), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.316000us (5869), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.105000us (5587), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.038000us (5703), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.615000us (5618), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.556000us (5790), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.978000us (5601), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.081000us (5802), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.068000us (5529), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.133000us (5872), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.345000us (5544), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.303000us (5816), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.183000us (5627), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.135000us (5857), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.466000us (5605), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.885000us (5861), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.901000us (5617), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.435000us (5799), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.990000us (5658), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.185000us (5812), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.303000us (5635), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.261000us (5763), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.046000us (5615), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.570000us (5707), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.826000us (5663), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.326000us (5837), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.478000us (5596), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.566000us (5806), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.290000us (5656), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.475000us (5680), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.553000us (5719), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.868000us (5867), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.281000us (5588), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.360000us (5784), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.000000us (5594), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.086000us (5740), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.510000us (5626), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.861000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.368000us (5597), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.418000us (5837), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.976000us (5585), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.366000us (5790), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.358000us (5627), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.480000us (5840), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.786000us (5560), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.921000us (5884), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.721000us (5609), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.295000us (5783), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.428000us (5739), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.796000us (5768), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.520000us (5614), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.925000us (5799), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.200000us (5674), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.680000us (5773), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.278000us (5627), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.203000us (5834), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.226000us (5636), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.630000us (5870), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.321000us (5634), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.776000us (5783), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.833000us (5639), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.078000us (5827), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.821000us (5563), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.290000us (5827), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.713000us (5433), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.228000us (5038), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 205.011000us (5723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.916000us (5835), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.245000us (5617), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.695000us (5810), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.526000us (5608), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.481000us (5823), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.851000us (5588), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.000000us (5834), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.375000us (5663), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.440000us (5827), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.268000us (5591), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 233.266000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.991000us (5618), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.918000us (5871), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.696000us (5609), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.470000us (5869), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.481000us (5613), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.793000us (5785), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.513000us (5628), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.270000us (5759), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.175000us (5653), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.835000us (5851), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.600000us (5638), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.728000us (5849), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.433000us (5617), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.898000us (5812), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.145000us (5690), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.615000us (5775), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.705000us (5602), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.838000us (5828), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.856000us (5588), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.746000us (5793), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.358000us (5670), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.305000us (5852), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.715000us (5621), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.643000us (5843), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.365000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.245000us (5852), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.113000us (5623), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.890000us (5924), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.078000us (5588), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 202.058000us (5795), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.450000us (5619), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.603000us (5831), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.325000us (5585), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.916000us (5825), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.951000us (5622), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.960000us (5833), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.818000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.573000us (5825), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.730000us (5602), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.335000us (5865), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.225000us (5598), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.911000us (5885), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.830000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.360000us (5973), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.698000us (5598), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.221000us (5915), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.436000us (5599), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.198000us (5821), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.755000us (5560), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.913000us (5889), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.796000us (5673), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.460000us (5728), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.385000us (5635), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.740000us (5823), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.790000us (5614), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.165000us (5873), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.968000us (5607), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.036000us (5794), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.603000us (5602), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.590000us (5854), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.461000us (5583), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.491000us (5843), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.280000us (5638), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.355000us (5870), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.488000us (5685), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.083000us (5916), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.946000us (5572), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.186000us (5722), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.276000us (5603), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.748000us (5791), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.460000us (5631), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.481000us (5719), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.606000us (5574), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.861000us (5836), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.131000us (5629), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.403000us (5791), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.411000us (5640), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.908000us (5787), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.848000us (5641), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.308000us (5765), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.833000us (5628), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.680000us (5823), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.088000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.851000us (5920), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.638000us (5611), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.821000us (5796), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.341000us (5593), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.721000us (5802), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.406000us (5631), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 196.315000us (5801), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.291000us (5625), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.246000us (5754), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.916000us (5570), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.456000us (5815), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.763000us (5608), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.305000us (5883), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.225000us (5632), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.075000us (5784), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.516000us (5598), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.743000us (5843), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.401000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.393000us (5807), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.636000us (5622), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.380000us (5794), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.761000us (5564), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.578000us (5850), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.211000us (5590), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.745000us (5940), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.246000us (5614), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.691000us (5776), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.858000us (5632), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.245000us (5748), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.313000us (5429), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 215.170000us (5081), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.145000us (5646), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.615000us (5801), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.975000us (5674), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.076000us (5876), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.240000us (5586), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.011000us (5800), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.108000us (5629), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.255000us (5802), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.103000us (5577), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.045000us (5316), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.245000us (5518), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.263000us (5805), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.245000us (5552), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.016000us (5053), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.883000us (5642), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.003000us (5791), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.480000us (5571), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.098000us (5174), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.033000us (5661), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.990000us (5799), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.773000us (5592), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.156000us (5843), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.670000us (5631), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.188000us (5824), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.498000us (5651), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.721000us (5850), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.091000us (5605), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.975000us (5866), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.325000us (5641), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.210000us (5816), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.535000us (5640), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.070000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.135000us (5591), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.845000us (5849), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.490000us (5724), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.705000us (5860), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.675000us (5590), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.373000us (5789), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.628000us (5556), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.726000us (5764), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.581000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.351000us (5750), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.933000us (5560), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.253000us (5909), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.675000us (5563), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.583000us (5881), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.488000us (5561), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.176000us (5883), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.653000us (5617), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.986000us (5825), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.506000us (5637), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.190000us (5843), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.441000us (5601), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.340000us (5906), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.813000us (5600), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.988000us (5864), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.396000us (5624), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.901000us (5794), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.296000us (5631), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.150000us (5850), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.533000us (5679), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.561000us (5821), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.213000us (5548), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.263000us (5877), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.910000us (5642), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.241000us (5815), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.801000us (5674), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.596000us (5857), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.263000us (5576), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.615000us (5854), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.831000us (5682), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.911000us (5818), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.688000us (5613), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.953000us (5822), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.043000us (5628), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.583000us (5837), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.961000us (5663), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.195000us (5804), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.380000us (5708), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.940000us (5792), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.423000us (5523), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.603000us (5319), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.661000us (5650), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.078000us (4990), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.538000us (5573), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.966000us (5092), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.526000us (5685), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.108000us (5724), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 230.026000us (5410), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.481000us (5285), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.968000us (5650), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.210000us (5794), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.785000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.758000us (5776), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 212.413000us (5610), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.475000us (5831), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 196.483000us (5631), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.885000us (5884), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.796000us (5607), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.748000us (5825), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.455000us (5668), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.841000us (5819), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.358000us (5690), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.911000us (5797), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.841000us (5657), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.523000us (5869), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.756000us (5655), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.026000us (5843), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 209.230000us (5551), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.566000us (5896), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.228000us (5512), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.005000us (5699), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.048000us (5557), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.830000us (5740), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.863000us (5311), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.446000us (5652), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.330000us (5507), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.150000us (5749), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.613000us (5508), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.058000us (5763), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.640000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 197.070000us (5743), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.035000us (5506), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.950000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.516000us (5401), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 210.225000us (4927), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.913000us (5497), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.636000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 195.773000us (5505), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.108000us (5703), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.556000us (5574), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.785000us (5735), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.818000us (5536), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.718000us (5730), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.516000us (5486), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.963000us (5697), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.970000us (5462), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.266000us (5747), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.891000us (5508), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.863000us (5697), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.330000us (5507), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.828000us (5787), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.176000us (5459), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.810000us (5656), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.371000us (5468), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 216.035000us (5756), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.455000us (5566), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.263000us (5696), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.576000us (5556), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.568000us (5736), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.261000us (5502), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.648000us (5744), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.058000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.636000us (5695), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.035000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.645000us (5725), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.198000us (5559), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.766000us (5706), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.916000us (5603), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.013000us (5699), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 205.626000us (5456), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.508000us (5775), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.946000us (5508), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.973000us (5695), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.918000us (5514), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.286000us (5775), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.248000us (5511), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.001000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.146000us (5511), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.686000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.148000us (5535), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.253000us (5634), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.613000us (5575), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.271000us (5687), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.883000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.801000us (5750), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.438000us (5573), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.046000us (5766), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.358000us (5449), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.351000us (5780), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.710000us (5515), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.266000us (5690), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 201.863000us (5498), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.286000us (5821), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.175000us (5514), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.131000us (5691), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.713000us (5525), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.341000us (5761), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.780000us (5493), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.496000us (5754), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.886000us (5464), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.746000us (5663), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.320000us (5504), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.091000us (5718), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.496000us (5523), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.948000us (5764), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.288000us (5616), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.970000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.123000us (5423), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.988000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.501000us (5483), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.808000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.386000us (5508), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.388000us (5719), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.643000us (5564), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.190000us (5697), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.445000us (5534), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 202.476000us (5693), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.308000us (5500), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.540000us (5648), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.623000us (5507), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.425000us (5737), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.418000us (5649), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.873000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.100000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.540000us (5655), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.146000us (5533), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.835000us (5652), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.895000us (5543), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.333000us (5718), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.558000us (5528), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.991000us (5662), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.131000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.291000us (5734), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.260000us (5500), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.583000us (5696), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.915000us (5486), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.835000us (5696), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.695000us (5532), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.555000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.756000us (5538), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.626000us (5669), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.241000us (5513), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 197.083000us (5666), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.183000us (5560), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.730000us (5735), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.995000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.433000us (5730), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.800000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.400000us (5684), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.091000us (5528), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.410000us (5716), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.668000us (5586), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.571000us (5700), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 198.195000us (5568), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.428000us (5679), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.948000us (5477), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.048000us (5777), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.565000us (5499), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.456000us (5695), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.450000us (5470), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.225000us (5683), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.823000us (5463), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.578000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.038000us (5538), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.486000us (5724), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.690000us (5540), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.710000us (5592), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.245000us (5509), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.731000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.343000us (5491), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.085000us (5717), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.758000us (5482), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 210.973000us (5707), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.926000us (5535), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.096000us (5673), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.631000us (5566), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.111000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.855000us (5457), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 196.985000us (5730), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 200.626000us (5518), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.718000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.893000us (5524), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.760000us (5745), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.838000us (5455), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.223000us (5728), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.216000us (5477), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.400000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.676000us (5575), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.963000us (5754), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.903000us (5561), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.543000us (5712), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 208.528000us (5509), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.773000us (5725), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.530000us (5447), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.065000us (5703), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.726000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.236000us (5737), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.421000us (5485), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.170000us (5754), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.045000us (5503), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.091000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.528000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.005000us (5736), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.488000us (5470), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.163000us (5697), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.615000us (5512), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.361000us (5671), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.891000us (5540), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.833000us (5700), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.911000us (5513), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.093000us (5724), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.008000us (5538), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.475000us (5718), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.976000us (5578), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.488000us (5685), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.343000us (5479), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.286000us (5736), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.870000us (5550), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 237.886000us (5325), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.628000us (5305), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 207.300000us (4983), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 242.731000us (4986), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.476000us (5243), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.308000us (5537), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.413000us (5746), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.451000us (4879), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.406000us (5670), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.096000us (5525), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.883000us (5670), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 195.611000us (5543), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.316000us (5784), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.283000us (5453), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.641000us (5707), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.123000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.426000us (5625), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.033000us (5497), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.328000us (5707), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.450000us (5477), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.871000us (5749), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.036000us (5470), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 206.688000us (5646), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.808000us (5510), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.428000us (5763), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.728000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.861000us (5696), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.966000us (5473), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.481000us (5701), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.241000us (5482), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.621000us (5632), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.463000us (5478), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.856000us (5749), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.291000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.408000us (5573), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 220.076000us (5442), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.323000us (5656), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.351000us (5475), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.691000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.850000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.370000us (5733), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.561000us (5488), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.496000us (5716), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.841000us (5480), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.160000us (5691), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.570000us (5568), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 200.696000us (5643), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.421000us (5572), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.178000us (5693), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 207.723000us (5481), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.481000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.880000us (5499), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.975000us (5709), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.978000us (5487), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.881000us (5817), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.768000us (5460), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.876000us (5643), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.093000us (5587), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.166000us (5658), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.868000us (5595), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.030000us (5708), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.873000us (5467), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.121000us (5698), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.810000us (5477), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.570000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.431000us (5561), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.135000us (5726), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.773000us (5484), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.596000us (5529), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 207.921000us (5021), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.718000us (5716), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.656000us (5478), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.731000us (5136), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.146000us (5425), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.796000us (4926), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.726000us (5431), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.590000us (4994), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.435000us (5503), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.383000us (5671), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.035000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 204.173000us (5673), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.841000us (5530), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.510000us (5740), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.203000us (5389), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.391000us (5706), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.665000us (5518), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.246000us (5674), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.983000us (5512), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.680000us (5659), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.671000us (5463), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.518000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.810000us (5449), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.946000us (5773), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.416000us (5505), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.431000us (5715), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.048000us (5498), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.035000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.040000us (5533), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.551000us (5727), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.350000us (5563), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.245000us (5729), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.738000us (5443), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.435000us (5706), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.245000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.435000us (5758), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.080000us (5496), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.948000us (5711), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.981000us (5519), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.915000us (5696), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.693000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.621000us (5737), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.291000us (5514), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.920000us (5761), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.011000us (5485), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 196.435000us (5707), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.383000us (5573), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.488000us (5723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 200.140000us (5518), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.735000us (5743), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.753000us (5504), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.096000us (5711), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.066000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.686000us (5717), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.726000us (5496), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.588000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.003000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 214.165000us (5640), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 226.301000us (5551), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.938000us (5761), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.885000us (5543), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.425000us (5765), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.641000us (5478), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.268000us (5651), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.413000us (5524), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.861000us (5774), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.016000us (5500), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.186000us (5702), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 212.740000us (5533), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.511000us (5684), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 195.105000us (5592), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.965000us (5728), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.698000us (5505), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.915000us (5734), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.368000us (5544), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.276000us (5698), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.510000us (5530), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.355000us (5698), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.255000us (5448), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.858000us (5764), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.271000us (5523), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.838000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.370000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.666000us (5726), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.530000us (5481), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.303000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.913000us (5452), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.253000us (5728), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.446000us (5510), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.355000us (5728), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.150000us (5490), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 1.474118ms (5325), Event tps: 5
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.013000us (7758), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.833000us (7723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.521000us (7857), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.353000us (7737), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.196000us (7739), Event tps: 5
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.795000us (7781), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.195000us (7769), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 134.551000us (7711), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.095000us (7850), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.751000us (7758), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.283000us (7835), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.796000us (7928), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.403000us (7817), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.690000us (7751), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.865000us (7944), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 144.666000us (7720), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.298000us (7757), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.776000us (7786), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.670000us (7933), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 130.260000us (7736), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.433000us (7877), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.091000us (7783), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.238000us (7958), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.251000us (7832), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.366000us (7806), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 144.450000us (7767), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.810000us (7823), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.651000us (7797), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.516000us (7814), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 120.916000us (7859), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.863000us (7842), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.395000us (7734), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.545000us (7916), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.401000us (7725), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.071000us (7853), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 124.193000us (7858), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.705000us (7759), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 136.693000us (7703), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.725000us (7780), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.820000us (7700), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.996000us (7829), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.328000us (7762), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.866000us (7842), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.798000us (7822), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.266000us (7692), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.416000us (7798), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.510000us (7926), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 127.478000us (7759), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.978000us (7812), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.603000us (7736), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.311000us (7779), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.470000us (7846), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.388000us (7834), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 119.591000us (7711), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.056000us (7787), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.006000us (7800), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.085000us (7842), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.841000us (7728), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.923000us (7786), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.045000us (7759), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.053000us (7820), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 127.850000us (7911), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 123.340000us (7740), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 119.093000us (7870), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.870000us (7552), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.435000us (7883), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.850000us (7794), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 128.880000us (7865), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.460000us (7736), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.703000us (7728), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 130.086000us (7793), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.435000us (7784), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 139.221000us (7767), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 137.836000us (7888), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 127.221000us (7824), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 139.213000us (7785), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.066000us (7859), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.958000us (7744), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.036000us (7957), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.525000us (7776), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.871000us (7805), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.271000us (7847), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 129.548000us (7909), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 124.915000us (7750), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.371000us (7782), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.473000us (7856), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.183000us (7850), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 139.951000us (7584), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.711000us (7846), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.956000us (7788), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.000000us (7800), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.286000us (7863), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.175000us (7822), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.878000us (7914), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.211000us (7744), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.245000us (7741), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 133.588000us (7877), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 136.765000us (7947), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.326000us (7889), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.298000us (7641), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.188000us (7720), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 145.825000us (7760), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.216000us (7775), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.016000us (7700), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.453000us (7887), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.691000us (7757), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 119.470000us (7818), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 123.790000us (7850), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.626000us (7832), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.206000us (7781), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.055000us (7804), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 133.683000us (7675), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.220000us (7732), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.628000us (7635), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.333000us (7734), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.023000us (7921), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.648000us (7859), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.545000us (7986), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.771000us (7842), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.340000us (7820), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.670000us (7767), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.246000us (7788), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.291000us (7741), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.081000us (7881), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.720000us (7824), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.565000us (7731), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.216000us (7835), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.993000us (7823), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.046000us (7794), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 145.560000us (7781), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.666000us (7827), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 144.450000us (7739), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.958000us (7847), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.753000us (7685), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.165000us (7839), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.893000us (7839), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.983000us (7685), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.115000us (7730), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.781000us (7641), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.401000us (7736), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.685000us (7492), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.833000us (7417), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 119.658000us (7416), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.480000us (7264), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.536000us (7954), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 112.511000us (7783), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.145000us (7863), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.275000us (7621), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.785000us (7532), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.268000us (7799), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.331000us (7707), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.225000us (7581), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.638000us (7596), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 124.145000us (7146), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.065000us (7706), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.055000us (7755), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.403000us (7915), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.366000us (7809), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.083000us (7964), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 126.395000us (7836), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 136.218000us (7770), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 133.496000us (7889), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.401000us (7730), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.056000us (7722), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.733000us (7797), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.411000us (7697), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 144.913000us (7833), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.140000us (7877), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.720000us (7864), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 126.001000us (7802), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.996000us (7805), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.351000us (7859), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.440000us (7645), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.445000us (7875), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.653000us (7800), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.978000us (7810), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.993000us (7811), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.176000us (7749), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.083000us (7619), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.976000us (7815), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.836000us (7832), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.188000us (7874), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.115000us (7885), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.463000us (7891), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 122.748000us (7754), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.025000us (7836), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 134.320000us (7788), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.775000us (7790), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.550000us (7874), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.211000us (7745), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.048000us (7814), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.761000us (7764), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.301000us (7829), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.510000us (7794), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.746000us (7785), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 137.371000us (7656), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.246000us (7797), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.530000us (7696), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.466000us (7823), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.716000us (7958), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.176000us (7833), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.431000us (7773), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.175000us (7790), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 130.930000us (7860), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.550000us (7919), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.408000us (7885), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.890000us (7880), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.288000us (7839), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.720000us (7654), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 137.998000us (7853), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.696000us (7781), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.845000us (7412), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 134.618000us (7782), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.626000us (7147), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 120.730000us (7257), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 125.428000us (7981), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.243000us (7791), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.423000us (7771), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.530000us (7720), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.525000us (7877), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.678000us (7813), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.796000us (7753), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.888000us (7954), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 128.600000us (7759), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.638000us (7799), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.920000us (7794), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.725000us (7738), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.950000us (7691), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 131.685000us (7776), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.865000us (7890), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 144.628000us (7743), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.993000us (7825), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.500000us (7836), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 142.960000us (7701), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.621000us (7937), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.983000us (7735), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.238000us (7835), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.363000us (7780), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.583000us (7787), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 134.603000us (7786), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.626000us (7806), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.296000us (7755), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.383000us (7818), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 120.795000us (7785), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 146.571000us (7733), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.550000us (7761), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.440000us (7769), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.021000us (7730), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.248000us (7862), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.783000us (7788), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.475000us (7719), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.788000us (7719), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 124.486000us (7405), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.635000us (7384), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 139.843000us (6566), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 120.693000us (7897), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.151000us (7772), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 123.591000us (7932), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 123.101000us (7758), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.405000us (7921), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.123000us (7823), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.666000us (7750), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.946000us (7829), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.685000us (7853), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.076000us (7797), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.146000us (7849), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.108000us (7851), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.636000us (7775), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.756000us (7825), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 147.521000us (7778), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.643000us (7809), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 137.551000us (7802), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.936000us (7904), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 121.393000us (7821), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 120.800000us (7905), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.473000us (7677), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.730000us (7786), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.188000us (7888), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 117.276000us (7786), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.278000us (7780), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.643000us (7870), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 140.430000us (7829), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 135.983000us (7860), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 120.493000us (7764), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.766000us (7682), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 138.526000us (7734), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.605000us (7894), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.080000us (7762), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.290000us (7778), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.680000us (7822), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.163000us (7847), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.923000us (7854), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.348000us (7860), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.105000us (7707), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.315000us (7693), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.911000us (7894), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 123.318000us (7803), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 130.166000us (7718), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 126.898000us (7802), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.963000us (7689), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 134.916000us (7717), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.086000us (7750), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 131.011000us (7698), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 124.293000us (7869), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.730000us (7622), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 122.800000us (7253), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 138.221000us (7913), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.093000us (7812), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 137.963000us (7898), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.366000us (7874), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 132.586000us (7830), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.398000us (7909), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 138.500000us (7765), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.875000us (7792), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.548000us (7780), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.730000us (7785), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.521000us (7808), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.750000us (7841), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.296000us (7749), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 139.248000us (7804), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 139.625000us (7825), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.635000us (7880), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.490000us (7852), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.240000us (7719), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.525000us (7852), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.945000us (7783), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 125.356000us (7779), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.940000us (7842), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.941000us (7767), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.061000us (7790), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.343000us (7874), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 115.113000us (7840), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 118.436000us (7861), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 144.728000us (7822), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.306000us (7823), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.245000us (7742), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.641000us (7767), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 130.256000us (7662), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.820000us (7846), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.195000us (7820), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.703000us (7797), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 114.355000us (7862), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.588000us (7931), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 143.626000us (7757), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.873000us (7879), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.975000us (7920), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 137.356000us (7810), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.430000us (7802), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 136.441000us (7707), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 148.536000us (7819), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 113.878000us (7939), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 116.606000us (7826), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 130.980000us (7750), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 141.151000us (7338), Event tps: 8
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.535000us (5189), Event tps: 10
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.015000us (5613), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.718000us (5530), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.231000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.865000us (5447), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.761000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.160000us (5522), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.466000us (5671), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.681000us (5532), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.473000us (5681), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.203000us (5515), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.870000us (5706), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.281000us (5597), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.921000us (5682), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 251.123000us (5573), Event tps: 8
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.436000us (5659), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 215.161000us (5559), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.740000us (5802), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.105000us (5513), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.068000us (5618), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.028000us (5473), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.936000us (5701), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.885000us (5513), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.145000us (5721), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.943000us (5486), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 195.681000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.508000us (5532), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.790000us (5729), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 206.898000us (5529), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.748000us (5756), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.050000us (5516), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.958000us (5820), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.286000us (5512), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.481000us (5613), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 207.080000us (5432), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.776000us (5726), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.843000us (5503), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.158000us (5810), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.341000us (5413), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 200.223000us (5673), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 207.623000us (5502), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.008000us (5802), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.678000us (5512), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.456000us (5751), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.853000us (5448), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.761000us (5733), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.066000us (5416), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.065000us (5698), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.501000us (5529), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.380000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.870000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.530000us (5756), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.918000us (5578), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.950000us (5720), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.765000us (5593), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.668000us (5682), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.566000us (5448), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.680000us (5754), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.130000us (5546), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.176000us (5761), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.065000us (5458), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.331000us (5766), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.726000us (5481), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.371000us (5734), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.305000us (5565), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 201.521000us (5759), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 221.565000us (5472), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.961000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.400000us (5520), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.406000us (5723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.711000us (5545), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.065000us (5735), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.491000us (5589), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.718000us (5712), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.948000us (5431), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.185000us (5725), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.011000us (5332), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.848000us (5323), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 208.713000us (5524), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.268000us (5759), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.325000us (5494), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.483000us (5669), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.776000us (5485), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.770000us (5758), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.630000us (5463), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.561000us (5675), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 217.400000us (4907), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 225.623000us (5472), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 197.653000us (4846), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.145000us (4956), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.866000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.991000us (5748), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.475000us (5389), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.035000us (5062), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.738000us (5450), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.901000us (5726), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.343000us (5455), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.523000us (5771), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.728000us (5481), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.655000us (5739), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.970000us (5475), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.391000us (5702), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.505000us (5599), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.758000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.910000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.650000us (5691), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.775000us (5442), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.986000us (5722), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.623000us (5467), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.728000us (5688), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.396000us (5528), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.143000us (5638), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.415000us (5527), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 212.595000us (5654), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.780000us (5499), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.960000us (5708), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 197.646000us (5494), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.995000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.853000us (5523), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.258000us (5699), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.598000us (5496), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.585000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.785000us (5490), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.808000us (5617), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.621000us (5484), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.970000us (5738), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.620000us (5401), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 212.645000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.830000us (5369), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 193.226000us (5623), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.665000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.766000us (5749), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.403000us (5430), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.745000us (5703), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 204.530000us (5508), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.880000us (5691), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.940000us (5484), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.230000us (5731), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.103000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.058000us (5716), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 198.550000us (5521), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.463000us (5702), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.061000us (5543), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.740000us (5801), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.440000us (5522), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.440000us (5751), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.950000us (5578), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.026000us (5608), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.855000us (5533), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 164.936000us (5747), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.601000us (5571), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.085000us (5723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 195.451000us (5487), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.880000us (5684), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.926000us (5566), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.910000us (5695), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.141000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.076000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.706000us (5188), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 265.453000us (5180), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 384.693000us (4887), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.015000us (5294), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.573000us (5612), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 214.938000us (5646), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.616000us (5496), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.796000us (5723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.101000us (5512), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.578000us (5705), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.863000us (5534), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.580000us (5736), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.716000us (5545), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.630000us (5685), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 200.563000us (5469), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.466000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.826000us (5481), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.126000us (5758), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.120000us (5440), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.626000us (5806), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 201.636000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 223.681000us (5678), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.145000us (5527), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.490000us (5736), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.490000us (5503), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.448000us (5748), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.390000us (5476), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.930000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.630000us (5451), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.251000us (5767), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.853000us (5548), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.605000us (5756), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.093000us (5486), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.280000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.723000us (5584), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.671000us (5739), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.046000us (5443), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.830000us (5694), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.103000us (5462), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.963000us (5767), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.441000us (5477), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.498000us (5745), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.013000us (5497), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.313000us (5700), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.183000us (5437), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.568000us (5760), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.990000us (5516), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.468000us (5753), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.198000us (5482), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.376000us (5761), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.838000us (5490), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.601000us (5722), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.986000us (5645), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.138000us (5712), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.758000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.340000us (5773), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.130000us (5509), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.180000us (5748), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.878000us (5525), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.485000us (5727), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.835000us (5530), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.408000us (5723), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.955000us (5534), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.566000us (5807), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.830000us (5502), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.546000us (5725), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.475000us (5501), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.316000us (5717), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.633000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.688000us (5682), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.681000us (5535), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.013000us (5717), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.061000us (5560), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.961000us (5719), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.928000us (5507), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.620000us (5688), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.613000us (5494), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.390000us (5738), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.576000us (5521), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.148000us (5748), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.186000us (5543), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.370000us (5691), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.603000us (5436), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.060000us (5755), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.396000us (5558), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.251000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.316000us (5521), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.230000us (5679), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.171000us (5511), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.285000us (5774), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.343000us (5468), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.970000us (5727), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.008000us (5484), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.328000us (5714), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.596000us (5511), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.685000us (5674), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.440000us (5553), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.168000us (5725), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.988000us (5523), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.001000us (5668), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.971000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.926000us (5734), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 197.745000us (5525), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.431000us (5738), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.536000us (5497), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.911000us (5683), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.066000us (5493), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.083000us (5693), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.008000us (5513), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.246000us (5698), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.131000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.160000us (5662), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.356000us (5480), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.926000us (5765), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.591000us (5486), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.545000us (5700), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.250000us (5467), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.886000us (5747), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.488000us (5483), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.093000us (5710), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.993000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.700000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.098000us (5490), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.186000us (5777), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.015000us (5493), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 266.071000us (5637), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.218000us (5547), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.500000us (5709), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.836000us (5491), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.603000us (5739), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.053000us (5419), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.801000us (5732), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.630000us (5572), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 189.838000us (5733), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 174.206000us (5536), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.410000us (5776), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.566000us (5541), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.961000us (5727), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.590000us (5479), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.145000us (5671), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.488000us (5547), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.176000us (5681), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.920000us (5428), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.338000us (5668), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.860000us (5545), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.905000us (5804), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.515000us (5514), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.210000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.391000us (5495), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.563000us (5759), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.576000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.505000us (5769), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.910000us (5536), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.758000us (5708), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.678000us (5496), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.881000us (5717), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.095000us (5583), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.281000us (5671), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 252.738000us (5537), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.686000us (5701), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.890000us (5485), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.985000us (5786), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.681000us (5518), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.343000us (5772), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.768000us (5564), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.431000us (5727), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.765000us (5517), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 186.361000us (5656), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.980000us (5543), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.430000us (5674), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.630000us (5478), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.818000us (5616), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.235000us (5392), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 205.353000us (4884), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.016000us (5452), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.376000us (5443), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.618000us (5535), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.228000us (5730), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.926000us (5476), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.640000us (5789), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.983000us (5491), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.748000us (5727), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.220000us (5507), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.925000us (5714), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 171.041000us (5492), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 207.891000us (5713), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.393000us (5520), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.431000us (5781), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.155000us (5473), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.506000us (5758), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 161.643000us (5535), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.376000us (5722), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.250000us (5556), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 149.335000us (5672), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 203.530000us (5502), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 153.541000us (5673), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 202.946000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.271000us (5690), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.915000us (5559), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 173.396000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 165.050000us (5534), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.480000us (5766), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 167.878000us (5522), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.526000us (5655), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.451000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.488000us (5728), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.671000us (5597), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.420000us (5718), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 204.275000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.038000us (5722), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.466000us (5475), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.376000us (5752), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.201000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.130000us (5704), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.666000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.656000us (5649), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.133000us (5461), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.111000us (5797), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.833000us (5521), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.356000us (5690), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.090000us (5527), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 188.323000us (5676), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.593000us (5567), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.743000us (5716), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.293000us (5488), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 172.418000us (5689), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.038000us (5555), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.026000us (5628), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.660000us (5013), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 179.158000us (5646), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.010000us (4750), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.593000us (5014), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 192.193000us (5480), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.608000us (5745), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.643000us (5530), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 150.075000us (5666), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 166.883000us (4925), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.098000us (5701), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 199.561000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 152.393000us (5715), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.543000us (5482), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 184.050000us (5676), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.060000us (5474), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 154.921000us (5668), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.163000us (5506), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 190.745000us (5609), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.610000us (5522), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.643000us (5692), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 182.030000us (5531), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.701000us (5780), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.851000us (5489), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 170.725000us (5712), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 157.220000us (5583), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 178.338000us (5671), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.315000us (5493), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.700000us (5734), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.173000us (5539), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.476000us (5701), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 201.980000us (5459), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 177.865000us (5745), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 163.866000us (5526), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 183.033000us (5715), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 168.810000us (5561), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 159.548000us (5730), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 156.936000us (5503), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.178000us (5670), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 158.278000us (5441), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 155.725000us (5767), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 169.581000us (5451), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 194.336000us (5717), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 210.611000us (5540), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.548000us (5706), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 187.740000us (5386), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 175.233000us (5668), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 181.881000us (5431), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 151.241000us (5740), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.873000us (5487), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.780000us (5662), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 180.906000us (5545), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 162.040000us (5729), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 185.215000us (5551), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 160.666000us (5725), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 176.003000us (5481), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick speed: 191.363000us (5737), Event tps: 4
 
 [0;4;97mThreadEvent:
 [;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m

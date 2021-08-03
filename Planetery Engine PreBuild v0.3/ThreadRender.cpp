@@ -43,7 +43,7 @@ static GLFWwindow* _window = nullptr;
 
 // main for ThreadRender
 static void _main() {
-	try {
+	/*try*/ {
 		logger.newThread("ThreadRender");
 		_state.store(State::normal, std::memory_order_relaxed);
 		_state.notify_all();
@@ -203,10 +203,10 @@ static void _main() {
 #endif
 			}
 		}
-	} catch (const char* e) {
-		logger("Uncaught Exception!! ", e);
-		events::ThreadEvents::panic(std::current_exception());
-	}  // catch (...) {
+	} //catch (const char* e) {
+	//	logger("Uncaught Exception!! ", e);
+	//	events::ThreadEvents::panic(std::current_exception());
+	//}  // catch (...) {
 	//	logger("Uncaught Unknown Exception!!");
 	//	events::ThreadEvents::panic(std::current_exception());
 	//}
