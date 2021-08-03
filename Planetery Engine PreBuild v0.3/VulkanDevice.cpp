@@ -50,6 +50,7 @@ PhysicalDevice::PhysicalDevice(
 	// GPU Requirements
 	if (!features10.features.geometryShader) meetRequirements = false;
 	if (!features10.features.tessellationShader) meetRequirements = false;
+	if (!features10.features.samplerAnisotropy) meetRequirements = false;
 	{
 		uint extensionCount;
 		vkEnumerateDeviceExtensionProperties(
@@ -80,7 +81,11 @@ PhysicalDevice::PhysicalDevice(
 			meetRequirements = false;
 	}
 
-	if (meetRequirements) logger << " Usable.";
+	if (meetRequirements) {
+		logger << " Usable.";
+	} else {
+		logger << " Failed to meet Min Requirements.";
+	}
 
 	// GPU Ratings
 	logger << " Rating: ";

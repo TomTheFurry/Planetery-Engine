@@ -65,7 +65,10 @@ export namespace vk {
 	enum class DescriptorDataType : std::underlying_type_t<VkDescriptorType> {
 		UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 		StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		Image = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
 		Sampler = VK_DESCRIPTOR_TYPE_SAMPLER,
+		ImageAndSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		//TODO: Add many more types of descriptor
 	};
 	enum class DescriptorPoolType : VkDescriptorPoolCreateFlags {
 		None = 0,
@@ -115,6 +118,36 @@ export namespace vk {
 		HostMemoryWrite = VK_ACCESS_HOST_WRITE_BIT,
 		AnyRead = VK_ACCESS_MEMORY_READ_BIT,
 		AnyWrite = VK_ACCESS_MEMORY_WRITE_BIT,
+	};
+
+	enum class SamplerFilter : std::underlying_type_t<VkFilter> {
+		Nearest = VK_FILTER_NEAREST,
+		Linear = VK_FILTER_LINEAR,
+		ExtCubic = VK_FILTER_CUBIC_IMG,	 // Needs extension: VK_EXT_filter_cubic
+	};
+
+	enum class SamplerMipmapMode : std::underlying_type_t<VkSamplerMipmapMode> {
+		Nearest = VK_SAMPLER_MIPMAP_MODE_NEAREST,
+		Linear = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+	};
+	enum class SamplerClampMode : std::underlying_type_t<VkSamplerAddressMode> {
+		Repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		MirroredRepeat = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT,
+		ClampToEdge = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+		BorderColor = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+		ClampToMirroredEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE,
+	};
+	enum class SamplerBorderColor : std::underlying_type_t<VkBorderColor> {
+		FloatTransparentBlack = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
+		IntTransparentBlack = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
+		FloatBlack = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,
+		IntBlack = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+		FloatWhite = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
+		IntWhite = VK_BORDER_COLOR_INT_OPAQUE_WHITE,
+		// Needs extension: VK_EXT_custom_border_color
+		ExtFloatCustom = VK_BORDER_COLOR_FLOAT_CUSTOM_EXT,
+		// Needs extension: VK_EXT_custom_border_color
+		ExtIntCustom = VK_BORDER_COLOR_INT_CUSTOM_EXT,
 	};
 
 	enum class TextureAspect {

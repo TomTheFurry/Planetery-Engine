@@ -28,6 +28,7 @@ export namespace vk {
 	class FrameBuffer;
 	class ImageView;
 	class Image;
+	class ImageSampler;
 	// Commend class:
 	class CommendPool;
 	class CommendBuffer;
@@ -315,6 +316,25 @@ namespace vk {
 		void* mappedPtr = nullptr;
 		LogicalDevice& d;
 	};
+	class ImageSampler
+	{
+	  public:
+		ImageSampler(LogicalDevice& d, SamplerFilter minFilter,
+		  SamplerFilter magFilter, SamplerClampMode clampModeX,
+		  SamplerClampMode clampModeY, SamplerClampMode clampModeZ,
+		  SamplerBorderColor borderColor, bool normalized = true,
+		  SamplerMipmapMode mipmapMode = SamplerMipmapMode::Linear,
+		  float lodBias = 0, float minLod = 0, float maxLod = 0);
+		ImageSampler(const ImageSampler&) = delete;
+		ImageSampler(ImageSampler&& other) noexcept;
+		ImageSampler& operator=(const ImageSampler&) = delete;
+		ImageSampler& operator=(ImageSampler&&) = default;
+		~ImageSampler();
+
+		VkSampler smp = nullptr;
+		LogicalDevice& d;
+	};
+
 }
 
 // Commend class:
@@ -496,14 +516,14 @@ namespace vk {
 				size_t offset = 0;
 				size_t length = VK_WHOLE_SIZE;
 			};
-			struct ImageType {
+			struct ImageAndSamplerType {
 				const ImageView* imageView;
-				VkSampler sampler;
-				VkImageLayout imageLayout;
+				const ImageSampler* sampler;
+				TextureActiveUseType imageActiveUsage;
 			};
 			union {
 				BufferType asBuffer;
-				ImageType asImage;
+				ImageAndSamplerType asImage;
 			};
 			WriteData(
 			  const Buffer* buf, size_t off = 0, size_t len = VK_WHOLE_SIZE) {
@@ -511,12 +531,17 @@ namespace vk {
 				asBuffer.offset = off;
 				asBuffer.length = len;
 			}
-			WriteData(
-			  const ImageView* img, VkSampler s, VkImageLayout imgLayout) {
-				asImage.imageView = img;
+			WriteData(const ImageView* imgView, const ImageSampler* s,
+			  TextureActiveUseType imgActiveUsage) {
+				asImage.imageView = imgView;
 				asImage.sampler = s;
-				asImage.imageLayout = imgLayout;
+				asImage.imageActiveUsage = imgActiveUsage;
 			}
+			WriteData(
+			  const ImageView* imgView, TextureActiveUseType imgActiveUsage):
+			  WriteData(imgView, nullptr, imgActiveUsage) {}
+			WriteData(const ImageSampler* s):
+			  WriteData(nullptr, s, TextureActiveUseType::Undefined) {}
 		};
 		struct WriteParam {
 			uint bindPoint;
@@ -666,7 +691,22 @@ namespace vk {
 				cmdInfo.pBufferInfo = bInfo.data();
 				cmdInfo.pTexelBufferView = nullptr;
 			} break;
-			case DescriptorDataType::Sampler: throw "NotImplemented"; break;
+			case DescriptorDataType::Sampler:
+				auto& iInfo = iInfol.emplace_back();
+				iInfo.reserve(cmdInfo.descriptorCount);
+				for (WriteData d : cmd.data) {
+					iInfo.push_back(VkDescriptorImageInfo{
+					  .sampler = d.asImage.sampler!=nullptr ? d.asImage.sampler->smp : nullptr,
+					  .imageView = d.asImage.imageView!=nullptr ? d.asImage.imageView->imgView : nullptr,
+					  .imageLayout = (VkImageLayout)d.asImage.imageActiveUsage,
+					});
+				}
+				if (iInfo.size() != cmdInfo.descriptorCount)
+					throw "VulkanInvalidCmdWriteNumOfData";
+				cmdInfo.pImageInfo = iInfo.data();
+				cmdInfo.pBufferInfo = nullptr;
+				cmdInfo.pTexelBufferView = nullptr;
+				break;
 			}
 			wds.push_back(cmdInfo);
 		}

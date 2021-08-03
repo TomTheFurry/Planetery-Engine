@@ -21,13 +21,15 @@ size_t formatUnitSize(VkFormat format) {
 	throw "VulkanInvalidFormat";
 }
 
-
+//----------------------------------------------
+//------------------ImageView-------------------
+//----------------------------------------------
 ImageView::ImageView(LogicalDevice& d, const Image& img): d(d) {
 	VkImageViewCreateInfo cInfo{};
 	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	cInfo.image = img.img;
-	//FIXME: Hack for viewTpye value.
-	cInfo.viewType = (VkImageViewType)(img.dimension-1);
+	// FIXME: Hack for viewTpye value.
+	cInfo.viewType = (VkImageViewType)(img.dimension - 1);
 	cInfo.format = img.format;
 	cInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
 	cInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -86,6 +88,9 @@ FrameBuffer::~FrameBuffer() {
 	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
 }
 
+//----------------------------------------------
+//------------------Image-----------------------
+//----------------------------------------------
 Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
   VkFormat texFormat, Flags<TextureUseType> texUsage,
   TextureActiveUseType startingUsage, Flags<MemoryFeature> texMemFeature,
@@ -173,7 +178,6 @@ Image::~Image() {
 	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
 }
 
-
 void* Image::map() {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::Mappable))
@@ -249,9 +253,6 @@ void Image::unmap() {
 	vkUnmapMemory(d.d, dm);
 }
 
-
-
-
 void Image::blockingIndirectWrite(const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
@@ -268,7 +269,6 @@ void Image::blockingIndirectWrite(const void* data) {
 	cb.endRecording();
 	cb.submit().wait();
 }
-
 void Image::blockingIndirectWrite(
   size_t nSize, size_t offset, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
@@ -298,7 +298,7 @@ void Image::directWrite(size_t nSize, size_t offset, const void* data) {
 	unmap();
 }
 
-void vk::Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
+void Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 	if constexpr (DO_SAFETY_CHECK) {
 		//??? What to check?
 	}
@@ -312,3 +312,48 @@ void vk::Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 	cb.submit().wait();
 }
 
+//----------------------------------------------
+//------------------ImageSampler----------------
+//----------------------------------------------
+
+ImageSampler::ImageSampler(LogicalDevice& d, SamplerFilter minFilter,
+  SamplerFilter magFilter, SamplerClampMode clampModeX,
+  SamplerClampMode clampModeY, SamplerClampMode clampModeZ,
+  SamplerBorderColor borderColor, bool normalized, SamplerMipmapMode mipmapMode,
+  float lodBias, float minLod, float maxLod):
+  d(d) {
+	VkSamplerCreateInfo scInfo{};
+	scInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	// scInfo.flags; Only useful for VK_EXT_fragment_density_map
+	scInfo.minFilter = (VkFilter)minFilter;
+	scInfo.magFilter = (VkFilter)magFilter;
+	scInfo.mipmapMode = (VkSamplerMipmapMode)mipmapMode;
+	scInfo.addressModeU = (VkSamplerAddressMode)clampModeX;
+	scInfo.addressModeV = (VkSamplerAddressMode)clampModeY;
+	scInfo.addressModeW = (VkSamplerAddressMode)clampModeZ;
+	scInfo.mipLodBias = lodBias;
+	// TODO: Add settings for anistropic filtering
+	scInfo.anisotropyEnable = VK_TRUE;
+	scInfo.maxAnisotropy =
+	  d.pd.properties10.properties.limits.maxSamplerAnisotropy;
+	// NOTE: Change here to add support for shader map multisample stuff
+	scInfo.compareEnable = VK_FALSE;
+	scInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	scInfo.minLod = minLod;
+	scInfo.maxLod = maxLod;
+	scInfo.borderColor = (VkBorderColor)borderColor;
+	scInfo.unnormalizedCoordinates = normalized ? VK_FALSE : VK_TRUE;
+
+	if (vkCreateSampler(d.d, &scInfo, nullptr, &smp) != VK_SUCCESS) {
+		throw "VulkanImageSamplerCreateFailure";
+	}
+}
+
+ImageSampler::ImageSampler(ImageSampler&& o) noexcept: d(o.d) {
+	smp = o.smp;
+	o.smp = nullptr;
+}
+
+ImageSampler::~ImageSampler() {
+	if (smp != nullptr) vkDestroySampler(d.d, smp, nullptr);
+}
