@@ -140,7 +140,7 @@ static void _main() {
 					  events::ThreadEvents::getPixelPerInch();
 					// fpsBox.notifyPPIChanged();
 				}
-				gl::target->clearColor(vec4(1.0f,0.8f,0.6f,1.0f));
+				gl::target->clearColor(vec4(1.0f, 0.8f, 0.6f, 1.0f));
 #endif
 
 #ifdef USE_VULKAN
@@ -235,32 +235,36 @@ void ThreadRender::start(GLFWwindow* window) {
 
 void ThreadRender::requestStop() {
 	_state.wait(State::init, std::memory_order_relaxed);
-	State st = _state.load(std::memory_order_relaxed);
-	if (st == State::normal)
-		_state.store(State::requestStop, std::memory_order_relaxed);
-	else if (st == State::paused) {
-		_state.store(State::requestStop, std::memory_order_relaxed);
+	State st = _state.exchange(State::requestStop, std::memory_order_relaxed);
+	if (st == State::paused) {
 		_state.notify_all();
+	} else if (st == State::complete) {
+		_state.store(State::complete, std::memory_order_relaxed);
 	}
 }
 
 void ThreadRender::pause() {
 	_state.wait(State::init, std::memory_order_relaxed);
-	State st = _state.load(std::memory_order_relaxed);
-	if (st == State::normal)
-		_state.store(State::paused, std::memory_order_relaxed);
+	State st = _state.exchange(State::paused, std::memory_order_relaxed);
+	if (st == State::requestStop) {
+		requestStop();
+		return;
+	}
+	if (st == State::complete) {
+		_state.store(State::complete, std::memory_order_relaxed);
+	}
 }
 
 void ThreadRender::unpause() {
 	_state.wait(State::init, std::memory_order_relaxed);
-	State st = _state.load(std::memory_order_relaxed);
-	if (st == State::paused) {
-		_state.store(State::normal, std::memory_order_relaxed);
-		_state.notify_all();
-	}
+	State result = State::paused;
+	bool works = _state.compare_exchange_strong(result, State::normal,
+	  std::memory_order_relaxed);
+	if (works) _state.notify_all();
 }
 
 void ThreadRender::join() {
+	if (_state.load(std::memory_order_relaxed) != State::complete)
 	_thread->join();
 	delete _thread;
 }

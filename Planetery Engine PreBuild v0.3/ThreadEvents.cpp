@@ -308,8 +308,9 @@ static void _main() {
 		render::ThreadRender::start(_window);
 
 		while (
-		  !glfwWindowShouldClose(_window)
-		  || _state.load(std::memory_order_relaxed) == State::requestStop) {
+		  !(glfwWindowShouldClose(_window)
+			|| _state.load(std::memory_order_relaxed) == State::requestStop
+			|| render::ThreadRender::getState() == render::State::complete)) {
 			ThreadEvents::counter++;
 
 			// Process request
@@ -374,12 +375,14 @@ static void _main() {
 			// TODO: Add sleep here
 		}
 		auto& eptr = _eptr;
+		auto rThreadState = render::ThreadRender::getState();
 		if (eptr) {
 			logger("Critical unknown error in ThreadRender. Haiting...");
+		} else if (rThreadState == render::State::complete) {
+			logger("Unknown exit in ThreadRender. Haiting...");
 		} else {
 			logger("Window close request recived. Stopping render thread...");
 		}
-		_state.store(State::requestStop, std::memory_order_relaxed);
 		render::ThreadRender::requestStop();
 		render::ThreadRender::join(1000000000);
 		logger("Render thread stopped.");
