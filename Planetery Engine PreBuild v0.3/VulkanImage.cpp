@@ -23,79 +23,12 @@ size_t formatUnitSize(VkFormat format) {
 }
 
 //----------------------------------------------
-//------------------ImageView-------------------
-//----------------------------------------------
-ImageView::ImageView(LogicalDevice& d, const Image& img): d(d) {
-	VkImageViewCreateInfo cInfo{};
-	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	cInfo.image = img.img;
-	// FIXME: Hack for viewTpye value.
-	cInfo.viewType = (VkImageViewType)(img.dimension - 1);
-	cInfo.format = img.format;
-	cInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	cInfo.subresourceRange.baseMipLevel = 0;
-	cInfo.subresourceRange.levelCount = img.mipLevels;
-	cInfo.subresourceRange.baseArrayLayer = 0;
-	cInfo.subresourceRange.layerCount = img.layers;
-	if (vkCreateImageView(d.d, &cInfo, nullptr, &imgView) != VK_SUCCESS) {
-		logger("Vulkan failed to make Image View form VkImage!\n");
-		throw "VulkanCreateImageViewFailure";
-	}
-}
-
-ImageView::ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo): d(d) {
-	if (vkCreateImageView(d.d, &createInfo, nullptr, &imgView) != VK_SUCCESS) {
-		logger("Vulkan failed to make Image View form VkImage!\n");
-		throw "VulkanCreateImageViewFailure";
-	}
-}
-ImageView::ImageView(ImageView&& other) noexcept: d(other.d) {
-	imgView = other.imgView;
-	other.imgView = nullptr;
-}
-ImageView::~ImageView() {
-	if (imgView != nullptr) vkDestroyImageView(d.d, imgView, nullptr);
-}
-
-FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
-  std::vector<ImageView*> attachments, uint layers):
-  d(device) {
-	size = nSize;
-	std::vector<VkImageView> att;
-	att.reserve(attachments.size());
-	for (auto& iv : attachments) att.push_back(iv->imgView);
-	VkFramebufferCreateInfo info{};
-	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	info.renderPass = rp.rp;
-	info.attachmentCount = (uint)att.size();
-	info.pAttachments = att.data();
-	info.width = size.x;
-	info.height = size.y;
-	info.layers = layers;
-	if (vkCreateFramebuffer(d.d, &info, nullptr, &fb) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create framebuffer!");
-	}
-}
-FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
-	fb = other.fb;
-	size = other.size;
-	other.fb = nullptr;
-}
-FrameBuffer::~FrameBuffer() {
-	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
-}
-
-//----------------------------------------------
 //------------------Image-----------------------
 //----------------------------------------------
 Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
-  VkFormat texFormat, Flags<TextureUseType> texUsage, Flags<MemoryFeature> texMemFeature,
-  Flags<TextureFeature> texFeature, uint mipLevels, uint layers,
-  uint subsamples):
+  VkFormat texFormat, Flags<TextureUseType> texUsage,
+  Flags<MemoryFeature> texMemFeature, Flags<TextureFeature> texFeature,
+  uint mipLevels, uint layers, uint subsamples):
   d(d) {
 	if (texMemFeature.has(MemoryFeature::Mappable)) {
 		if (texMemFeature.has(MemoryFeature::Coherent))
@@ -263,7 +196,7 @@ void Image::blockingIndirectWrite(const void* data) {
 	auto sg = Buffer(d, texMemorySize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = CommendBuffer(d.getCommendPool(CommendPoolType::Shortlived));
+	auto cb = d.getSingleUseCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
 	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
@@ -281,7 +214,7 @@ void Image::blockingIndirectWrite(
 	auto sg = Buffer(d, nSize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = CommendBuffer(d.getCommendPool(CommendPoolType::Shortlived));
+	auto cb = d.getSingleUseCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
 	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
@@ -304,7 +237,7 @@ void Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 	if constexpr (DO_SAFETY_CHECK) {
 		//??? What to check?
 	}
-	auto cb = CommendBuffer(d.getCommendPool(CommendPoolType::Shortlived));
+	auto cb = d.getSingleUseCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
 	cb.cmdChangeState(*this, targetUsage, PipelineStage::TopOfPipe,
@@ -312,6 +245,45 @@ void Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 
 	cb.endRecording();
 	cb.submit().wait();
+}
+
+//----------------------------------------------
+//------------------ImageView-------------------
+//----------------------------------------------
+ImageView::ImageView(LogicalDevice& d, const Image& img): d(d) {
+	VkImageViewCreateInfo cInfo{};
+	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	cInfo.image = img.img;
+	// FIXME: Hack for viewTpye value.
+	cInfo.viewType = (VkImageViewType)(img.dimension - 1);
+	cInfo.format = img.format;
+	cInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+	cInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	cInfo.subresourceRange.baseMipLevel = 0;
+	cInfo.subresourceRange.levelCount = img.mipLevels;
+	cInfo.subresourceRange.baseArrayLayer = 0;
+	cInfo.subresourceRange.layerCount = img.layers;
+	if (vkCreateImageView(d.d, &cInfo, nullptr, &imgView) != VK_SUCCESS) {
+		logger("Vulkan failed to make Image View form VkImage!\n");
+		throw "VulkanCreateImageViewFailure";
+	}
+}
+
+ImageView::ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo): d(d) {
+	if (vkCreateImageView(d.d, &createInfo, nullptr, &imgView) != VK_SUCCESS) {
+		logger("Vulkan failed to make Image View form VkImage!\n");
+		throw "VulkanCreateImageViewFailure";
+	}
+}
+ImageView::ImageView(ImageView&& other) noexcept: d(other.d) {
+	imgView = other.imgView;
+	other.imgView = nullptr;
+}
+ImageView::~ImageView() {
+	if (imgView != nullptr) vkDestroyImageView(d.d, imgView, nullptr);
 }
 
 //----------------------------------------------
@@ -358,4 +330,36 @@ ImageSampler::ImageSampler(ImageSampler&& o) noexcept: d(o.d) {
 
 ImageSampler::~ImageSampler() {
 	if (smp != nullptr) vkDestroySampler(d.d, smp, nullptr);
+}
+
+//----------------------------------------------
+//------------------FrameBuffer-----------------
+//----------------------------------------------
+
+FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+  std::vector<ImageView*> attachments, uint layers):
+  d(device) {
+	size = nSize;
+	std::vector<VkImageView> att;
+	att.reserve(attachments.size());
+	for (auto& iv : attachments) att.push_back(iv->imgView);
+	VkFramebufferCreateInfo info{};
+	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	info.renderPass = rp.rp;
+	info.attachmentCount = (uint)att.size();
+	info.pAttachments = att.data();
+	info.width = size.x;
+	info.height = size.y;
+	info.layers = layers;
+	if (vkCreateFramebuffer(d.d, &info, nullptr, &fb) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create framebuffer!");
+	}
+}
+FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
+	fb = other.fb;
+	size = other.size;
+	other.fb = nullptr;
+}
+FrameBuffer::~FrameBuffer() {
+	if (fb != nullptr) vkDestroyFramebuffer(d.d, fb, nullptr);
 }

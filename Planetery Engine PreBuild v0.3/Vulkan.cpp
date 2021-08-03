@@ -18,6 +18,7 @@ import Define;
 import Logger;
 using namespace vk;
 
+// Native Callbacks
 VkResult __cdecl vkCreateDebugUtilsMessengerEXT(VkInstance instance,
   const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
   const VkAllocationCallbacks* pAllocator,
@@ -61,6 +62,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	return VK_FALSE;
 }
 
+// Const Settings
 const Layer _layers[] = {
   {"VK_LAYER_KHRONOS_validation", 0u},
 };
@@ -71,11 +73,12 @@ const Extension _extensions[] = {
 const char* const _deviceExtensions[] = {
   "VK_KHR_swapchain",
 };
+
+// Static values
 static VkInstance _vk = nullptr;
 static bool _loadedPreInitData = false;
 static std::vector<VkLayerProperties> _layersAvailable;
 static std::vector<VkExtensionProperties> _extensionsAvailable;
-static std::list<PhysicalDevice> _physicalDevices;
 static OSRenderSurface* _OSSurface;
 static std::vector<const char*> _layersEnabled;
 static std::vector<const char*> _extensionsEnabled;
@@ -195,39 +198,7 @@ inline void createDebugger() {
 		logger("Warning: Failed to create Vulkan logger!\n");
 	};
 }
-inline void scanPhysicalDevices() {
-	std::vector<VkPhysicalDevice> _physicalDevicesAvailable;
-	logger.newLayer();
-	logger << "Vulkan: Scanning Graphic Cards...\n";
-	{
-		uint deviceCount = 0;
-		vkEnumeratePhysicalDevices(_vk, &deviceCount, nullptr);
-		if (deviceCount == 0) {
-			logger("Vulkan did not find any available graphic cards!\n");
-			logger.closeLayer();
-			throw "VulkanNoGraphicCardsDetected";
-		}
-		_physicalDevicesAvailable.resize(deviceCount);
-		vkEnumeratePhysicalDevices(
-		  _vk, &deviceCount, _physicalDevicesAvailable.data());
-	}
-	//_physicalDevices.reserve(_physicalDevicesAvailable.size());
-	for (auto& d : _physicalDevicesAvailable) {
-		PhysicalDevice dev(d, _OSSurface);
-		if (dev.meetRequirements) _physicalDevices.emplace_back(std::move(dev));
-	}
-	_physicalDevices.sort(
-	  [](const auto& p1, const auto& p2) { return p1 < p2; });
-	if (_physicalDevices.empty()) {
-		logger("Vulkan did not find any usable graphic cards!\n");
-		logger.closeLayer();
-		throw "VulkanNoUsableGraphicCardsDetected";
-	}
-	logger.closeLayer();
-}
-inline void makeRenderingLogicalDevice() {
-	_renderDevice = _physicalDevices.front().makeDevice(VK_QUEUE_GRAPHICS_BIT);
-}
+
 
 bool vk::requestLayer(const char* name, uint minVersion) {
 	if (!_loadedPreInitData) preInit();
@@ -359,10 +330,10 @@ inline void loadSwapchain(bool remake = false) {
 	sd.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	sd.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	_renderPass->complete();
-	ShaderCompiled vertShad(
-	  *_renderDevice, ShaderType::Vert, "cshader/testUniformAndTexture.vert.spv");
-	ShaderCompiled fragShad(
-	  *_renderDevice, ShaderType::Frag, "cshader/testUniformAndTexture.frag.spv");
+	ShaderCompiled vertShad(*_renderDevice, ShaderType::Vert,
+	  "cshader/testUniformAndTexture.vert.spv");
+	ShaderCompiled fragShad(*_renderDevice, ShaderType::Frag,
+	  "cshader/testUniformAndTexture.frag.spv");
 	// Make layouts
 	if (_dsl == nullptr) {
 		std::vector<DescriptorLayoutBinding> dslb{};
@@ -439,8 +410,8 @@ void vk::init() {
 	// Create the OS specific Render Surface (for display out)
 	_OSSurface = new OSRenderSurface();
 	// Create devices
-	scanPhysicalDevices();
-	makeRenderingLogicalDevice();
+	_renderDevice = PhysicalDevice::getUsablePhysicalDevice(_OSSurface)
+					  .makeDevice(VK_QUEUE_GRAPHICS_BIT);
 	// Make SwapChain and pipeline and programs and layouts
 	loadSwapchain();
 	// Test programe
@@ -453,17 +424,19 @@ void vk::init() {
 	_indexBuff->blockingIndirectWrite((void*)std::data(testInd));
 
 	int texWidth, texHeight, texChannels;
-	stbi_uc* pixels = stbi_load("cshader/test.png", &texWidth, &texHeight,
-	  &texChannels, STBI_rgb_alpha);
+	stbi_uc* pixels = stbi_load(
+	  "cshader/test.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	VkDeviceSize imageSize = texWidth * texHeight * 4;
 	if (!pixels) throw "TEST_VulkanStbImageLoadFailure";
 
 	_imgTest = new Image(*_renderDevice, uvec3{texWidth, texHeight, 1}, 2,
-	  VK_FORMAT_R8G8B8A8_SRGB, TextureUseType::ShaderSampling, MemoryFeature::IndirectWritable);
+	  VK_FORMAT_R8G8B8A8_SRGB, TextureUseType::ShaderSampling,
+	  MemoryFeature::IndirectWritable);
 	assert(_imgTest.texMemorySize == imageSize);
 	_imgTest->blockingIndirectWrite(pixels);
 	stbi_image_free(pixels);
-	_imgTest->blockingTransformActiveUsage(TextureActiveUseType::ReadOnlyShader);
+	_imgTest->blockingTransformActiveUsage(
+	  TextureActiveUseType::ReadOnlyShader);
 
 	_imgViewTest = new ImageView(*_renderDevice, *_imgTest);
 	_imgSamplerBasic = new ImageSampler(
@@ -551,7 +524,7 @@ void vk::_testDraw() {
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
 	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
-		1.f);
+	  1.f);
 
 
 	_ub[_currentRenderTick->getImageIndex()].directWrite(&currentColor);
@@ -581,8 +554,8 @@ void vk::end(void (*cleanupFunc)()) {
 	if (_imgTest != nullptr) delete _imgTest;
 	if (_imgViewTest != nullptr) delete _imgViewTest;
 	if (_imgSamplerBasic != nullptr) delete _imgSamplerBasic;
+	if (_renderDevice != nullptr) delete _renderDevice;
 	// testPrograme end
-	_physicalDevices.clear();
 	if (_OSSurface != nullptr) delete _OSSurface;
 	if (_debugMessenger)
 		vkDestroyDebugUtilsMessengerEXT(_vk, _debugMessenger, nullptr);

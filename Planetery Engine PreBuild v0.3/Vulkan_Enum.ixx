@@ -68,7 +68,7 @@ export namespace vk {
 		Image = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
 		Sampler = VK_DESCRIPTOR_TYPE_SAMPLER,
 		ImageAndSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		//TODO: Add many more types of descriptor
+		// TODO: Add many more types of descriptor
 	};
 	enum class DescriptorPoolType : VkDescriptorPoolCreateFlags {
 		None = 0,

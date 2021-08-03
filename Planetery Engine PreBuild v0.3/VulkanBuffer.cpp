@@ -179,9 +179,6 @@ Buffer& Buffer::getStagingBuffer(RenderTick& rt, size_t nSize) {
 	return rt.makeStagingBuffer(size);
 }
 void Buffer::blockingIndirectWrite(const void* data) {
-	blockingIndirectWrite(d.getCommendPool(CommendPoolType::Shortlived), data);
-}
-void Buffer::blockingIndirectWrite(CommendPool& cp, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!feature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
@@ -189,19 +186,13 @@ void Buffer::blockingIndirectWrite(CommendPool& cp, const void* data) {
 	auto sg = Buffer(d, size,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = CommendBuffer(cp);
+	auto cb = d.getSingleUseCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopy(sg, *this, size);
 	cb.endRecording();
 	cb.submit().wait();
 }
-void Buffer::blockingIndirectWrite(
-  size_t size, size_t offset, const void* data) {
-	blockingIndirectWrite(
-	  d.getCommendPool(CommendPoolType::Shortlived), size, offset, data);
-}
-void Buffer::blockingIndirectWrite(
-  CommendPool& cp, size_t nSize, size_t offset, const void* data) {
+void Buffer::blockingIndirectWrite(size_t nSize, size_t offset, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!feature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
@@ -210,7 +201,7 @@ void Buffer::blockingIndirectWrite(
 	auto sg = Buffer(d, nSize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = CommendBuffer(cp);
+	auto cb = d.getSingleUseCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopy(sg, *this, nSize, 0, offset);
 	cb.endRecording();

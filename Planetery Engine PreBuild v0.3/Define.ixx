@@ -8,7 +8,7 @@ import std.core;
 //import <glm/gtc/type_ptr.hpp>;
 
 export {
-#include <glm/glm.hpp>;
+#include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 	typedef unsigned short usint;

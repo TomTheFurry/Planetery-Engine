@@ -1,9 +1,9 @@
 module;
 #include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include "GLFW.h"
-#	include <assert.h>
+#pragma warning(disable : 26812)
+#include <vulkan/vulkan.h>
+#include "GLFW.h"
+#include <assert.h>
 module Vulkan;
 import: Internal;
 import: Enum;
@@ -12,6 +12,39 @@ import Define;
 import ThreadEvents;
 import Logger;
 using namespace vk;
+
+PhysicalDevice PhysicalDevice::getUsablePhysicalDevice(
+  OSRenderSurface* osSurface) {
+	std::vector<VkPhysicalDevice> pDevices;
+	logger.newLayer();
+	logger << "Vulkan: Scanning Graphic Cards...\n";
+	{
+		uint deviceCount = 0;
+		vkEnumeratePhysicalDevices(getVkInstance(), &deviceCount, nullptr);
+		if (deviceCount == 0) {
+			logger("Vulkan did not find any available graphic cards!\n");
+			logger.closeLayer();
+			return nullptr;
+		}
+		pDevices.resize(deviceCount);
+		vkEnumeratePhysicalDevices(
+		  getVkInstance(), &deviceCount, pDevices.data());
+	}
+	std::vector<PhysicalDevice> objDevices;
+	objDevices.reserve(pDevices.size());
+	for (auto& dPtr : pDevices) {
+		if (!objDevices.emplace_back(dPtr, osSurface).meetRequirements)
+			objDevices.pop_back();
+	}
+	if (objDevices.empty()) {
+		logger("Vulkan did not find any usable graphic cards!\n");
+		logger.closeLayer();
+		return nullptr;
+	}
+	logger.closeLayer();
+	return std::move(*std::max_element(objDevices.begin(), objDevices.end(),
+	  [](const auto& p1, const auto& p2) { return p1 < p2; }));
+}
 
 PhysicalDevice::PhysicalDevice(
   VkPhysicalDevice _d, OSRenderSurface* renderSurface) {
@@ -107,8 +140,11 @@ PhysicalDevice::PhysicalDevice(
 	logger << std::to_string(rating) << "\n";
 	logger.closeLayer();
 }
+PhysicalDevice::PhysicalDevice(const PhysicalDevice& o):
+  PhysicalDevice(o.d, o.renderOut){};
+
 PhysicalDevice::PhysicalDevice(PhysicalDevice&& o) noexcept:
-  devices(std::move(o.devices)), queueFamilies(std::move(o.queueFamilies)) {
+  queueFamilies(std::move(o.queueFamilies)) {
 	d = o.d;
 	features10 = o.features10;
 	features11 = o.features11;
@@ -126,6 +162,7 @@ PhysicalDevice::PhysicalDevice(PhysicalDevice&& o) noexcept:
 	memProperties = o.memProperties;
 	o.d = nullptr;
 }
+
 QueueFamilyIndex PhysicalDevice::getQueueFamily(
   VkQueueFlags requirement, OSRenderSurface* surfaceOut) {
 	for (uint i = 0; i < queueFamilies.size(); i++) {
@@ -163,36 +200,36 @@ uint PhysicalDevice::getMemoryTypeIndex(
 	return uint(-1);
 }
 LogicalDevice* PhysicalDevice::makeDevice(
-  VkQueueFlags requirement, OSRenderSurface* renderSurface) {
+  VkQueueFlags requirement, OSRenderSurface* renderSurface) & {
 	QueueFamilyIndex i = getQueueFamily(requirement, renderSurface);
 	if (i == uint(-1)) return nullptr;
-	return &devices.emplace_back(*this, i);
+	return new LogicalDevice(*this, i);
+}
+LogicalDevice* PhysicalDevice::makeDevice(
+  VkQueueFlags requirement, OSRenderSurface* renderSurface) && {
+	QueueFamilyIndex i = getQueueFamily(requirement, renderSurface);
+	if (i == uint(-1)) return nullptr;
+	return new LogicalDevice(std::move(*this), i);
 }
 SwapChainSupport PhysicalDevice::getSwapChainSupport() const {
 	return SwapChainSupport(*this, *renderOut);
 }
-PhysicalDevice::~PhysicalDevice() {
-	// Nothing to do here for now
-}
 
-
-LogicalDevice::LogicalDevice(
-  PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
-  pd(p) {
+void LogicalDevice::_setup() {
 	const float One = 1.0f;
-	queueIndex = queueFamilyIndex;
 	std::array<VkDeviceQueueCreateInfo, 1> queueInfo{};
 	queueInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueInfo[0].queueFamilyIndex = queueFamilyIndex;
+	queueInfo[0].queueFamilyIndex = queueIndex;
 	queueInfo[0].queueCount = 2;
 	queueInfo[0].pQueuePriorities = &One;
 
 	VkDeviceCreateInfo deviceInfo{};
 	deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceInfo.pNext = &p.features10;
+	deviceInfo.pNext = &pd.features10;
 	deviceInfo.pQueueCreateInfos = queueInfo.data();
 	deviceInfo.queueCreateInfoCount = 1;
-	deviceInfo.enabledExtensionCount = (uint)std::size(getRequestedDeviceExtensions());
+	deviceInfo.enabledExtensionCount =
+	  (uint)std::size(getRequestedDeviceExtensions());
 	deviceInfo.ppEnabledExtensionNames =
 	  std::data(getRequestedDeviceExtensions());
 	deviceInfo.pEnabledFeatures = NULL;
@@ -201,13 +238,26 @@ LogicalDevice::LogicalDevice(
 		logger("Vulkan failed to create main graphical device!\n");
 		throw "VulkanCreateGraphicalDeviceFailure";
 	}
-	vkGetDeviceQueue(d, queueFamilyIndex, 0, &queue);
+	vkGetDeviceQueue(d, queueIndex, 0, &queue);
 	commendPools.reserve(static_cast<uint>(CommendPoolType::MAX_ENUM));
 	for (uint i = 0; i < static_cast<uint>(CommendPoolType::MAX_ENUM); i++)
 		commendPools.emplace_back(*this, static_cast<CommendPoolType>(i));
 }
+
+LogicalDevice::LogicalDevice(
+  const PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
+  pd(p) {
+	queueIndex = queueFamilyIndex;
+	_setup();
+}
+LogicalDevice::LogicalDevice(
+  PhysicalDevice&& p, QueueFamilyIndex queueFamilyIndex):
+  pd(std::move(p)) {
+	queueIndex = queueFamilyIndex;
+	_setup();
+}
 LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept:
-  pd(o.pd), commendPools(std::move(o.commendPools)) {
+  pd(std::move(o.pd)), commendPools(std::move(o.commendPools)) {
 	queue = o.queue;
 	queueIndex = o.queueIndex;
 	d = o.d;
@@ -217,13 +267,6 @@ LogicalDevice::~LogicalDevice() {
 	if (swapChain) swapChain.reset();
 	commendPools.clear();
 	if (d) vkDestroyDevice(d, nullptr);
-}
-CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
-	if constexpr (DO_SAFETY_CHECK)
-		if (static_cast<uint>(type)
-			>= static_cast<uint>(CommendPoolType::MAX_ENUM))
-			throw "VulkanInvalidEnum";
-	return commendPools.at(static_cast<uint>(type));
 }
 void LogicalDevice::makeSwapChain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
@@ -240,6 +283,17 @@ void LogicalDevice::remakeSwapChain(uvec2 size) {
 		logger << "WARN: Failed to rebuild swapchain. Retrying...\n";
 		logger.closeMessage();
 	};
+}
+CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
+	if constexpr (DO_SAFETY_CHECK)
+		if (static_cast<uint>(type)
+			>= static_cast<uint>(CommendPoolType::MAX_ENUM))
+			throw "VulkanInvalidEnum";
+	return commendPools.at(static_cast<uint>(type));
+}
+CommendBuffer LogicalDevice::getSingleUseCommendBuffer() {
+	auto& cp = getCommendPool(CommendPoolType::Shortlived);
+	return cp.makeCommendBuffer();
 }
 
 OSRenderSurface::OSRenderSurface() {

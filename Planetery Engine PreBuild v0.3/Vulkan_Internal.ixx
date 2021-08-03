@@ -25,10 +25,10 @@ export namespace vk {
 	class IndexBuffer;
 	class UniformBuffer;
 	// Image class:
-	class FrameBuffer;
-	class ImageView;
 	class Image;
+	class ImageView;
 	class ImageSampler;
+	class FrameBuffer;
 	// Commend class:
 	class CommendPool;
 	class CommendBuffer;
@@ -64,7 +64,7 @@ export namespace vk {
 }
 
 // Device class:
-namespace vk {
+export namespace vk {
 	struct Layer {
 		const char* name;
 		uint version;
@@ -76,11 +76,16 @@ namespace vk {
 	class PhysicalDevice
 	{
 	  public:
+		static PhysicalDevice getUsablePhysicalDevice(
+		  OSRenderSurface* osSurface);
 		PhysicalDevice(
 		  VkPhysicalDevice _d, OSRenderSurface* renderSurface = nullptr);
-		PhysicalDevice(const PhysicalDevice&) = delete;
-		PhysicalDevice(PhysicalDevice&&) noexcept;
-		VkPhysicalDevice d;
+		PhysicalDevice() = default;
+		PhysicalDevice(const PhysicalDevice& other);
+		PhysicalDevice(PhysicalDevice&& other) noexcept;
+		PhysicalDevice& operator=(const PhysicalDevice&) = default;
+		PhysicalDevice& operator=(PhysicalDevice&&) = default;
+		VkPhysicalDevice d = nullptr;
 		VkPhysicalDeviceFeatures2 features10;
 		VkPhysicalDeviceVulkan11Features features11;
 		VkPhysicalDeviceVulkan12Features features12;
@@ -89,7 +94,6 @@ namespace vk {
 		VkPhysicalDeviceVulkan12Properties properties12;
 		VkPhysicalDeviceMemoryProperties memProperties;
 		std::vector<VkQueueFamilyProperties> queueFamilies;
-		std::list<LogicalDevice> devices;
 		float rating;
 		bool meetRequirements;
 		OSRenderSurface* renderOut = nullptr;
@@ -98,7 +102,9 @@ namespace vk {
 		uint getMemoryTypeIndex(
 		  uint bitFilter, Flags<MemoryFeature> feature) const;
 		LogicalDevice* makeDevice(
-		  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr);
+		  VkQueueFlags requirement, OSRenderSurface* renderSurface = nullptr) &;
+		LogicalDevice* makeDevice(VkQueueFlags requirement,
+		  OSRenderSurface* renderSurface = nullptr) &&;
 		VkPhysicalDevice operator->() { return d; }
 		const VkPhysicalDevice operator->() const { return d; }
 		bool operator==(const PhysicalDevice& other) const {
@@ -108,12 +114,15 @@ namespace vk {
 			return rating <=> other.rating;
 		}
 		SwapChainSupport getSwapChainSupport() const;
-		~PhysicalDevice();
+		~PhysicalDevice() = default;
 	};
 	class LogicalDevice
 	{
 	  public:
-		LogicalDevice(PhysicalDevice& pd, QueueFamilyIndex queueFamilyIndex);
+		void _setup();
+		LogicalDevice(
+		  const PhysicalDevice& pd, QueueFamilyIndex queueFamilyIndex);
+		LogicalDevice(PhysicalDevice&& pd, QueueFamilyIndex queueFamilyIndex);
 		LogicalDevice(const LogicalDevice&) = delete;
 		LogicalDevice(LogicalDevice&&) noexcept;
 		VkDevice d;
@@ -124,10 +133,11 @@ namespace vk {
 		void makeSwapChain(uvec2 size = uvec2(-1));
 		void remakeSwapChain(uvec2 size = uvec2(-1));
 		CommendPool& getCommendPool(CommendPoolType type);
+		CommendBuffer getSingleUseCommendBuffer();
 		VkDevice operator->() { return d; }
 		const VkDevice operator->() const { return d; }
 		~LogicalDevice();
-		PhysicalDevice& pd;
+		PhysicalDevice pd;
 	};
 	class OSRenderSurface
 	{
@@ -174,7 +184,7 @@ namespace vk {
 }
 
 // Buffer class:
-namespace vk {
+export namespace vk {
 	class Buffer
 	{
 		void _setup();
@@ -197,11 +207,8 @@ namespace vk {
 		Buffer& getStagingBuffer(RenderTick& rt);
 		Buffer& getStagingBuffer(RenderTick& rt, size_t size);
 		void blockingIndirectWrite(const void* data);
-		void blockingIndirectWrite(CommendPool& cp, const void* data);
 		void blockingIndirectWrite(
 		  size_t size, size_t offset, const void* data);
-		void blockingIndirectWrite(
-		  CommendPool& cp, size_t size, size_t offset, const void* data);
 		void directWrite(const void* data);
 		void directWrite(size_t size, size_t offset, const void* data);
 
@@ -243,32 +250,7 @@ namespace vk {
 }
 
 // Image class:
-namespace vk {
-	class FrameBuffer
-	{
-	  public:
-		FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
-		  std::vector<ImageView*> attachments, uint layers = 1);
-		FrameBuffer(const FrameBuffer&) = delete;
-		FrameBuffer(FrameBuffer&& other) noexcept;
-		~FrameBuffer();
-		uvec2 size;
-		VkFramebuffer fb = nullptr;
-		LogicalDevice& d;
-	};
-	class ImageView
-	{
-	  public:
-		ImageView(LogicalDevice& d, const Image& img);
-		ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo);
-		ImageView(const ImageView&) = delete;
-		ImageView(ImageView&& other) noexcept;
-		ImageView& operator=(const ImageView&) = delete;
-		ImageView& operator=(ImageView&&) = default;
-		~ImageView();
-		VkImageView imgView = nullptr;
-		LogicalDevice& d;
-	};
+export namespace vk {
 	class Image
 	{
 	  public:
@@ -315,6 +297,19 @@ namespace vk {
 		void* mappedPtr = nullptr;
 		LogicalDevice& d;
 	};
+	class ImageView
+	{
+	  public:
+		ImageView(LogicalDevice& d, const Image& img);
+		ImageView(LogicalDevice& d, VkImageViewCreateInfo createInfo);
+		ImageView(const ImageView&) = delete;
+		ImageView(ImageView&& other) noexcept;
+		ImageView& operator=(const ImageView&) = delete;
+		ImageView& operator=(ImageView&&) = default;
+		~ImageView();
+		VkImageView imgView = nullptr;
+		LogicalDevice& d;
+	};
 	class ImageSampler
 	{
 	  public:
@@ -323,7 +318,9 @@ namespace vk {
 		  SamplerClampMode clampModeX = SamplerClampMode::BorderColor,
 		  SamplerClampMode clampModeY = SamplerClampMode::BorderColor,
 		  SamplerClampMode clampModeZ = SamplerClampMode::BorderColor,
-		  SamplerBorderColor borderColor = SamplerBorderColor::FloatTransparentBlack, bool normalized = true,
+		  SamplerBorderColor borderColor =
+			SamplerBorderColor::FloatTransparentBlack,
+		  bool normalized = true,
 		  SamplerMipmapMode mipmapMode = SamplerMipmapMode::Linear,
 		  float lodBias = 0, float minLod = 0, float maxLod = 0);
 		ImageSampler(const ImageSampler&) = delete;
@@ -335,11 +332,22 @@ namespace vk {
 		VkSampler smp = nullptr;
 		LogicalDevice& d;
 	};
-
+	class FrameBuffer
+	{
+	  public:
+		FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+		  std::vector<ImageView*> attachments, uint layers = 1);
+		FrameBuffer(const FrameBuffer&) = delete;
+		FrameBuffer(FrameBuffer&& other) noexcept;
+		~FrameBuffer();
+		uvec2 size;
+		VkFramebuffer fb = nullptr;
+		LogicalDevice& d;
+	};
 }
 
 // Commend class:
-namespace vk {
+export namespace vk {
 	class CommendPool
 	{
 	  public:
@@ -347,6 +355,7 @@ namespace vk {
 		CommendPool(const CommendPool&) = delete;
 		CommendPool(CommendPool&& other) noexcept;
 		~CommendPool();
+		CommendBuffer makeCommendBuffer();
 		VkCommandPool cp = nullptr;
 		LogicalDevice& d;
 	};
@@ -396,7 +405,7 @@ namespace vk {
 }
 
 // Sync class:
-namespace vk {
+export namespace vk {
 	class Fence
 	{
 	  public:
@@ -445,7 +454,7 @@ namespace vk {
 }
 
 // Descriptor class:
-namespace vk {
+export namespace vk {
 	struct DescriptorLayoutBinding {
 		uint bindPoint;
 		DescriptorDataType type;
@@ -742,7 +751,7 @@ namespace vk {
 }
 
 // Shader class:
-namespace vk {
+export namespace vk {
 	class ShaderCompiled
 	{
 	  public:
@@ -759,7 +768,7 @@ namespace vk {
 }
 
 // Pipeline class:
-namespace vk {
+export namespace vk {
 	class VertexAttribute
 	{
 	  public:
@@ -810,7 +819,7 @@ namespace vk {
 }
 
 // Tick class:
-namespace vk {
+export namespace vk {
 	constexpr size_t RENDERTICK_INITIAL_MBR_SIZE = 512;
 	class RenderTick
 	{

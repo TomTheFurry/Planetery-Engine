@@ -37,6 +37,7 @@ CommendPool::CommendPool(CommendPool&& other) noexcept: d(other.d) {
 CommendPool::~CommendPool() {
 	if (cp != nullptr) vkDestroyCommandPool(d.d, cp, nullptr);
 }
+CommendBuffer CommendPool::makeCommendBuffer() { return CommendBuffer(*this); }
 
 CommendBuffer::CommendBuffer(CommendPool& pool): cp(pool) {
 	VkCommandBufferAllocateInfo allocInfo{};
