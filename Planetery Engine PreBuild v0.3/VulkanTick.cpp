@@ -108,6 +108,8 @@ void RenderTick::send() {
 			logger("WARN: Vulkan RenderTick SyncPointStack not at base on "
 				   "submitting call!\n");
 	if (outdated) throw OutdatedSwapchainException();
+	if (_cmdStages.empty()) { return;}
+
 	if (vkQueueSubmit(
 		  d.queue, _cmdStages.size(), _cmdStages.data(), _completionFence.fc)
 		!= VK_SUCCESS) {
