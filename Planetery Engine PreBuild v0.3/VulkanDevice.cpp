@@ -95,6 +95,7 @@ PhysicalDevice::PhysicalDevice(
 		// OPTI: change it so that it sorts the avilb' extension before find
 		// matches using std::lower_bound.
 		for (const char* neededExt : getRequestedDeviceExtensions()) {
+			if (*neededExt == '\0') continue;
 			if (std::find_if(availableExtensions.begin(),
 				  availableExtensions.end(),
 				  [neededExt](const VkExtensionProperties& p) {
@@ -277,6 +278,7 @@ void LogicalDevice::makeSwapChain(uvec2 size) {
 void LogicalDevice::remakeSwapChain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
 	assert(swapChain);
+	//FIXME: Potancal Deadlock here!
 	while (true) {
 		if (swapChain->rebuildSwapChain(size)) break;
 		logger.newMessage();

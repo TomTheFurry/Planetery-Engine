@@ -81,6 +81,7 @@ static void _main() {
 		ulint nsDeltaPerSec = 0;
 		uint tickCount = 0;
 		RollingAverage<lint, lint, 60> roller{};
+		RollingAverage<lint, lint, 60> hotRoller{};
 		bool flips = false;
 		std::chrono::steady_clock::time_point hotTickTimerA;
 		std::chrono::steady_clock::time_point hotTickTimerB;
@@ -144,7 +145,8 @@ static void _main() {
 #endif
 
 #ifdef USE_VULKAN
-				bool realFrame = vk::drawFrame([]() {
+				uint failCount = 0;
+				while (!vk::drawFrame([]() {
 #endif
 					// do jobs
 					for (auto& h : _renderJobs) {
@@ -158,52 +160,55 @@ static void _main() {
 						}
 					}
 #ifdef USE_VULKAN
-				});
-				if (realFrame) {
+				}))
+					failCount++;
 #endif
-					// fpsBox.render();
+				// fpsBox.render();
 
-					if (sec_count >= 10) {
-						// testText.str("Dummy test:\n");
-						// while (true) {} //Lock the thread up after 30 sec for
-						// testing
-					}
-					tickCount++;
-					tickTimerA = std::chrono::high_resolution_clock::now();
-					lint nsDelta = (tickTimerA - tickTimerB).count();
-					std::swap(tickTimerA, tickTimerB);
-					nsDeltaPerSec += nsDelta;
-
-					hotTickTimerA = std::chrono::high_resolution_clock::now();
-					auto hotSpan = (hotTickTimerA - hotTickTimerB).count();
-					roller.next(hotSpan);
-					if (nsDeltaPerSec >= NS_PER_S) {
-						sec_count++;
-						eventTickCount =
-						  events::ThreadEvents::counter.exchange(0);
-						logger("Average Tick speed: ", nanoSec(roller.get()),
-						  " (", tickCount, "), Event tps: ", eventTickCount,
-						  "\n");
-#ifdef USE_VULKAN
-						vk::testSwitch();
-#endif
-						nsDeltaPerSec -= NS_PER_S;
-						tps = tickCount;
-						// fpsBox.clear();
-						// fpsBox << tps << "(" << eventTickCount << ")\n";
-						tickCount = 0;
-						flips = !flips;
-					}
-#ifdef USE_VULKAN
+				if (sec_count >= 10) {
+					// testText.str("Dummy test:\n");
+					// while (true) {} //Lock the thread up after 30 sec for
+					// testing
 				}
+				tickCount++;
+				tickTimerA = std::chrono::high_resolution_clock::now();
+				lint nsDelta = (tickTimerA - tickTimerB).count();
+				std::swap(tickTimerA, tickTimerB);
+				nsDeltaPerSec += nsDelta;
+
+				hotTickTimerA = std::chrono::high_resolution_clock::now();
+				auto hotSpan = (hotTickTimerA - hotTickTimerB).count();
+				hotRoller.next(hotSpan);
+				roller.next(nsDelta);
+				if (nsDeltaPerSec >= NS_PER_S) {
+					sec_count++;
+					eventTickCount = events::ThreadEvents::counter.exchange(0);
+					logger("Average Tick span: ", nanoSec(hotRoller.get()), "/",
+						nanoSec(roller.get()), " (",
+					  tickCount,
+#ifdef USE_VULKAN
+						   "(",failCount,")",
 #endif
+						"), Event tps: ", eventTickCount, "\n");
+#ifdef USE_VULKAN
+					failCount = 0;
+					vk::testSwitch();
+#endif
+					nsDeltaPerSec -= NS_PER_S;
+					tps = tickCount;
+					// fpsBox.clear();
+					// fpsBox << tps << "(" << eventTickCount << ")\n";
+					tickCount = 0;
+					flips = !flips;
+				}
+
 #ifdef USE_OPENGL
 				events::ThreadEvents::swapBuffer();	 // Will block and wait for
 													 // screen updates (v-sync)
 #endif
 			}
 		}
-	} //catch (const char* e) {
+	}  // catch (const char* e) {
 	//	logger("Uncaught Exception!! ", e);
 	//	events::ThreadEvents::panic(std::current_exception());
 	//}  // catch (...) {
@@ -258,14 +263,14 @@ void ThreadRender::pause() {
 void ThreadRender::unpause() {
 	_state.wait(State::init, std::memory_order_relaxed);
 	State result = State::paused;
-	bool works = _state.compare_exchange_strong(result, State::normal,
-	  std::memory_order_relaxed);
+	bool works = _state.compare_exchange_strong(
+	  result, State::normal, std::memory_order_relaxed);
 	if (works) _state.notify_all();
 }
 
 void ThreadRender::join() {
 	if (_state.load(std::memory_order_relaxed) != State::complete)
-	_thread->join();
+		_thread->join();
 	delete _thread;
 }
 

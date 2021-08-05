@@ -18,6 +18,9 @@ import Define;
 import Logger;
 using namespace vk;
 
+//#define VULKAN_DEBUG
+
+#ifdef VULKAN_DEBUG
 // Native Callbacks
 VkResult __cdecl vkCreateDebugUtilsMessengerEXT(VkInstance instance,
   const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
@@ -61,14 +64,23 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	logger.closeMessage();
 	return VK_FALSE;
 }
+#endif
 
 // Const Settings
 const Layer _layers[] = {
+#ifdef VULKAN_DEBUG
   {"VK_LAYER_KHRONOS_validation", 0u},
+#endif
+  {"", 0u},
 };
+
 const Extension _extensions[] = {
-  {"VK_EXT_debug_utils", 0u}, {"VK_EXT_validation_features", 0u},
+#ifdef VULKAN_DEBUG
+  {"VK_EXT_debug_utils", 0u},
+  {"VK_EXT_validation_features", 0u},
   //{"VK_EXT_debug_report", 0u},
+#endif
+  {"", 0u},
 };
 const char* const _deviceExtensions[] = {
   "VK_KHR_swapchain",
@@ -82,7 +94,9 @@ static std::vector<VkExtensionProperties> _extensionsAvailable;
 static OSRenderSurface* _OSSurface;
 static std::vector<const char*> _layersEnabled;
 static std::vector<const char*> _extensionsEnabled;
+#ifdef VULKAN_DEBUG
 static VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
+#endif
 static LogicalDevice* _renderDevice = nullptr;
 static uint32_t glfwExtensionCount;
 
@@ -182,6 +196,7 @@ inline void createInstance() {
 		throw "VulkanCreateInstanceFailure";
 	}
 }
+#ifdef VULKAN_DEBUG
 inline void createDebugger() {
 	VkDebugUtilsMessengerCreateInfoEXT createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -198,6 +213,7 @@ inline void createDebugger() {
 		logger("Warning: Failed to create Vulkan logger!\n");
 	};
 }
+#endif
 
 
 bool vk::requestLayer(const char* name, uint minVersion) {
@@ -303,6 +319,8 @@ const uint testInd[]{
 };
 
 static DescriptorLayout* _dsl = nullptr;
+static ShaderCompiled* _vertShad = nullptr;
+static ShaderCompiled* _fragShad = nullptr;
 
 inline void loadSwapchain(bool remake = false) {
 	_newSwapchain = true;
@@ -330,10 +348,16 @@ inline void loadSwapchain(bool remake = false) {
 	sd.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	sd.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	_renderPass->complete();
-	ShaderCompiled vertShad(*_renderDevice, ShaderType::Vert,
-	  "cshader/testUniformAndTexture.vert.spv");
-	ShaderCompiled fragShad(*_renderDevice, ShaderType::Frag,
-	  "cshader/testUniformAndTexture.frag.spv");
+
+	if (_vertShad == nullptr) {
+		_vertShad = new ShaderCompiled(*_renderDevice, ShaderType::Vert,
+		  "cshader/testUniformAndTexture.vert.spv");
+	}
+	if (_fragShad == nullptr) {
+		_fragShad = new ShaderCompiled(*_renderDevice, ShaderType::Frag,
+		  "cshader/testUniformAndTexture.frag.spv");
+	}
+	
 	// Make layouts
 	if (_dsl == nullptr) {
 		std::vector<DescriptorLayoutBinding> dslb{};
@@ -349,8 +373,8 @@ inline void loadSwapchain(bool remake = false) {
 	_pipeline->bind(*_dsl);
 	std::vector<const ShaderCompiled*> pointShad;
 	pointShad.reserve(2);
-	pointShad.push_back(&vertShad);
-	pointShad.push_back(&fragShad);
+	pointShad.push_back(_vertShad);
+	pointShad.push_back(_fragShad);
 	VkViewport viewport{
 	  .x = 0,
 	  .y = 0,
@@ -405,8 +429,10 @@ void vk::init() {
 	checkBaseRequiredPlugins();
 	// Create the Vulkan instance
 	createInstance();
+#ifdef VULKAN_DEBUG
 	// Create the Vulkan debug logger
 	createDebugger();
+#endif
 	// Create the OS specific Render Surface (for display out)
 	_OSSurface = new OSRenderSurface();
 	// Create devices
@@ -554,11 +580,15 @@ void vk::end(void (*cleanupFunc)()) {
 	if (_imgTest != nullptr) delete _imgTest;
 	if (_imgViewTest != nullptr) delete _imgViewTest;
 	if (_imgSamplerBasic != nullptr) delete _imgSamplerBasic;
+	if (_vertShad != nullptr) delete _vertShad;
+	if (_fragShad != nullptr) delete _fragShad;
 	if (_renderDevice != nullptr) delete _renderDevice;
 	// testPrograme end
 	if (_OSSurface != nullptr) delete _OSSurface;
+	#ifdef VULKAN_DEBUG
 	if (_debugMessenger)
 		vkDestroyDebugUtilsMessengerEXT(_vk, _debugMessenger, nullptr);
+	#endif
 	if (_vk) vkDestroyInstance(_vk, nullptr);
 }
 

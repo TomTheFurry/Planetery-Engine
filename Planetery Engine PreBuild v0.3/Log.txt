@@ -41,13 +41,85 @@
 [;0m  [90m-[39mAll init done. Ready to sync with other threads.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 188.485000us (4467), Event tps: 37
+[;0m  [90m-[39mAverage Tick span: 116.900000us/117.010000us (6129(0)), Event tps: 45
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 195.263000us (5111), Event tps: 13
+[;0m  [90m-[39mAverage Tick span: 234.568000us/234.693000us (6438(0)), Event tps: 85
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick speed: 242.036000us (4335), Event tps: 6
+[;0m  [90m-[39mAverage Tick span: 166.086000us/166.201000us (7428(0)), Event tps: 28
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 121.285000us/121.393000us (7207(0)), Event tps: 16
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 116.860000us/116.965000us (7747(0)), Event tps: 14
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 184.891000us/185.006000us (6820(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 133.568000us/133.673000us (7558(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 146.260000us/146.361000us (7255(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 133.630000us/133.735000us (7512(0)), Event tps: 13
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 121.298000us/121.406000us (6831(0)), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 2.218128ms/2.218235ms (7396(16)), Event tps: 5
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 41.461420ms/41.461526ms (609(335)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 128.411646ms/128.487753ms (1(724)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 128.412940ms/128.547743ms (1(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 145.388008ms/145.578450ms (1(144)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 145.400480ms/145.654775ms (1(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 145.872880ms/146.197565ms (1(4)), Event tps: 4
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 145.874430ms/146.261186ms (1(0)), Event tps: 2
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 145.875671ms/146.314643ms (1(0)), Event tps: 1
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 149.203000us/149.315000us (258(0)), Event tps: 10
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 139.251000us/139.355000us (6618(0)), Event tps: 126
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 136.176000us/136.286000us (7045(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 141.211000us/141.321000us (7018(0)), Event tps: 1
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 121.921000us/122.025000us (7300(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 133.566000us/133.678000us (7085(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 127.471000us/127.580000us (7382(0)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 153.778000us/153.875000us (6808(0)), Event tps: 1
 
 [0;4;97mThreadEvent:
 [;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m
