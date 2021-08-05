@@ -124,13 +124,15 @@ export namespace utf {
 	extern std::pair<const char_u16*, char_cp> getCodePoint(
 	  const char_u16* ptr);
 
-	template<typename T> concept UTFEvenCharType = std::same_as<T, char_cp>;
+	template<typename T>
+	concept UTFEvenCharType = std::same_as<T, char_cp>;
 
-	template<typename T> concept UTFUnevenCharType =
+	template<typename T>
+	concept UTFUnevenCharType =
 	  std::same_as<T, char_u8> || std::same_as<T, char_u16>;
 
-	template<typename T> concept UTFCharType =
-	  UTFUnevenCharType<T> || UTFEvenCharType<T>;
+	template<typename T>
+	concept UTFCharType = UTFUnevenCharType<T> || UTFEvenCharType<T>;
 
 	// NOTE: WARN: Current method will read at end of iterator location.
 	// However, it is currently not causing issue because char* should be
@@ -401,10 +403,11 @@ export namespace pmr {
 
 
 
-export template<typename T> concept Iterator = std::input_or_output_iterator<T>;
+export template<typename T>
+concept Iterator = std::input_or_output_iterator<T>;
 
-export template<class ContainerType> concept Container =
-  requires(ContainerType a, const ContainerType b) {
+export template<class ContainerType>
+concept Container = requires(ContainerType a, const ContainerType b) {
 	requires std::regular<ContainerType>;
 	requires std::swappable<ContainerType>;
 	requires std::destructible<typename ContainerType::value_type>;
@@ -421,42 +424,34 @@ export template<class ContainerType> concept Container =
 	requires std::same_as<typename ContainerType::difference_type,
 	  typename std::iterator_traits<
 		typename ContainerType::const_iterator>::difference_type>;
-	{ a.begin() }
-	->std::same_as<typename ContainerType::iterator>;
-	{ a.end() }
-	->std::same_as<typename ContainerType::iterator>;
-	{ b.begin() }
-	->std::same_as<typename ContainerType::const_iterator>;
-	{ b.end() }
-	->std::same_as<typename ContainerType::const_iterator>;
-	{ a.cbegin() }
-	->std::same_as<typename ContainerType::const_iterator>;
-	{ a.cend() }
-	->std::same_as<typename ContainerType::const_iterator>;
-	{ a.size() }
-	->std::same_as<typename ContainerType::size_type>;
-	{ a.max_size() }
-	->std::same_as<typename ContainerType::size_type>;
-	{ a.empty() }
-	->std::same_as<bool>;
+	{ a.begin() } -> std::same_as<typename ContainerType::iterator>;
+	{ a.end() } -> std::same_as<typename ContainerType::iterator>;
+	{ b.begin() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ b.end() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ a.cbegin() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ a.cend() } -> std::same_as<typename ContainerType::const_iterator>;
+	{ a.size() } -> std::same_as<typename ContainerType::size_type>;
+	{ a.max_size() } -> std::same_as<typename ContainerType::size_type>;
+	{ a.empty() } -> std::same_as<bool>;
 };
 
-export template<typename C> concept ConstContainer =
-  std::is_const_v<C> && Container<std::remove_cvref<C>>;
-export template<typename C> concept NonConstContainer =
+export template<typename C>
+concept ConstContainer = std::is_const_v<C> && Container<std::remove_cvref<C>>;
+export template<typename C>
+concept NonConstContainer =
   (!std::is_const_v<C>)&&Container<std::remove_cvref<C>>;
 
 static_assert(Container<std::vector<uint>>);
 static_assert(!Container<uint>);
 
-export template<typename V> concept Viewable = requires(V v) {
-	{ v.begin() }
-	->Iterator;
-	{ v.end() }
-	->Iterator;
+export template<typename V>
+concept Viewable = requires(V v) {
+	{ v.begin() } -> Iterator;
+	{ v.end() } -> Iterator;
 	requires std::sentinel_for<decltype(v.begin()), decltype(v.end())>;
 };
-export template<typename V, typename T> concept ViewableWith = requires(V v) {
+export template<typename V, typename T>
+concept ViewableWith = requires(V v) {
 	requires Viewable<V>;
 	requires std::convertible_to<decltype(*v.begin()), T>;
 };
@@ -466,8 +461,8 @@ template<Iterator Iter> struct iterator_return {
 };
 
 export template<typename BaseIt, typename Func, Func f>
-requires std::regular_invocable<Func,
-  typename iterator_return<BaseIt>::type> class ConvertedIterator: public BaseIt
+requires std::regular_invocable<Func, typename iterator_return<BaseIt>::type>
+class ConvertedIterator: public BaseIt
 {
   public:
 	using base_return_type = typename iterator_return<BaseIt>::type;
@@ -488,8 +483,8 @@ requires std::regular_invocable<Func,
 };
 
 export template<typename BaseIt, typename Func, Func func>
-requires std::invocable<Func,
-  typename iterator_return<BaseIt>::type> class CView
+requires std::invocable<Func, typename iterator_return<BaseIt>::type>
+class CView
 {
 	typedef ConvertedIterator<BaseIt, decltype(func), func> Iter;
 	Iter _begin;
@@ -534,55 +529,74 @@ export template<typename BaseIt> class View
 	}
 };
 
-export template<typename T> concept trivalType = std::is_trivial_v<T>;
-export template<typename T> concept integral_based =
-  std::integral<typename std::underlying_type<T>::type>;
+export template<typename T>
+concept trivalType = std::is_trivial_v<T>;
+export template<typename T>
+concept integral_based = std::integral<typename std::underlying_type<T>::type>;
 export template<integral_based FlagType> class Flags
 {
 	using value = std::underlying_type<FlagType>::type;
 	value _v;
 
   public:
-	Flags() { _v = 0; }
-	Flags(FlagType f) { _v = static_cast<value>(f); }
-	Flags(value f) { _v = f; }
-	explicit operator value() const { return _v; }
-	operator bool() const { return _v != 0; }
-	Flags operator|(Flags b) const { return _v | b._v; }
-	Flags operator|(FlagType f) const { return _v | static_cast<value>(f); }
-	Flags operator&(Flags b) const { return _v & b._v; }
-	Flags operator&(FlagType f) const { return _v & static_cast<value>(f); }
-	Flags operator^(Flags b) const { return _v ^ b._v; }
-	Flags operator^(FlagType f) const { return _v ^ static_cast<value>(f); }
+	constexpr Flags() { _v = 0; }
+	constexpr Flags(FlagType f) { _v = static_cast<value>(f); }
+	constexpr Flags(value f) { _v = f; }
+	constexpr explicit operator value() const { return _v; }
+	constexpr value toVal() const { return _v; }
+	constexpr operator bool() const { return _v != 0; }
+	constexpr Flags operator|(Flags b) const { return _v | b._v; }
+	constexpr Flags operator|(FlagType f) const {
+		return _v | static_cast<value>(f);
+	}
+	constexpr Flags operator&(Flags b) const { return _v & b._v; }
+	constexpr Flags operator&(FlagType f) const {
+		return _v & static_cast<value>(f);
+	}
+	constexpr Flags operator^(Flags b) const { return _v ^ b._v; }
+	constexpr Flags operator^(FlagType f) const {
+		return _v ^ static_cast<value>(f);
+	}
 
-	Flags& operator|=(Flags b) { return (_v |= b._v, *this); }
-	Flags& operator|=(FlagType f) {
+	constexpr Flags& operator|=(Flags b) { return (_v |= b._v, *this); }
+	constexpr Flags& operator|=(FlagType f) {
 		return (_v |= static_cast<value>(f), *this);
 	}
-	Flags& operator&=(Flags b) { return (_v &= b._v, *this); }
-	Flags& operator&=(FlagType f) {
+	constexpr Flags& operator&=(Flags b) { return (_v &= b._v, *this); }
+	constexpr Flags& operator&=(FlagType f) {
 		return (_v &= static_cast<value>(f), *this);
 	}
-	Flags& operator^=(Flags b) { return (_v ^= b._v, *this); }
-	Flags& operator^=(FlagType f) {
+	constexpr Flags& operator^=(Flags b) { return (_v ^= b._v, *this); }
+	constexpr Flags& operator^=(FlagType f) {
 		return (_v ^= static_cast<value>(f), *this);
 	}
-	bool has(Flags b) const { return _v & b._v; }
-	bool has(FlagType f) const { return _v & static_cast<value>(f); }
-	Flags& set(Flags b) { return (_v |= b._v, *this); }
-	Flags& set(FlagType f) { return (_v |= static_cast<value>(f), *this); }
-	Flags& unset(Flags b) { return (_v |= ~b._v, *this); }
-	Flags& unset(FlagType f) { return (_v |= ~static_cast<value>(f), *this); }
-	friend Flags operator|(FlagType l, FlagType r) {
+	constexpr bool operator==(Flags b) const { return b._v == _v; }
+	constexpr bool operator==(FlagType f) const {
+		return static_cast<value>(f) == _v;
+	}
+
+	constexpr bool has(Flags b) const { return _v & b._v; }
+	constexpr bool has(FlagType f) const { return _v & static_cast<value>(f); }
+	constexpr Flags& set(Flags b) { return (_v |= b._v, *this); }
+	constexpr Flags& set(FlagType f) {
+		return (_v |= static_cast<value>(f), *this);
+	}
+	constexpr Flags& unset(Flags b) { return (_v |= ~b._v, *this); }
+	constexpr Flags& unset(FlagType f) {
+		return (_v |= ~static_cast<value>(f), *this);
+	}
+	friend constexpr Flags operator|(FlagType l, FlagType r) {
 		return Flags(static_cast<value>(l) | static_cast<value>(r));
 	}
-	friend Flags operator&(FlagType l, FlagType r) {
+	friend constexpr Flags operator&(FlagType l, FlagType r) {
 		return Flags(static_cast<value>(l) & static_cast<value>(r));
 	}
-	friend Flags operator^(FlagType l, FlagType r) {
+	friend constexpr Flags operator^(FlagType l, FlagType r) {
 		return Flags(static_cast<value>(l) ^ static_cast<value>(r));
 	}
-	friend Flags operator~(FlagType r) { return Flags(~static_cast<value>(r)); }
+	friend constexpr Flags operator~(FlagType r) {
+		return Flags(~static_cast<value>(r));
+	}
 };
 
 
@@ -599,10 +613,8 @@ export namespace util {
 	};
 
 	glm::vec4 transformHSV(glm::vec4 in,
-	  float h,// hue shift (in degrees)
-	  float s,
-	  float v
-	);
+	  float h,	// hue shift (in degrees)
+	  float s, float v);
 
 	/// <summary>
 	/// Booby Trap the templated class. Call trigger() to trigger the trap. Call
@@ -635,7 +647,9 @@ export namespace util {
 		T _t;
 		bool _triggered;
 	};
-	template<typename P> requires std::is_pointer_v<P> class Trap<P>
+	template<typename P>
+	requires std::is_pointer_v<P>
+	class Trap<P>
 	{
 	  public:
 		typedef P ValueType;
