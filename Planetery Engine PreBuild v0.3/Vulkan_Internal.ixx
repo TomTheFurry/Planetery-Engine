@@ -787,14 +787,67 @@ export namespace vk {
 	class RenderPass
 	{
 	  public:
-		RenderPass(LogicalDevice& d);
+		class Attachment: private VkAttachmentDescription
+		{
+			friend RenderPass;
+
+		  public:
+			Attachment(VkFormat colorFormat,
+			  TextureActiveUseType currentActiveUsage, AttachmentReadOp readOp,
+			  TextureActiveUseType outputActiveUsage, AttachmentWriteOp writeOp,
+			  uint samples = 1);
+			Attachment(VkFormat depthStencilformat,
+			  TextureActiveUseType currentActiveUsage,
+			  AttachmentReadOp depthReadOp, AttachmentReadOp stencilReadOp,
+			  TextureActiveUseType outputActiveUsage,
+			  AttachmentWriteOp depthWriteOp, AttachmentWriteOp stencilWriteOp,
+			  uint samples = 1);
+		};
+		class SubPass
+		{
+			friend RenderPass;
+
+		  public:
+			SubPass(std::initializer_list<uint> inputColorAttachment,
+			  std::initializer_list<uint> inputDepthStencilAttachment,
+			  std::initializer_list<uint> outputColorAttachment,
+			  std::initializer_list<uint> outputDepthStencilAttachment,
+			  std::initializer_list<uint> outputResolveAttachment,
+			  std::initializer_list<uint> forwardAttachment);
+
+		  private:
+			std::vector<VkAttachmentReference> input;
+			std::vector<VkAttachmentReference> color;
+			std::vector<VkAttachmentReference> depthStencil;
+			std::vector<VkAttachmentReference> resolve;
+			std::vector<uint> preserve;
+			operator VkSubpassDescription() const;
+		};
+		class SubPassDependency: private VkSubpassDependency
+		{
+			friend RenderPass;
+
+		  public:
+			// spId: -1 = external
+			SubPassDependency(uint spId, PipelineStage srcStage,
+			  MemoryAccess srcAccess, PipelineStage dstStage,
+			  MemoryAccess dstAccess, bool perPixelIndependent = true);
+			// spId: -1 = external
+			SubPassDependency(uint srcSpId, PipelineStage srcStage,
+			  MemoryAccess srcAccess, uint dstSpId, PipelineStage dstStage,
+			  MemoryAccess dstAccess, bool perPixelIndependent = true);
+		};
+
+		RenderPass(LogicalDevice& d,
+		  std::initializer_list<Attachment> attachments,
+		  std::initializer_list<SubPass> subPasses,
+		  std::initializer_list<SubPassDependency> dependencies);
 		RenderPass(const RenderPass& d) = delete;
 		RenderPass(RenderPass&& d) noexcept;
 		~RenderPass();
-		void complete();
 		VkRenderPass rp = nullptr;
-		std::vector<VkAttachmentDescription> attachmentTypes;
-		std::vector<std::vector<uint>> subpasses;
+		std::vector<Attachment> attachments;
+		std::vector<SubPass> subpasses;
 		std::vector<VkSubpassDependency> subpassDependencies;
 		LogicalDevice& d;
 	};

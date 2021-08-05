@@ -77,6 +77,16 @@ export namespace vk {
 		HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 	};
 
+	enum class AttachmentReadOp : std::underlying_type_t<VkAttachmentLoadOp> {
+		Read = VK_ATTACHMENT_LOAD_OP_LOAD,
+		Clear = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		Undefined = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+	};
+	enum class AttachmentWriteOp : std::underlying_type_t<VkAttachmentStoreOp> {
+		Write = VK_ATTACHMENT_STORE_OP_STORE,
+		Undefined = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+	};
+
 	enum class PipelineStage : VkPipelineStageFlags {
 		None = VK_PIPELINE_STAGE_NONE_KHR,
 		TopOfPipe = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,

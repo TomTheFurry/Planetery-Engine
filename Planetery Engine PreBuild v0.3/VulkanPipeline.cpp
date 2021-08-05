@@ -1,14 +1,15 @@
 module;
 #include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include <assert.h>
+#pragma warning(disable : 26812)
+#include <vulkan/vulkan.h>
+#include <assert.h>
 module Vulkan;
-import:Internal;
+import: Internal;
 import: Enum;
 import std.core;
 import Define;
 import Logger;
+
 using namespace vk;
 
 VertexAttribute::VertexAttribute() {}
@@ -39,42 +40,189 @@ VkPipelineVertexInputStateCreateInfo VertexAttribute::getStructForPipeline() {
 	return vis;
 }
 
-RenderPass::RenderPass(LogicalDevice& device): d(device) {}
+
+
+
+RenderPass::Attachment::Attachment(VkFormat colorFormat,
+  TextureActiveUseType currentActiveUsage, AttachmentReadOp readOp,
+  TextureActiveUseType outputActiveUsage, AttachmentWriteOp writeOp, uint sam) {
+	flags = 0;
+	format = colorFormat;
+	samples = (VkSampleCountFlagBits)sam;
+	loadOp = (VkAttachmentLoadOp)readOp;
+	storeOp = (VkAttachmentStoreOp)writeOp;
+	stencilLoadOp = (VkAttachmentLoadOp)AttachmentReadOp::Undefined;
+	stencilStoreOp = (VkAttachmentStoreOp)AttachmentWriteOp::Undefined;
+	initialLayout = (VkImageLayout)currentActiveUsage;
+	finalLayout = (VkImageLayout)outputActiveUsage;
+}
+RenderPass::Attachment::Attachment(VkFormat depthStencilformat,
+  TextureActiveUseType currentActiveUsage, AttachmentReadOp depthReadOp,
+  AttachmentReadOp sReadOp, TextureActiveUseType outputActiveUsage,
+  AttachmentWriteOp depthWriteOp, AttachmentWriteOp sWriteOp, uint sam) {
+	flags = 0;
+	format = depthStencilformat;
+	samples = (VkSampleCountFlagBits)sam;
+	loadOp = (VkAttachmentLoadOp)depthReadOp;
+	storeOp = (VkAttachmentStoreOp)depthWriteOp;
+	stencilLoadOp = (VkAttachmentLoadOp)sReadOp;
+	stencilStoreOp = (VkAttachmentStoreOp)sWriteOp;
+	initialLayout = (VkImageLayout)currentActiveUsage;
+	finalLayout = (VkImageLayout)outputActiveUsage;
+}
+
+enum class _AtmUsage {
+	InputColor = 1,
+	InputDepthStencil = 2,
+	Color = 4,
+	DepthStencil = 8,
+	Resolve = 16,
+	Forward = 32,
+};
+TextureActiveUseType _getSubPassAtmGoodActiveUseType(Flags<_AtmUsage> v) {
+	switch (v.toVal()) {
+	case Flags(_AtmUsage::InputColor).toVal():
+		return TextureActiveUseType::ReadOnlyShader;
+	case Flags(_AtmUsage::InputDepthStencil).toVal():
+		return TextureActiveUseType::ReadOnlyAttachmentDepthStencil;
+
+	case Flags(_AtmUsage::Color).toVal():
+		return TextureActiveUseType::AttachmentColor;
+	case Flags(_AtmUsage::DepthStencil).toVal():
+		return TextureActiveUseType::AttachmentDepthStencil;
+
+	case Flags(_AtmUsage::Forward).toVal():
+		return TextureActiveUseType::Undefined;	 // dont care
+
+	default:
+		if (v.has(_AtmUsage::Forward))
+			throw "VulkanSubPassInvalidAttachmentUsage:UniqueForward";
+		if (v.has(_AtmUsage::Color) && v.has(_AtmUsage::DepthStencil))
+			throw "VulkanSubPassInvalidAttachmentUsage:ColorOrDepthStencil";
+		return TextureActiveUseType::General;
+	}
+}
+
+RenderPass::SubPass::SubPass(std::initializer_list<uint> inputColorAtm,
+  std::initializer_list<uint> inputDepthStencilAtm,
+  std::initializer_list<uint> colorAtm,
+  std::initializer_list<uint> depthStencilAtm,
+  std::initializer_list<uint> resolveAtm,
+  std::initializer_list<uint> forwardAtm):
+  preserve(forwardAtm) {
+	if (!std::empty(depthStencilAtm)
+		&& depthStencilAtm.size() != colorAtm.size())
+		throw "VulkanSubpassInvalidDepthStencilAttachmentCount";
+	if (!std::empty(resolveAtm) && resolveAtm.size() != colorAtm.size())
+		throw "VulkanSubpassInvalidResolveAttachmentCount";
+	std::map<uint, Flags<_AtmUsage>> atm{};
+	for (auto& id : inputColorAtm) atm[id] |= _AtmUsage::InputColor;
+	for (auto& id : inputDepthStencilAtm)
+		atm[id] |= _AtmUsage::InputDepthStencil;
+	for (auto& id : colorAtm) atm[id] |= _AtmUsage::Color;
+	for (auto& id : depthStencilAtm) atm[id] |= _AtmUsage::DepthStencil;
+	for (auto& id : resolveAtm) atm[id] |= _AtmUsage::Resolve;
+	atm.erase(uint(-1));
+	std::unordered_map<uint, TextureActiveUseType> atmType{};
+	atmType.reserve(atm.size());
+	for (auto it : atm) {
+		atmType[it.first] = _getSubPassAtmGoodActiveUseType(it.second);
+	}
+	// Push to vector
+	input.reserve(inputColorAtm.size() + inputDepthStencilAtm.size());
+	for (auto& id : inputColorAtm)
+		input.push_back(
+		  VkAttachmentReference{id, (VkImageLayout)atmType.at(id)});
+	for (auto& id : inputDepthStencilAtm)
+		input.push_back(
+		  VkAttachmentReference{id, (VkImageLayout)atmType.at(id)});
+
+	color.reserve(colorAtm.size());
+	for (auto& id : colorAtm)
+		color.push_back(
+		  VkAttachmentReference{id, (VkImageLayout)atmType.at(id)});
+
+	depthStencil.reserve(depthStencilAtm.size());
+	for (auto& id : depthStencilAtm)
+		depthStencil.push_back(
+		  VkAttachmentReference{id, (VkImageLayout)atmType.at(id)});
+
+	resolve.reserve(resolveAtm.size());
+	for (auto& id : resolveAtm)
+		resolve.push_back(
+		  VkAttachmentReference{id, (VkImageLayout)atmType.at(id)});
+}
+
+RenderPass::SubPass::operator VkSubpassDescription() const {
+	VkSubpassDescription spInfo{};
+	spInfo.flags = 0;
+	spInfo.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	spInfo.inputAttachmentCount = input.size();
+	spInfo.pInputAttachments = input.empty() ? nullptr : input.data();
+	spInfo.colorAttachmentCount = color.size();
+	spInfo.pColorAttachments = color.empty() ? nullptr : color.data();
+	spInfo.pResolveAttachments = resolve.empty() ? nullptr : resolve.data();
+	spInfo.pDepthStencilAttachment =
+	  depthStencil.empty() ? nullptr : depthStencil.data();
+	spInfo.preserveAttachmentCount = preserve.size();
+	spInfo.pPreserveAttachments = preserve.empty() ? nullptr : preserve.data();
+	return spInfo;
+}
+
+RenderPass::SubPassDependency::SubPassDependency(uint spId,
+  PipelineStage srcStage, MemoryAccess srcAccess, PipelineStage dstStage,
+  MemoryAccess dstAccess, bool perPixelIndependent) {
+	if (spId == uint(-1)) spId = VK_SUBPASS_EXTERNAL;
+	srcSubpass = spId;
+	dstSubpass = spId;
+	srcStageMask = (VkPipelineStageFlags)srcStage;
+	dstStageMask = (VkPipelineStageFlags)dstStage;
+	srcAccessMask = (VkAccessFlags)srcAccess;
+	dstAccessMask = (VkAccessFlags)dstAccess;
+	dependencyFlags = perPixelIndependent
+					  ? VkDependencyFlagBits::VK_DEPENDENCY_BY_REGION_BIT
+					  : 0;
+}
+RenderPass::SubPassDependency::SubPassDependency(uint srcSpId,
+  PipelineStage srcStage, MemoryAccess srcAccess, uint dstSpId,
+  PipelineStage dstStage, MemoryAccess dstAccess, bool perPixelIndependent) {
+	if (srcSpId == uint(-1)) srcSpId = VK_SUBPASS_EXTERNAL;
+	if (dstSpId == uint(-1)) dstSpId = VK_SUBPASS_EXTERNAL;
+	srcSubpass = srcSpId;
+	dstSubpass = dstSpId;
+	srcStageMask = (VkPipelineStageFlags)srcStage;
+	dstStageMask = (VkPipelineStageFlags)dstStage;
+	srcAccessMask = (VkAccessFlags)srcAccess;
+	dstAccessMask = (VkAccessFlags)dstAccess;
+	dependencyFlags = perPixelIndependent
+					  ? VkDependencyFlagBits::VK_DEPENDENCY_BY_REGION_BIT
+					  : 0;
+}
+
+RenderPass::RenderPass(LogicalDevice& device,
+  std::initializer_list<Attachment> attachments,
+  std::initializer_list<SubPass> subPasses,
+  std::initializer_list<SubPassDependency> dependencies):
+  d(device) {
+	std::vector<VkSubpassDescription> spDes{};
+	spDes.reserve(subPasses.size());
+	for (auto& sp : subPasses) spDes.push_back((VkSubpassDescription)sp);
+	VkRenderPassCreateInfo renderPassInfo{
+	  .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+	  .attachmentCount = (uint)attachments.size(),
+	  .pAttachments = std::data(attachments),
+	  .subpassCount = (uint)subPasses.size(),
+	  .pSubpasses = std::data(spDes),
+	  .dependencyCount = (uint)dependencies.size(),
+	  .pDependencies = std::data(dependencies),
+	};
+	if (vkCreateRenderPass(d.d, &renderPassInfo, nullptr, &rp) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create render pass!");
+	}
+}
 RenderPass::RenderPass(RenderPass&& o) noexcept: d(o.d) {
 	rp = o.rp;
 	o.rp = nullptr;
-}
-void RenderPass::complete() {
-	std::vector<VkSubpassDescription> subpassDes;
-	std::list<std::vector<VkAttachmentReference>> attRefs;
-	subpassDes.reserve(attachmentTypes.size());
-	for (uint i = 0; i < subpasses.size(); i++) {
-		auto& attRef = attRefs.emplace_back();
-		attRef.reserve(subpasses.at(i).size());
-		for (uint j = 0; j < subpasses.at(i).size(); j++) {
-			attRef.push_back(VkAttachmentReference{
-			  .attachment = subpasses.at(i).at(j),
-			  .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-			});
-		}
-		subpassDes.push_back(VkSubpassDescription{
-		  .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-		  .colorAttachmentCount = (uint)attRef.size(),
-		  .pColorAttachments = attRef.data(),
-		});
-	}
-	VkRenderPassCreateInfo renderPassInfo{
-	  .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-	  .attachmentCount = (uint)attachmentTypes.size(),
-	  .pAttachments = attachmentTypes.data(),
-	  .subpassCount = (uint)subpassDes.size(),
-	  .pSubpasses = subpassDes.data(),
-	  .dependencyCount = (uint)subpassDependencies.size(),
-	  .pDependencies = subpassDependencies.data(),
-	};
-	if (vkCreateRenderPass(d.d, &renderPassInfo, nullptr, &rp) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create render pass!");
-	}
 }
 RenderPass::~RenderPass() {
 	if (rp != nullptr) vkDestroyRenderPass(d.d, rp, nullptr);
@@ -145,14 +293,12 @@ void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
 	  VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT
 	  | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	colorBlendAttachment.blendEnable = VK_FALSE;
-	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;	 // TODO
-	colorBlendAttachment.dstColorBlendFactor =
-	  VK_BLEND_FACTOR_ZERO;											 // TODO
-	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;			 // TODO
-	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;	 // TODO
-	colorBlendAttachment.dstAlphaBlendFactor =
-	  VK_BLEND_FACTOR_ZERO;								  // TODO
-	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;  // TODO
+	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;	  // TODO
+	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;  // TODO
+	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;			  // TODO
+	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;	  // TODO
+	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;  // TODO
+	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;			  // TODO
 	colorBlending.sType =
 	  VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	colorBlending.logicOpEnable = VK_FALSE;
@@ -168,7 +314,7 @@ void ShaderPipeline::complete(std::vector<const ShaderCompiled*> shaderModules,
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = _dsl.size();
-	pipelineLayoutInfo.pSetLayouts = _dsl.data();												   // Optional
+	pipelineLayoutInfo.pSetLayouts = _dsl.data();	   // Optional
 	pipelineLayoutInfo.pushConstantRangeCount = 0;	   // TODO
 	pipelineLayoutInfo.pPushConstantRanges = nullptr;  // TODO
 	if (vkCreatePipelineLayout(d.d, &pipelineLayoutInfo, nullptr, &pl)

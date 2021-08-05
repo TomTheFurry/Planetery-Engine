@@ -18,7 +18,7 @@ import Define;
 import Logger;
 using namespace vk;
 
-//#define VULKAN_DEBUG
+#define VULKAN_DEBUG
 
 #ifdef VULKAN_DEBUG
 // Native Callbacks
@@ -99,6 +99,7 @@ static VkDebugUtilsMessengerEXT _debugMessenger = nullptr;
 #endif
 static LogicalDevice* _renderDevice = nullptr;
 static uint32_t glfwExtensionCount;
+static SwapchainCallback scCallback;
 
 
 inline void preInit() {
@@ -329,26 +330,21 @@ inline void loadSwapchain(bool remake = false) {
 	else
 		_renderDevice->makeSwapChain();
 	// Make renderPass
-	_renderPass = new RenderPass(*_renderDevice);
-	auto& ad = _renderPass->attachmentTypes.emplace_back();
-	ad.format = _renderDevice->swapChain->surfaceFormat.format;
-	ad.samples = VK_SAMPLE_COUNT_1_BIT;
-	ad.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	ad.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	ad.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	ad.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	ad.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	ad.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-	_renderPass->subpasses.emplace_back(1, 0);
-	auto& sd = _renderPass->subpassDependencies.emplace_back();
-	sd.srcSubpass = VK_SUBPASS_EXTERNAL;
-	sd.dstSubpass = 0;
-	sd.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	sd.srcAccessMask = 0;
-	sd.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	sd.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	_renderPass->complete();
+	VkFormat swapchainFormat = _renderDevice->swapChain->surfaceFormat.format;
 
+	{
+		RenderPass::Attachment swapchainAtm(swapchainFormat,
+		  TextureActiveUseType::Undefined, AttachmentReadOp::Clear,
+		  TextureActiveUseType::Present, AttachmentWriteOp::Write);
+		RenderPass::SubPass subPass1({}, {}, {0}, {}, {}, {});
+		RenderPass::SubPassDependency dependency1(uint(-1),
+		  PipelineStage::OutputAttachmentColor,
+		  MemoryAccess::None, 0,
+		  PipelineStage::OutputAttachmentColor, MemoryAccess::AttachmentColorWrite,
+			false);
+		_renderPass = new RenderPass(
+		  *_renderDevice, {swapchainAtm}, {subPass1}, {dependency1});
+	}
 	if (_vertShad == nullptr) {
 		_vertShad = new ShaderCompiled(*_renderDevice, ShaderType::Vert,
 		  "cshader/testUniformAndTexture.vert.spv");
@@ -403,7 +399,7 @@ inline void loadSwapchain(bool remake = false) {
 		  *_renderDevice, *_renderPass, _renderDevice->swapChain->pixelSize, b);
 	}
 }
-inline void unloadSwapchain() {
+inline void unloadSwapchain(bool remake = false) {
 	for (auto& ptr : _renderFrames)
 		if (ptr != nullptr) {
 			delete ptr;
@@ -413,9 +409,11 @@ inline void unloadSwapchain() {
 	_swapchainViews.clear();
 	if (_pipeline != nullptr) delete _pipeline;
 	if (_renderPass != nullptr) delete _renderPass;
+
+
 }
 inline void recreateSwapchain() {
-	unloadSwapchain();
+	unloadSwapchain(true);
 	loadSwapchain(true);
 }
 
@@ -476,12 +474,12 @@ void vk::_prepareFrame() {
 		delete frame;
 		frame = nullptr;
 	}
-	checkStatus();
+	//checkStatus();
 	frame = new RenderTick(*_renderDevice);
 	_currentRenderTick = frame;
 }
 void vk::_sendFrame() {
-	checkStatus();
+	//checkStatus();
 	_currentRenderTick->send();
 	_currentFrame++;
 	_currentFrame %= MAX_FRAMES_IN_FLIGHT;
@@ -499,6 +497,10 @@ inline void makeDescriptors(uint num) {
 	if (_dpc != nullptr) delete _dpc;
 	_dpc = new DescriptorContainer(
 	  *_renderDevice, *_dsl, num, DescriptorPoolType::Dynamic);
+}
+
+void vk::setSwapchinCallback(SwapchainCallback callback) {
+	scCallback = callback;
 }
 
 void vk::_testDraw() {
@@ -551,7 +553,6 @@ void vk::_testDraw() {
 	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
 	  1.f);
-
 
 	_ub[_currentRenderTick->getImageIndex()].directWrite(&currentColor);
 

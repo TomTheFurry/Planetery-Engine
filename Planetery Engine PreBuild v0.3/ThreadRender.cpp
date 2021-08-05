@@ -142,12 +142,23 @@ static void _main() {
 					// fpsBox.notifyPPIChanged();
 				}
 				gl::target->clearColor(vec4(1.0f, 0.8f, 0.6f, 1.0f));
+				// do jobs
+				for (auto& h : _renderJobs) {
+					if (h != nullptr) {
+						if (h->requestDelete) {
+							delete h;
+							h = nullptr;
+						} else {
+							h->func();
+						}
+					}
+				}
 #endif
 
 #ifdef USE_VULKAN
 				uint failCount = 0;
 				while (!vk::drawFrame([]() {
-#endif
+					vk::_testDraw();
 					// do jobs
 					for (auto& h : _renderJobs) {
 						if (h != nullptr) {
@@ -159,10 +170,9 @@ static void _main() {
 							}
 						}
 					}
-#ifdef USE_VULKAN
-				}))
-					failCount++;
+				})) failCount++;
 #endif
+
 				// fpsBox.render();
 
 				if (sec_count >= 10) {

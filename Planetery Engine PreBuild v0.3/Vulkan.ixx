@@ -6,6 +6,12 @@ import std.core;
 import Define;
 
 export namespace vk {
+	struct SwapchainCallback {
+		void (*onCreate)(bool) = nullptr;
+		void (*onDestroy)(bool) = nullptr;
+	};
+
+
 	const uint* getLayerVersion(const char* name);		// may return nullptr
 	const uint* getExtensionVersion(const char* name);	// may return nullptr
 	bool requestLayer(const char* name, uint minVersion = 0);
@@ -19,9 +25,9 @@ export namespace vk {
 	template<typename Func> bool drawFrame(Func f);	 // Render Thread only
 	void checkStatus() noexcept(false);	 // throws OutdatedSwapchainException
 	void end(void (*cleanupFunc)());
+	void setSwapchinCallback(SwapchainCallback callback); //Render Thread only
 
 	void notifyOutdatedSwapchain();	 // Can be called by any frame
-
 	void testSwitch();
 
 	namespace device {
@@ -53,7 +59,6 @@ template<typename Func> bool vk::drawFrame(Func func) {
 	try {
 		_prepareFrame();
 		func();
-		_testDraw();
 		_sendFrame();
 		return true;
 	} catch (OutdatedSwapchainException) {

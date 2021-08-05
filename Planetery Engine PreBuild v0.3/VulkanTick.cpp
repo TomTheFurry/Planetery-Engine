@@ -127,8 +127,9 @@ void RenderTick::send() {
 	auto pCode = vkQueuePresentKHR(d.queue, &presentInfo);
 	switch (pCode) {
 	case VK_SUCCESS: break;
-	case VK_SUBOPTIMAL_KHR:
+	case VK_SUBOPTIMAL_KHR: logger("Note: SubotimalKhr noted.");
 	case VK_ERROR_OUT_OF_DATE_KHR:
+		//logger("Note: OutOfDateKhr noted.");
 		outdated = true;
 		throw OutdatedSwapchainException();
 		break;

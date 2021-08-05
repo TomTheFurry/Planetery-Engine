@@ -281,9 +281,7 @@ void LogicalDevice::remakeSwapChain(uvec2 size) {
 	//FIXME: Potancal Deadlock here!
 	while (true) {
 		if (swapChain->rebuildSwapChain(size)) break;
-		logger.newMessage();
-		logger << "WARN: Failed to rebuild swapchain. Retrying...\n";
-		logger.closeMessage();
+		logger("WARN: Failed to rebuild swapchain. Retrying...\n");
 	};
 }
 CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
@@ -364,6 +362,8 @@ SwapChain::SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
 	rebuildSwapChain(preferredSize, transparentWindow);
 }
 bool SwapChain::rebuildSwapChain(uvec2 preferredSize, bool transparentWindow) {
+	//logger("Rebuild SwapChain...");
+
 	VkSwapchainKHR old_sc = sc;
 	auto sp = d.pd.getSwapChainSupport();
 	surfaceFormat = sp.getFormat();
@@ -392,7 +392,7 @@ bool SwapChain::rebuildSwapChain(uvec2 preferredSize, bool transparentWindow) {
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = old_sc == nullptr ? VK_NULL_HANDLE : old_sc;
 	if (vkCreateSwapchainKHR(d.d, &createInfo, nullptr, &sc) != VK_SUCCESS) {
-		logger("Vulkan failed to make Swapchain!\n");
+		//logger("Vulkan failed to make Swapchain!\n");
 		sc = nullptr;
 	}
 	if (old_sc != nullptr) vkDestroySwapchainKHR(d.d, old_sc, nullptr);
