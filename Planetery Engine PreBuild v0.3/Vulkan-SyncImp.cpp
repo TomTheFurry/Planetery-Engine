@@ -1,9 +1,12 @@
-module Vulkan;
-import: Internal;
+module Vulkan: SyncImp;
+import: Device;
+import: Sync;
 import: Enum;
 import std.core;
 import Define;
 import Logger;
+import "Assert.h";
+import "VulkanExtModule.h";
 using namespace vk;
 
 TimelineSemaphore::TimelineSemaphore(LogicalDevice& device, ulint initValue):

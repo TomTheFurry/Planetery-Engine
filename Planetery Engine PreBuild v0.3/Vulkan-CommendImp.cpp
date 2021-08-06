@@ -1,14 +1,19 @@
 module;
 #include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include <assert.h>
-module Vulkan;
-import: Internal;
+module Vulkan: CommendImp;
+import: Commend;
 import: Enum;
+import: Buffer;
+import: Device;
+import: Pipeline;
+import: Image;
+import: Descriptor;
+import: Sync;
 import std.core;
 import Define;
 import Logger;
+import "Assert.h";
+import "VulkanExtModule.h";
 using namespace vk;
 
 CommendPool::CommendPool(LogicalDevice& device, CommendPoolType type):

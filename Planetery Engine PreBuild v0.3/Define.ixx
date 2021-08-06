@@ -3,14 +3,7 @@ module;
 export module Define;
 export import "GlmModule.h";
 import std.core;
-//export import "glm/glm.hpp";
-//export import "glm/gtx/quaternion.hpp";
-//export import "glm/gtc/type_ptr.hpp";
-
 export {
-//#include <glm/glm.hpp>
-//#include <glm/gtx/quaternion.hpp>
-//#include <glm/gtc/type_ptr.hpp>
 	typedef unsigned short usint;
 	typedef unsigned int uint;
 	typedef unsigned long long int ulint;

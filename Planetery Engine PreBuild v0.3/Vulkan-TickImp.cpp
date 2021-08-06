@@ -1,9 +1,14 @@
-module Vulkan;
-import: Internal;
+module Vulkan: TickImp;
+import: Tick;
 import: Enum;
+import: Device;
+import: Commend;
+import: Buffer;
 import std.core;
 import Define;
 import Logger;
+import "Assert.h";
+import "VulkanExtModule.h";
 using namespace vk;
 
 constexpr int RENDERTICK_INITIAL_MBR_SIZE = 4;

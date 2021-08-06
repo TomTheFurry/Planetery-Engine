@@ -1,47 +1,29 @@
 module;
 #include "Marco.h"
 #include <cstdlib>
-#pragma warning(disable : 26812)
-#include <vulkan/vulkan.h>
-#include <assert.h>
-
 // Image loading using stb. Remove this when not testing!!!
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
-
 module Vulkan;
-import "GlfwModule.h";
-import: Internal;
+import: Device;
+import: Buffer;
+import: Image;
+import: Shader;
+import: Sync;
+import: Commend;
+import: Descriptor;
+import: Pipeline;
+import: Tick;
 import: Enum;
 import std.core;
 import Define;
 import Logger;
+import "VulkanExtModule.h";
+import "Assert.h";
+import "GlfwModule.h";
 using namespace vk;
 
-#define VULKAN_DEBUG
-
 #ifdef VULKAN_DEBUG
-// Native Callbacks
-VkResult __cdecl vkCreateDebugUtilsMessengerEXT(VkInstance instance,
-  const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-  const VkAllocationCallbacks* pAllocator,
-  VkDebugUtilsMessengerEXT* pDebugMessenger) {
-	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-	  instance, "vkCreateDebugUtilsMessengerEXT");
-	if (func != nullptr) {
-		return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-	} else {
-		return VK_ERROR_EXTENSION_NOT_PRESENT;
-	}
-}
-void __cdecl vkDestroyDebugUtilsMessengerEXT(VkInstance instance,
-  VkDebugUtilsMessengerEXT debugMessenger,
-  const VkAllocationCallbacks* pAllocator) {
-	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-	  instance, "vkDestroyDebugUtilsMessengerEXT");
-	if (func != nullptr) { func(instance, debugMessenger, pAllocator); }
-}
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
   VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
   VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -65,6 +47,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	return VK_FALSE;
 }
 #endif
+
 
 // Const Settings
 const Layer _layers[] = {

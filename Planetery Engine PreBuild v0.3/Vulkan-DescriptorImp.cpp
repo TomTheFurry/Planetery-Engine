@@ -1,5 +1,6 @@
-module Vulkan;
-import: Internal;
+module Vulkan: DescriptorImp;
+import: Device;
+import: Descriptor;
 import: Enum;
 import std.core;
 import Define;

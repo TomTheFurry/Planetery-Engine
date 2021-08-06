@@ -1,12 +1,15 @@
 module;
 //This 'include' fixes redef error that happens if you use std::iostream... somehow...
 #include <vulkan/vulkan.h>
-module Vulkan;
-import: Internal;
+module Vulkan: ShaderImp;
+import: Shader;
 import: Enum;
+import: Device;
 import std.core;
 import Define;
 import Logger;
+import "Assert.h";
+import "VulkanExtModule.h";
 using namespace vk;
 
 ShaderCompiled::ShaderCompiled(

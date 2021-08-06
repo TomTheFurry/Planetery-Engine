@@ -84,41 +84,35 @@
     <ClCompile Include="Vulkan.ixx">
       <Filter>Modules\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Vulkan_Enum.ixx">
+    <ClCompile Include="Vulkan-Enum.ixx">
       <Filter>Modules\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Vulkan_Internal.ixx">
-      <Filter>Modules\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanDevice.cpp">
+    <ClCompile Include="Vulkan-DeviceImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanSync.cpp">
+    <ClCompile Include="Vulkan-SyncImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanImage.cpp">
+    <ClCompile Include="Vulkan-ImageImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanDescriptor.cpp">
+    <ClCompile Include="Vulkan-DescriptorImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanShader.cpp">
+    <ClCompile Include="Vulkan-ShaderImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanPipeline.cpp">
+    <ClCompile Include="Vulkan-PipelineImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanCommend.cpp">
+    <ClCompile Include="Vulkan-CommendImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanBuffer.cpp">
+    <ClCompile Include="Vulkan-BufferImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanTick.cpp">
+    <ClCompile Include="Vulkan-TickImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanExtern.cpp">
-      <Filter>Modules\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="GlmModule.h">
       <Filter>Header Units</Filter>
@@ -149,6 +143,39 @@
     </ClCompile>
     <ClCompile Include="TempFix\memory_resource.cpp">
       <Filter>Header Files\TempFix</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Internal.ixx">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Buffer.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Commend.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Descriptor.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Device.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Image.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Pipeline.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Shader.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Sync.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Tick.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanNativeCall.cpp">
+      <Filter>Modules\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

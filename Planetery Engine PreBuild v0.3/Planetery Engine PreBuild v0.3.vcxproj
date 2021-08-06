@@ -117,6 +117,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
       <DisableSpecificWarnings>5050</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\sharedInclude\glad\glad.c" />
+    <ClCompile Include="Vulkan-Buffer.ixx" />
     <ClCompile Include="Define.ixx" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="Font.ixx" />
@@ -161,20 +163,64 @@
     <ClCompile Include="ThreadRender.ixx" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Util.ixx" />
+    <ClCompile Include="Vulkan-Commend.ixx" />
+    <ClCompile Include="Vulkan-Descriptor.ixx" />
+    <ClCompile Include="Vulkan-Device.ixx" />
+    <ClCompile Include="Vulkan-Image.ixx" />
+    <ClCompile Include="Vulkan-Pipeline.ixx" />
+    <ClCompile Include="Vulkan-Shader.ixx" />
+    <ClCompile Include="Vulkan-Sync.ixx" />
+    <ClCompile Include="Vulkan-Tick.ixx" />
     <ClCompile Include="Vulkan.cpp" />
     <ClCompile Include="Vulkan.ixx" />
-    <ClCompile Include="VulkanBuffer.cpp" />
-    <ClCompile Include="VulkanCommend.cpp" />
-    <ClCompile Include="VulkanDescriptor.cpp" />
-    <ClCompile Include="VulkanExtern.cpp" />
-    <ClCompile Include="VulkanImage.cpp" />
-    <ClCompile Include="VulkanPipeline.cpp" />
-    <ClCompile Include="VulkanShader.cpp" />
-    <ClCompile Include="VulkanSync.cpp" />
-    <ClCompile Include="VulkanDevice.cpp" />
-    <ClCompile Include="VulkanTick.cpp" />
-    <ClCompile Include="Vulkan_Enum.ixx" />
-    <ClCompile Include="Vulkan_Internal.ixx" />
+    <ClCompile Include="Vulkan-BufferImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-CommendImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-DescriptorImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-ImageImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-PipelineImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-ShaderImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-SyncImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-DeviceImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-TickImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
+    <ClCompile Include="Vulkan-Enum.ixx" />
+    <ClCompile Include="Vulkan-Internal.ixx" />
+    <ClCompile Include="VulkanNativeCall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.h" />

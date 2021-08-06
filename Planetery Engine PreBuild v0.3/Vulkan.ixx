@@ -1,5 +1,17 @@
 export module Vulkan;
+export import: Enum;
+export import: Device;
+export import: Buffer;
+export import: Image;
+export import: Shader;
+export import: Sync;
+export import: Commend;
+export import: Descriptor;
+export import: Pipeline;
+export import: Tick;
+
 import: Internal;
+
 import std.core;
 import Define;
 
@@ -16,8 +28,6 @@ export namespace vk {
 	bool requestExtension(const char* name, uint minVersion = 0);
 
 	void requestDeviceExtension(const char* name, bool optional = false);
-
-	struct OutdatedSwapchainException {};
 
 	void init();  // request all needed extension/layers before call!
 	template<typename Func> bool drawFrame(Func f);	 // Render Thread only
@@ -56,7 +66,7 @@ export namespace vk {
 }
 
 
-template<typename Func> bool vk::drawFrame(Func func) {
+export template<typename Func> bool vk::drawFrame(Func func) {
 	try {
 		_prepareFrame();
 		func();

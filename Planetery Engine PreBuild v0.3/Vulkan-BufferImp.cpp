@@ -1,14 +1,16 @@
 module;
 #include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include <assert.h>
-module Vulkan;
-import: Internal;
+module Vulkan: BufferImp;
+import: Buffer;
+import: Device;
 import: Enum;
+import: Tick;
+import: Commend;
 import std.core;
 import Define;
 import Logger;
+import "Assert.h";
+import "VulkanExtModule.h";
 using namespace vk;
 
 void Buffer::_setup() {

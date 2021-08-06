@@ -1,11 +1,15 @@
-module Vulkan;
-import "GlfwModule.h";
-import: Internal;
+module Vulkan: DeviceImp;
+import: Device;
 import: Enum;
+import: Commend;
+import: Image;
 import std.core;
 import Define;
 import ThreadEvents;
 import Logger;
+import "Assert.h";
+import "VulkanExtModule.h";
+import "GlfwModule.h";
 using namespace vk;
 
 PhysicalDevice PhysicalDevice::getUsablePhysicalDevice(

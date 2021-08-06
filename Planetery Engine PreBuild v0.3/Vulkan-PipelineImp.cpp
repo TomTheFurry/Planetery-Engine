@@ -1,10 +1,14 @@
-module Vulkan;
-import: Internal;
+module Vulkan: PipelineImp;
+import: Pipeline;
 import: Enum;
+import: Device;
+import: Descriptor;
+import: Shader;
 import std.core;
 import Define;
 import Logger;
-
+import "Assert.h";
+import "VulkanExtModule.h";
 using namespace vk;
 
 VertexAttribute::VertexAttribute() {}
