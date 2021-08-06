@@ -1,8 +1,7 @@
 ﻿module;
 #include "Marco.h"
-#include "GLFW.h"
-#include <glad/glad.h>
 module ThreadRender;
+import "GlfwModule.h";
 import std.core;
 import std.threading;
 import Define;

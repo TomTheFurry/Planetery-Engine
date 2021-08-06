@@ -1,5 +1,3 @@
-module;
-
 export module Font;
 import Define;
 import std.core;

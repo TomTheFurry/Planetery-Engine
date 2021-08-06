@@ -1,5 +1,7 @@
 module;
-
+// This 'include' fixes redef error that happens if you use std::iostream...
+// somehow...
+#include <glfw\glfw3.h>
 export module StringBox;
 import std.core;
 import Define;
@@ -27,7 +29,7 @@ public:
 
 	template<typename T> StringBox& operator<<(T&& t) {
 		_change = true;
-		_ss << (std::forward<T>(t));
+		//_ss << (std::forward<T>(t));
 		return *this;
 	}
   protected:

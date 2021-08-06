@@ -1,10 +1,9 @@
 ﻿module;
 #include "ConsoleFormat.h"
-#include <cstdlib>
-#include <assert.h>
-#include <glad/glad.h>
-#include <freetype/freetype.h>
 module Font;
+import "FreeTypeModule.h";
+import "ShelfPackModule.h";
+import "GladGlfwGlTempModule.h";
 import std.core;
 import std.memory;
 import Define;
@@ -12,7 +11,6 @@ import Util;
 import Logger;
 import ThreadEvents;
 import GL;
-#include <shelf-packModulize.h>
 
 #define GL_SSBO_IDENTIFIER_FONT_GLYPH uint(42)
 constexpr auto CHARCODE_8_UNKNOWN_CHAR = '?';
@@ -23,8 +21,6 @@ constexpr auto CHARCODE_32_UNKNOWN_CHAR = char32_t(0x0000FFFD);
 constexpr auto CHARCODE_32_ONKNOWN_OBJECT = char32_t(0x0000FFFC);
 constexpr auto CHARCODE_NEXTLINE = '\n';
 constexpr uint TAB_SPACE = 4;
-
-//#ifdef USE_OPENGL
 
 using namespace font;
 
@@ -1020,7 +1016,3 @@ NextLine:
 			break;	// out of space. drawing at below screen
 	}
 }
-//#endif
-//#ifdef USE_VULKAN
-//#	include "VK.h"
-//#endif

@@ -1,10 +1,5 @@
-module;
-#include "Marco.h"
-#define USE_OPENGL	 // Temp Compile Bypass so that I can still at least build
-#ifdef USE_OPENGL
-#include <glad/glad.h>
-#include "GLFW.h"
 export module GL;
+import "GladGlfwGlTempModule.h";
 import std.core;
 import Define;
 
@@ -329,6 +324,3 @@ export template<typename T> class Swapper
 	Swapper(Swapper&& s) = delete;
 	~Swapper() { std::swap(_t, _b); }
 };
-#else
-export module GL;
-#endif

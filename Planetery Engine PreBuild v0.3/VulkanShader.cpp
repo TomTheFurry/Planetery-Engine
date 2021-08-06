@@ -1,8 +1,6 @@
 module;
-#include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include <assert.h>
+//This 'include' fixes redef error that happens if you use std::iostream... somehow...
+#include <vulkan/vulkan.h>
 module Vulkan;
 import: Internal;
 import: Enum;

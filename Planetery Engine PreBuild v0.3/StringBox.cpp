@@ -1,7 +1,9 @@
 module;
-#include <glad/glad.h>
+// This 'include' fixes redef error that happens if you use std::iostream...
+// somehow...
+#include <glfw\glfw3.h>
 module StringBox;
-
+import "GladGlfwGlTempModule.h";
 import std.core;
 import Define;
 import Font;

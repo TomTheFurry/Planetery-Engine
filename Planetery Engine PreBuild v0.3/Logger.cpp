@@ -1,6 +1,6 @@
 module;
 #include "ConsoleFormat.h"
-#include <ctime> //MOUDLE HOTFIX: Required if use std::chrono
+#include <ctime> //MOUDLE HOTFIX: Required if use std::chrono, fix missing ctime_s() def.
 module Logger;
 import Util;
 import std.core;

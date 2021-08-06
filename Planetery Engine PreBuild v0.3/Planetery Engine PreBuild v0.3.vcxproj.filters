@@ -28,6 +28,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{a2feeae4-8107-4700-8565-7ef67f3f1833}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Units">
+      <UniqueIdentifier>{205f3e63-05f3-49fa-8232-dc31a8e4a135}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -40,9 +43,6 @@
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Font.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="GL.ixx">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Logger.ixx">
@@ -61,9 +61,6 @@
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="font.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="GL.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
@@ -120,15 +117,42 @@
     <ClCompile Include="VulkanTick.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanExtern.cpp">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="GlmModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Assert.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="GlfwModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="GL.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GL.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GladGlfwGlTempModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="ShelfPackModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanExtModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeTypeModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
     <ClCompile Include="TempFix\memory_resource.cpp">
       <Filter>Header Files\TempFix</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GLFW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Marco.h">

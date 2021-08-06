@@ -3,7 +3,6 @@ module;
 #include <cstdlib>
 #pragma warning(disable : 26812)
 #include <vulkan/vulkan.h>
-#include "GLFW.h"
 #include <assert.h>
 
 // Image loading using stb. Remove this when not testing!!!
@@ -11,6 +10,7 @@ module;
 #include <stb/stb_image.h>
 
 module Vulkan;
+import "GlfwModule.h";
 import: Internal;
 import: Enum;
 import std.core;

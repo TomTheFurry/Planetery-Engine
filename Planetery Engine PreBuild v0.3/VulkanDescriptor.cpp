@@ -1,8 +1,3 @@
-module;
-#include "Marco.h"
-#	pragma warning(disable : 26812)
-#	include <vulkan/vulkan.h>
-#	include <assert.h>
 module Vulkan;
 import: Internal;
 import: Enum;

@@ -1,9 +1,9 @@
 module;
 #include "Marco.h"
 #include "ConsoleFormat.h"
-#include <assert.h>
-#include "GLFW.h"
 module ThreadEvents;
+import "Assert.h";
+import "GlfwModule.h";
 import std.core;
 import std.threading;
 import Define;

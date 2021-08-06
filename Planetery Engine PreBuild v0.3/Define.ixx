@@ -1,16 +1,16 @@
 module;
-#include <cmath>
 #include "Marco.h"
 export module Define;
+export import "GlmModule.h";
 import std.core;
-//import <glm/glm.hpp>;
-//import <glm/gtx/quaternion.hpp>;
-//import <glm/gtc/type_ptr.hpp>;
+//export import "glm/glm.hpp";
+//export import "glm/gtx/quaternion.hpp";
+//export import "glm/gtc/type_ptr.hpp";
 
 export {
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
+//#include <glm/glm.hpp>
+//#include <glm/gtx/quaternion.hpp>
+//#include <glm/gtc/type_ptr.hpp>
 	typedef unsigned short usint;
 	typedef unsigned int uint;
 	typedef unsigned long long int ulint;

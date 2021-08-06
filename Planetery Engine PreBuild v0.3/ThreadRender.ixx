@@ -1,6 +1,5 @@
-module;
-#include "GLFW.h"
 export module ThreadRender;
+import "GlfwModule.h";
 import std.core;
 import std.threading;
 import Define;

@@ -1,5 +1,3 @@
-module;
-#include "Marco.h"
 export module Vulkan;
 import: Internal;
 import std.core;
@@ -52,6 +50,9 @@ export namespace vk {
 	void _sendFrame();
 	void _resetOutdatedFrame();
 	void _testDraw();
+
+	//ExternTempTest
+	void _drawSetup();
 }
 
 

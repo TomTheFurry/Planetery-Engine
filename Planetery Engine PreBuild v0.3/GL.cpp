@@ -1,14 +1,9 @@
 module;
-#include "Marco.h"
-#define USE_OPENGL	// Temp Compile Bypass so that I can still at least build
-#ifdef USE_OPENGL
-#include <assert.h>
-#include <glad/glad.h>
-#include "GLFW.h"
-
+// This 'include' fixes redef error that happens if you use std::iostream...
+// somehow...
+#include <glfw\glfw3.h>
 module GL;
 import Logger;
-
 static void APIENTRY glDebugOutput(GLenum source, GLenum type, uint id,
   GLenum severity, GLsizei length, const char* message, const void* userParam) {
 	if (id == 131185 || id == 131204 || id == 131169)
@@ -1033,6 +1028,3 @@ void gl::drawLineStrip(VertexBuffer* lineBuffer, vec4 color, float width) {
 	}
 }
 RenderTarget* gl::target = nullptr;
-#else
-module GL;
-#endif

@@ -166,6 +166,7 @@
     <ClCompile Include="VulkanBuffer.cpp" />
     <ClCompile Include="VulkanCommend.cpp" />
     <ClCompile Include="VulkanDescriptor.cpp" />
+    <ClCompile Include="VulkanExtern.cpp" />
     <ClCompile Include="VulkanImage.cpp" />
     <ClCompile Include="VulkanPipeline.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
@@ -176,10 +177,20 @@
     <ClCompile Include="Vulkan_Internal.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Assert.h" />
     <ClInclude Include="ConsoleFormat.h" />
-    <ClInclude Include="GLFW.h" />
+    <ClCompile Include="GlfwModule.h" />
+    <ClCompile Include="GlmModule.h">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </ClCompile>
+    <ClCompile Include="GladGlfwGlTempModule.h" />
+    <ClCompile Include="FreeTypeModule.h" />
     <ClInclude Include="Marco.h" />
+    <ClCompile Include="ShelfPackModule.h" />
     <ClInclude Include="TempFix\internal_shared.h" />
+    <ClCompile Include="VulkanExtModule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

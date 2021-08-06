@@ -1,5 +1,4 @@
 module;
-#include <assert.h>
 #include "ConsoleFormat.h"
 module Util;
 import std.core;

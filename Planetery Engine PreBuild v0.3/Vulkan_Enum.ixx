@@ -1,8 +1,5 @@
-module;
-#include "Marco.h"
-#pragma warning(disable : 26812)
-#include <vulkan/vulkan.h>
 export module Vulkan: Enum;
+import "VulkanExtModule.h";
 import std.core;
 import Define;
 import Util;

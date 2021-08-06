@@ -1,6 +1,5 @@
-module;
-#include <assert.h>
 export module Util;
+import "Assert.h";
 import std.core;
 import std.threading;
 import std.memory;

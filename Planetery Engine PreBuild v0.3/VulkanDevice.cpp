@@ -1,10 +1,5 @@
-module;
-#include "Marco.h"
-#pragma warning(disable : 26812)
-#include <vulkan/vulkan.h>
-#include "GLFW.h"
-#include <assert.h>
 module Vulkan;
+import "GlfwModule.h";
 import: Internal;
 import: Enum;
 import std.core;

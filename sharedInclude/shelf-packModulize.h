@@ -1,12 +1,11 @@
-/*
+
 #include <algorithm>
 #include <cstdint>
 #include <deque>
 #include <limits>
 #include <map>
 #include <vector>
-*/
-#include <cstdint>
+
 namespace mapbox {
 
 const char * const SHELF_PACK_VERSION = "2.1.1";
