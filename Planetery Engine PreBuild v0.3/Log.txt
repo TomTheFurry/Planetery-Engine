@@ -41,10 +41,28 @@
 [;0m  [90m-[39mAll init done. Ready to sync with other threads.
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick span: 186.501000us/186.626000us (4297(0)), Event tps: 161
+[;0m  [90m-[39mAverage Tick span: 159.906000us/160.030000us (5379(0)), Event tps: 93
 
 [0;4;97mThreadRender:
-[;0m  [90m-[39mAverage Tick span: 185.781000us/185.901000us (5101(0)), Event tps: 70
+[;0m  [90m-[39mAverage Tick span: 10.812915ms/10.813021ms (4233(89)), Event tps: 1
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 1.425785ms/1.425908ms (2203(1)), Event tps: 0
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 140.278000us/140.393000us (4810(0)), Event tps: 20
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 139.058000us/139.173000us (6784(0)), Event tps: 53
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 134.608000us/134.715000us (7054(0)), Event tps: 120
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 135.833000us/135.943000us (7033(0)), Event tps: 71
+
+[0;4;97mThreadRender:
+[;0m  [90m-[39mAverage Tick span: 145.700000us/145.810000us (6986(0)), Event tps: 12
 
 [0;4;97mThreadEvent:
 [;0m  [90m-[39mWindow close request recived. Stopping render thread...[31m\n[39m

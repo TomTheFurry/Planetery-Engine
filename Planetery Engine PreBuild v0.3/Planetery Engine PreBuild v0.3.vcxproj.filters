@@ -33,163 +33,160 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\sharedInclude\glad\glad.c">
       <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Define.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="StringBox.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadEvents.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadRender.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Util.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="font.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Util.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="StringBox.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadEvents.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadRender.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan.cpp">
-      <Filter>Modules\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan.ixx">
-      <Filter>Modules\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Enum.ixx">
-      <Filter>Modules\Vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-DeviceImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-SyncImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-ImageImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-DescriptorImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-ShaderImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-PipelineImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-CommendImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-BufferImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-TickImp.cpp">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="GlmModule.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="Assert.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="GlfwModule.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="GL.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="GL.ixx">
-      <Filter>Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="GladGlfwGlTempModule.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="ShelfPackModule.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanExtModule.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
-    <ClCompile Include="FreeTypeModule.h">
-      <Filter>Header Units</Filter>
     </ClCompile>
     <ClCompile Include="TempFix\memory_resource.cpp">
       <Filter>Header Files\TempFix</Filter>
     </ClCompile>
-    <ClCompile Include="Vulkan-Internal.ixx">
+    <ClCompile Include="SrcHeaderUnit\FreeTypeModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcHeaderUnit\GladGlfwGlTempModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcHeaderUnit\GlfwModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcHeaderUnit\GlmModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcHeaderUnit\ShelfPackModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcHeaderUnit\VulkanExtModule.h">
+      <Filter>Header Units</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan.cpp">
       <Filter>Modules\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="Vulkan-Buffer.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Commend.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Descriptor.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Device.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Image.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Pipeline.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Shader.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Sync.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="Vulkan-Tick.ixx">
-      <Filter>Modules\Vulkan\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanNativeCall.cpp">
+    <ClCompile Include="SrcVulkan\Vulkan.ixx">
       <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Buffer.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-BufferImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Commend.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-CommendImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Descriptor.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-DescriptorImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Device.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-DeviceImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Image.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-ImageImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Pipeline.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-PipelineImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Shader.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-ShaderImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Sync.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-SyncImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Tick.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-TickImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\VulkanNativeCall.cpp">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Enum.ixx">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Internal.ixx">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Define.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Font.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Font.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GL.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GL.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Logger.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Logger.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StringBox.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StringBox.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThreadEvents.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThreadEvents.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThreadRender.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ThreadRender.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Util.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Util.ixx">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleFormat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Marco.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TempFix\internal_shared.h">
       <Filter>Header Files\TempFix</Filter>
     </ClInclude>
     <ClInclude Include="TempFix\memory_resource">
       <Filter>Header Files\TempFix</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\ConsoleFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Marco.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -203,22 +200,22 @@
     <None Include="shader\basic.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="testUniform.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="testUniform.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="shader\point.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shader\point.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="testUniformAndTexture.frag">
+    <None Include="cshader\testUniform.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="testUniformAndTexture.vert">
+    <None Include="cshader\testUniform.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="cshader\testUniformAndTexture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="cshader\testUniformAndTexture.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
