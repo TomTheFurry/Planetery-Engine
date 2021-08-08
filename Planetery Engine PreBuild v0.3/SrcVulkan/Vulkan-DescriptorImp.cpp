@@ -70,7 +70,9 @@ namespace vk {
 		aInfo.descriptorPool = dp.dp;
 		aInfo.descriptorSetCount = 1;
 		aInfo.pSetLayouts = &dl.dsl;
-		vkAllocateDescriptorSets(dp.d.d, &aInfo, &ds);
+		if (vkAllocateDescriptorSets(dp.d.d, &aInfo, &ds) != VK_SUCCESS) {
+			throw "VulkanDescriptorSetCreateFailure";
+		}
 	}
 	DescriptorSet::DescriptorSet(DescriptorPool& dp, VkDescriptorSet _ds):
 	  dp(dp) {

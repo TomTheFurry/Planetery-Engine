@@ -16,9 +16,16 @@ import std.core;
 import Define;
 
 export namespace vk {
+	struct DeviceCallback {
+		void (*onCreate)(LogicalDevice&) = nullptr;
+		void (*onDestroy)(LogicalDevice&) = nullptr;
+	};
 	struct SwapchainCallback {
-		void (*onCreate)(bool) = nullptr;
+		void (*onCreate)(SwapChain&, bool) = nullptr;
 		void (*onDestroy)(bool) = nullptr;
+	};
+	struct FrameCallback {
+		void (*onDraw)(RenderTick&) = nullptr;
 	};
 
 
@@ -30,13 +37,14 @@ export namespace vk {
 	void requestDeviceExtension(const char* name, bool optional = false);
 
 	void init();  // request all needed extension/layers before call!
-	template<typename Func> bool drawFrame(Func f);	 // Render Thread only
+	bool drawFrame();	 // Render Thread only
 	void checkStatus() noexcept(false);	 // throws OutdatedSwapchainException
-	void end(void (*cleanupFunc)());
-	void setSwapchinCallback(SwapchainCallback callback); //Render Thread only
+	void end();
+	void setCallback(DeviceCallback dCallback);	   // Render Thread only
+	void setCallback(SwapchainCallback scCallback);  // Render Thread only
+	void setCallback(FrameCallback fCallback);		 // Render Thread only
 
 	void notifyOutdatedSwapchain();	 // Can be called by any frame
-	void testSwitch();
 
 	namespace device {
 		class PhysicalDevice;
@@ -56,25 +64,4 @@ export namespace vk {
 		class Commeend;
 	}
 
-	void _prepareFrame();
-	void _sendFrame();
-	void _resetOutdatedFrame();
-	void _testDraw();
-
-	//ExternTempTest
-	void _drawSetup();
 }
-
-
-export template<typename Func> bool vk::drawFrame(Func func) {
-	try {
-		_prepareFrame();
-		func();
-		_sendFrame();
-		return true;
-	} catch (OutdatedSwapchainException) {
-		_resetOutdatedFrame();
-		return false;
-	}
-}
-
