@@ -2,9 +2,7 @@
 layout (points) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-layout (binding = 0) uniform geomUni {
-	vec2 emSize;
-}
+uniform vec2 emSize;
 
 struct glGlyph
 {
@@ -15,18 +13,18 @@ struct glGlyph
 	vec2 emSize; //width and height
 };
 
-layout(std430, binding = 2) readonly buffer fontSet
+layout(std430) buffer fontSet
 {
 	uint identifier;
 	uint size;
 	glGlyph glyphs[];
 };
 
-layout (location = 0) in vec2 posV[];
-layout (location = 1) in uint gIdV[];
+in vec2 posV[];
+in uint gIdV[];
 
-layout (location = 0) out vec2 texPosG;
-layout (location = 1) flat out int debugFlag;
+out vec2 texPosG;
+flat out int debugFlag;
 
 void main() {
 	vec2 pos = posV[0];

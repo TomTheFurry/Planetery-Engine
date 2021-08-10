@@ -1,11 +1,9 @@
 #version 460 core
-layout (location = 0) in vec2 texPosG;
-layout (location = 1) flat in int debugFlag;
-layout (location = 0) out vec4 fragColor;
-layout (binding = 1) uniform fragUni {
-	sampler2D fontMap;
-	vec4 texColor;
-}
+in vec2 texPosG;
+flat in int debugFlag;
+out vec4 fragColor;
+uniform sampler2D fontMap;
+uniform vec4 texColor;
 
 void main() {
 	if (debugFlag==1) {
