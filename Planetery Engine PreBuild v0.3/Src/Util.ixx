@@ -806,7 +806,7 @@ export namespace util {
 #define _DEFB StackMemoryResource<AlignSize>
 #define _DEFCTOR _DEFA _DEFB
 
-namespace pmr {
+export namespace pmr {
 
 	_DEFCTOR::StackMemoryResource():
 	  StackMemoryResource(
