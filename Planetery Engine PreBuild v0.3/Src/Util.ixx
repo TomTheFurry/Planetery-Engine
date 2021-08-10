@@ -303,6 +303,8 @@ export namespace pmr {
 	using Byte = std::byte;
 	template<typename T> using Allocator = std::pmr::polymorphic_allocator<T>;
 	using MemoryResource = std::pmr::memory_resource;
+	using ThreadUnsafePoolResource = std::pmr::unsynchronized_pool_resource;
+	using ThreadSafePoolResource = std::pmr::synchronized_pool_resource;
 	using MonotonicResource = std::pmr::monotonic_buffer_resource;
 
 	template<size_t AlignSize = DEFAULT_ALIGNMEMT> class StackMemoryResource:

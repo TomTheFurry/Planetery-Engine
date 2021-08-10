@@ -89,7 +89,7 @@ const uint testInd[]{
 static const glm::vec4 START_COLOR{0.f, 0.5f, 0.7f, 1.f};
 static glm::vec4 currentColor{1.f, 0.9f, 1.f, 1.f};
 
-//Depend on Device
+// Depend on Device
 static vk::Image* _imgTest = nullptr;
 static vk::ImageView* _imgViewTest = nullptr;
 static vk::ImageSampler* _imgSamplerBasic = nullptr;
@@ -101,7 +101,7 @@ static vk::VertexAttribute va{};
 
 static vk::DescriptorLayout* _dsl = nullptr;
 
-//Depend on SwapChain
+// Depend on SwapChain
 static vk::DescriptorContainer* _dpc = nullptr;
 static std::vector<vk::DescriptorSet> _ds{};
 static std::vector<vk::UniformBuffer> _ub{};
@@ -119,11 +119,11 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 	_vertBuff = new VertexBuffer(
 	  d, sizeof(testVert), vk::MemoryFeature::IndirectWritable);
 	_vertBuff->blockingIndirectWrite((void*)std::data(testVert));
-	_indexBuff = new IndexBuffer(
-	  d, sizeof(testInd), MemoryFeature::IndirectWritable);
+	_indexBuff =
+	  new IndexBuffer(d, sizeof(testInd), MemoryFeature::IndirectWritable);
 	_indexBuff->blockingIndirectWrite((void*)std::data(testInd));
 
-	//Make Image
+	// Make Image
 	{
 		int texWidth, texHeight, texChannels;
 		stbi_uc* pixels = stbi_load("cshader/test.png", &texWidth, &texHeight,
@@ -141,23 +141,21 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 		  TextureActiveUseType::ReadOnlyShader);
 
 		_imgViewTest = new ImageView(d, *_imgTest);
-		_imgSamplerBasic = new ImageSampler(
-		  d, SamplerFilter::Nearest, SamplerFilter::Linear);
+		_imgSamplerBasic =
+		  new ImageSampler(d, SamplerFilter::Nearest, SamplerFilter::Linear);
 	}
 
 	_vertShad = new ShaderCompiled(
-		d, ShaderType::Vert, "cshader/testUniformAndTexture.vert.spv");
+	  d, ShaderType::Vert, "cshader/testUniformAndTexture.vert.spv");
 	_fragShad = new ShaderCompiled(
-		d, ShaderType::Frag, "cshader/testUniformAndTexture.frag.spv");
+	  d, ShaderType::Frag, "cshader/testUniformAndTexture.frag.spv");
 
 	std::vector<DescriptorLayoutBinding> dslb{};
-	dslb.push_back(
-		DescriptorLayoutBinding{0, DescriptorDataType::UniformBuffer, 1,
-		Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag});
+	dslb.push_back(DescriptorLayoutBinding{0, DescriptorDataType::UniformBuffer,
+	  1, Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag});
 	dslb.push_back(DescriptorLayoutBinding{
-		1, DescriptorDataType::ImageAndSampler, 1, ShaderType::Frag});
+	  1, DescriptorDataType::ImageAndSampler, 1, ShaderType::Frag});
 	_dsl = new DescriptorLayout(d, dslb);
-
 }
 void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	using namespace vk;
@@ -176,7 +174,8 @@ void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 	using namespace vk;
 
-	_dpc = new DescriptorContainer(sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
+	_dpc =
+	  new DescriptorContainer(sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
 	// Make renderPass
 	VkFormat swapchainFormat = sc.surfaceFormat.format;
 	{
@@ -223,8 +222,8 @@ void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 	_ds.reserve(swapChainImageSize);
 	_ub.reserve(swapChainImageSize);
 	for (uint i = 0; i < swapChainImageSize; i++) {
-		auto& ub = _ub.emplace_back(
-		  sc.d, sizeof(START_COLOR), MemoryFeature::Mappable);
+		auto& ub =
+		  _ub.emplace_back(sc.d, sizeof(START_COLOR), MemoryFeature::Mappable);
 		ub.directWrite(&START_COLOR);
 		auto& ds = _ds.emplace_back(_dpc->allocNewSet());
 		std::array<DescriptorSet::WriteData, 1> wd{
@@ -272,8 +271,7 @@ void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
 	  1.f);
 	_ub[rt.getImageIndex()].directWrite(&currentColor);
-	rt.addCmdStage(
-	  _commendBuffers.at(rt.getImageIndex()), {}, {},
+	rt.addCmdStage(_commendBuffers.at(rt.getImageIndex()), {}, {},
 	  {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
 }
 

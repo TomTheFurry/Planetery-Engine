@@ -54,9 +54,6 @@
     <ClCompile Include="SrcHeaderUnit\ShelfPackModule.h">
       <Filter>Header Units</Filter>
     </ClCompile>
-    <ClCompile Include="SrcHeaderUnit\VulkanExtModule.h">
-      <Filter>Header Units</Filter>
-    </ClCompile>
     <ClCompile Include="SrcVulkan\Vulkan.cpp">
       <Filter>Modules\Vulkan</Filter>
     </ClCompile>
@@ -173,6 +170,15 @@
     </ClCompile>
     <ClCompile Include="Src\Main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\VulkanExtModule.h">
+      <Filter>Modules\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Memory.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-MemoryImp.cpp">
+      <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -59,18 +59,21 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;$(ProjectDir)Header;$(ProjectDir)SrcHeaderUnit;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)SrcHeaderUnit;$(ProjectDir)Header;C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;$(SolutionDir)lib;$(SolutionDir)sharedInclude;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <SourcePath>$(ProjectDir)SrcVulkan;$(ProjectDir)SrcHeaderUnit;$(ProjectDir)Src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">
-    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;$(ProjectDir)Header;$(ProjectDir)SrcHeaderUnit;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)SrcHeaderUnit;$(ProjectDir)Header;C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;$(SolutionDir)lib;$(SolutionDir)sharedInclude;$(LibraryPath)</LibraryPath>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <SourcePath>$(ProjectDir)SrcVulkan;$(ProjectDir)SrcHeaderUnit;$(ProjectDir)Src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\VulkanSDK\1.2.170.0\Include;$(ProjectDir)Header;$(ProjectDir)SrcHeaderUnit;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)SrcHeaderUnit;$(ProjectDir)Header;C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)sharedInclude;$(IncludePath)</IncludePath>
     <LibraryPath>C:\VulkanSDK\1.2.170.0\Lib;$(SolutionDir)lib;$(SolutionDir)sharedInclude;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(ProjectDir)SrcVulkan;$(ProjectDir)SrcHeaderUnit;$(ProjectDir)Src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -158,6 +161,12 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
     </ClCompile>
     <ClCompile Include="SrcVulkan\Vulkan-Internal.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-Memory.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-MemoryImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
     <ClCompile Include="SrcVulkan\Vulkan-Pipeline.ixx" />
     <ClCompile Include="SrcVulkan\Vulkan-PipelineImp.cpp">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
@@ -230,7 +239,7 @@
     <ClCompile Include="SrcHeaderUnit\GlfwModule.h" />
     <ClCompile Include="SrcHeaderUnit\GlmModule.h" />
     <ClCompile Include="SrcHeaderUnit\ShelfPackModule.h" />
-    <ClCompile Include="SrcHeaderUnit\VulkanExtModule.h" />
+    <ClCompile Include="SrcVulkan\VulkanExtModule.h" />
     <ClInclude Include="TempFix\internal_shared.h" />
   </ItemGroup>
   <ItemGroup>
