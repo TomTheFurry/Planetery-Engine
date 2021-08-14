@@ -1,6 +1,7 @@
 export module Vulkan: Image;
 export import: Internal;
 import: Enum;
+import: Memory;
 import std.core;
 import Define;
 import Util;
@@ -38,9 +39,10 @@ export namespace vk {
 		void blockingTransformActiveUsage(TextureActiveUseType targetUsage);
 
 		// TODO: Check if below is okay with vkMinAlignment
-		size_t mappingMinAlignment;	 // size_t(-1) equals no mapping
 		size_t texMemorySize;
+		size_t mSize;
 		uvec3 size;
+		size_t minAlignment;
 		uint dimension;
 		uint mipLevels;
 		uint layers;
@@ -50,7 +52,8 @@ export namespace vk {
 		Flags<TextureUseType> usage;
 		TextureActiveUseType activeUsage;
 		VkImage img = nullptr;
-		VkDeviceMemory dm = nullptr;
+		uint memoryIndex;
+		MemoryPointer ptr;
 		void* mappedPtr = nullptr;
 		LogicalDevice& d;
 	};

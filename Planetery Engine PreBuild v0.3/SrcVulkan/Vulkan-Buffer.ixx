@@ -1,11 +1,14 @@
 export module Vulkan: Buffer;
 export import: Internal;
 import: Enum;
+import: Memory;
 import Util;
 import "VulkanExtModule.h";
 
 // Buffer class:
 export namespace vk {
+	// FIXME: Can't unmap part of memory...
+	// Effect: Only allowed to map one memory at a time
 	class Buffer
 	{
 		void _setup();
@@ -34,12 +37,14 @@ export namespace vk {
 		void directWrite(size_t size, size_t offset, const void* data);
 
 		// TODO: Make a remake() function
+		size_t mSize;
 		size_t size;
 		size_t minAlignment;
 		Flags<MemoryFeature> feature;
 		Flags<BufferUseType> usage;
 		VkBuffer b = nullptr;
-		VkDeviceMemory dm = nullptr;
+		uint memoryIndex;
+		MemoryPointer ptr;
 		void* mappedPtr = nullptr;
 		LogicalDevice& d;
 	};

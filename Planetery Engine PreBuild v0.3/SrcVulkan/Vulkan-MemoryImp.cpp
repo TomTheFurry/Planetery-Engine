@@ -2,6 +2,8 @@ module Vulkan: MemoryImp;
 import: Memory;
 import: Enum;
 import: Device;
+import Logger;
+import Util;
 import "VulkanExtModule.h";
 
 using namespace vk;
@@ -15,10 +17,10 @@ template<class T> inline auto Prev(T iter) { return --iter; }
 
 
 MemoryAllocator::MemoryAllocator(
-  LogicalDevice& d, MemoryFeature feature, uint memoryIndex):
+  LogicalDevice& d, uint memoryIndex):
   d(d) {
-	this->feature = feature;
 	this->memoryIndex = memoryIndex;
+	logger("VulkanMemory(", memoryIndex, "): Init\n");
 }
 DeviceMemory MemoryAllocator::alloc(size_t n) {
 	VkMemoryAllocateInfo allocInfo{
@@ -29,20 +31,21 @@ DeviceMemory MemoryAllocator::alloc(size_t n) {
 	};
 	DeviceMemory dm{};
 	vkAllocateMemory(d.d, &allocInfo, nullptr, &dm.dm);
+	logger(
+	  "VulkanMemory(", memoryIndex, "): Alloc ", byte(n), " at ", address(dm.dm), "\n");
 	return dm;
 }
-void MemoryAllocator::free(DeviceMemory m) { vkFreeMemory(d.d, m.dm, nullptr); }
+void MemoryAllocator::free(DeviceMemory m) {
+	logger("VulkanMemory(", memoryIndex, "): Free ",
+	  address(m.dm), "\n");
+	vkFreeMemory(d.d, m.dm, nullptr);
+}
 
 
-MemoryPool::Group::Group(size_t size, void* ptr) {
+MemoryPool::Group::Group(size_t size) {
 	auto iter = nodes.emplace(0, State{}).first;
 	iter->second.isFree = freeNodes.emplace(0, iter).first;
 	nodes.emplace(size, State{freeNodes.end()});
-
-	// DEBUG
-	ptrDebug = (char*)ptr;
-	std::fill(ptrDebug, ptrDebug + size, 'f');
-	*ptrDebug = 'F';
 }
 
 size_t MemoryPool::Group::alloc(size_t n, size_t align) {
@@ -63,20 +66,9 @@ size_t MemoryPool::Group::alloc(size_t n, size_t align) {
 			continue;
 		}
 
-		// DEBUG
-		std::fill(ptrDebug + offset, ptrDebug + nOffset, 'w');
-		std::fill(ptrDebug + result, ptrDebug + nextPoint, 'u');
-		*(ptrDebug + offset) = *(ptrDebug + offset) == 'w' ? 'W' : 'U';
-
 		if (nOffset - nextPoint >= MIN_NODE_SIZE) {
-			// DEBUG
-			std::fill(ptrDebug + nextPoint, ptrDebug + nOffset, 'f');
-			*(ptrDebug + nextPoint) = 'F';
 
 			if (nState.isFree != freeNodes.end()) {
-				// DEBUG
-				assert(nState.isFree == Next(freeIter));
-				*(ptrDebug + nOffset) = 'f';
 
 				nodes.erase(Next(freeIter->second));
 				freeNodes.erase(Next(freeIter));
@@ -88,10 +80,6 @@ size_t MemoryPool::Group::alloc(size_t n, size_t align) {
 			  freeNodes.emplace_hint(Next(freeIter), nextPoint, iter);
 		}
 		if (result - offset >= MIN_NODE_SIZE) {
-			// DEBUG
-			std::fill(ptrDebug + offset, ptrDebug + result, 'f');
-			*(ptrDebug + offset) = 'F';
-
 			// No need for updating anything as I just shotten current node by
 			// making a next node
 			nodes.emplace_hint(
@@ -120,21 +108,15 @@ void MemoryPool::Group::free(size_t ptr) {
 	bool nextFree = Next(iter)->second.isFree != freeNodes.end();
 
 	if (nextFree) {
-		// DEBUG
-		*(ptrDebug + Next(iter)->first) = 'f';
 
 		freeNodes.erase(Next(iter)->second.isFree);
 		nodes.erase(Next(iter));
 	}
-	// DEBUG
-	std::fill(ptrDebug + iter->first, ptrDebug + Next(iter)->first, 'f');
 	if (prevFree) {
 		// No need for updating anything as I just expend previous node by
 		// deleting current node
 		nodes.erase(iter);
 	} else {
-		// DEBUG
-		*(ptrDebug + iter->first) = 'F';
 
 		iter->second.isFree =
 		  freeNodes.emplace(iter->first, iter).first;  // Slow... Design flaw :(
@@ -148,14 +130,21 @@ MemoryPool::MemoryPool(size_t initialSize, MemoryAllocator targetAllocator):
   upperAllocator(targetAllocator) {
 	blockSize = initialSize;
 }
+MemoryPool::MemoryPool(MemoryPool&& o):
+  groups(std::move(o.groups)), upperAllocator(o.upperAllocator),
+  blockSize(o.blockSize) {}
+
 MemoryPool::~MemoryPool() noexcept(false) {
 	if (!groups.empty()) throw "VulkanMemoryPoolMissingFree";
 }
 
 MemoryPointer MemoryPool::alloc(size_t n, size_t align) {
-	if (n > blockSize)
-		throw "TOFIX:VulkanMemoryPoolAllocSizeGreaterThenBlockSize";
 	MemoryPointer mp{};
+	if (n > blockSize) {
+		mp.dm = upperAllocator.alloc(n);
+		mp.offset = 0;
+		return mp;
+	}
 	for (auto& [dm, group] : groups) {
 		size_t offset = group.alloc(n, align);
 		if (offset != size_t(-1)) {
@@ -165,18 +154,26 @@ MemoryPointer MemoryPool::alloc(size_t n, size_t align) {
 		}
 	}
 	auto _p = upperAllocator.alloc(blockSize);
-
-	auto& [dm, group] = *(groups.emplace(_p, Group(blockSize, _p.dm)).first);
+	auto& [dm, group] = *(groups.emplace(_p, Group(blockSize)).first);
 	mp.dm = dm;
 	mp.offset = group.alloc(n, align);
-	assert(mp.offset != size_t(-1));
+	if (mp.offset == size_t(-1)) throw "VULKANASSERTFAILURE";
 	return mp;
 }
 
 void MemoryPool::free(MemoryPointer ptr) {
-	groups.at(ptr.dm).free(ptr.offset);
-	if (groups.at(ptr.dm).isEmpty()) {
-		groups.erase(ptr.dm);
+	auto iter = groups.find(ptr.dm);
+	if (ptr.offset == 0) {
+		if (iter == groups.end()) {
+			upperAllocator.free(ptr.dm);
+			return;
+		}
+	}
+	if (iter == groups.end()) throw "VULKANASSERTFAILURE";
+
+	iter->second.free(ptr.offset);
+	if (iter->second.isEmpty()) {
+		groups.erase(iter);
 		upperAllocator.free(ptr.dm);
 	}
 }

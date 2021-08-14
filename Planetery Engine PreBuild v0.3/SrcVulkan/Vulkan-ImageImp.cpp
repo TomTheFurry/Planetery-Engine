@@ -6,6 +6,7 @@ import: Buffer;
 import: Commend;
 import: Sync;
 import: Pipeline;
+import: Memory;
 import std.core;
 import Define;
 import Logger;
@@ -34,13 +35,13 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
   d(d) {
 	if (texMemFeature.has(MemoryFeature::Mappable)) {
 		if (texMemFeature.has(MemoryFeature::Coherent))
-			mappingMinAlignment =
+			minAlignment =
 			  d.pd.properties10.properties.limits.nonCoherentAtomSize;
 		else
-			mappingMinAlignment =
+			minAlignment =
 			  d.pd.properties10.properties.limits.minMemoryMapAlignment;
 	} else {
-		mappingMinAlignment = size_t(-1);
+		minAlignment = 1;
 	}
 	if (texMemFeature.has(MemoryFeature::IndirectWritable)) {
 		texUsage.set(TextureUseType::TransferDst);
@@ -48,6 +49,8 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	if (texMemFeature.has(MemoryFeature::IndirectReadable)) {
 		texUsage.set(TextureUseType::TransferSrc);
 	}
+	// HOTFIX: This is hotfix for min requirement for alignment
+	minAlignment = d.pd.properties10.properties.limits.nonCoherentAtomSize;
 
 	size = texSize;
 	feature = texFeature;
@@ -74,8 +77,9 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	iInfo.mipLevels = mipLevels;
 	iInfo.arrayLayers = layers;
 	iInfo.samples = (VkSampleCountFlagBits)subsamples;
-	iInfo.tiling = mappingMinAlignment == uint(-1) ? VK_IMAGE_TILING_OPTIMAL
-												   : VK_IMAGE_TILING_LINEAR;
+	iInfo.tiling = texMemFeature.has(MemoryFeature::Mappable)
+				   ? VK_IMAGE_TILING_LINEAR
+				   : VK_IMAGE_TILING_OPTIMAL;
 	iInfo.usage = (VkImageUsageFlags)texUsage;
 	iInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	// iInfo.queueFamilyIndexCount;
@@ -89,30 +93,38 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	// Alloc Memory
 	VkMemoryRequirements memRequirements;
 	vkGetImageMemoryRequirements(d.d, img, &memRequirements);
-	uint memTypeIndex =
-	  d.pd.getMemoryTypeIndex(memRequirements.memoryTypeBits, texMemFeature);
-	// TODO: Add fallback
-	if (memTypeIndex == -1) throw "VulkanFailedToGetMemoryType";
-	// TODO: Fix allocator for custom allocation in PhysicalDevice
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = memTypeIndex;
-	if (vkAllocateMemory(d.d, &allocInfo, nullptr, &dm) != VK_SUCCESS) {
-		throw std::runtime_error("failed to allocate buffer memory!");
-	}
-
-	vkBindImageMemory(d.d, img, dm, 0);
+	mSize = memRequirements.size;
+	auto pair = d.allocMemory(
+	  memRequirements.memoryTypeBits, memFeature, mSize, minAlignment);
+	memoryIndex = pair.first;
+	ptr = pair.second;
+	if (vkBindImageMemory(d.d, img, ptr.dm.dm, ptr.offset) != VK_SUCCESS)
+		throw "VulkanImageBindMemoryFailure";
 }
 Image::Image(Image&& other) noexcept: d(other.d) {
+	texMemorySize = other.texMemorySize;
+	mSize = other.mSize;
+	size = other.size;
+	minAlignment = other.minAlignment;
 	img = other.img;
+	memoryIndex = other.memoryIndex;
+	ptr = other.ptr;
+	mappedPtr = other.mappedPtr;
+	memFeature = other.memFeature;
+	usage = other.usage;
+	activeUsage = other.activeUsage;
+	dimension = other.dimension;
+	mipLevels = other.mipLevels;
+	layers = other.layers;
+	format = other.format;
+	feature = other.feature;
 	other.img = nullptr;
-	dm = other.dm;
-	other.dm = nullptr;
+	other.memoryIndex = uint(-1);
+	other.mappedPtr = nullptr;
 }
 Image::~Image() {
 	if (img != nullptr) vkDestroyImage(d.d, img, nullptr);
-	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
+	if (memoryIndex != uint(-1)) d.freeMemory(memoryIndex, ptr);
 }
 
 void* Image::map() {
@@ -124,7 +136,7 @@ void* Image::map() {
 			&& activeUsage != TextureActiveUseType::HostWritable)
 			throw "VulkanImageIncorrectActiveUsage";
 	}
-	vkMapMemory(d.d, dm, 0, VK_WHOLE_SIZE, 0, &mappedPtr);
+	vkMapMemory(d.d, ptr.dm.dm, ptr.offset, mSize, 0, &mappedPtr);
 	return mappedPtr;
 }
 void* Image::map(size_t nSize, size_t offset) {
@@ -133,15 +145,13 @@ void* Image::map(size_t nSize, size_t offset) {
 		if (!memFeature.has(MemoryFeature::Mappable))
 			throw "VulkanImageNotMappable";
 		if (mappedPtr != nullptr) throw "VulkanImageAlreadyMapped";
-		if (nSize % mappingMinAlignment != 0)
-			throw "VulkanImageNotOnMinAlignment";
-		if (offset % mappingMinAlignment != 0)
-			throw "VulkanImageNotOnMinAlignment";
+		if (nSize % minAlignment != 0) throw "VulkanImageNotOnMinAlignment";
+		if (offset % minAlignment != 0) throw "VulkanImageNotOnMinAlignment";
 		if (activeUsage != TextureActiveUseType::General
 			&& activeUsage != TextureActiveUseType::HostWritable)
 			throw "VulkanImageIncorrectActiveUsage";
 	}
-	vkMapMemory(d.d, dm, offset, nSize, 0, &mappedPtr);
+	vkMapMemory(d.d, ptr.dm.dm, ptr.offset + offset, nSize, 0, &mappedPtr);
 	return mappedPtr;
 }
 void Image::flush() {
@@ -154,9 +164,9 @@ void Image::flush() {
 	}
 	VkMappedMemoryRange r{};
 	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
-	r.offset = 0;
-	r.size = VK_WHOLE_SIZE;
+	r.memory = ptr.dm.dm;
+	r.offset = ptr.offset;
+	r.size = mSize;
 	vkFlushMappedMemoryRanges(d.d, 1, &r);
 }
 void Image::flush(size_t nSize, size_t offset) {
@@ -165,16 +175,14 @@ void Image::flush(size_t nSize, size_t offset) {
 		if (!memFeature.has(MemoryFeature::Mappable))
 			throw "VulkanImageNotMappable";
 		if (mappedPtr == nullptr) throw "VulkanImageNotMapped";
-		if (nSize % mappingMinAlignment != 0)
-			throw "VulkanImageNotOnMinAlignment";
-		if (offset % mappingMinAlignment != 0)
-			throw "VulkanImageNotOnMinAlignment";
+		if (nSize % minAlignment != 0) throw "VulkanImageNotOnMinAlignment";
+		if (offset % minAlignment != 0) throw "VulkanImageNotOnMinAlignment";
 	}
 	VkMappedMemoryRange r{};
 	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
+	r.memory = ptr.dm.dm;
 	r.size = nSize;
-	r.offset = offset;
+	r.offset = ptr.offset + offset;
 	vkFlushMappedMemoryRanges(d.d, 1, &r);
 }
 void Image::unmap() {
@@ -187,7 +195,8 @@ void Image::unmap() {
 			throw "VulkanImageIncorrectActiveUsage";
 		mappedPtr = nullptr;
 	}
-	vkUnmapMemory(d.d, dm);
+	// FIXME: Can't unmap part of memory...
+	vkUnmapMemory(d.d, ptr.dm.dm);
 }
 
 void Image::blockingIndirectWrite(const void* data) {

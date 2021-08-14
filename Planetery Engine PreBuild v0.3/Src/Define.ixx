@@ -75,11 +75,8 @@ export {
 	constexpr bool USING_OPENGL = false;
 #endif
 }
-export std::string nanoSec(auto ns);
-export std::string sec(auto s);
-export std::string byte(auto B);
 
-std::string nanoSec(auto ns) {
+export std::string nanoSec(auto ns) {
 	if (ns < NS_PER_US) return std::to_string(ns) + "ns";
 	if (ns < NS_PER_MS) return std::to_string(ns / NS_PER_US_F) + "us";
 	if (ns < NS_PER_S) return std::to_string(ns / NS_PER_MS_F) + "ms";
@@ -87,11 +84,21 @@ std::string nanoSec(auto ns) {
 	if (ns < NS_PER_H) return std::to_string(ns / NS_PER_M_F) + "min";
 	return std::to_string(ns / NS_PER_H_F) + "hour";
 }
-std::string sec(auto s) { return nanoSec(s * NS_PER_S); }
-std::string byte(auto B) {
+export std::string sec(auto s) { return nanoSec(s * NS_PER_S); }
+export std::string byte(auto B) {
 	if (B < B_PER_KB) return std::to_string(B) + "B";
 	if (B < B_PER_MB) return std::to_string(B / B_PER_KB_F) + "KB";
 	if (B < B_PER_GB) return std::to_string(B / B_PER_MB_F) + "MB";
 	if (B < B_PER_TB) return std::to_string(B / B_PER_GB_F) + "GB";
 	return std::to_string(B / B_PER_TB_F) + "TB";
+}
+
+//Source: https://stackoverflow.com/questions/5100718/integer-to-hex-string-in-c
+export template<typename I>
+std::string address(I w, size_t hex_len = sizeof(I) << 1) {
+	static const char* digits = "0123456789ABCDEF";
+	std::string rc(hex_len, '0');
+	for (size_t i = 0, j = (hex_len - 1) * 4; i < hex_len; ++i, j -= 4)
+		rc[i] = digits[(((size_t)w) >> j) & 0x0f];
+	return rc;
 }

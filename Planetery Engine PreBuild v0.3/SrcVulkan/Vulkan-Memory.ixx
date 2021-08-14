@@ -16,17 +16,15 @@ namespace vk {
 		DeviceMemory dm;
 		size_t offset;
 	};
-
 	class MemoryAllocator
 	{
 	  public:
 		MemoryAllocator(
-		  LogicalDevice& d, MemoryFeature feature, uint memoryIndex);
+		  LogicalDevice& d, uint memoryIndex);
 		MemoryAllocator(const MemoryAllocator&) = default;
 		MemoryAllocator(MemoryAllocator&&) = default;
 		DeviceMemory alloc(size_t n);
 		void free(DeviceMemory m);
-		MemoryFeature feature;
 		uint memoryIndex;
 		LogicalDevice& d;
 	};
@@ -39,8 +37,7 @@ namespace vk {
 			  isFree;
 		};
 		struct Group {
-			Group(size_t size, void* ptrDebug);
-			char* ptrDebug;
+			Group(size_t size);
 			// key as DeviceMemory
 			std::map<size_t, State> nodes;
 			std::map<size_t, std::map<size_t, State>::iterator> freeNodes;
@@ -50,10 +47,12 @@ namespace vk {
 		};
 		std::map<DeviceMemory, Group> groups;
 		size_t blockSize;
-		MemoryAllocator& upperAllocator;
+		MemoryAllocator upperAllocator;
 
 	  public:
 		MemoryPool(size_t initialSize, MemoryAllocator targetAllocator);
+		MemoryPool(const MemoryPool&) = delete;
+		MemoryPool(MemoryPool&& o);
 		MemoryPointer alloc(size_t n, size_t align);
 		void free(MemoryPointer ptr);
 		~MemoryPool() noexcept(false);

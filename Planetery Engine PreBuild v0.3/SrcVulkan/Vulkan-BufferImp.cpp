@@ -6,6 +6,7 @@ import: Device;
 import: Enum;
 import: Tick;
 import: Commend;
+import: Memory;
 import std.core;
 import Define;
 import Logger;
@@ -24,19 +25,12 @@ void Buffer::_setup() {
 	}
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(d.d, b, &memRequirements);
-	uint memTypeIndex =
-	  d.pd.getMemoryTypeIndex(memRequirements.memoryTypeBits, feature);
-	// TODO: Add fallback
-	if (memTypeIndex == -1) throw "VulkanFailedToGetMemoryType";
-	// TODO: Fix allocator for custom allocation in PhysicalDevice
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = memTypeIndex;
-	if (vkAllocateMemory(d.d, &allocInfo, nullptr, &dm) != VK_SUCCESS) {
-		throw std::runtime_error("failed to allocate buffer memory!");
-	}
-	vkBindBufferMemory(d.d, b, dm, 0);
+	mSize = memRequirements.size;
+	auto pair = d.allocMemory(memRequirements.memoryTypeBits, feature, mSize, minAlignment);
+	memoryIndex = pair.first;
+	ptr = pair.second;
+
+	if (vkBindBufferMemory(d.d, b, ptr.dm.dm, ptr.offset) != VK_SUCCESS) throw "VulkanBufferBindMemoryFailure";
 }
 
 Buffer::Buffer(LogicalDevice& device, size_t s,
@@ -61,25 +55,29 @@ Buffer::Buffer(LogicalDevice& device, size_t s,
 	if (feature.has(MemoryFeature::IndirectWritable)) {
 		usage.set(BufferUseType::TransferDst);
 	}
+	//HOTFIX: This is hotfix for min requirement for alignment
+	minAlignment = d.pd.properties10.properties.limits.nonCoherentAtomSize;
 	_setup();
 }
 
 Buffer::Buffer(Buffer&& other) noexcept: d(other.d) {
+	mSize = other.size;
 	size = other.size;
 	minAlignment = other.minAlignment;
 	b = other.b;
-	dm = other.dm;
+	memoryIndex = other.memoryIndex;
+	ptr = other.ptr;
 	mappedPtr = other.mappedPtr;
 	feature = other.feature;
 	usage = other.usage;
 	other.b = nullptr;
-	other.dm = nullptr;
+	other.memoryIndex = uint(-1);
 	other.mappedPtr = nullptr;
 }
 
 Buffer::~Buffer() {
 	if (b != nullptr) vkDestroyBuffer(d.d, b, nullptr);
-	if (dm != nullptr) vkFreeMemory(d.d, dm, nullptr);
+	if (memoryIndex != uint(-1)) d.freeMemory(memoryIndex, ptr);
 }
 void* Buffer::map() {
 	if constexpr (DO_SAFETY_CHECK) {
@@ -87,7 +85,7 @@ void* Buffer::map() {
 			throw "VulkanBufferNotMappable";
 		if (mappedPtr != nullptr) throw "VulkanBufferAlreadyMapped";
 	}
-	vkMapMemory(d.d, dm, 0, VK_WHOLE_SIZE, 0, &mappedPtr);
+	vkMapMemory(d.d, ptr.dm.dm, ptr.offset, mSize, 0, &mappedPtr);
 	return mappedPtr;
 }
 void* Buffer::map(size_t nSize, size_t offset) {
@@ -99,7 +97,7 @@ void* Buffer::map(size_t nSize, size_t offset) {
 		if (nSize % minAlignment != 0) throw "VulkanBufferNotOnMinAlignment";
 		if (offset % minAlignment != 0) throw "VulkanBufferNotOnMinAlignment";
 	}
-	vkMapMemory(d.d, dm, offset, nSize, 0, &mappedPtr);
+	vkMapMemory(d.d, ptr.dm.dm, ptr.offset + offset, nSize, 0, &mappedPtr);
 	return mappedPtr;
 }
 void Buffer::flush() {
@@ -112,9 +110,9 @@ void Buffer::flush() {
 	}
 	VkMappedMemoryRange r{};
 	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
-	r.offset = 0;
-	r.size = VK_WHOLE_SIZE;
+	r.memory = ptr.dm.dm;
+	r.offset = ptr.offset;
+	r.size = mSize;
 	vkFlushMappedMemoryRanges(d.d, 1, &r);
 }
 void Buffer::flush(size_t nSize, size_t offset) {
@@ -128,9 +126,9 @@ void Buffer::flush(size_t nSize, size_t offset) {
 	}
 	VkMappedMemoryRange r{};
 	r.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	r.memory = dm;
+	r.memory = ptr.dm.dm;
 	r.size = nSize;
-	r.offset = offset;
+	r.offset = ptr.offset + offset;
 	vkFlushMappedMemoryRanges(d.d, 1, &r);
 }
 void Buffer::unmap() {
@@ -140,7 +138,8 @@ void Buffer::unmap() {
 		if (mappedPtr == nullptr) throw "VulkanBufferNotMapped";
 		mappedPtr = nullptr;
 	}
-	vkUnmapMemory(d.d, dm);
+	//FIXME: Can't unmap part of memory...
+	vkUnmapMemory(d.d, ptr.dm.dm);
 }
 
 void Buffer::cmdIndirectWrite(RenderTick& rt, CommendBuffer& cb, void* data) {

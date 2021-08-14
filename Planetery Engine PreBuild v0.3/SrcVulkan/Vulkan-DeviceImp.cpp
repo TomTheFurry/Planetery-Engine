@@ -268,6 +268,21 @@ LogicalDevice::~LogicalDevice() {
 	commendPools.clear();
 	if (d) vkDestroyDevice(d, nullptr);
 }
+std::pair<uint, MemoryPointer> vk::LogicalDevice::allocMemory(
+  uint bitFilter,
+  Flags<MemoryFeature> feature, size_t n, size_t align) {
+	uint key = pd.getMemoryTypeIndex(bitFilter, feature);
+	auto iter = memoryPools.lower_bound(key);
+	if (iter == memoryPools.end() || iter->first != key)
+		iter = memoryPools.emplace_hint(
+		  iter, key, MemoryPool(65536, MemoryAllocator(*this, key)));
+	return std::pair(key,iter->second.alloc(n, align));
+}
+void vk::LogicalDevice::freeMemory(uint memoryIndex, MemoryPointer ptr) {
+	//logger("Vulkan Freeing memId: ", memoryIndex);
+	memoryPools.at(memoryIndex).free(ptr);
+}
+
 void LogicalDevice::makeSwapChain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
 	assert(!swapChain);

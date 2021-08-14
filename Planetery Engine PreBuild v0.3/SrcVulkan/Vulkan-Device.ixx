@@ -1,5 +1,6 @@
 export module Vulkan: Device;
 export import: Internal;
+import: Memory;
 import: Enum;
 import std.core;
 import Define;
@@ -42,6 +43,7 @@ export namespace vk {
 		OSRenderSurface* renderOut = nullptr;
 		QueueFamilyIndex getQueueFamily(
 		  VkQueueFlags requirement, OSRenderSurface* displayOutput = nullptr);
+		//TODO: cache the result
 		uint getMemoryTypeIndex(
 		  uint bitFilter, Flags<MemoryFeature> feature) const;
 		LogicalDevice* makeDevice(
@@ -73,6 +75,12 @@ export namespace vk {
 		QueueFamilyIndex queueIndex;
 		std::unique_ptr<SwapChain> swapChain;
 		std::vector<CommendPool> commendPools;
+		std::map<uint, MemoryPool> memoryPools;
+		std::pair<uint, MemoryPointer> allocMemory(
+		  uint bitFilter,
+		  Flags<MemoryFeature> feature, size_t n, size_t align);
+		void freeMemory(uint memoryIndex, MemoryPointer ptr);
+		
 		void makeSwapChain(uvec2 size = uvec2(-1));
 		void remakeSwapChain(uvec2 size = uvec2(-1));
 		CommendPool& getCommendPool(CommendPoolType type);

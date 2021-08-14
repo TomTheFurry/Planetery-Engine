@@ -16,6 +16,11 @@ export namespace vk {
 	class OSRenderSurface;
 	class SwapChainSupport;
 	class SwapChain;
+	// Memory class:
+	struct DeviceMemory;
+	struct MemoryPointer;
+	class MemoryPool;
+	class MemoryAllocator;
 	// Buffer class:
 	class Buffer;
 	class VertexBuffer;
