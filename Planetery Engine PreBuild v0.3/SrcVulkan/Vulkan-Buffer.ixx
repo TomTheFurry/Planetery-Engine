@@ -73,4 +73,13 @@ export namespace vk {
 		  Buffer(d, size, neededFeature, neededUsage | BufferUseType::Uniform) {
 		}
 	};
+	class StorageBuffer: public Buffer
+	{
+	  public:
+		StorageBuffer(LogicalDevice& d, size_t size,
+		  Flags<MemoryFeature> neededFeature = MemoryFeature::None,
+		  Flags<BufferUseType> neededUsage = BufferUseType::None):
+		  Buffer(d, size, neededFeature, neededUsage | BufferUseType::Storage) {
+		}
+	};
 }

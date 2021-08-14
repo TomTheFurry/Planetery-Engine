@@ -286,6 +286,9 @@
     </None>
     <None Include="shader\point.frag" />
     <None Include="shader\point.vert" />
+    <None Include="shader\textRenderVk.frag" />
+    <None Include="shader\textRenderVk.geom" />
+    <None Include="shader\textRenderVk.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -224,5 +224,14 @@
     <None Include="cshader\testUniformAndTexture.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shader\textRenderVk.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader\textRenderVk.geom">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader\textRenderVk.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
