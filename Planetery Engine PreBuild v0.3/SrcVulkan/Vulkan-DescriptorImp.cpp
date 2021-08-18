@@ -83,7 +83,7 @@ namespace vk {
 		o.ds = nullptr;
 	}
 	DescriptorSet::~DescriptorSet() {
-		//TODO: Keep track of whether clean up is required using only itself to fix static uninit error
+		//TODO: Keep track of whether clean up is required as call to free Desc set may not be needed
 		if (ds != nullptr && dp.settings.has(DescriptorPoolType::Resetable)) {
 			vkFreeDescriptorSets(dp.d.d, dp.dp, 1, &ds);
 		}

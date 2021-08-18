@@ -200,21 +200,25 @@ void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 		_frameBuffers.emplace_back(sc.d, *_renderPass, sc.pixelSize, b);
 	}
 	// Make Pipeline
-	_pipeline = new ShaderPipeline(sc.d);
-	_pipeline->bind(*_dsl);
-	std::vector<const ShaderCompiled*> pointShad;
-	pointShad.reserve(2);
-	pointShad.push_back(_vertShad);
-	pointShad.push_back(_fragShad);
-	VkViewport viewport{
-	  .x = 0,
-	  .y = 0,
-	  .width = (float)sc.pixelSize.x,
-	  .height = (float)sc.pixelSize.y,
-	  .minDepth = 0,
-	  .maxDepth = 0,
-	};
-	_pipeline->complete(pointShad, va, viewport, *_renderPass);
+	_pipeline = new ShaderPipeline(sc.d, {_dsl}, *_renderPass, 0,
+	  {ShaderPipeline::ShaderStage(*_vertShad, "main"),
+		ShaderPipeline::ShaderStage(*_fragShad, "main")},
+	  va, PrimitiveTopology::TriangleStrip, false,
+	  {VkViewport{
+		.x = 0,
+		.y = 0,
+		.width = (float)sc.pixelSize.x,
+		.height = (float)sc.pixelSize.y,
+		.minDepth = 0,
+		.maxDepth = 1,
+	  }},
+	  {VkRect2D{VkOffset2D{0, 0}, VkExtent2D{sc.pixelSize.x, sc.pixelSize.y}}},
+	  false, false,
+	  PolygonMode::Fill, CullMode::None, FrontDirection::Clockwise,
+	  std::optional<ShaderPipeline::DepthBias>(), 1.f, 1, true,
+	  std::optional<ShaderPipeline::DepthStencilSettings>(),
+	  LogicOperator::None, {ShaderPipeline::AttachmentBlending()},
+	  vec4());
 	assert(_pipeline->p != nullptr);
 
 	uint swapChainImageSize = sc.swapChainImages.size();

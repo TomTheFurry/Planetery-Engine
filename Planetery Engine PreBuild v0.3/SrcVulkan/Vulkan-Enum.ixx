@@ -83,6 +83,161 @@ export namespace vk {
 		Write = VK_ATTACHMENT_STORE_OP_STORE,
 		Undefined = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 	};
+	enum class SampleCount : VkSampleCountFlags {
+		Bit1 = VK_SAMPLE_COUNT_1_BIT,
+		Bit2 = VK_SAMPLE_COUNT_2_BIT,
+		Bit4 = VK_SAMPLE_COUNT_4_BIT,
+		Bit8 = VK_SAMPLE_COUNT_8_BIT,
+		Bit16 = VK_SAMPLE_COUNT_16_BIT,
+		Bit32 = VK_SAMPLE_COUNT_32_BIT,
+		Bit64 = VK_SAMPLE_COUNT_64_BIT,
+	};
+	enum class ColorComponents : VkColorComponentFlags {
+		None = 0,
+		Red = VK_COLOR_COMPONENT_R_BIT,
+		Green = VK_COLOR_COMPONENT_G_BIT,
+		Blue = VK_COLOR_COMPONENT_B_BIT,
+		Alpha = VK_COLOR_COMPONENT_A_BIT,
+		All = Red | Green | Blue | Alpha,
+	};
+	enum class BlendOperator : std::underlying_type_t<VkBlendOp> {
+		Add = VK_BLEND_OP_ADD,
+		Subtract = VK_BLEND_OP_SUBTRACT,
+		ReverseSubtract = VK_BLEND_OP_REVERSE_SUBTRACT,
+		Min = VK_BLEND_OP_MIN,
+		Max = VK_BLEND_OP_MAX,
+		// TODO: Maybe add support for advanced blend op
+		/* Provided by VK_EXT_blend_operation_advanced
+		= VK_BLEND_OP_ZERO_EXT,
+		= VK_BLEND_OP_SRC_EXT,
+		= VK_BLEND_OP_DST_EXT,
+		= VK_BLEND_OP_SRC_OVER_EXT,
+		= VK_BLEND_OP_DST_OVER_EXT,
+		= VK_BLEND_OP_SRC_IN_EXT,
+		= VK_BLEND_OP_DST_IN_EXT,
+		= VK_BLEND_OP_SRC_OUT_EXT,
+		= VK_BLEND_OP_DST_OUT_EXT,
+		= VK_BLEND_OP_SRC_ATOP_EXT,
+		= VK_BLEND_OP_DST_ATOP_EXT,
+		= VK_BLEND_OP_XOR_EXT,
+		= VK_BLEND_OP_MULTIPLY_EXT,
+		= VK_BLEND_OP_SCREEN_EXT,
+		= VK_BLEND_OP_OVERLAY_EXT,
+		= VK_BLEND_OP_DARKEN_EXT,
+		= VK_BLEND_OP_LIGHTEN_EXT,
+		= VK_BLEND_OP_COLORDODGE_EXT,
+		= VK_BLEND_OP_COLORBURN_EXT,
+		= VK_BLEND_OP_HARDLIGHT_EXT,
+		= VK_BLEND_OP_SOFTLIGHT_EXT,
+		= VK_BLEND_OP_DIFFERENCE_EXT,
+		= VK_BLEND_OP_EXCLUSION_EXT,
+		= VK_BLEND_OP_INVERT_EXT,
+		= VK_BLEND_OP_INVERT_RGB_EXT,
+		= VK_BLEND_OP_LINEARDODGE_EXT,
+		= VK_BLEND_OP_LINEARBURN_EXT,
+		= VK_BLEND_OP_VIVIDLIGHT_EXT,
+		= VK_BLEND_OP_LINEARLIGHT_EXT,
+		= VK_BLEND_OP_PINLIGHT_EXT,
+		= VK_BLEND_OP_HARDMIX_EXT,
+		= VK_BLEND_OP_HSL_HUE_EXT,
+		= VK_BLEND_OP_HSL_SATURATION_EXT,
+		= VK_BLEND_OP_HSL_COLOR_EXT,
+		= VK_BLEND_OP_HSL_LUMINOSITY_EXT,
+		= VK_BLEND_OP_PLUS_EXT,
+		= VK_BLEND_OP_PLUS_CLAMPED_EXT,
+		= VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT,
+		= VK_BLEND_OP_PLUS_DARKER_EXT,
+		= VK_BLEND_OP_MINUS_EXT,
+		= VK_BLEND_OP_MINUS_CLAMPED_EXT,
+		= VK_BLEND_OP_CONTRAST_EXT,
+		= VK_BLEND_OP_INVERT_OVG_EXT,
+		= VK_BLEND_OP_RED_EXT,
+		= VK_BLEND_OP_GREEN_EXT,
+		= VK_BLEND_OP_BLUE_EXT, */
+	};
+	enum class BlendFactor : std::underlying_type_t<VkBlendFactor> {
+		Zero = VK_BLEND_FACTOR_ZERO,
+		One = VK_BLEND_FACTOR_ONE,
+		SrcColor = VK_BLEND_FACTOR_SRC_COLOR,
+		OneMinusSrcColor = VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+		DstColor = VK_BLEND_FACTOR_DST_COLOR,
+		OneMinusDstColor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+		SrcAlpha = VK_BLEND_FACTOR_SRC_ALPHA,
+		OneMinusSrcAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+		DstAlpha = VK_BLEND_FACTOR_DST_ALPHA,
+		OneMinusDstAlpha = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA,
+		ConstColor = VK_BLEND_FACTOR_CONSTANT_COLOR,
+		OneMinusConstColor = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR,
+		ConstAlpha = VK_BLEND_FACTOR_CONSTANT_ALPHA,
+		OneMinusConstAlpha = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA,
+		SrcAlphaSaturate = VK_BLEND_FACTOR_SRC_ALPHA_SATURATE,
+		Src1Color = VK_BLEND_FACTOR_SRC1_COLOR,
+		OneMinusSrc1Color = VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR,
+		Src1Alpha = VK_BLEND_FACTOR_SRC1_ALPHA,
+		OneMinusSrc1Alpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA,
+	};
+	enum class CompareOperator : std::underlying_type_t<VkCompareOp> {
+		AlwaysFalse = VK_COMPARE_OP_NEVER,
+		Less = VK_COMPARE_OP_LESS,
+		Equal = VK_COMPARE_OP_EQUAL,
+		LessOrEqual = VK_COMPARE_OP_LESS_OR_EQUAL,
+		Greater = VK_COMPARE_OP_GREATER,
+		NotEqual = VK_COMPARE_OP_NOT_EQUAL,
+		GreaterOrEqual = VK_COMPARE_OP_GREATER_OR_EQUAL,
+		AlwaysTrue = VK_COMPARE_OP_ALWAYS,
+	};
+	enum class LogicOperator : std::underlying_type_t<VkLogicOp> {
+		None = 0,
+		Zeros = VK_LOGIC_OP_CLEAR,
+		IAndD = VK_LOGIC_OP_AND,
+		IAndNotD = VK_LOGIC_OP_AND_REVERSE,
+		I = VK_LOGIC_OP_COPY,
+		NotIAndD = VK_LOGIC_OP_AND_INVERTED,
+		D = VK_LOGIC_OP_NO_OP,
+		IXorD = VK_LOGIC_OP_XOR,
+		IOrD = VK_LOGIC_OP_OR,
+		INorD = VK_LOGIC_OP_NOR,
+		IXnorD = VK_LOGIC_OP_EQUIVALENT,
+		NotD = VK_LOGIC_OP_INVERT,
+		IOrNotD = VK_LOGIC_OP_OR_REVERSE,
+		NotI = VK_LOGIC_OP_COPY_INVERTED,
+		NotIOrD = VK_LOGIC_OP_OR_INVERTED,
+		INandD = VK_LOGIC_OP_NAND,
+		Ones = VK_LOGIC_OP_SET,
+	};
+
+	enum class FrontDirection : std::underlying_type_t<VkFrontFace> {
+		CounterClockwise = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+		Clockwise = VK_FRONT_FACE_CLOCKWISE,
+	};
+	enum class CullMode : VkCullModeFlags {
+		None = VK_CULL_MODE_NONE,
+		Front = VK_CULL_MODE_FRONT_BIT,
+		Back = VK_CULL_MODE_BACK_BIT,
+	};
+	enum class PolygonMode : std::underlying_type_t<VkPolygonMode> {
+		Fill = VK_POLYGON_MODE_FILL,
+		Line = VK_POLYGON_MODE_LINE,
+		Point = VK_POLYGON_MODE_POINT,
+		ExtRectangleFill =
+		  VK_POLYGON_MODE_FILL_RECTANGLE_NV,  // TODO: add support for
+											  // VK_POLYGON_MODE_FILL_RECTANGLE_NV
+	};
+	enum class PrimitiveTopology : std::underlying_type_t<VkPrimitiveTopology> {
+		PointList = VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
+		LineList = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+		LineStrip = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
+		TriangleList = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+		TriangleStrip = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
+		TriangleFan = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN,
+		LineListAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
+		LineStripAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY,
+		TriangleListAdjacency =
+		  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY,
+		TriangleStripAdjacency =
+		  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY,
+		PatchList = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST,
+	};
 
 	enum class PipelineStage : VkPipelineStageFlags {
 		None = VK_PIPELINE_STAGE_NONE_KHR,
@@ -281,3 +436,6 @@ export template<> class Flags<vk::ShaderType>;
 export template<> class Flags<vk::DescriptorPoolType>;
 export template<> class Flags<vk::PipelineStage>;
 export template<> class Flags<vk::MemoryAccess>;
+export template<> class Flags<vk::ColorComponents>;
+export template<> class Flags<vk::SampleCount>;
+export template<> class Flags<vk::CullMode>;

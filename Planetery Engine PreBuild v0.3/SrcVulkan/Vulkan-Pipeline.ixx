@@ -93,19 +93,97 @@ export namespace vk {
 	class ShaderPipeline
 	{
 	  public:
-		ShaderPipeline(LogicalDevice& device);
+		class AttachmentBlending: private VkPipelineColorBlendAttachmentState
+		{
+			friend class ShaderPipeline;
+
+		  public:
+			AttachmentBlending() {
+				blendEnable = false;
+				srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+				dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+				colorBlendOp = VK_BLEND_OP_ADD;
+				srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+				dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+				alphaBlendOp = VK_BLEND_OP_ADD;
+				colorWriteMask =
+				  VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT
+				  | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+			}
+			AttachmentBlending(BlendFactor srcColorFactor,
+			  BlendFactor dstColorFactor, BlendOperator colorOperator,
+			  BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor,
+			  BlendOperator alphaOperator,
+			  Flags<ColorComponents> writeEnableMask) {
+				blendEnable = true;
+				srcColorBlendFactor = (VkBlendFactor)srcColorFactor;
+				dstColorBlendFactor = (VkBlendFactor)dstColorFactor;
+				colorBlendOp = (VkBlendOp)colorOperator;
+				srcAlphaBlendFactor = (VkBlendFactor)srcAlphaFactor;
+				dstAlphaBlendFactor = (VkBlendFactor)dstAlphaFactor;
+				alphaBlendOp = (VkBlendOp)alphaOperator;
+				colorWriteMask = writeEnableMask;
+			}
+		};
+		class ShaderStage: private VkPipelineShaderStageCreateInfo
+		{
+			friend class ShaderPipeline;
+
+		  public:
+			// TODO: Add support for Specialization Constants(???)
+			ShaderStage(ShaderCompiled& shader, const char* entryName);
+		};
+		class DepthStencilSettings:
+		  private VkPipelineDepthStencilStateCreateInfo
+		{
+			friend class ShaderPipeline;
+
+		  public:
+			DepthStencilSettings(CompareOperator depthTestOperator,
+			  bool depthWriting, std::optional<vec2> depthBounds) {
+				sType =
+				  VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+				pNext = nullptr;
+				depthTestEnable =
+				  depthWriting
+				  || depthTestOperator != CompareOperator::AlwaysTrue;
+				depthWriteEnable = depthWriting;
+				depthCompareOp = (VkCompareOp)depthTestOperator;
+				depthBoundsTestEnable = depthBounds.has_value();
+				if (depthBounds.has_value()) {
+					minDepthBounds = depthBounds->x;
+					maxDepthBounds = depthBounds->y;
+				}
+				// TODO: Stencil Testing Settings
+				stencilTestEnable = false;
+			}
+		};
+		struct DepthBias {
+			float constantFactor;
+			float slopeFactor;
+			float clamp;
+		};
+		ShaderPipeline(LogicalDevice& device,
+		  std::initializer_list<DescriptorLayout*> descriptorLayouts,
+		  RenderPass& renderPass, uint32_t subpassId,
+		  std::initializer_list<ShaderStage> stages,
+		  VertexAttribute& vertAttribute, PrimitiveTopology vertTopology,
+		  bool primitiveRestartByIndex,
+		  std::initializer_list<VkViewport> viewports,
+		  std::initializer_list<VkRect2D> scissors, bool rasterizerClampDepth,
+		  bool rasterizerDiscard, PolygonMode polygonMode,
+		  Flags<CullMode> cullMode, FrontDirection frontDirection,
+		  std::optional<DepthBias> depthBias, float lineWidth, uint sampleCount,
+		  bool rasterizerSetAlphaToOne,
+		  std::optional<DepthStencilSettings> depthStencilSettings,
+		  LogicOperator colorBlendLogicOperator,
+		  std::initializer_list<AttachmentBlending> attachmentBlending,
+		  vec4 blendConstants);
 		ShaderPipeline(const ShaderPipeline&) = delete;
 		ShaderPipeline(ShaderPipeline&& other) noexcept;
 		~ShaderPipeline();
-		void bind(const DescriptorLayout& dsl);
-		void complete(std::vector<const ShaderCompiled*> shaderModules,
-		  VertexAttribute& va, VkViewport viewport,
-		  const RenderPass& renderPass);
 		VkPipeline p = nullptr;
 		VkPipelineLayout pl = nullptr;
 		LogicalDevice& d;
-
-	  private:
-		std::vector<VkDescriptorSetLayout> _dsl;
 	};
 }
