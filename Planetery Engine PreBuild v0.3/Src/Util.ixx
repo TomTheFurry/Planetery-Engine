@@ -718,6 +718,7 @@ export namespace util {
 		template<trivalType T> T* alloc(size_t n = 1) {
 			return PMRPair::allocate_object<T>(n);
 		}
+		void reset() { r.release(); }
 	};
 
 	template<typename T> class RepeatIterator
@@ -795,6 +796,44 @@ export namespace util {
 		return View<RepeatIterator<T>>(
 		  RepeatIterator(&t), RepeatIterator(&t, n));
 	}
+
+	template<typename T> class OptionalUniquePtr
+	{
+		T* value = nullptr;
+
+	  public:
+		OptionalUniquePtr() = default;
+		explicit OptionalUniquePtr(T* ptr) { value = ptr; }
+		OptionalUniquePtr(const OptionalUniquePtr&) = delete;
+		OptionalUniquePtr(OptionalUniquePtr&& other) {
+			value = other.value;
+			other.value = nullptr;
+		}
+		OptionalUniquePtr& operator=(OptionalUniquePtr&& other) {
+			value = other.value;
+			other.value = nullptr;
+		}
+		template<typename... CtorArgs> void make(CtorArgs&&... args) {
+			delete value;
+			value = new T(std::forward<CtorArgs>(args)...);
+		}
+		T* operator->() { return value; }
+		const T* operator->() const { return value; }
+		T& operator*() { return *value; }
+		const T& operator*() const { return *value; }
+		operator bool() const { return !isNull(); }
+		bool isNull() const { return value == nullptr; }
+		void reset() {
+			delete value;
+			value = nullptr;
+		}
+		~OptionalUniquePtr() { delete value; }
+	};
+	template<typename T, typename... CtorArgs>
+	static OptionalUniquePtr<T> makeOptionalUniquePtr(CtorArgs&&... args) {
+		return OptionalUniquePtr<T>(new T(std::forward<CtorArgs>(args)...));
+	}
+
 }
 
 
