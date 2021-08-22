@@ -16,17 +16,6 @@ import std.core;
 import Define;
 
 export namespace vk {
-	struct DeviceCallback {
-		void (*onCreate)(LogicalDevice&) = nullptr;
-		void (*onDestroy)(LogicalDevice&) = nullptr;
-	};
-	struct SwapchainCallback {
-		void (*onCreate)(SwapChain&, bool) = nullptr;
-		void (*onDestroy)(bool) = nullptr;
-	};
-	struct FrameCallback {
-		void (*onDraw)(RenderTick&) = nullptr;
-	};
 
 
 	const uint* getLayerVersion(const char* name);		// may return nullptr

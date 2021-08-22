@@ -73,7 +73,8 @@ export namespace vk {
 		VkDevice d;
 		VkQueue queue;
 		QueueFamilyIndex queueIndex;
-		std::unique_ptr<SwapChain> swapChain;
+		//FIXME: LogicalDevice missing getSwapchain() method!
+		util::OptionalUniquePtr<SwapChain> swapChain;
 		std::vector<CommendPool> commendPools;
 		std::map<uint, MemoryPool> memoryPools;
 		std::pair<uint, MemoryPointer> allocMemory(
@@ -81,8 +82,9 @@ export namespace vk {
 		  Flags<MemoryFeature> feature, size_t n, size_t align);
 		void freeMemory(uint memoryIndex, MemoryPointer ptr);
 		
-		void makeSwapChain(uvec2 size = uvec2(-1));
-		void remakeSwapChain(uvec2 size = uvec2(-1));
+		void loadSwapchain(uvec2 size = uvec2(-1));
+		void reloadSwapchain(uvec2 size = uvec2(-1));
+		void unloadSwapchain();
 		CommendPool& getCommendPool(CommendPoolType type);
 		CommendBuffer getSingleUseCommendBuffer();
 		VkDevice operator->() { return d; }
@@ -110,26 +112,36 @@ export namespace vk {
 		VkSurfaceFormatKHR getFormat() const;
 		VkPresentModeKHR getPresentMode(bool preferRelaxedVBlank = false) const;
 		uvec2 getSwapChainSize(uvec2 preferredSize = uvec2(uint(-1))) const;
+		uint getImageCount(uint preferredCount = uint(4)) const;
 		VkSurfaceCapabilitiesKHR capabilities{};
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
 	};
 	class SwapChain
 	{
+		//TODO: Add support for setting preferred Swapchain Method
+		bool _build(uvec2 preferredSize, uint preferredImageCount,
+		  bool transparentWindow);
 	  public:
+		static void setCallback(SwapchainCallback callback);
 		SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
-		  uvec2 preferredSize, bool transparentWindow = false);
+		  uvec2 preferredSize, uint preferredImageCount = uint(4), bool transparentWindow = false);
 		SwapChain(const SwapChain&) = delete;
 		SwapChain(SwapChain&&) = delete;
-		bool rebuildSwapChain(
-		  uvec2 preferredSize, bool transparentWindow = false);
+		void rebuild(uvec2 preferredSize, uint preferredImageCount = uint(4),
+		  bool transparentWindow = false);
+		uint getImageCount() const;
+		RenderTick& renderNextFrame();
+		void markAllTickAsOutdated();
 		LogicalDevice& d;
 		const OSRenderSurface& sf;
 		VkSwapchainKHR sc;
 		VkSurfaceFormatKHR surfaceFormat;
 		uvec2 pixelSize;
 		std::vector<VkImage> swapChainImages;
+		std::vector<util::OptionalUniquePtr<RenderTick>> ticks;
 		ImageView getChainImageView(uint index);
 		~SwapChain();
+		//std::pair<uint, Semaphore> getNextImage();
 	};
 }

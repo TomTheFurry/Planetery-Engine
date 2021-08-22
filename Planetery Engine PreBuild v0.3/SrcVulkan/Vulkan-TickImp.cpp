@@ -6,6 +6,7 @@ import: Commend;
 import: Buffer;
 import std.core;
 import Define;
+import Util;
 import Logger;
 import "Assert.h";
 import "VulkanExtModule.h";
@@ -13,22 +14,45 @@ using namespace vk;
 
 constexpr int RENDERTICK_INITIAL_MBR_SIZE = 4;
 
-RenderTick::RenderTick(LogicalDevice& ld):
-  d(ld), _completionFence(d), _presentSemaphore(d), _acquireSemaphore(d),
-  _submitPools(RENDERTICK_INITIAL_MBR_SIZE) {
-	_waitingForFence = false;
-	_syncLines.emplace_back(TimelineSemaphore(d, 0), 0);
-	outdated = false;
-	imageIndex = -1;
-	auto code = vkAcquireNextImageKHR(d.d, d.swapChain->sc, 0u,
-	  _acquireSemaphore.sp, VK_NULL_HANDLE, &imageIndex);
-	if (code == VK_ERROR_OUT_OF_DATE_KHR || code == VK_SUBOPTIMAL_KHR) {
-		outdated = true;
-		throw OutdatedSwapchainException();
-	}
+static FrameCallback frameCallback{};
+void RenderTick::setCallback(FrameCallback callback) {
+	frameCallback = callback;
 }
+
+RenderTick::RenderTick(LogicalDevice& d, uint frameId, Semaphore&& as):
+  d(d), completionFence(d), acquireSemaphore(std::move(as)),
+  presentSemaphore(d), submitPools(RENDERTICK_INITIAL_MBR_SIZE) {
+	frameSent = false;
+	outdated = false;
+	syncLines.emplace_back(TimelineSemaphore(d, 0), 0);
+	imageIndex = frameId;
+	if (frameCallback.onCreate) frameCallback.onCreate(*this);
+	// logger("RenderTick ", imageIndex, " create");
+}
+void RenderTick::reset(Semaphore&& as) {
+	// logger("RenderTick ", imageIndex, " reset");
+	waitForCompletion();
+	stagingBuffers.clear();
+	singleUseCommendBuffers.clear();
+	syncLines.clear();
+	syncPointStack.clear();
+	cmdStages.clear();
+	submitPools.reset();
+	completionFence.reset();
+	acquireSemaphore = std::move(as);
+	frameSent = false;
+	outdated = false;
+	syncLines.emplace_back(TimelineSemaphore(d, 0), 0);
+}
+bool vk::RenderTick::render() {
+	try {
+		if (frameCallback.onDraw) frameCallback.onDraw(*this);
+		return true;
+	} catch (OutdatedFrameException) { return false; }
+}
+
 SyncPoint RenderTick::makeSyncLine(SyncNumber initialValue) {
-	return _syncLines
+	return syncLines
 	  .emplace_back(TimelineSemaphore(d, initialValue), initialValue)
 	  .top();
 }
@@ -43,7 +67,7 @@ void RenderTick::addCmdStage(CommendBuffer& cb,
 		}
 	}
 
-	auto* vkti = _submitPools.alloc<VkTimelineSemaphoreSubmitInfo>(1);
+	auto* vkti = submitPools.alloc<VkTimelineSemaphoreSubmitInfo>(1);
 	vkti->sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
 	vkti->pNext = NULL;
 	vkti->waitSemaphoreValueCount = waitFor.size();
@@ -57,9 +81,9 @@ void RenderTick::addCmdStage(CommendBuffer& cb,
 	sInfo.signalSemaphoreCount = signalTo.size();
 
 	auto* semaphores =
-	  _submitPools.alloc<VkSemaphore>(waitFor.size() + signalTo.size());
-	auto* syncNums = _submitPools.alloc<SyncNumber>(signalTo.size());
-	auto* waitTypes = _submitPools.alloc<VkPipelineStageFlags>(waitType.size());
+	  submitPools.alloc<VkSemaphore>(waitFor.size() + signalTo.size());
+	auto* syncNums = submitPools.alloc<SyncNumber>(signalTo.size());
+	auto* waitTypes = submitPools.alloc<VkPipelineStageFlags>(waitType.size());
 	std::copy(waitType.begin(), waitType.end(), waitTypes);
 	sInfo.pWaitDstStageMask = waitTypes;
 
@@ -81,46 +105,51 @@ void RenderTick::addCmdStage(CommendBuffer& cb,
 	}
 	if (signalTo.empty()) {
 		sInfo.signalSemaphoreCount = 1;
-		sInfo.pSignalSemaphores = &_presentSemaphore.sp;
+		sInfo.pSignalSemaphores = &presentSemaphore.sp;
 	}
 	if (waitFor.empty()) {
 		sInfo.waitSemaphoreCount = 1;
-		sInfo.pWaitSemaphores = &_acquireSemaphore.sp;
+		sInfo.pWaitSemaphores = &acquireSemaphore.sp;
 	}
-	_cmdStages.push_back(sInfo);
+	cmdStages.push_back(sInfo);
 }
 SyncPoint RenderTick::getTopSyncPoint() {
 	if constexpr (DO_SAFETY_CHECK)
-		if (_syncPointStack.empty()) throw "VulkanSyncPointStackEmpty";
-	return _syncPointStack.top();
+		if (syncPointStack.empty()) throw "VulkanSyncPointStackEmpty";
+	return syncPointStack.back();
 }
 void RenderTick::pushSyncPointStack(SyncPoint syncPoint) {
-	_syncPointStack.push(syncPoint);
+	syncPointStack.push_back(syncPoint);
 }
 SyncPoint RenderTick::popSyncPointStack() {
 	if constexpr (DO_SAFETY_CHECK)
-		if (_syncPointStack.empty()) throw "VulkanSyncPointStackEmpty";
-	return _syncPointStack.top();
+		if (syncPointStack.empty()) throw "VulkanSyncPointStackEmpty";
+	return syncPointStack.back();
 }
+void RenderTick::forceResetSwapchain() {
+	throw OutdatedSwapchainException();
+}
+void vk::RenderTick::forceResetFrame() { throw OutdatedFrameException(); }
 void RenderTick::send() {
+	// logger("RenderTick ", imageIndex, " send");
 	if constexpr (DO_SAFETY_CHECK)
-		if (!_syncPointStack.empty())
+		if (!syncPointStack.empty())
 			logger("WARN: Vulkan RenderTick SyncPointStack not at base on "
 				   "submitting call!\n");
 	if (outdated) throw OutdatedSwapchainException();
-	if (_cmdStages.empty()) { return;}
+	if (cmdStages.empty()) { return; }
 
 	if (vkQueueSubmit(
-		  d.queue, _cmdStages.size(), _cmdStages.data(), _completionFence.fc)
+		  d.queue, cmdStages.size(), cmdStages.data(), completionFence.fc)
 		!= VK_SUCCESS) {
 		outdated = true;
 		throw std::runtime_error("failed to submit draw command buffer!");
 	}
-	_waitingForFence = true;
+	frameSent = true;
 	VkPresentInfoKHR presentInfo{};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.waitSemaphoreCount = 1;
-	presentInfo.pWaitSemaphores = &_presentSemaphore.sp;
+	presentInfo.pWaitSemaphores = &presentSemaphore.sp;
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = &d.swapChain->sc;
 	presentInfo.pImageIndices = &imageIndex;
@@ -129,36 +158,34 @@ void RenderTick::send() {
 	case VK_SUCCESS: break;
 	case VK_SUBOPTIMAL_KHR: logger("Note: SubotimalKhr noted.");
 	case VK_ERROR_OUT_OF_DATE_KHR:
-		//logger("Note: OutOfDateKhr noted.");
+		// logger("Note: OutOfDateKhr noted.");
 		outdated = true;
 		throw OutdatedSwapchainException();
 		break;
 	default: outdated = true; throw "VKQueuePresentUnknownError";
 	}
 }
-void RenderTick::notifyOutdated() { outdated = true; }
 
 bool RenderTick::isCompleted() const {
-	if (!_waitingForFence) return true;
-	if (vkGetFenceStatus(d.d, _completionFence.fc) == VK_NOT_READY)
-		return false;
+	if (!frameSent) return true;
+	if (vkGetFenceStatus(d.d, completionFence.fc) == VK_NOT_READY) return false;
 	return true;
 }
 
 bool RenderTick::waitForCompletion(ulint timeout) const {
-	if (!_waitingForFence) return true;
-	return (vkWaitForFences(d.d, 1, &_completionFence.fc, VK_TRUE, timeout)
+	if (!frameSent) return true;
+	return (vkWaitForFences(d.d, 1, &completionFence.fc, VK_TRUE, timeout)
 			== VK_SUCCESS);
 }
 Buffer& RenderTick::makeStagingBuffer(size_t size) {
-	return _stagingBuffers.emplace_back(d, size,
+	return stagingBuffers.emplace_back(d, size,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 }
 CommendBuffer& RenderTick::makeSingleUseCommendBuffer(CommendPool& cp) {
-	return _sigleUseCommendBuffer.emplace_back(cp);
+	return singleUseCommendBuffers.emplace_back(cp);
 }
-void RenderTick::forceKill() {}
 RenderTick::~RenderTick() {
 	while (!waitForCompletion()) {};
+	if (frameCallback.onDestroy) frameCallback.onDestroy(*this);
 	assert(isCompleted());
 }

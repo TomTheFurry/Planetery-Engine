@@ -74,7 +74,7 @@ const Extension _extensions[] = {
 #ifdef VULKAN_DEBUG
   {"VK_EXT_debug_utils", 0u},
   {"VK_EXT_validation_features", 0u},
-  //{"VK_EXT_debug_report", 0u},
+//{"VK_EXT_debug_report", 0u},
 #endif
   {"", 0u},
 };
@@ -90,12 +90,8 @@ static std::vector<const char*> _extensionsEnabled;
 static std::vector<VkLayerProperties> _layersAvailable;
 static std::vector<VkExtensionProperties> _extensionsAvailable;
 static DeviceCallback dCallback;
-static SwapchainCallback scCallback;
-static FrameCallback fCallback;
 static OSRenderSurface* _OSSurface;
 static LogicalDevice* _renderDevice = nullptr;
-constexpr auto MAX_FRAMES_IN_FLIGHT = 4;
-static std::array<RenderTick*, MAX_FRAMES_IN_FLIGHT> _renderFrames{nullptr};
 static uint _currentFrame = 0;
 static bool _newSwapchain = true;
 static std::atomic_flag _swapchainNotOutdated;
@@ -232,24 +228,6 @@ inline void createInstance() {
 		throw "VulkanCreateInstanceFailure";
 	}
 }
-inline void loadSwapchain(bool remake = false) {
-	_newSwapchain = true;
-	_swapchainNotOutdated.test_and_set(std::memory_order_relaxed);
-	if (remake) _renderDevice->remakeSwapChain();
-	else
-		_renderDevice->makeSwapChain();
-
-	if (scCallback.onCreate != nullptr)
-		scCallback.onCreate(*_renderDevice->swapChain, remake);
-}
-inline void unloadSwapchain(bool remake = false) {
-	for (auto& ptr : _renderFrames)
-		if (ptr != nullptr) {
-			delete ptr;
-			ptr = nullptr;
-		}
-	if (scCallback.onDestroy != nullptr) scCallback.onDestroy(remake);
-}
 
 void vk::init() {
 	logger("VK Interface init.\n");
@@ -268,28 +246,15 @@ void vk::init() {
 					  .makeDevice(VK_QUEUE_GRAPHICS_BIT);
 	dCallback.onCreate(*_renderDevice);
 	// Make SwapChain and pipeline and programs and layouts
-	if (scCallback.onCreate == nullptr && scCallback.onDestroy == nullptr) {
-		logger("Warning! SwapchainCallback not set!\n");
-	}
-	loadSwapchain();
+	_renderDevice->loadSwapchain();
 }
 bool vk::drawFrame() {
 	try {
-		auto& frame = _renderFrames[_currentFrame];
-		if (frame != nullptr) {
-			delete frame;
-			frame = nullptr;
-		}
-		frame = new RenderTick(*_renderDevice);
-		fCallback.onDraw(*frame);
-		frame->send();
+		_renderDevice->swapChain->renderNextFrame();
 		_currentFrame++;
-		_currentFrame %= MAX_FRAMES_IN_FLIGHT;
-		_newSwapchain = false;
 		return true;
 	} catch (OutdatedSwapchainException) {
-		unloadSwapchain(true);
-		loadSwapchain(true);
+		_renderDevice->reloadSwapchain();
 		return false;
 	}
 }
@@ -299,7 +264,7 @@ void vk::checkStatus() noexcept(false) {
 }
 void vk::end() {
 	logger("VK Interface end.\n");
-	unloadSwapchain();
+	_renderDevice->unloadSwapchain();
 	dCallback.onDestroy(*_renderDevice);
 	if (_renderDevice != nullptr) delete _renderDevice;
 	// testPrograme end
@@ -311,10 +276,9 @@ void vk::end() {
 	if (_vk) vkDestroyInstance(_vk, nullptr);
 }
 void vk::setCallback(DeviceCallback dC) { dCallback = dC; }
-void vk::setCallback(SwapchainCallback scC) { scCallback = scC; }
-void vk::setCallback(FrameCallback fC) { fCallback = fC; }
+void vk::setCallback(SwapchainCallback scC) { SwapChain::setCallback(scC); }
+void vk::setCallback(FrameCallback fC) { RenderTick::setCallback(fC); }
 
 void vk::notifyOutdatedSwapchain() {
 	_swapchainNotOutdated.clear(std::memory_order_relaxed);
 }
-

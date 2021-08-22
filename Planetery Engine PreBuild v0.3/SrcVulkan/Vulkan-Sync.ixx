@@ -14,18 +14,23 @@ export namespace vk {
 		Fence(vk::LogicalDevice& d, bool signaled = false);
 		Fence(const Fence&) = delete;
 		Fence(Fence&& o) noexcept;
+		Fence& operator=(Fence&&); //FIXME: Does not set the new LogicalDevice Ref
 		~Fence();
 		void wait();
+		void reset();
 		VkFence fc;
 		vk::LogicalDevice& d;
 	};
 	class Semaphore
 	{
 	  public:
-		Semaphore(vk::LogicalDevice& d, bool isSet = false);
+		Semaphore(vk::LogicalDevice& d);
 		Semaphore(const Semaphore&) = delete;
 		Semaphore(Semaphore&& o) noexcept;
+		Semaphore& operator=(
+		  Semaphore&&);	 // FIXME: Does not set the new LogicalDevice Ref
 		~Semaphore();
+		void reset();
 		VkSemaphore sp;
 		vk::LogicalDevice& d;
 	};
@@ -35,7 +40,11 @@ export namespace vk {
 		TimelineSemaphore(vk::LogicalDevice& d, ulint initValue);
 		TimelineSemaphore(const TimelineSemaphore&) = delete;
 		TimelineSemaphore(TimelineSemaphore&& o) noexcept;
+		TimelineSemaphore& operator=(
+		  TimelineSemaphore&&);	 // FIXME: Does not set the new LogicalDevice
+								 // Ref
 		~TimelineSemaphore();
+		void reset(ulint initValue);
 		VkSemaphore sp;
 		vk::LogicalDevice& d;
 	};

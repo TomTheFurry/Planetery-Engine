@@ -13,9 +13,17 @@ export namespace vk {
 	typedef uint QueueFamilyIndex;
 	class PhysicalDevice;
 	class LogicalDevice;
+	struct DeviceCallback {
+		void (*onCreate)(LogicalDevice&) = nullptr;
+		void (*onDestroy)(LogicalDevice&) = nullptr;
+	};
 	class OSRenderSurface;
 	class SwapChainSupport;
 	class SwapChain;
+	struct SwapchainCallback {
+		void (*onCreate)(SwapChain&, bool) = nullptr;
+		void (*onDestroy)(SwapChain&, bool) = nullptr;
+	};
 	// Memory class:
 	struct DeviceMemory;
 	struct MemoryPointer;
@@ -55,6 +63,11 @@ export namespace vk {
 	class ShaderPipeline;
 	// Tick class:
 	class RenderTick;
+	struct FrameCallback {
+		void (*onCreate)(RenderTick&) = nullptr;
+		void (*onDraw)(RenderTick&) = nullptr;
+		void (*onDestroy)(RenderTick&) = nullptr;
+	};
 }
 
 // Internal Functions:

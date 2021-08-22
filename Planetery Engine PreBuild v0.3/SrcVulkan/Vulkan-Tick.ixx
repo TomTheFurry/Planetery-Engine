@@ -11,12 +11,20 @@ import: Sync;
 // Tick class:
 export namespace vk {
 	struct OutdatedSwapchainException {};
+	struct OutdatedFrameException {};
 
 	constexpr size_t RENDERTICK_INITIAL_MBR_SIZE = 512;
 	class RenderTick
 	{
+		friend class SwapChain;
+		void reset(Semaphore&& as);	 // call from swapchain
+		bool render();				 // call from swapchain
+		void send();				 // call from swapchain
+
 	  public:
-		RenderTick(LogicalDevice& d);
+		static void setCallback(FrameCallback callback);
+		RenderTick(
+		  LogicalDevice& d, uint frameId, Semaphore&& acquireSemaphore);
 		RenderTick(const RenderTick&) = delete;
 		RenderTick(RenderTick&&) = delete;
 		SyncPoint makeSyncLine(SyncNumber initialValue = 0);
@@ -25,35 +33,34 @@ export namespace vk {
 		  const std::vector<SyncPoint>& waitFor,
 		  const std::vector<VkPipelineStageFlags>& waitType);
 		SyncPoint getTopSyncPoint();
-		void addSyncPointToLayer();
+		// void addSyncPointToLayer();
+		// ^^^^Missing def... Forgot what this should do?
 		void pushSyncPointStack(SyncPoint syncPoint);
 		SyncPoint popSyncPointStack();	// return layerEndingSyncPoint
-		void send();
-		void notifyOutdated();
-		bool isOutdated() const { return outdated; }
-		bool isStarted() const { return _waitingForFence; }
+		void forceResetSwapchain();
+		void forceResetFrame();	 // TODO: force reset container stuff
+		bool isStarted() const { return frameSent; }
 		uint getImageIndex() const { return imageIndex; }
 		bool isCompleted() const;
 		bool waitForCompletion(
 		  ulint timeout = -1) const;  // return false for timeout
 		Buffer& makeStagingBuffer(size_t size);
 		CommendBuffer& makeSingleUseCommendBuffer(CommendPool& cp);
-		void forceKill();
 		~RenderTick();	// Will wait for completion
 		LogicalDevice& d;
 
 	  private:
-		bool _waitingForFence;
-		Fence _completionFence;
-		Semaphore _acquireSemaphore;
-		Semaphore _presentSemaphore;
-		util::MBRPool _submitPools;
-		std::list<SyncLine> _syncLines;
-		std::stack<SyncPoint> _syncPointStack;
-		std::vector<VkSubmitInfo> _cmdStages;
-		std::list<Buffer> _stagingBuffers;
-		std::list<CommendBuffer> _sigleUseCommendBuffer;
-		uint imageIndex;
+		bool frameSent;
 		bool outdated;
+		uint imageIndex;
+		std::list<Buffer> stagingBuffers;
+		std::list<CommendBuffer> singleUseCommendBuffers;
+		Fence completionFence;
+		Semaphore presentSemaphore;
+		Semaphore acquireSemaphore;
+		util::MBRPool submitPools;
+		std::list<SyncLine> syncLines;
+		std::vector<SyncPoint> syncPointStack;
+		std::vector<VkSubmitInfo> cmdStages;
 	};
 }

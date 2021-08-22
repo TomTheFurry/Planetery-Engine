@@ -103,13 +103,18 @@ static vk::DescriptorLayout* _dsl = nullptr;
 
 // Depend on SwapChain
 static vk::DescriptorContainer* _dpc = nullptr;
-static std::vector<vk::DescriptorSet> _ds{};
-static std::vector<vk::UniformBuffer> _ub{};
-static std::vector<vk::CommendBuffer> _commendBuffers{};
 static vk::RenderPass* _renderPass = nullptr;
-static std::vector<vk::ImageView> _swapchainViews{};
-static std::vector<vk::FrameBuffer> _frameBuffers{};
 static vk::ShaderPipeline* _pipeline = nullptr;
+
+// Depend on Frame
+struct FrameContainer {
+	util::OptionalUniquePtr<vk::DescriptorSet> ds;
+	util::OptionalUniquePtr<vk::UniformBuffer> ub;
+	util::OptionalUniquePtr<vk::CommendBuffer> cb;
+	util::OptionalUniquePtr<vk::ImageView> sv;
+	util::OptionalUniquePtr<vk::FrameBuffer> fb;
+};
+static std::vector<FrameContainer> _frames{};
 
 void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 	using namespace vk;
@@ -159,9 +164,6 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 }
 void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	using namespace vk;
-	_commendBuffers.clear();
-	_ub.clear();
-	_ds.clear();
 	if (_vertBuff != nullptr) delete _vertBuff;
 	if (_indexBuff != nullptr) delete _indexBuff;
 	if (_dsl != nullptr) delete _dsl;
@@ -173,7 +175,8 @@ void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 }
 void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 	using namespace vk;
-
+	//logger("vkSwapchainCallbackOnCreate:", recreation ? " true" : " false");
+	assert(frames.empty());
 	_dpc =
 	  new DescriptorContainer(sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
 	// Make renderPass
@@ -190,15 +193,10 @@ void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 		_renderPass =
 		  new RenderPass(sc.d, {swapchainAtm}, {subPass1}, {dependency1});
 	}
+	// Setup frame containers
+	_frames.resize(sc.getImageCount());
+
 	// Make swapchain framebuffer
-	_swapchainViews.reserve(sc.swapChainImages.size());
-	_frameBuffers.reserve(sc.swapChainImages.size());
-	for (uint i = 0; i < sc.swapChainImages.size(); i++) {
-		_swapchainViews.push_back(sc.getChainImageView(i));
-		std::vector<ImageView*> b;
-		b.emplace_back(&_swapchainViews.back());
-		_frameBuffers.emplace_back(sc.d, *_renderPass, sc.pixelSize, b);
-	}
 	// Make Pipeline
 	_pipeline = new ShaderPipeline(sc.d, {_dsl}, *_renderPass, 0,
 	  {ShaderPipeline::ShaderStage(*_vertShad, "main"),
@@ -213,72 +211,81 @@ void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 		.maxDepth = 1,
 	  }},
 	  {VkRect2D{VkOffset2D{0, 0}, VkExtent2D{sc.pixelSize.x, sc.pixelSize.y}}},
-	  false, false,
-	  PolygonMode::Fill, CullMode::None, FrontDirection::Clockwise,
-	  std::optional<ShaderPipeline::DepthBias>(), 1.f, 1, true,
-	  std::optional<ShaderPipeline::DepthStencilSettings>(),
-	  LogicOperator::None, {ShaderPipeline::AttachmentBlending()},
-	  vec4());
+	  false, false, PolygonMode::Fill, CullMode::None,
+	  FrontDirection::Clockwise, std::optional<ShaderPipeline::DepthBias>(),
+	  1.f, 1, true, std::optional<ShaderPipeline::DepthStencilSettings>(),
+	  LogicOperator::None, {ShaderPipeline::AttachmentBlending()}, vec4());
 	assert(_pipeline->p != nullptr);
-
-	uint swapChainImageSize = sc.swapChainImages.size();
-	_commendBuffers.reserve(swapChainImageSize);
-	_ds.reserve(swapChainImageSize);
-	_ub.reserve(swapChainImageSize);
-	for (uint i = 0; i < swapChainImageSize; i++) {
-		auto& ub =
-		  _ub.emplace_back(sc.d, sizeof(START_COLOR), MemoryFeature::Mappable);
-		ub.directWrite(&START_COLOR);
-		auto& ds = _ds.emplace_back(_dpc->allocNewSet());
-		std::array<DescriptorSet::WriteData, 1> wd{
-		  DescriptorSet::WriteData(&ub)};
-		std::array<DescriptorSet::WriteData, 1> wd2{
-		  DescriptorSet::WriteData(_imgViewTest, _imgSamplerBasic,
-			TextureActiveUseType::ReadOnlyShader)};
-
-		ds.blockingWrite(0, DescriptorDataType::UniformBuffer, 1, 0, wd);
-		ds.blockingWrite(1, DescriptorDataType::ImageAndSampler, 1, 0, wd2);
-
-		// CommendBuffers
-		auto& cb = _commendBuffers.emplace_back(
-		  sc.d.getCommendPool(CommendPoolType::Default));
-
-		cb.startRecording(CommendBufferUsage::None);
-		cb.cmdBeginRender(
-		  *_renderPass, _frameBuffers.at(i), vec4(1., 0., 0., 0.));
-		cb.cmdBind(*_pipeline);
-		cb.cmdBind(ds, *_pipeline);
-		cb.cmdBind(*_vertBuff);
-		cb.cmdBind(*_indexBuff);
-		// cb.cmdDraw((uint)std::size(testVert) / 2);
-
-		cb.cmdDrawIndexed(std::size(testInd));
-		cb.cmdEndRender();
-		cb.endRecording();
-	}
 }
-void vkSwapchainCallbackOnDestroy(bool recreation) {
+
+void vkSwapchainCallbackOnDestroy(vk::SwapChain& sc, bool recreation) {
+	//logger("vkSwapchainCallbackOnDestroy:", recreation ? " true" : " false");
 	if (_dpc != nullptr) delete _dpc;
 	if (_pipeline != nullptr) delete _pipeline;
 	if (_renderPass != nullptr) delete _renderPass;
-	_commendBuffers.clear();
-	_ds.clear();
-	_ub.clear();
-	_frameBuffers.clear();
-	_swapchainViews.clear();
+}
+void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
+	using namespace vk;
+	uint frameId = rt.getImageIndex();
+	//logger("vkFrameCallbackOnCreate:", frameId);
+	auto& frame = _frames[frameId];
+	// FIXME: RenderTick missing a getSwapchain() method!
+	auto& sc = *rt.d.swapChain;
+
+	frame.sv.make(sc.getChainImageView(frameId));
+
+	std::vector<ImageView*> b;
+	b.emplace_back(&*frame.sv);
+	frame.fb.make(rt.d, *_renderPass, sc.pixelSize, b);
+
+	frame.ub.make(rt.d, sizeof(START_COLOR), MemoryFeature::Mappable);
+	frame.ub->directWrite(&START_COLOR);
+
+	frame.ds.make(_dpc->allocNewSet());
+	std::array<DescriptorSet::WriteData, 1> wd{
+	  DescriptorSet::WriteData(&*frame.ub)};
+	std::array<DescriptorSet::WriteData, 1> wd2{DescriptorSet::WriteData(
+	  _imgViewTest, _imgSamplerBasic, TextureActiveUseType::ReadOnlyShader)};
+	frame.ds->blockingWrite(0, DescriptorDataType::UniformBuffer, 1, 0, wd);
+	frame.ds->blockingWrite(1, DescriptorDataType::ImageAndSampler, 1, 0, wd2);
+
+	frame.cb.make(rt.d.getCommendPool(CommendPoolType::Default));
+	frame.cb->startRecording(CommendBufferUsage::None);
+	frame.cb->cmdBeginRender(*_renderPass, *frame.fb, vec4(1., 0., 0., 0.));
+	frame.cb->cmdBind(*_pipeline);
+	frame.cb->cmdBind(*frame.ds, *_pipeline);
+	frame.cb->cmdBind(*_vertBuff);
+	frame.cb->cmdBind(*_indexBuff);
+	// frame.cb->cmdDraw((uint)std::size(testVert) / 2);
+	frame.cb->cmdDrawIndexed(std::size(testInd));
+	frame.cb->cmdEndRender();
+	frame.cb->endRecording();
 }
 void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 	using namespace vk;
+	uint frameId = rt.getImageIndex();
+	//logger("vkFrameCallbackOnRender:", frameId);
+	auto& frame = _frames[frameId];
+
 	const float DELTA = 0.0001f;
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
 	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
 	  1.f);
-	_ub[rt.getImageIndex()].directWrite(&currentColor);
-	rt.addCmdStage(_commendBuffers.at(rt.getImageIndex()), {}, {},
-	  {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
+	frame.ub->directWrite(&currentColor);
+	rt.addCmdStage(
+	  *frame.cb, {}, {}, {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
 }
-
+void vkFrameCallbackOnDestroy(vk::RenderTick& rt) {
+	uint frameId = rt.getImageIndex();
+	//logger("vkFrameCallbackOnDestroy:", frameId);
+	auto& frame = _frames[frameId];
+	frame.cb.reset();
+	frame.ds.reset();
+	frame.ub.reset();
+	frame.fb.reset();
+	frame.sv.reset();
+}
 void vulkanSetup() {
 	using namespace vk;
 	{
@@ -288,7 +295,9 @@ void vulkanSetup() {
 		SwapchainCallback sc{
 		  &vkSwapchainCallbackOnCreate, &vkSwapchainCallbackOnDestroy};
 		vk::setCallback(sc);
-		vk::setCallback(FrameCallback{&vkFrameCallbackOnRender});
+		FrameCallback fc{&vkFrameCallbackOnCreate, &vkFrameCallbackOnRender,
+		  &vkFrameCallbackOnDestroy};
+		vk::setCallback(fc);
 	}
 	vk::init();
 	logger("VK graphics init done.\n Now init shaders...\n");

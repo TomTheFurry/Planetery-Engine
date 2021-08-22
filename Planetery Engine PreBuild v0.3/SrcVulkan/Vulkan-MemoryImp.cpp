@@ -20,7 +20,7 @@ MemoryAllocator::MemoryAllocator(
   LogicalDevice& d, uint memoryIndex):
   d(d) {
 	this->memoryIndex = memoryIndex;
-	logger("VulkanMemory(", memoryIndex, "): Init\n");
+	//logger("VulkanMemory(", memoryIndex, "): Init\n");
 }
 DeviceMemory MemoryAllocator::alloc(size_t n) {
 	VkMemoryAllocateInfo allocInfo{
@@ -31,13 +31,13 @@ DeviceMemory MemoryAllocator::alloc(size_t n) {
 	};
 	DeviceMemory dm{};
 	vkAllocateMemory(d.d, &allocInfo, nullptr, &dm.dm);
-	logger(
-	  "VulkanMemory(", memoryIndex, "): Alloc ", byte(n), " at ", address(dm.dm), "\n");
+	//logger(
+	//  "VulkanMemory(", memoryIndex, "): Alloc ", byte(n), " at ", address(dm.dm), "\n");
 	return dm;
 }
 void MemoryAllocator::free(DeviceMemory m) {
-	logger("VulkanMemory(", memoryIndex, "): Free ",
-	  address(m.dm), "\n");
+	//logger("VulkanMemory(", memoryIndex, "): Free ",
+	//  address(m.dm), "\n");
 	vkFreeMemory(d.d, m.dm, nullptr);
 }
 

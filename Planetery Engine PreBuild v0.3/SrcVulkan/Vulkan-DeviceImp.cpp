@@ -3,6 +3,7 @@ import: Device;
 import: Enum;
 import: Commend;
 import: Image;
+import: Tick;
 import std.core;
 import Define;
 import ThreadEvents;
@@ -269,35 +270,31 @@ LogicalDevice::~LogicalDevice() {
 	if (d) vkDestroyDevice(d, nullptr);
 }
 std::pair<uint, MemoryPointer> vk::LogicalDevice::allocMemory(
-  uint bitFilter,
-  Flags<MemoryFeature> feature, size_t n, size_t align) {
+  uint bitFilter, Flags<MemoryFeature> feature, size_t n, size_t align) {
 	uint key = pd.getMemoryTypeIndex(bitFilter, feature);
 	auto iter = memoryPools.lower_bound(key);
 	if (iter == memoryPools.end() || iter->first != key)
 		iter = memoryPools.emplace_hint(
 		  iter, key, MemoryPool(65536, MemoryAllocator(*this, key)));
-	return std::pair(key,iter->second.alloc(n, align));
+	return std::pair(key, iter->second.alloc(n, align));
 }
 void vk::LogicalDevice::freeMemory(uint memoryIndex, MemoryPointer ptr) {
-	//logger("Vulkan Freeing memId: ", memoryIndex);
+	// logger("Vulkan Freeing memId: ", memoryIndex);
 	memoryPools.at(memoryIndex).free(ptr);
 }
 
-void LogicalDevice::makeSwapChain(uvec2 size) {
+void LogicalDevice::loadSwapchain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
 	assert(!swapChain);
-	swapChain = std::make_unique<SwapChain>(*pd.renderOut, *this, size);
-	if (swapChain->sc == nullptr) remakeSwapChain(size);
+
+	swapChain.make(*pd.renderOut, *this, size);
 }
-void LogicalDevice::remakeSwapChain(uvec2 size) {
+void LogicalDevice::reloadSwapchain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
 	assert(swapChain);
-	//FIXME: Potancal Deadlock here!
-	while (true) {
-		if (swapChain->rebuildSwapChain(size)) break;
-		logger("WARN: Failed to rebuild swapchain. Retrying...\n");
-	};
+	swapChain->rebuild(size);
 }
+void LogicalDevice::unloadSwapchain() { swapChain.reset(); }
 CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
 	if constexpr (DO_SAFETY_CHECK)
 		if (static_cast<uint>(type)
@@ -367,25 +364,25 @@ uvec2 SwapChainSupport::getSwapChainSize(uvec2 ps) const {
 	  capabilities.maxImageExtent.width, capabilities.maxImageExtent.height};
 	return glm::max(min, glm::min(max, ps));
 }
-
-SwapChain::SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
-  uvec2 preferredSize, bool transparentWindow):
-  d(device),
-  sf(surface) {
-	sc = nullptr;
-	rebuildSwapChain(preferredSize, transparentWindow);
+uint SwapChainSupport::getImageCount(uint preferredCount) const {
+	return std::max(capabilities.minImageCount,
+	  capabilities.maxImageCount == 0
+		? preferredCount
+		: std::min(capabilities.maxImageCount, preferredCount));
 }
-bool SwapChain::rebuildSwapChain(uvec2 preferredSize, bool transparentWindow) {
-	//logger("Rebuild SwapChain...");
 
+static SwapchainCallback swapchainCallback;
+void SwapChain::setCallback(SwapchainCallback sc) { swapchainCallback = sc; }
+
+bool SwapChain::_build(
+  uvec2 preferredSize, uint preferredImageCount, bool transparentWindow) {
 	VkSwapchainKHR old_sc = sc;
 	auto sp = d.pd.getSwapChainSupport();
 	surfaceFormat = sp.getFormat();
 	auto presentMode = sp.getPresentMode(true);
 	pixelSize = sp.getSwapChainSize(preferredSize);
-	uint32_t bufferCount = std::min(sp.capabilities.maxImageCount - 1,
-							 sp.capabilities.minImageCount + 2 - 1)
-						 + 1;
+	uint32_t bufferCount = sp.getImageCount(preferredImageCount);
+
 	VkSwapchainCreateInfoKHR createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	createInfo.surface = sf.surface;
@@ -405,20 +402,101 @@ bool SwapChain::rebuildSwapChain(uvec2 preferredSize, bool transparentWindow) {
 	createInfo.presentMode = presentMode;
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = old_sc == nullptr ? VK_NULL_HANDLE : old_sc;
-	if (vkCreateSwapchainKHR(d.d, &createInfo, nullptr, &sc) != VK_SUCCESS) {
-		//logger("Vulkan failed to make Swapchain!\n");
-		sc = nullptr;
-	}
+	auto result = vkCreateSwapchainKHR(d.d, &createInfo, nullptr, &sc);
 	if (old_sc != nullptr) vkDestroySwapchainKHR(d.d, old_sc, nullptr);
-
-	swapChainImages.clear();
-	if (sc != nullptr) {
+	switch (result) {
+	case VK_SUCCESS:
 		vkGetSwapchainImagesKHR(d.d, sc, &bufferCount, nullptr);
 		swapChainImages.resize(bufferCount);
 		vkGetSwapchainImagesKHR(d.d, sc, &bufferCount, swapChainImages.data());
+		return true;
+	case VK_ERROR_OUT_OF_HOST_MEMORY:
+		throw "VulkanSwapchainCreateFailure::OutOfHostMemory";
+	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+		throw "VulkanSwapchainCreateFailure::OutOfDeviceMemory";
+	case VK_ERROR_DEVICE_LOST:
+		// TODO: Add handling for device lost
+		throw "TODOVulkanDeviceLostUnhandled";
+	case VK_ERROR_SURFACE_LOST_KHR:
+		// TODO: Add handling for surface lost
+		throw "TODOVulkanSurfaceLostUnhandled";
+	case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
+		throw "VulkanSwapchainCreateFailure::NativeWindowInUse";
+	case VK_ERROR_INITIALIZATION_FAILED: sc = nullptr; return false;
+	default: throw "VulkanSwapchainCreateFailure::UnhandledEnum";
 	}
-	return (sc != nullptr);
 }
+
+SwapChain::SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
+  uvec2 preferredSize, uint preferredImageCount, bool transparentWindow):
+  d(device),
+  sf(surface) {
+	//logger("Create SwapChain...");
+	sc = nullptr;
+	while (!_build(preferredSize, preferredImageCount, transparentWindow)) {
+		// TODO: Add exit condition in case of stuck for some reason
+	};
+	ticks.resize(getImageCount());
+	if (swapchainCallback.onCreate) swapchainCallback.onCreate(*this, false);
+}
+void SwapChain::rebuild(
+  uvec2 preferredSize, uint preferredImageCount, bool transparentWindow) {
+	// logger("Rebuild SwapChain...");
+	while (!_build(preferredSize, preferredImageCount, transparentWindow)) {
+		// TODO: Add exit condition in case of stuck for some reason
+	};
+	ticks.clear();
+	ticks.resize(getImageCount());
+	// TODO: Get rid of the haltAndNotifyOutdated() and instead delay the
+	// onDestroy callback?
+	if (swapchainCallback.onDestroy) swapchainCallback.onDestroy(*this, true);
+	if (swapchainCallback.onCreate) swapchainCallback.onCreate(*this, true);
+}
+uint SwapChain::getImageCount() const { return swapChainImages.size(); }
+RenderTick& SwapChain::renderNextFrame() {
+	uint imageId{uint(-1)};
+	Semaphore sp{d};
+	// TODO: Add timeout setting
+	auto code =
+	  vkAcquireNextImageKHR(d.d, sc, uint(-1), sp.sp, VK_NULL_HANDLE, &imageId);
+	switch (code) {
+	case VK_SUCCESS: {
+		auto& optPtr = ticks[imageId];
+		//logger("Swapchain Acquire ", imageId);
+		if (optPtr) {
+			// logger("Swapchain reset Tick ", imageId);
+			optPtr->reset(std::move(sp));
+		} else {
+			// logger("Swapchain Make Tick ", imageId);
+			optPtr.make(d, imageId, std::move(sp));
+		}
+		while (!optPtr->render()) {
+			// FIXME: Kinda hacky here using std::move on another obj's internal stuff
+			// Currently needs a placeholder to avoid self move asignment issue causing
+			// underfined(?) behavior or unspecified state.
+			Semaphore temp{std::move(optPtr->acquireSemaphore)};
+			optPtr.make(d, imageId, std::move(temp));
+		}
+		optPtr->send(); //May throw OutdatedSwapchainException()
+		return *optPtr;
+	}
+	case VK_SUBOPTIMAL_KHR:
+	case VK_ERROR_OUT_OF_DATE_KHR: throw OutdatedSwapchainException();
+	case VK_TIMEOUT: throw "VulkanSwapchainGetNextImageFailure::Timout";
+	case VK_ERROR_OUT_OF_HOST_MEMORY:
+		throw "VulkanSwapchainGetNextImageFailure::OutOfHostMemory";
+	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+		throw "VulkanSwapchainGetNextImageFailure::OutOfDeviceMemory";
+	case VK_ERROR_DEVICE_LOST:
+		// TODO: Add handling for device lost
+		throw "TODOVulkanDeviceLostUnhandled";
+	case VK_ERROR_SURFACE_LOST_KHR:
+		// TODO: Add handling for surface lost
+		throw "TODOVulkanSurfaceLostUnhandled";
+	default: throw "VulkanSwapchainGetNextImageFailure::UnhandledEnum";
+	}
+}
+
 ImageView SwapChain::getChainImageView(uint index) {
 	VkImageViewCreateInfo cInfo{};
 	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -437,5 +515,10 @@ ImageView SwapChain::getChainImageView(uint index) {
 	return ImageView(d, cInfo);
 }
 SwapChain::~SwapChain() {
-	if (sc != nullptr) vkDestroySwapchainKHR(d.d, sc, nullptr);
+	if (sc != nullptr) {
+		ticks.clear();
+		if (swapchainCallback.onDestroy)
+			swapchainCallback.onDestroy(*this, false);
+		vkDestroySwapchainKHR(d.d, sc, nullptr);
+	}
 }
