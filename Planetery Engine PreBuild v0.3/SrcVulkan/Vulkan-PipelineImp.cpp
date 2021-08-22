@@ -231,9 +231,11 @@ ShaderPipeline::ShaderStage::ShaderStage(
   ShaderCompiled& shader, const char* entryName) {
 	sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	pNext = nullptr;
+	flags = 0;
 	stage = (VkShaderStageFlagBits)shader.shaderType;
 	module = shader.sm;
 	pName = entryName;
+	pSpecializationInfo = nullptr;
 }
 
 ShaderPipeline::ShaderPipeline(ShaderPipeline&& other) noexcept: d(other.d) {}
