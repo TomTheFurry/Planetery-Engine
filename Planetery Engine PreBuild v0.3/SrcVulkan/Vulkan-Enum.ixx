@@ -52,6 +52,13 @@ export namespace _toIndexTpye {
 	}
 }
 export namespace vk {
+	enum class WindowTransparentType : VkCompositeAlphaFlagsKHR {
+		RemoveAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+		PreMultiplied = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
+		PostMultiplied = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
+		ExternCall = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+	};
+
 	constexpr auto CommendPoolTypeCount = 3;
 	enum class CommendPoolType : uint {
 		Default = 0,

@@ -245,22 +245,17 @@ void vk::init() {
 	_renderDevice = PhysicalDevice::getUsablePhysicalDevice(_OSSurface)
 					  .makeDevice(VK_QUEUE_GRAPHICS_BIT);
 	dCallback.onCreate(*_renderDevice);
-	// Make SwapChain and pipeline and programs and layouts
-	_renderDevice->loadSwapchain();
 }
 bool vk::drawFrame() {
+	if (!_renderDevice->isSwapchainValid()) _renderDevice->loadSwapchain(); 
 	try {
-		_renderDevice->swapChain->renderNextFrame();
+		_renderDevice->getSwapchain().renderNextFrame();
 		_currentFrame++;
 		return true;
 	} catch (OutdatedSwapchainException) {
-		_renderDevice->reloadSwapchain();
+		_renderDevice->getSwapchain().outdated = true;
 		return false;
 	}
-}
-void vk::checkStatus() noexcept(false) {
-	if (!_swapchainNotOutdated.test_and_set(std::memory_order_relaxed))
-		throw OutdatedSwapchainException{};
 }
 void vk::end() {
 	logger("VK Interface end.\n");
@@ -278,7 +273,3 @@ void vk::end() {
 void vk::setCallback(DeviceCallback dC) { dCallback = dC; }
 void vk::setCallback(SwapchainCallback scC) { SwapChain::setCallback(scC); }
 void vk::setCallback(FrameCallback fC) { RenderTick::setCallback(fC); }
-
-void vk::notifyOutdatedSwapchain() {
-	_swapchainNotOutdated.clear(std::memory_order_relaxed);
-}

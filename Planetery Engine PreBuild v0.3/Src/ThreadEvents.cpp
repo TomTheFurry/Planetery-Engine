@@ -115,9 +115,6 @@ static void window_pos_callback(GLFWwindow* _, int x, int y) {
 	}
 }
 static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
-#ifdef USE_VULKAN
-	vk::notifyOutdatedSwapchain();
-#endif
 	_framebufferSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
 		pair.second.flags.fetch_or(
@@ -260,7 +257,7 @@ static void _main() {
 		  GLFW_DONT_CARE);	// On fullscreen mode, what
 							// refresh rate? (DONT_CARE = max)
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER,
-		  GLFW_FALSE);	// Is the window transparent?
+		  GLFW_TRUE);	// Is the window transparent?
 
 		bool useFullScreen = false;
 		uint windowW = windowInitSize.x;

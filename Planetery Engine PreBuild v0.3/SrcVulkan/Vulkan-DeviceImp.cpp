@@ -269,7 +269,7 @@ LogicalDevice::~LogicalDevice() {
 	commendPools.clear();
 	if (d) vkDestroyDevice(d, nullptr);
 }
-std::pair<uint, MemoryPointer> vk::LogicalDevice::allocMemory(
+std::pair<uint, MemoryPointer> LogicalDevice::allocMemory(
   uint bitFilter, Flags<MemoryFeature> feature, size_t n, size_t align) {
 	uint key = pd.getMemoryTypeIndex(bitFilter, feature);
 	auto iter = memoryPools.lower_bound(key);
@@ -278,23 +278,26 @@ std::pair<uint, MemoryPointer> vk::LogicalDevice::allocMemory(
 		  iter, key, MemoryPool(65536, MemoryAllocator(*this, key)));
 	return std::pair(key, iter->second.alloc(n, align));
 }
-void vk::LogicalDevice::freeMemory(uint memoryIndex, MemoryPointer ptr) {
+void LogicalDevice::freeMemory(uint memoryIndex, MemoryPointer ptr) {
 	// logger("Vulkan Freeing memId: ", memoryIndex);
 	memoryPools.at(memoryIndex).free(ptr);
 }
 
+bool LogicalDevice::isSwapchainValid() const {
+	return swapChain && swapChain->isValid();
+}
+
+
+SwapChain& LogicalDevice::getSwapchain() { return *swapChain; }
+
 void LogicalDevice::loadSwapchain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
-	assert(!swapChain);
-
-	swapChain.make(*pd.renderOut, *this, size);
-}
-void LogicalDevice::reloadSwapchain(uvec2 size) {
-	assert(pd.renderOut != nullptr);
-	assert(swapChain);
-	swapChain->rebuild(size);
+	if (swapChain) swapChain->rebuild(size);
+	else
+		swapChain.make(*pd.renderOut, *this, size, 1u);
 }
 void LogicalDevice::unloadSwapchain() { swapChain.reset(); }
+bool LogicalDevice::isSwapchainLoaded() const { return swapChain; }
 CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
 	if constexpr (DO_SAFETY_CHECK)
 		if (static_cast<uint>(type)
@@ -374,14 +377,33 @@ uint SwapChainSupport::getImageCount(uint preferredCount) const {
 static SwapchainCallback swapchainCallback;
 void SwapChain::setCallback(SwapchainCallback sc) { swapchainCallback = sc; }
 
-bool SwapChain::_build(
-  uvec2 preferredSize, uint preferredImageCount, bool transparentWindow) {
+// NOTE: Three result from this _build() call:
+// 1: return & Successful. sc != nullptr. *old_sc invalidated.
+// 2: return & Failure. sc == nullptr. *old_sc invalidated.
+// 3: throw Exception. *sc not touched. *old_sc not touched.
+void SwapChain::_build(uvec2 preferredSize, uint preferredImageCount,
+  WindowTransparentType transparentWindowType) {
 	VkSwapchainKHR old_sc = sc;
 	auto sp = d.pd.getSwapChainSupport();
 	surfaceFormat = sp.getFormat();
 	auto presentMode = sp.getPresentMode(true);
 	pixelSize = sp.getSwapChainSize(preferredSize);
+	if (pixelSize == uvec2(0)) {
+		logger("Vulkan: Noted that window size is 0. Halting rendering...\n");
+		throw MinimizedSurfaceException();
+	}
+
 	uint32_t bufferCount = sp.getImageCount(preferredImageCount);
+
+	if ((sp.capabilities.supportedCompositeAlpha
+		  & (VkCompositeAlphaFlagBitsKHR)transparentWindowType)
+		== 0) {
+		logger("Vulkan: WARNING: Window Surface does not support "
+			   "VkCompositeAlphaFlagBitsKHR: ",
+		  (VkCompositeAlphaFlagBitsKHR)transparentWindowType,
+		  ". Setting it to default.\n");
+		transparentWindowType = WindowTransparentType::RemoveAlpha;
+	}
 
 	VkSwapchainCreateInfoKHR createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -396,20 +418,19 @@ bool SwapChain::_build(
 	createInfo.queueFamilyIndexCount = 0;
 	createInfo.pQueueFamilyIndices = nullptr;
 	createInfo.preTransform = sp.capabilities.currentTransform;
-	createInfo.compositeAlpha = transparentWindow
-								? VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR
-								: VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	createInfo.compositeAlpha =
+	  (VkCompositeAlphaFlagBitsKHR)transparentWindowType;
 	createInfo.presentMode = presentMode;
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = old_sc == nullptr ? VK_NULL_HANDLE : old_sc;
 	auto result = vkCreateSwapchainKHR(d.d, &createInfo, nullptr, &sc);
-	if (old_sc != nullptr) vkDestroySwapchainKHR(d.d, old_sc, nullptr);
 	switch (result) {
 	case VK_SUCCESS:
 		vkGetSwapchainImagesKHR(d.d, sc, &bufferCount, nullptr);
 		swapChainImages.resize(bufferCount);
 		vkGetSwapchainImagesKHR(d.d, sc, &bufferCount, swapChainImages.data());
-		return true;
+		outdated = false;
+		break;
 	case VK_ERROR_OUT_OF_HOST_MEMORY:
 		throw "VulkanSwapchainCreateFailure::OutOfHostMemory";
 	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
@@ -422,35 +443,37 @@ bool SwapChain::_build(
 		throw "TODOVulkanSurfaceLostUnhandled";
 	case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
 		throw "VulkanSwapchainCreateFailure::NativeWindowInUse";
-	case VK_ERROR_INITIALIZATION_FAILED: sc = nullptr; return false;
+	case VK_ERROR_INITIALIZATION_FAILED: sc = nullptr;
 	default: throw "VulkanSwapchainCreateFailure::UnhandledEnum";
+	}
+	if (old_sc != nullptr) {
+		vkDestroySwapchainKHR(d.d, old_sc, nullptr);
+		// TODO: Maybe seperate destruction of ticks and delay the
+		// onDestroy callback?
+		ticks.clear();
+		if (swapchainCallback.onDestroy)
+			swapchainCallback.onDestroy(*this, sc != nullptr);
+	}
+	if (sc != nullptr) {
+		ticks.resize(getImageCount());
+		if (swapchainCallback.onCreate)
+			swapchainCallback.onCreate(*this, old_sc != nullptr);
 	}
 }
 
 SwapChain::SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
-  uvec2 preferredSize, uint preferredImageCount, bool transparentWindow):
+  uvec2 preferredSize, uint preferredImageCount,
+  WindowTransparentType transparentWindowType):
   d(device),
   sf(surface) {
-	//logger("Create SwapChain...");
+	// logger("Create SwapChain...");
 	sc = nullptr;
-	while (!_build(preferredSize, preferredImageCount, transparentWindow)) {
-		// TODO: Add exit condition in case of stuck for some reason
-	};
-	ticks.resize(getImageCount());
-	if (swapchainCallback.onCreate) swapchainCallback.onCreate(*this, false);
+	_build(preferredSize, preferredImageCount, transparentWindowType);
 }
-void SwapChain::rebuild(
-  uvec2 preferredSize, uint preferredImageCount, bool transparentWindow) {
+void SwapChain::rebuild(uvec2 preferredSize, uint preferredImageCount,
+  WindowTransparentType transparentWindowType) {
 	// logger("Rebuild SwapChain...");
-	while (!_build(preferredSize, preferredImageCount, transparentWindow)) {
-		// TODO: Add exit condition in case of stuck for some reason
-	};
-	ticks.clear();
-	ticks.resize(getImageCount());
-	// TODO: Get rid of the haltAndNotifyOutdated() and instead delay the
-	// onDestroy callback?
-	if (swapchainCallback.onDestroy) swapchainCallback.onDestroy(*this, true);
-	if (swapchainCallback.onCreate) swapchainCallback.onCreate(*this, true);
+	_build(preferredSize, preferredImageCount, transparentWindowType);
 }
 uint SwapChain::getImageCount() const { return swapChainImages.size(); }
 RenderTick& SwapChain::renderNextFrame() {
@@ -462,7 +485,7 @@ RenderTick& SwapChain::renderNextFrame() {
 	switch (code) {
 	case VK_SUCCESS: {
 		auto& optPtr = ticks[imageId];
-		//logger("Swapchain Acquire ", imageId);
+		// logger("Swapchain Acquire ", imageId);
 		if (optPtr) {
 			// logger("Swapchain reset Tick ", imageId);
 			optPtr->reset(std::move(sp));
@@ -471,13 +494,13 @@ RenderTick& SwapChain::renderNextFrame() {
 			optPtr.make(d, imageId, std::move(sp));
 		}
 		while (!optPtr->render()) {
-			// FIXME: Kinda hacky here using std::move on another obj's internal stuff
-			// Currently needs a placeholder to avoid self move asignment issue causing
-			// underfined(?) behavior or unspecified state.
+			// FIXME: Kinda hacky here using std::move on another obj's internal
+			// stuff Currently needs a placeholder to avoid self move asignment
+			// issue causing underfined(?) behavior or unspecified state.
 			Semaphore temp{std::move(optPtr->acquireSemaphore)};
 			optPtr.make(d, imageId, std::move(temp));
 		}
-		optPtr->send(); //May throw OutdatedSwapchainException()
+		optPtr->send();	 // May throw OutdatedSwapchainException()
 		return *optPtr;
 	}
 	case VK_SUBOPTIMAL_KHR:
@@ -496,6 +519,8 @@ RenderTick& SwapChain::renderNextFrame() {
 	default: throw "VulkanSwapchainGetNextImageFailure::UnhandledEnum";
 	}
 }
+
+bool SwapChain::isValid() const { return sc!=nullptr && !outdated; }
 
 ImageView SwapChain::getChainImageView(uint index) {
 	VkImageViewCreateInfo cInfo{};
