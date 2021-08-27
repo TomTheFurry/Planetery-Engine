@@ -6,7 +6,7 @@ export namespace events {
 	enum class State { init, paused, normal, requestStop, complete };
 	namespace KeyCode {
 		enum KeyCode {
-			unkown = -1,  // TAG: Hey old me... unk'n'own!!!
+			unkown = -1,
 			null = 0,
 			space = 32,
 			apostrophe = 39,
@@ -160,6 +160,16 @@ export namespace events {
 		uint get() { return _flag; }
 	};
 	using KeyEventFunction = std::function<void(int, KeyAction, KeyModFlags)>;
+
+	enum class WindowEventType {
+		Null,
+		Move,
+		Resize,
+		FrameBufferResize,
+		FullScreenModeChange,
+	};
+	using WindowEventFunction = std::function<void(WindowEventType)>;
+
 	enum class FullScreenMode { windowed, fullscreen, windowedFullscreen };
 	class ThreadEvents
 	{
@@ -180,7 +190,8 @@ export namespace events {
 		  std::exception_ptr eptr);	 // report non critical exception
 
 		// called ONLY by render thread
-		static void swapBuffer();
+		static void swapBuffer(); //TODO: Move this to OpenGL Interface
+
 		// HACK: not sure who should own the glfwWindow object.
 		// Don't wanna show the glfwWindow in header file, so... return void*
 		static void* getGLFWWindow();
@@ -218,15 +229,17 @@ export namespace events {
 
 		// window key event (NON BLOCKING, so the actual binding and unbinding
 		// WILL be delayed)
-		[[nodiscard]] static void addKeyEventCallback(KeyEventFunction f,
+		static void addKeyEventCallback(KeyEventFunction f,
 		  int keyCode = KeyCode::null, KeyAction keyAction = KeyAction::null,
 		  KeyModFlags keyModFlags = KeyModFlags(
 			KeyModFlag::null));	 // Unchangable
-		[[nodiscard]] static void addInlineKeyEventCallback(KeyEventFunction f,
+		static void addInlineKeyEventCallback(KeyEventFunction f,
 		  int keyCode = KeyCode::null, KeyAction keyAction = KeyAction::null,
 		  KeyModFlags keyModFlags = KeyModFlags(
 			KeyModFlag::null));	 // Unchangable
+		static void addInlineWindowEventCallback(WindowEventFunction f,
+		  WindowEventType triggerType = WindowEventType::Null);	 // Unchangable
 
-		static bool pollEvents();  // return true if there are events
+		  static bool pollEvents();	 // return true if there are events
 	};
 }

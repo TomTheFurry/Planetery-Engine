@@ -46,6 +46,11 @@ struct _KeyCallback {
 	KeyModFlags keyModFlags = KeyModFlags(KeyModFlag::null);
 	std::thread::id id;
 };
+struct _WindowCallback {
+	WindowEventFunction func;
+	WindowEventType type;
+	std::thread::id id;
+};
 namespace _flag {
 	enum _Flag {
 		windowResized = 1,
@@ -61,6 +66,8 @@ struct _Thread {
 	std::mutex mxCallbacks{};
 	std::atomic<bool> CallbacksEmpty = true;
 	std::vector<_KeyCallback>* newCallbacks = new std::vector<_KeyCallback>{};
+	std::vector<_WindowCallback>* newWindowCallbacks =
+	  new std::vector<_WindowCallback>{};
 	std::atomic<_Flags> flags = _Flags(-1);
 };
 
@@ -86,6 +93,7 @@ static std::unordered_map<std::thread::id, _Thread> _threads{};
 static std::unordered_map<std::thread::id, std::vector<_KeyEvent>>
   _eventsToAdd{};
 static std::vector<_KeyCallback> _activeCallbacks{};
+static std::vector<_WindowCallback> _activeWindowCallbacks{};
 std::atomic<uint> ThreadEvents::counter{0};
 
 static void glfwErrorCallback(int errorCode, const char* text) {
@@ -106,6 +114,18 @@ static void window_size_callback(GLFWwindow* _, int width, int height) {
 		pair.second.flags.fetch_or(
 		  _flag::windowResized, std::memory_order_relaxed);
 	}
+
+	for (auto& c : _activeWindowCallbacks) {
+		if (c.type == WindowEventType::Null
+			|| c.type == WindowEventType::Resize) {
+			if (c.id == std::this_thread::get_id()) {
+				c.func(WindowEventType::Resize);
+			} else {
+				logger(
+				  "ERROR: Non-inline window callback NOT yet supported!\n");
+			}
+		}
+	}
 }
 static void window_pos_callback(GLFWwindow* _, int x, int y) {
 	_windowPos.store(ivec2(x, y), std::memory_order_release);
@@ -113,12 +133,36 @@ static void window_pos_callback(GLFWwindow* _, int x, int y) {
 		pair.second.flags.fetch_or(
 		  _flag::windowMoved, std::memory_order_relaxed);
 	}
+
+	for (auto& c : _activeWindowCallbacks) {
+		if (c.type == WindowEventType::Null
+			|| c.type == WindowEventType::Move) {
+			if (c.id == std::this_thread::get_id()) {
+				c.func(WindowEventType::Move);
+			} else {
+				logger(
+				  "ERROR: Non-inline window callback NOT yet supported!\n");
+			}
+		}
+	}
 }
 static void framebuffer_size_callback(GLFWwindow* _, int width, int height) {
 	_framebufferSize.store(uvec2(width, height), std::memory_order_release);
 	for (auto& pair : _threads) {
 		pair.second.flags.fetch_or(
 		  _flag::windowResized, std::memory_order_relaxed);
+	}
+
+	for (auto& c : _activeWindowCallbacks) {
+		if (c.type == WindowEventType::Null
+			|| c.type == WindowEventType::FrameBufferResize) {
+			if (c.id == std::this_thread::get_id()) {
+				c.func(WindowEventType::FrameBufferResize);
+			} else {
+				logger(
+				  "ERROR: Non-inline window callback NOT yet supported!\n");
+			}
+		}
 	}
 }
 static void mouse_pos_callback(GLFWwindow* _, double x, double y) {
@@ -257,7 +301,7 @@ static void _main() {
 		  GLFW_DONT_CARE);	// On fullscreen mode, what
 							// refresh rate? (DONT_CARE = max)
 		glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER,
-		  GLFW_TRUE);	// Is the window transparent?
+		  GLFW_TRUE);  // Is the window transparent?
 
 		bool useFullScreen = false;
 		uint windowW = windowInitSize.x;
@@ -310,6 +354,7 @@ static void _main() {
 			|| render::ThreadRender::getState() == render::State::complete)) {
 			ThreadEvents::counter++;
 
+			bool fullscreenModeChanged = false;
 			// Process request
 			if (_fullScreenModeChangeRequest.exchange(
 				  false, std::memory_order_release)) {
@@ -319,6 +364,7 @@ static void _main() {
 					_unsetFullScreenMode(_fullScreenMode);
 					_setFullScreenMode(newMode);
 					_fullScreenMode = newMode;
+					fullscreenModeChanged = true;
 				}
 			}
 
@@ -333,16 +379,22 @@ static void _main() {
 				// ACTUAL SIZE.
 				if (d.CallbacksEmpty.load(std::memory_order_relaxed) == false) {
 					static std::vector<_KeyCallback> vec{};
+					static std::vector<_WindowCallback> vecWin{};
 					assert(vec.empty());
+					assert(vecWin.empty());
 					{
 						std::lock_guard _{d.mxCallbacks};
 						d.CallbacksEmpty.store(
 						  true, std::memory_order_relaxed);	 // Set the size
 						d.newCallbacks->swap(vec);
+						d.newWindowCallbacks->swap(vecWin);
 					}
 					_activeCallbacks.insert(
 					  _activeCallbacks.end(), vec.begin(), vec.end());
 					vec.clear();
+					_activeWindowCallbacks.insert(_activeWindowCallbacks.end(),
+					  vecWin.begin(), vecWin.end());
+					vecWin.clear();
 				}
 			}
 
@@ -353,6 +405,20 @@ static void _main() {
 			// glfwPollEvents(); //WILL MAYBE BLOCK
 			glfwWaitEvents();  // Will BLOCK, call glfwPostEmptyEvent() to wake
 							   // thread
+
+
+
+			for (auto& c : _activeWindowCallbacks) {
+				if (c.type == WindowEventType::Null
+					|| c.type == WindowEventType::FullScreenModeChange) {
+					if (c.id == std::this_thread::get_id()) {
+						c.func(WindowEventType::FullScreenModeChange);
+					} else {
+						logger("ERROR: Non-inline window callback NOT yet "
+							   "supported!\n");
+					}
+				}
+			}
 
 			// Forth, dispach events to each threads
 			for (auto& pair : _eventsToAdd) {
@@ -367,9 +433,6 @@ static void _main() {
 
 			// Fifth, cleanup
 			_eventsToAdd.clear();
-
-			// Sixth, add sleep so that this doesn't eat up all runtime
-			// TODO: Add sleep here
 		}
 		auto& eptr = _eptr;
 		auto rThreadState = render::ThreadRender::getState();
@@ -574,6 +637,17 @@ void events::ThreadEvents::addInlineKeyEventCallback(KeyEventFunction f,
 	}
 	t.CallbacksEmpty.store(false, std::memory_order_relaxed);
 }
+void events::ThreadEvents::addInlineWindowEventCallback(
+  WindowEventFunction f, WindowEventType triggerType) {
+	auto& t = _threads[std::this_thread::get_id()];	 // WILL add entries
+	{
+		std::lock_guard _{t.mxCallbacks};
+		t.newWindowCallbacks->emplace_back(
+		  _WindowCallback{f, triggerType, _thread->get_id()});
+	}
+	t.CallbacksEmpty.store(false, std::memory_order_relaxed);
+}
+
 
 bool events::ThreadEvents::pollEvents() {
 	auto t = _threads.find(std::this_thread::get_id());
