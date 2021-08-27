@@ -37,6 +37,15 @@ static std::vector<RenderHandle*> _renderJobs{};
 // Thread
 static GLFWwindow* _window = nullptr;
 
+// Local Thread control (THIS THREAD ONLY)
+void _selfRequestStop() {
+	_state.store(State::requestStop, std::memory_order_relaxed);
+}
+void _selfRequestPause() {
+	State st = _state.exchange(State::paused, std::memory_order_relaxed);
+	if (st == State::requestStop) { _selfRequestStop(); }
+}
+
 // Vulkan
 const float testVert[]{
   0.5f,
@@ -175,7 +184,7 @@ void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 }
 void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 	using namespace vk;
-	//logger("vkSwapchainCallbackOnCreate:", recreation ? " true" : " false");
+	// logger("vkSwapchainCallbackOnCreate:", recreation ? " true" : " false");
 	assert(frames.empty());
 	_dpc =
 	  new DescriptorContainer(sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
@@ -217,17 +226,27 @@ void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 	  LogicOperator::None, {ShaderPipeline::AttachmentBlending()}, vec4());
 	assert(_pipeline->p != nullptr);
 }
-
 void vkSwapchainCallbackOnDestroy(vk::SwapChain& sc, bool recreation) {
-	//logger("vkSwapchainCallbackOnDestroy:", recreation ? " true" : " false");
+	// logger("vkSwapchainCallbackOnDestroy:", recreation ? " true" : " false");
 	if (_dpc != nullptr) delete _dpc;
 	if (_pipeline != nullptr) delete _pipeline;
 	if (_renderPass != nullptr) delete _renderPass;
 }
+static std::atomic<bool> isPausedOnMinimized{false};
+void vkSwapchainCallbackOnSurfaceMinimized(vk::SwapChain&) {
+	logger("Window Minimized. Enter sleep state in next cycle...\n");
+	_selfRequestPause();
+	isPausedOnMinimized.store(true, std::memory_order_relaxed);
+}
+void glfwVkFrameBufferResizeWakeupInlineCallback(events::WindowEventType) {
+	if (isPausedOnMinimized.exchange(false, std::memory_order_relaxed)) {
+		ThreadRender::unpause();
+	}
+}
 void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 	using namespace vk;
 	uint frameId = rt.getImageIndex();
-	//logger("vkFrameCallbackOnCreate:", frameId);
+	// logger("vkFrameCallbackOnCreate:", frameId);
 	auto& frame = _frames[frameId];
 	// FIXME: RenderTick missing a getSwapchain() method!
 	auto& sc = *rt.d.swapChain;
@@ -264,7 +283,7 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 	using namespace vk;
 	uint frameId = rt.getImageIndex();
-	//logger("vkFrameCallbackOnRender:", frameId);
+	// logger("vkFrameCallbackOnRender:", frameId);
 	auto& frame = _frames[frameId];
 
 	const float DELTA = 0.0001f;
@@ -278,7 +297,7 @@ void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 }
 void vkFrameCallbackOnDestroy(vk::RenderTick& rt) {
 	uint frameId = rt.getImageIndex();
-	//logger("vkFrameCallbackOnDestroy:", frameId);
+	// logger("vkFrameCallbackOnDestroy:", frameId);
 	auto& frame = _frames[frameId];
 	frame.cb.reset();
 	frame.ds.reset();
@@ -286,14 +305,20 @@ void vkFrameCallbackOnDestroy(vk::RenderTick& rt) {
 	frame.fb.reset();
 	frame.sv.reset();
 }
+
 void vulkanSetup() {
 	using namespace vk;
+	events::ThreadEvents::addInlineWindowEventCallback(
+	  &glfwVkFrameBufferResizeWakeupInlineCallback,
+	  events::WindowEventType::FrameBufferResize);
+
 	{
 		DeviceCallback dc{
 		  &vkDeviceCallbackOnCreate, &vkDeviceCallbackOnDestroy};
 		vk::setCallback(dc);
-		SwapchainCallback sc{
-		  &vkSwapchainCallbackOnCreate, &vkSwapchainCallbackOnDestroy};
+		SwapchainCallback sc{&vkSwapchainCallbackOnCreate,
+		  &vkSwapchainCallbackOnDestroy,
+		  &vkSwapchainCallbackOnSurfaceMinimized};
 		vk::setCallback(sc);
 		FrameCallback fc{&vkFrameCallbackOnCreate, &vkFrameCallbackOnRender,
 		  &vkFrameCallbackOnDestroy};
@@ -311,6 +336,7 @@ void vkTestSwitch() {
 	}
 	useA = !useA;
 }
+
 
 
 
@@ -356,8 +382,6 @@ static void _main() {
 		RollingAverage<lint, lint, 60> roller{};
 		RollingAverage<lint, lint, 60> hotRoller{};
 		bool flips = false;
-		std::chrono::steady_clock::time_point hotTickTimerA;
-		std::chrono::steady_clock::time_point hotTickTimerB;
 		std::chrono::steady_clock::time_point tickTimerA;
 		std::chrono::steady_clock::time_point tickTimerB;
 		tickTimerB = std::chrono::high_resolution_clock::now();
@@ -368,13 +392,16 @@ static void _main() {
 		// fpsBox.pos = vec2{-0.9, 0.5};
 		// fpsBox.setTextSize(72.f);
 		// fpsBox.setSize(vec2{0.3, 0.2});
+		uint failCount = 0;
+		std::chrono::steady_clock::time_point hotTickTimerA;
+		std::chrono::steady_clock::time_point hotTickTimerB;
 
 		while (_state.load(std::memory_order_relaxed)
 			   != State::requestStop) {	 // does not have to instantly respond
 			if (_state.load(std::memory_order_relaxed) == State::paused) {
-				logger("Thread paused.");
+				logger("Thread paused.\n");
 				_state.wait(State::paused, std::memory_order_relaxed);
-				logger("Thread resumed.");
+				logger("Thread resumed.\n");
 				tickCount = 0;
 				nsDeltaPerSec = 0;
 				tickTimerB = std::chrono::high_resolution_clock::now();
@@ -429,8 +456,10 @@ static void _main() {
 #endif
 
 #ifdef USE_VULKAN
-				uint failCount = 0;
-				while (!vk::drawFrame()) failCount++;
+				if (!vk::drawFrame(false)) {
+					failCount++;
+					continue;
+				}
 #endif
 
 				// fpsBox.render();
@@ -454,13 +483,12 @@ static void _main() {
 					sec_count++;
 					eventTickCount = events::ThreadEvents::counter.exchange(0);
 					logger("Average Tick span: ", nanoSec(hotRoller.get()), "/",
-					  nanoSec(roller.get()), " (", tickCount,
+					  nanoSec(roller.get()), " (Tick:", tickCount,
 #ifdef USE_VULKAN
-					  "(", failCount, ")",
+					  "(FalseTick:", failCount, ")",
 #endif
 					  "), Event tps: ", eventTickCount, "\n");
 #ifdef USE_VULKAN
-					failCount = 0;
 					vkTestSwitch();
 #endif
 					nsDeltaPerSec -= NS_PER_S;
@@ -468,9 +496,9 @@ static void _main() {
 					// fpsBox.clear();
 					// fpsBox << tps << "(" << eventTickCount << ")\n";
 					tickCount = 0;
+					failCount = 0;
 					flips = !flips;
 				}
-
 #ifdef USE_OPENGL
 				events::ThreadEvents::swapBuffer();	 // Will block and wait for
 													 // screen updates (v-sync)

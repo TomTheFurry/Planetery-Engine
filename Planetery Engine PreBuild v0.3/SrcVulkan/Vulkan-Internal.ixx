@@ -23,6 +23,7 @@ export namespace vk {
 	struct SwapchainCallback {
 		void (*onCreate)(SwapChain&, bool) = nullptr;
 		void (*onDestroy)(SwapChain&, bool) = nullptr;
+		void (*onSurfaceMinimized)(SwapChain&) = nullptr;
 	};
 	// Memory class:
 	struct DeviceMemory;

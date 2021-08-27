@@ -9,7 +9,7 @@ import "VulkanExtModule.h";
 
 // Device class:
 export namespace vk {
-	struct MinimizedSurfaceException {};
+	struct SurfaceMinimizedException {};
 
 	struct Layer {
 		const char* name;
@@ -86,7 +86,7 @@ export namespace vk {
 		void freeMemory(uint memoryIndex, MemoryPointer ptr);
 		bool isSwapchainValid() const;
 		SwapChain& getSwapchain();
-		void loadSwapchain(uvec2 preferredSize = uvec2(-1));
+		bool loadSwapchain(uvec2 preferredSize = uvec2(-1));
 		void unloadSwapchain();
 		bool isSwapchainLoaded() const;
 		CommendPool& getCommendPool(CommendPoolType type);
@@ -135,9 +135,10 @@ export namespace vk {
 		SwapChain(SwapChain&&) = delete;
 		void rebuild(uvec2 preferredSize, uint preferredImageCount = uint(4),
 		  WindowTransparentType transparentWindowType =
-			WindowTransparentType::PreMultiplied);
+			WindowTransparentType::RemoveAlpha);
 		uint getImageCount() const;
-		RenderTick& renderNextFrame();
+		// TODO: Add timeout setting
+		bool renderNextFrame(bool waitForVSync);
 		void markAllTickAsOutdated();
 		bool isValid() const;
 		LogicalDevice& d;

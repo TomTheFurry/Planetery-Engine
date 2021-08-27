@@ -13,6 +13,10 @@ import "VulkanExtModule.h";
 import "GlfwModule.h";
 using namespace vk;
 
+#define PREFERRED_IMAGE_COUNT 18u
+#define USE_MAILBOX_MODE
+#define PREFERRED_WIN_ALPHA_MODE
+
 PhysicalDevice PhysicalDevice::getUsablePhysicalDevice(
   OSRenderSurface* osSurface) {
 	std::vector<VkPhysicalDevice> pDevices;
@@ -290,11 +294,14 @@ bool LogicalDevice::isSwapchainValid() const {
 
 SwapChain& LogicalDevice::getSwapchain() { return *swapChain; }
 
-void LogicalDevice::loadSwapchain(uvec2 size) {
+bool LogicalDevice::loadSwapchain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
-	if (swapChain) swapChain->rebuild(size);
-	else
-		swapChain.make(*pd.renderOut, *this, size, 1u);
+	try {
+		if (swapChain) swapChain->rebuild(size, PREFERRED_IMAGE_COUNT);
+		else
+			swapChain.make(*pd.renderOut, *this, size, PREFERRED_IMAGE_COUNT);
+		return true;
+	} catch (SurfaceMinimizedException) { return false; }
 }
 void LogicalDevice::unloadSwapchain() { swapChain.reset(); }
 bool LogicalDevice::isSwapchainLoaded() const { return swapChain; }
@@ -347,7 +354,9 @@ VkSurfaceFormatKHR SwapChainSupport::getFormat() const {
 }
 VkPresentModeKHR SwapChainSupport::getPresentMode(
   bool preferRelaxedVBlank) const {
+#ifdef USE_MAILBOX_MODE
 	return VK_PRESENT_MODE_MAILBOX_KHR;
+#endif
 	if (preferRelaxedVBlank
 		&& std::find(presentModes.begin(), presentModes.end(),
 			 VK_PRESENT_MODE_FIFO_RELAXED_KHR)
@@ -368,6 +377,14 @@ uvec2 SwapChainSupport::getSwapChainSize(uvec2 ps) const {
 	return glm::max(min, glm::min(max, ps));
 }
 uint SwapChainSupport::getImageCount(uint preferredCount) const {
+	/*logger("ImgCount: ",
+	  std::max(capabilities.minImageCount,
+		capabilities.maxImageCount == 0
+		  ? preferredCount
+		  : std::min(capabilities.maxImageCount, preferredCount)),
+	  " PreferredCount: ", preferredCount,
+	  " Capabilities: ", capabilities.minImageCount, "-",
+	  capabilities.maxImageCount);*/
 	return std::max(capabilities.minImageCount,
 	  capabilities.maxImageCount == 0
 		? preferredCount
@@ -390,7 +407,9 @@ void SwapChain::_build(uvec2 preferredSize, uint preferredImageCount,
 	pixelSize = sp.getSwapChainSize(preferredSize);
 	if (pixelSize == uvec2(0)) {
 		logger("Vulkan: Noted that window size is 0. Halting rendering...\n");
-		throw MinimizedSurfaceException();
+		if (swapchainCallback.onSurfaceMinimized)
+			swapchainCallback.onSurfaceMinimized(*this);
+		throw SurfaceMinimizedException();
 	}
 
 	uint32_t bufferCount = sp.getImageCount(preferredImageCount);
@@ -476,13 +495,13 @@ void SwapChain::rebuild(uvec2 preferredSize, uint preferredImageCount,
 	_build(preferredSize, preferredImageCount, transparentWindowType);
 }
 uint SwapChain::getImageCount() const { return swapChainImages.size(); }
-RenderTick& SwapChain::renderNextFrame() {
+bool SwapChain::renderNextFrame(bool waitForVSync) {
 	uint imageId{uint(-1)};
 	Semaphore sp{d};
-	// TODO: Add timeout setting
 	auto code =
-	  vkAcquireNextImageKHR(d.d, sc, uint(-1), sp.sp, VK_NULL_HANDLE, &imageId);
+	  vkAcquireNextImageKHR(d.d, sc, 0, sp.sp, VK_NULL_HANDLE, &imageId);
 	switch (code) {
+	case VK_SUBOPTIMAL_KHR: outdated = true;
 	case VK_SUCCESS: {
 		auto& optPtr = ticks[imageId];
 		// logger("Swapchain Acquire ", imageId);
@@ -500,12 +519,17 @@ RenderTick& SwapChain::renderNextFrame() {
 			Semaphore temp{std::move(optPtr->acquireSemaphore)};
 			optPtr.make(d, imageId, std::move(temp));
 		}
-		optPtr->send();	 // May throw OutdatedSwapchainException()
-		return *optPtr;
+		try {
+			optPtr->send();	 // May throw OutdatedSwapchainException()
+			return true;
+		} catch (OutdatedSwapchainException) {
+			outdated = true;
+			return false;
+		}
 	}
-	case VK_SUBOPTIMAL_KHR:
-	case VK_ERROR_OUT_OF_DATE_KHR: throw OutdatedSwapchainException();
-	case VK_TIMEOUT: throw "VulkanSwapchainGetNextImageFailure::Timout";
+	case VK_ERROR_OUT_OF_DATE_KHR: outdated = true; return false;
+	case VK_TIMEOUT: return false;
+	case VK_NOT_READY: return false;
 	case VK_ERROR_OUT_OF_HOST_MEMORY:
 		throw "VulkanSwapchainGetNextImageFailure::OutOfHostMemory";
 	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
@@ -520,7 +544,7 @@ RenderTick& SwapChain::renderNextFrame() {
 	}
 }
 
-bool SwapChain::isValid() const { return sc!=nullptr && !outdated; }
+bool SwapChain::isValid() const { return sc != nullptr && !outdated; }
 
 ImageView SwapChain::getChainImageView(uint index) {
 	VkImageViewCreateInfo cInfo{};

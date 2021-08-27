@@ -18,7 +18,7 @@ export namespace vk {
 	{
 		friend class SwapChain;
 		void reset(Semaphore&& as);	 // call from swapchain
-		bool render();				 // call from swapchain
+		bool render();				 // call from swapchain, true: frame need resetting
 		void send();				 // call from swapchain
 
 	  public:

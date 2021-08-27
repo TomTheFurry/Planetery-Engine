@@ -246,16 +246,11 @@ void vk::init() {
 					  .makeDevice(VK_QUEUE_GRAPHICS_BIT);
 	dCallback.onCreate(*_renderDevice);
 }
-bool vk::drawFrame() {
-	if (!_renderDevice->isSwapchainValid()) _renderDevice->loadSwapchain(); 
-	try {
-		_renderDevice->getSwapchain().renderNextFrame();
-		_currentFrame++;
-		return true;
-	} catch (OutdatedSwapchainException) {
-		_renderDevice->getSwapchain().outdated = true;
-		return false;
-	}
+bool vk::drawFrame(bool waitForVSync) {
+	if (!_renderDevice->isSwapchainValid() && !_renderDevice->loadSwapchain()) return false;
+	if (!_renderDevice->getSwapchain().renderNextFrame(waitForVSync)) return false;
+	_currentFrame++;
+	return true;
 }
 void vk::end() {
 	logger("VK Interface end.\n");
