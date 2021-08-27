@@ -110,7 +110,7 @@ static vk::VertexAttribute va{};
 
 static vk::DescriptorLayout* _dsl = nullptr;
 
-// Depend on SwapChain
+// Depend on Swapchain
 static vk::DescriptorContainer* _dpc = nullptr;
 static vk::RenderPass* _renderPass = nullptr;
 static vk::ShaderPipeline* _pipeline = nullptr;
@@ -182,7 +182,7 @@ void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	if (_vertShad != nullptr) delete _vertShad;
 	if (_fragShad != nullptr) delete _fragShad;
 }
-void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
+void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	using namespace vk;
 	// logger("vkSwapchainCallbackOnCreate:", recreation ? " true" : " false");
 	assert(frames.empty());
@@ -226,14 +226,14 @@ void vkSwapchainCallbackOnCreate(vk::SwapChain& sc, bool recreation) {
 	  LogicOperator::None, {ShaderPipeline::AttachmentBlending()}, vec4());
 	assert(_pipeline->p != nullptr);
 }
-void vkSwapchainCallbackOnDestroy(vk::SwapChain& sc, bool recreation) {
+void vkSwapchainCallbackOnDestroy(vk::Swapchain& sc, bool recreation) {
 	// logger("vkSwapchainCallbackOnDestroy:", recreation ? " true" : " false");
 	if (_dpc != nullptr) delete _dpc;
 	if (_pipeline != nullptr) delete _pipeline;
 	if (_renderPass != nullptr) delete _renderPass;
 }
 static std::atomic<bool> isPausedOnMinimized{false};
-void vkSwapchainCallbackOnSurfaceMinimized(vk::SwapChain&) {
+void vkSwapchainCallbackOnSurfaceMinimized(vk::Swapchain&) {
 	logger("Window Minimized. Enter sleep state in next cycle...\n");
 	_selfRequestPause();
 	isPausedOnMinimized.store(true, std::memory_order_relaxed);

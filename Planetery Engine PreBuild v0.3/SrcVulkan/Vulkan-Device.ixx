@@ -60,7 +60,7 @@ export namespace vk {
 		std::partial_ordering operator<=>(const PhysicalDevice& other) const {
 			return rating <=> other.rating;
 		}
-		SwapChainSupport getSwapChainSupport() const;
+		SwapchainSupport getSwapchainSupport() const;
 		~PhysicalDevice() = default;
 	};
 	class LogicalDevice
@@ -77,7 +77,7 @@ export namespace vk {
 		VkQueue queue;
 		QueueFamilyIndex queueIndex;
 		//FIXME: LogicalDevice missing getSwapchain() method!
-		util::OptionalUniquePtr<SwapChain> swapChain;
+		util::OptionalUniquePtr<Swapchain> swapChain;
 		std::vector<CommendPool> commendPools;
 		std::map<uint, MemoryPool> memoryPools;
 		std::pair<uint, MemoryPointer> allocMemory(
@@ -85,7 +85,7 @@ export namespace vk {
 		  Flags<MemoryFeature> feature, size_t n, size_t align);
 		void freeMemory(uint memoryIndex, MemoryPointer ptr);
 		bool isSwapchainValid() const;
-		SwapChain& getSwapchain();
+		Swapchain& getSwapchain();
 		bool loadSwapchain(uvec2 preferredSize = uvec2(-1));
 		void unloadSwapchain();
 		bool isSwapchainLoaded() const;
@@ -107,32 +107,32 @@ export namespace vk {
 		const VkSurfaceKHR operator->() const { return surface; }
 		~OSRenderSurface();
 	};
-	class SwapChainSupport
+	class SwapchainSupport
 	{
 	  public:
-		SwapChainSupport() = default;
-		SwapChainSupport(
+		SwapchainSupport() = default;
+		SwapchainSupport(
 		  const PhysicalDevice& pd, const OSRenderSurface& surface);
 		VkSurfaceFormatKHR getFormat() const;
 		VkPresentModeKHR getPresentMode(bool preferRelaxedVBlank = false) const;
-		uvec2 getSwapChainSize(uvec2 preferredSize = uvec2(uint(-1))) const;
+		uvec2 getSwapchainSize(uvec2 preferredSize = uvec2(uint(-1))) const;
 		uint getImageCount(uint preferredCount = uint(4)) const;
 		VkSurfaceCapabilitiesKHR capabilities{};
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
 	};
-	class SwapChain
+	class Swapchain
 	{
 		//TODO: Add support for setting preferred Swapchain Method
 		void _build(uvec2 preferredSize, uint preferredImageCount,
 		  WindowTransparentType transparentWindowType);
 	  public:
 		static void setCallback(SwapchainCallback callback);
-		SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
+		Swapchain(const OSRenderSurface& surface, LogicalDevice& device,
 		  uvec2 preferredSize, uint preferredImageCount = uint(4),
 		  WindowTransparentType transparentWindowType = WindowTransparentType::RemoveAlpha);
-		SwapChain(const SwapChain&) = delete;
-		SwapChain(SwapChain&&) = delete;
+		Swapchain(const Swapchain&) = delete;
+		Swapchain(Swapchain&&) = delete;
 		void rebuild(uvec2 preferredSize, uint preferredImageCount = uint(4),
 		  WindowTransparentType transparentWindowType =
 			WindowTransparentType::RemoveAlpha);
@@ -150,7 +150,7 @@ export namespace vk {
 		std::vector<util::OptionalUniquePtr<RenderTick>> ticks;
 		bool outdated = false;
 		ImageView getChainImageView(uint index);
-		~SwapChain();
+		~Swapchain();
 		//std::pair<uint, Semaphore> getNextImage();
 	};
 }

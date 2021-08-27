@@ -114,7 +114,7 @@ PhysicalDevice::PhysicalDevice(
 	if (renderSurface != nullptr) {
 		if (getQueueFamily(VK_QUEUE_GRAPHICS_BIT, renderSurface) == uint(-1))
 			meetRequirements = false;
-		auto swapChain = SwapChainSupport(*this, *renderSurface);
+		auto swapChain = SwapchainSupport(*this, *renderSurface);
 		if (swapChain.formats.empty() || swapChain.presentModes.empty())
 			meetRequirements = false;
 	}
@@ -216,8 +216,8 @@ LogicalDevice* PhysicalDevice::makeDevice(
 	if (i == uint(-1)) return nullptr;
 	return new LogicalDevice(std::move(*this), i);
 }
-SwapChainSupport PhysicalDevice::getSwapChainSupport() const {
-	return SwapChainSupport(*this, *renderOut);
+SwapchainSupport PhysicalDevice::getSwapchainSupport() const {
+	return SwapchainSupport(*this, *renderOut);
 }
 
 void LogicalDevice::_setup() {
@@ -292,7 +292,7 @@ bool LogicalDevice::isSwapchainValid() const {
 }
 
 
-SwapChain& LogicalDevice::getSwapchain() { return *swapChain; }
+Swapchain& LogicalDevice::getSwapchain() { return *swapChain; }
 
 bool LogicalDevice::loadSwapchain(uvec2 size) {
 	assert(pd.renderOut != nullptr);
@@ -329,7 +329,7 @@ OSRenderSurface::~OSRenderSurface() {
 	vkDestroySurfaceKHR(getVkInstance(), surface, nullptr);
 }
 
-SwapChainSupport::SwapChainSupport(
+SwapchainSupport::SwapchainSupport(
   const PhysicalDevice& pd, const OSRenderSurface& s) {
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pd.d, s.surface, &capabilities);
 	uint fCount, pmCount;
@@ -343,7 +343,7 @@ SwapChainSupport::SwapChainSupport(
 	vkGetPhysicalDeviceSurfacePresentModesKHR(
 	  pd.d, s.surface, &pmCount, presentModes.data());
 }
-VkSurfaceFormatKHR SwapChainSupport::getFormat() const {
+VkSurfaceFormatKHR SwapchainSupport::getFormat() const {
 	assert(!formats.empty());
 	auto it = std::find_if(
 	  formats.begin(), formats.end(), [](const VkSurfaceFormatKHR& v) {
@@ -352,7 +352,7 @@ VkSurfaceFormatKHR SwapChainSupport::getFormat() const {
 	  });
 	return it == formats.end() ? formats.front() : *it;
 }
-VkPresentModeKHR SwapChainSupport::getPresentMode(
+VkPresentModeKHR SwapchainSupport::getPresentMode(
   bool preferRelaxedVBlank) const {
 #ifdef USE_MAILBOX_MODE
 	return VK_PRESENT_MODE_MAILBOX_KHR;
@@ -365,7 +365,7 @@ VkPresentModeKHR SwapChainSupport::getPresentMode(
 	else
 		return VK_PRESENT_MODE_FIFO_KHR;
 }
-uvec2 SwapChainSupport::getSwapChainSize(uvec2 ps) const {
+uvec2 SwapchainSupport::getSwapchainSize(uvec2 ps) const {
 	if (capabilities.currentExtent.width != uint(-1)
 		&& capabilities.currentExtent.height != uint(-1))
 		return uvec2(
@@ -376,7 +376,7 @@ uvec2 SwapChainSupport::getSwapChainSize(uvec2 ps) const {
 	  capabilities.maxImageExtent.width, capabilities.maxImageExtent.height};
 	return glm::max(min, glm::min(max, ps));
 }
-uint SwapChainSupport::getImageCount(uint preferredCount) const {
+uint SwapchainSupport::getImageCount(uint preferredCount) const {
 	/*logger("ImgCount: ",
 	  std::max(capabilities.minImageCount,
 		capabilities.maxImageCount == 0
@@ -392,19 +392,19 @@ uint SwapChainSupport::getImageCount(uint preferredCount) const {
 }
 
 static SwapchainCallback swapchainCallback;
-void SwapChain::setCallback(SwapchainCallback sc) { swapchainCallback = sc; }
+void Swapchain::setCallback(SwapchainCallback sc) { swapchainCallback = sc; }
 
 // NOTE: Three result from this _build() call:
 // 1: return & Successful. sc != nullptr. *old_sc invalidated.
 // 2: return & Failure. sc == nullptr. *old_sc invalidated.
 // 3: throw Exception. *sc not touched. *old_sc not touched.
-void SwapChain::_build(uvec2 preferredSize, uint preferredImageCount,
+void Swapchain::_build(uvec2 preferredSize, uint preferredImageCount,
   WindowTransparentType transparentWindowType) {
 	VkSwapchainKHR old_sc = sc;
-	auto sp = d.pd.getSwapChainSupport();
+	auto sp = d.pd.getSwapchainSupport();
 	surfaceFormat = sp.getFormat();
 	auto presentMode = sp.getPresentMode(true);
-	pixelSize = sp.getSwapChainSize(preferredSize);
+	pixelSize = sp.getSwapchainSize(preferredSize);
 	if (pixelSize == uvec2(0)) {
 		logger("Vulkan: Noted that window size is 0. Halting rendering...\n");
 		if (swapchainCallback.onSurfaceMinimized)
@@ -480,22 +480,22 @@ void SwapChain::_build(uvec2 preferredSize, uint preferredImageCount,
 	}
 }
 
-SwapChain::SwapChain(const OSRenderSurface& surface, LogicalDevice& device,
+Swapchain::Swapchain(const OSRenderSurface& surface, LogicalDevice& device,
   uvec2 preferredSize, uint preferredImageCount,
   WindowTransparentType transparentWindowType):
   d(device),
   sf(surface) {
-	// logger("Create SwapChain...");
+	// logger("Create Swapchain...");
 	sc = nullptr;
 	_build(preferredSize, preferredImageCount, transparentWindowType);
 }
-void SwapChain::rebuild(uvec2 preferredSize, uint preferredImageCount,
+void Swapchain::rebuild(uvec2 preferredSize, uint preferredImageCount,
   WindowTransparentType transparentWindowType) {
-	// logger("Rebuild SwapChain...");
+	// logger("Rebuild Swapchain...");
 	_build(preferredSize, preferredImageCount, transparentWindowType);
 }
-uint SwapChain::getImageCount() const { return swapChainImages.size(); }
-bool SwapChain::renderNextFrame(bool waitForVSync) {
+uint Swapchain::getImageCount() const { return swapChainImages.size(); }
+bool Swapchain::renderNextFrame(bool waitForVSync) {
 	uint imageId{uint(-1)};
 	Semaphore sp{d};
 	auto code =
@@ -544,9 +544,9 @@ bool SwapChain::renderNextFrame(bool waitForVSync) {
 	}
 }
 
-bool SwapChain::isValid() const { return sc != nullptr && !outdated; }
+bool Swapchain::isValid() const { return sc != nullptr && !outdated; }
 
-ImageView SwapChain::getChainImageView(uint index) {
+ImageView Swapchain::getChainImageView(uint index) {
 	VkImageViewCreateInfo cInfo{};
 	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	cInfo.image = swapChainImages.at(index);
@@ -563,7 +563,7 @@ ImageView SwapChain::getChainImageView(uint index) {
 	cInfo.subresourceRange.layerCount = 1;
 	return ImageView(d, cInfo);
 }
-SwapChain::~SwapChain() {
+Swapchain::~Swapchain() {
 	if (sc != nullptr) {
 		ticks.clear();
 		if (swapchainCallback.onDestroy)

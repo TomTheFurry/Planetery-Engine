@@ -16,7 +16,7 @@ export namespace vk {
 	constexpr size_t RENDERTICK_INITIAL_MBR_SIZE = 512;
 	class RenderTick
 	{
-		friend class SwapChain;
+		friend class Swapchain;
 		void reset(Semaphore&& as);	 // call from swapchain
 		bool render();				 // call from swapchain, true: frame need resetting
 		void send();				 // call from swapchain

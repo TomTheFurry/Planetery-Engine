@@ -266,5 +266,5 @@ void vk::end() {
 	if (_vk) vkDestroyInstance(_vk, nullptr);
 }
 void vk::setCallback(DeviceCallback dC) { dCallback = dC; }
-void vk::setCallback(SwapchainCallback scC) { SwapChain::setCallback(scC); }
+void vk::setCallback(SwapchainCallback scC) { Swapchain::setCallback(scC); }
 void vk::setCallback(FrameCallback fC) { RenderTick::setCallback(fC); }

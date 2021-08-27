@@ -18,12 +18,12 @@ export namespace vk {
 		void (*onDestroy)(LogicalDevice&) = nullptr;
 	};
 	class OSRenderSurface;
-	class SwapChainSupport;
-	class SwapChain;
+	class SwapchainSupport;
+	class Swapchain;
 	struct SwapchainCallback {
-		void (*onCreate)(SwapChain&, bool) = nullptr;
-		void (*onDestroy)(SwapChain&, bool) = nullptr;
-		void (*onSurfaceMinimized)(SwapChain&) = nullptr;
+		void (*onCreate)(Swapchain&, bool) = nullptr;
+		void (*onDestroy)(Swapchain&, bool) = nullptr;
+		void (*onSurfaceMinimized)(Swapchain&) = nullptr;
 	};
 	// Memory class:
 	struct DeviceMemory;
