@@ -90,12 +90,12 @@ export namespace vk {
 		std::vector<VkSubpassDependency> subpassDependencies;
 		LogicalDevice& d;
 	};
-	class ShaderPipeline
+	class RenderPipeline
 	{
 	  public:
 		class AttachmentBlending: private VkPipelineColorBlendAttachmentState
 		{
-			friend class ShaderPipeline;
+			friend class RenderPipeline;
 
 		  public:
 			AttachmentBlending() {
@@ -127,7 +127,7 @@ export namespace vk {
 		};
 		class ShaderStage: private VkPipelineShaderStageCreateInfo
 		{
-			friend class ShaderPipeline;
+			friend class RenderPipeline;
 
 		  public:
 			// TODO: Add support for Specialization Constants(???)
@@ -136,7 +136,7 @@ export namespace vk {
 		class DepthStencilSettings:
 		  private VkPipelineDepthStencilStateCreateInfo
 		{
-			friend class ShaderPipeline;
+			friend class RenderPipeline;
 
 		  public:
 			DepthStencilSettings(CompareOperator depthTestOperator,
@@ -163,7 +163,7 @@ export namespace vk {
 			float slopeFactor;
 			float clamp;
 		};
-		ShaderPipeline(LogicalDevice& device,
+		RenderPipeline(LogicalDevice& device,
 		  std::initializer_list<DescriptorLayout*> descriptorLayouts,
 		  RenderPass& renderPass, uint32_t subpassId,
 		  std::initializer_list<ShaderStage> stages,
@@ -179,9 +179,9 @@ export namespace vk {
 		  LogicOperator colorBlendLogicOperator,
 		  std::initializer_list<AttachmentBlending> attachmentBlending,
 		  vec4 blendConstants);
-		ShaderPipeline(const ShaderPipeline&) = delete;
-		ShaderPipeline(ShaderPipeline&& other) noexcept;
-		~ShaderPipeline();
+		RenderPipeline(const RenderPipeline&) = delete;
+		RenderPipeline(RenderPipeline&& other) noexcept;
+		~RenderPipeline();
 		VkPipeline p = nullptr;
 		VkPipelineLayout pl = nullptr;
 		LogicalDevice& d;

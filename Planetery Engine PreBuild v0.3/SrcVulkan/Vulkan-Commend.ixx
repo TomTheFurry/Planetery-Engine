@@ -28,13 +28,13 @@ export namespace vk {
 		void startRecording(Flags<CommendBufferUsage> usage);
 		void cmdBeginRender(
 		  const RenderPass& rp, const FrameBuffer& fb, vec4 bgColor);
-		void cmdBind(const ShaderPipeline& cb);
+		void cmdBind(const RenderPipeline& cb);
 		void cmdBind(
 		  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
 		void cmdBind(const IndexBuffer& ib,
 		  VkIndexType dataType = _toIndexTpye::val<uint>(), size_t offset = 0);
 		void cmdBind(const DescriptorSet& ds,
-		  const ShaderPipeline& p);	 // TODO: add multibinding
+		  const RenderPipeline& p);	 // TODO: add multibinding
 
 		void cmdChangeState(Image& target, TextureActiveUseType type,
 		  Flags<PipelineStage> srcStage, Flags<MemoryAccess> srcAccess,

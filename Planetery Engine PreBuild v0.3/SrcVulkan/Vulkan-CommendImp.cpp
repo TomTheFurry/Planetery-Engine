@@ -87,7 +87,7 @@ void CommendBuffer::cmdBeginRender(
 	rpCmdInfo.pClearValues = &v;
 	vkCmdBeginRenderPass(cb, &rpCmdInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
-void CommendBuffer::cmdBind(const ShaderPipeline& p) {
+void CommendBuffer::cmdBind(const RenderPipeline& p) {
 	vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, p.p);
 }
 void CommendBuffer::cmdBind(
@@ -98,7 +98,7 @@ void CommendBuffer::cmdBind(
   const IndexBuffer& ib, VkIndexType dataType, size_t offset) {
 	vkCmdBindIndexBuffer(cb, ib.b, offset, dataType);
 }
-void CommendBuffer::cmdBind(const DescriptorSet& ds, const ShaderPipeline& p) {
+void CommendBuffer::cmdBind(const DescriptorSet& ds, const RenderPipeline& p) {
 	vkCmdBindDescriptorSets(
 	  cb, VK_PIPELINE_BIND_POINT_GRAPHICS, p.pl, 0, 1, &ds.ds, 0, nullptr);
 }

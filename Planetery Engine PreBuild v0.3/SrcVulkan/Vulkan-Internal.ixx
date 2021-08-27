@@ -61,7 +61,7 @@ export namespace vk {
 	// Pipeline class:
 	class VertexAttribute;
 	class RenderPass;
-	class ShaderPipeline;
+	class RenderPipeline;
 	// Tick class:
 	class RenderTick;
 	struct FrameCallback {

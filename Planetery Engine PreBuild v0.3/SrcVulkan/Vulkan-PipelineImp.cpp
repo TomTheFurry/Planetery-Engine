@@ -227,7 +227,7 @@ RenderPass::~RenderPass() {
 	if (rp != nullptr) vkDestroyRenderPass(d.d, rp, nullptr);
 }
 
-ShaderPipeline::ShaderStage::ShaderStage(
+RenderPipeline::ShaderStage::ShaderStage(
   ShaderCompiled& shader, const char* entryName) {
 	sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	pNext = nullptr;
@@ -238,14 +238,14 @@ ShaderPipeline::ShaderStage::ShaderStage(
 	pSpecializationInfo = nullptr;
 }
 
-ShaderPipeline::ShaderPipeline(ShaderPipeline&& other) noexcept: d(other.d) {}
-ShaderPipeline::~ShaderPipeline() {
+RenderPipeline::RenderPipeline(RenderPipeline&& other) noexcept: d(other.d) {}
+RenderPipeline::~RenderPipeline() {
 	if (pl != nullptr) vkDestroyPipelineLayout(d.d, pl, nullptr);
 	if (p != nullptr) vkDestroyPipeline(d.d, p, nullptr);
 }
 
 // TODO: add support for push constants
-ShaderPipeline::ShaderPipeline(LogicalDevice& d,
+RenderPipeline::RenderPipeline(LogicalDevice& d,
   std::initializer_list<DescriptorLayout*> descriptorLayouts,
   RenderPass& renderPass, uint32_t subpassId,
   std::initializer_list<ShaderStage> stages, VertexAttribute& vertAttribute,

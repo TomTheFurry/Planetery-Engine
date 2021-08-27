@@ -113,7 +113,7 @@ static vk::DescriptorLayout* _dsl = nullptr;
 // Depend on Swapchain
 static vk::DescriptorContainer* _dpc = nullptr;
 static vk::RenderPass* _renderPass = nullptr;
-static vk::ShaderPipeline* _pipeline = nullptr;
+static vk::RenderPipeline* _pipeline = nullptr;
 
 // Depend on Frame
 struct FrameContainer {
@@ -207,9 +207,9 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 
 	// Make swapchain framebuffer
 	// Make Pipeline
-	_pipeline = new ShaderPipeline(sc.d, {_dsl}, *_renderPass, 0,
-	  {ShaderPipeline::ShaderStage(*_vertShad, "main"),
-		ShaderPipeline::ShaderStage(*_fragShad, "main")},
+	_pipeline = new RenderPipeline(sc.d, {_dsl}, *_renderPass, 0,
+	  {RenderPipeline::ShaderStage(*_vertShad, "main"),
+		RenderPipeline::ShaderStage(*_fragShad, "main")},
 	  va, PrimitiveTopology::TriangleStrip, false,
 	  {VkViewport{
 		.x = 0,
@@ -221,9 +221,9 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	  }},
 	  {VkRect2D{VkOffset2D{0, 0}, VkExtent2D{sc.pixelSize.x, sc.pixelSize.y}}},
 	  false, false, PolygonMode::Fill, CullMode::None,
-	  FrontDirection::Clockwise, std::optional<ShaderPipeline::DepthBias>(),
-	  1.f, 1, true, std::optional<ShaderPipeline::DepthStencilSettings>(),
-	  LogicOperator::None, {ShaderPipeline::AttachmentBlending()}, vec4());
+	  FrontDirection::Clockwise, std::optional<RenderPipeline::DepthBias>(),
+	  1.f, 1, true, std::optional<RenderPipeline::DepthStencilSettings>(),
+	  LogicOperator::None, {RenderPipeline::AttachmentBlending()}, vec4());
 	assert(_pipeline->p != nullptr);
 }
 void vkSwapchainCallbackOnDestroy(vk::Swapchain& sc, bool recreation) {
