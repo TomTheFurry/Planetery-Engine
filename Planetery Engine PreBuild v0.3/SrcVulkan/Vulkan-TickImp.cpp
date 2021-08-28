@@ -57,10 +57,11 @@ SyncPoint RenderTick::makeSyncLine(SyncNumber initialValue) {
 	  .top();
 }
 void RenderTick::addCmdStage(CommendBuffer& cb,
-  const std::vector<SyncPoint>& signalTo, const std::vector<SyncPoint>& waitFor,
-  const std::vector<VkPipelineStageFlags>& waitType) {
+  std::initializer_list<SyncPoint> signalTo,
+  std::initializer_list<SyncPoint> waitFor,
+  std::initializer_list<VkPipelineStageFlags> waitType) {
 	if constexpr (DO_SAFETY_CHECK) {
-		if (waitFor.empty()) {
+		if (std::empty(waitFor)) {
 			if (waitType.size() != 1) throw "VulkanInvalidArgs";
 		} else {
 			if (waitFor.size() != waitType.size()) throw "VulkanInvalidArgs";
@@ -103,11 +104,11 @@ void RenderTick::addCmdStage(CommendBuffer& cb,
 		syncNums++;
 		semaphores++;
 	}
-	if (signalTo.empty()) {
+	if (std::empty(signalTo)) {
 		sInfo.signalSemaphoreCount = 1;
 		sInfo.pSignalSemaphores = &presentSemaphore.sp;
 	}
-	if (waitFor.empty()) {
+	if (std::empty(waitFor)) {
 		sInfo.waitSemaphoreCount = 1;
 		sInfo.pWaitSemaphores = &acquireSemaphore.sp;
 	}

@@ -29,9 +29,9 @@ export namespace vk {
 		RenderTick(RenderTick&&) = delete;
 		SyncPoint makeSyncLine(SyncNumber initialValue = 0);
 		void addCmdStage(CommendBuffer& cb,
-		  const std::vector<SyncPoint>& signalTo,
-		  const std::vector<SyncPoint>& waitFor,
-		  const std::vector<VkPipelineStageFlags>& waitType);
+		  std::initializer_list<SyncPoint> signalTo,
+		  std::initializer_list<SyncPoint> waitFor,
+		  std::initializer_list<VkPipelineStageFlags> waitType);
 		SyncPoint getTopSyncPoint();
 		// void addSyncPointToLayer();
 		// ^^^^Missing def... Forgot what this should do?

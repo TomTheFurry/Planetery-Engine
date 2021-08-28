@@ -17,6 +17,7 @@ import Define;
 
 export namespace vk {
 
+
 	const uint* getLayerVersion(const char* name);		// may return nullptr
 	const uint* getExtensionVersion(const char* name);	// may return nullptr
 	bool requestLayer(const char* name, uint minVersion = 0);
@@ -27,8 +28,8 @@ export namespace vk {
 	void init();  // request all needed extension/layers before call!
 	bool drawFrame(bool waitForVSync = true);  // Render Thread only
 	void end();
-	void setCallback(DeviceCallback dCallback);	   // Render Thread only
-	void setCallback(SwapchainCallback scCallback);  // Render Thread only
+	void setCallback(DeviceCallback dCallback);		 // Render Thread only
+	void setCallback(SwapchainCallback scCallback);	 // Render Thread only
 	void setCallback(FrameCallback fCallback);		 // Render Thread only
 
 

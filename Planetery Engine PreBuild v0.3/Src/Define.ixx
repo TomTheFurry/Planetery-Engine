@@ -4,6 +4,11 @@ export module Define;
 export import "GlmModule.h";
 import std.core;
 export {
+	template<typename T> using Ref = std::reference_wrapper<T>;
+	template<typename T>
+	std::span<const T> asSpan(std::initializer_list<T> & l) {
+		return std::span(l.begin(), l.end());
+	}
 	typedef unsigned short usint;
 	typedef unsigned int uint;
 	typedef unsigned long long int ulint;

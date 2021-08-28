@@ -164,12 +164,21 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 	_fragShad = new ShaderCompiled(
 	  d, ShaderType::Frag, "cshader/testUniformAndTexture.frag.spv");
 
-	std::vector<DescriptorLayoutBinding> dslb{};
-	dslb.push_back(DescriptorLayoutBinding{0, DescriptorDataType::UniformBuffer,
-	  1, Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag});
-	dslb.push_back(DescriptorLayoutBinding{
-	  1, DescriptorDataType::ImageAndSampler, 1, ShaderType::Frag});
-	_dsl = new DescriptorLayout(d, dslb);
+	_dsl = new DescriptorLayout(
+	  d, {
+		   DescriptorLayoutBinding{
+			 .bindPoint = 0,
+			 .type = DescriptorDataType::UniformBuffer,
+			 .count = 1,
+			 .shader = Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag,
+		   },
+		   DescriptorLayoutBinding{
+			 .bindPoint = 1,
+			 .type = DescriptorDataType::ImageAndSampler,
+			 .count = 1,
+			 .shader = ShaderType::Frag,
+		   },
+		 });
 }
 void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	using namespace vk;
@@ -252,21 +261,34 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 	auto& sc = *rt.d.swapChain;
 
 	frame.sv.make(sc.getChainImageView(frameId));
-
-	std::vector<ImageView*> b;
-	b.emplace_back(&*frame.sv);
-	frame.fb.make(rt.d, *_renderPass, sc.pixelSize, b);
+	frame.fb.make(FrameBuffer{
+	  rt.d, *_renderPass, (uvec2)sc.pixelSize, {std::cref(*frame.sv)}});
 
 	frame.ub.make(rt.d, sizeof(START_COLOR), MemoryFeature::Mappable);
 	frame.ub->directWrite(&START_COLOR);
 
 	frame.ds.make(_dpc->allocNewSet());
-	std::array<DescriptorSet::WriteData, 1> wd{
-	  DescriptorSet::WriteData(&*frame.ub)};
-	std::array<DescriptorSet::WriteData, 1> wd2{DescriptorSet::WriteData(
-	  _imgViewTest, _imgSamplerBasic, TextureActiveUseType::ReadOnlyShader)};
-	frame.ds->blockingWrite(0, DescriptorDataType::UniformBuffer, 1, 0, wd);
-	frame.ds->blockingWrite(1, DescriptorDataType::ImageAndSampler, 1, 0, wd2);
+
+	DescriptorSet::blockingWrite(
+	  rt.d, {
+			  DescriptorSet::CmdWriteInfo{
+				.target = &*frame.ds,
+				.bindPoint = 0,
+				.type = DescriptorDataType::UniformBuffer,
+				.count = 1,
+				.offset = 0,
+				.data = {DescriptorSet::WriteData(&*frame.ub)},
+			  },
+			  DescriptorSet::CmdWriteInfo{
+				.target = &*frame.ds,
+				.bindPoint = 1,
+				.type = DescriptorDataType::ImageAndSampler,
+				.count = 1,
+				.offset = 0,
+				.data = {DescriptorSet::WriteData(_imgViewTest,
+				  _imgSamplerBasic, TextureActiveUseType::ReadOnlyShader)},
+			  },
+			});
 
 	frame.cb.make(rt.d.getCommendPool(CommendPoolType::Default));
 	frame.cb->startRecording(CommendBufferUsage::None);

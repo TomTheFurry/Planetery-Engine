@@ -94,9 +94,13 @@ export namespace vk {
 	};
 	class FrameBuffer
 	{
+		void _ctor(RenderPass& rp,
+		  std::span<const Ref<const ImageView>> attachments, uint layers);
 	  public:
 		FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
-		  std::vector<ImageView*> attachments, uint layers = 1);
+		  std::span<const Ref<const ImageView>> attachments, uint layers = 1);
+		FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+		  std::initializer_list<Ref<const ImageView>> attachments, uint layers = 1);
 		FrameBuffer(const FrameBuffer&) = delete;
 		FrameBuffer(FrameBuffer&& other) noexcept;
 		~FrameBuffer();

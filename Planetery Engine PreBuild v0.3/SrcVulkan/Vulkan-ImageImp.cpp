@@ -346,14 +346,11 @@ ImageSampler::~ImageSampler() {
 //----------------------------------------------
 //------------------FrameBuffer-----------------
 //----------------------------------------------
-
-FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
-  std::vector<ImageView*> attachments, uint layers):
-  d(device) {
-	size = nSize;
-	std::vector<VkImageView> att;
+void FrameBuffer::_ctor(RenderPass& rp,
+  std::span<const Ref<const ImageView>> attachments, uint layers) {
+	std::vector<VkImageView> att{};
 	att.reserve(attachments.size());
-	for (auto& iv : attachments) att.push_back(iv->imgView);
+	for (auto& ivRef : attachments) att.push_back(ivRef.get().imgView);
 	VkFramebufferCreateInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	info.renderPass = rp.rp;
@@ -365,6 +362,19 @@ FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
 	if (vkCreateFramebuffer(d.d, &info, nullptr, &fb) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create framebuffer!");
 	}
+}
+
+FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+  std::span<const Ref<const ImageView>> attachments, uint layers):
+  d(device) {
+	size = nSize;
+	_ctor(rp, attachments, layers);
+}
+vk::FrameBuffer::FrameBuffer(LogicalDevice& device, RenderPass& rp, uvec2 nSize,
+  std::initializer_list<Ref<const ImageView>> attachments, uint layers):
+  d(device) {
+	size = nSize;
+	_ctor(rp, asSpan(attachments), layers);
 }
 FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept: d(other.d) {
 	fb = other.fb;
