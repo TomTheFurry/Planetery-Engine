@@ -1,4 +1,4 @@
-export module Vulkan: Internal;
+export module Vulkan: Declaration;
 import: Enum;
 import "VulkanExtModule.h";
 import std.core;

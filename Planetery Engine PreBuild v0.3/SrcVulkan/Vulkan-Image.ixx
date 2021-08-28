@@ -1,5 +1,5 @@
 export module Vulkan: Image;
-export import: Internal;
+export import: Declaration;
 import: Enum;
 import: Memory;
 import std.core;

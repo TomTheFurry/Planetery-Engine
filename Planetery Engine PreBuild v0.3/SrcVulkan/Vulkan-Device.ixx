@@ -1,5 +1,5 @@
 export module Vulkan: Device;
-export import: Internal;
+export import: Declaration;
 import: Memory;
 import: Enum;
 import std.core;

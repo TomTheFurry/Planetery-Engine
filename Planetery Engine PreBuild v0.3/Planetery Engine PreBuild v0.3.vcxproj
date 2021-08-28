@@ -160,7 +160,7 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
     </ClCompile>
-    <ClCompile Include="SrcVulkan\Vulkan-Internal.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-Declaration.ixx" />
     <ClCompile Include="SrcVulkan\Vulkan-Memory.ixx">
       <FileType>Document</FileType>
     </ClCompile>

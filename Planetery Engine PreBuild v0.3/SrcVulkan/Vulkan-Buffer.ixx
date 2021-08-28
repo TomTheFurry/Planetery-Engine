@@ -1,5 +1,5 @@
 export module Vulkan: Buffer;
-export import: Internal;
+export import: Declaration;
 import: Enum;
 import: Memory;
 import Util;

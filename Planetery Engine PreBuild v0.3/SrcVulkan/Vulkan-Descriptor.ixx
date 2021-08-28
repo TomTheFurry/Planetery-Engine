@@ -1,5 +1,5 @@
 export module Vulkan: Descriptor;
-export import: Internal;
+export import: Declaration;
 import: Device;
 import: Enum;
 import Define;

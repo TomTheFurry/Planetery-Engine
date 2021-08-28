@@ -10,7 +10,7 @@ export import: Descriptor;
 export import: Pipeline;
 export import: Tick;
 
-import: Internal;
+import: Declaration;
 
 import std.core;
 import Define;

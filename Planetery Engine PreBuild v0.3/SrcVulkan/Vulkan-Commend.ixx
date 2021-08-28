@@ -1,5 +1,5 @@
 export module Vulkan: Commend;
-export import: Internal;
+export import: Declaration;
 import: Enum;
 import Define;
 import Util;

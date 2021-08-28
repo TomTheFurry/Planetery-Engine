@@ -1,5 +1,5 @@
 export module Vulkan: Tick;
-export import: Internal;
+export import: Declaration;
 import: Enum;
 import std.core;
 import Define;
