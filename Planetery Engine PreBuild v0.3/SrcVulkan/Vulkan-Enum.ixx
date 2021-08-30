@@ -59,12 +59,11 @@ export namespace vk {
 		ExternCall = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
 	};
 
-	constexpr auto CommendPoolTypeCount = 3;
-	enum class CommendPoolType : uint {
+	enum class CommendPoolType : VkCommandPoolCreateFlags {
 		Default = 0,
-		Shortlived,
-		Resetable,
-		MAX_ENUM
+		Shortlived = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+		Resetable = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+		Protected = VK_COMMAND_POOL_CREATE_PROTECTED_BIT,
 	};
 	enum class DescriptorDataType : std::underlying_type_t<VkDescriptorType> {
 		UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -434,6 +433,7 @@ export namespace vk {
 	};
 
 }
+export template<> class Flags<vk::CommendPoolType>;
 export template<> class Flags<vk::TextureUseType>;
 export template<> class Flags<vk::BufferUseType>;
 export template<> class Flags<vk::TextureFeature>;

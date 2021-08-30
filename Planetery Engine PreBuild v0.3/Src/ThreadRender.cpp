@@ -160,25 +160,19 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 	}
 
 	_vertShad = new ShaderCompiled(
-	  d, ShaderType::Vert, "cshader/testUniformAndTexture.vert.spv");
+	  d, ShaderType::Vert, "cshader/testUniformPushTex.vert.spv");
 	_fragShad = new ShaderCompiled(
-	  d, ShaderType::Frag, "cshader/testUniformAndTexture.frag.spv");
+	  d, ShaderType::Frag, "cshader/testUniformPushTex.frag.spv");
 
-	_dsl = new DescriptorLayout(
-	  d, {
-		   DescriptorLayoutBinding{
-			 .bindPoint = 0,
-			 .type = DescriptorDataType::UniformBuffer,
-			 .count = 1,
-			 .shader = Flags<ShaderType>(ShaderType::Vert) | ShaderType::Frag,
-		   },
-		   DescriptorLayoutBinding{
-			 .bindPoint = 1,
-			 .type = DescriptorDataType::ImageAndSampler,
-			 .count = 1,
-			 .shader = ShaderType::Frag,
-		   },
-		 });
+	_dsl =
+	  new DescriptorLayout(d, {
+								DescriptorLayoutBinding{
+								  .bindPoint = 0,
+								  .type = DescriptorDataType::ImageAndSampler,
+								  .count = 1,
+								  .shader = ShaderType::Frag,
+								},
+							  });
 }
 void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	using namespace vk;
@@ -216,7 +210,9 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 
 	// Make swapchain framebuffer
 	// Make Pipeline
-	_pipeline = new RenderPipeline(sc.d, {_dsl}, *_renderPass, 0,
+	_pipeline = new RenderPipeline(sc.d, {_dsl},
+	  {RenderPipeline::PushConstantLayout(0, sizeof(vec4), ShaderType::Frag)},
+	  *_renderPass, 0,
 	  {RenderPipeline::ShaderStage(*_vertShad, "main"),
 		RenderPipeline::ShaderStage(*_fragShad, "main")},
 	  va, PrimitiveTopology::TriangleStrip, false,
@@ -270,7 +266,7 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 	frame.ds.make(_dpc->allocNewSet());
 
 	DescriptorSet::blockingWrite(
-	  rt.d, {
+	  rt.d, {/*
 			  DescriptorSet::CmdWriteInfo{
 				.target = &*frame.ds,
 				.bindPoint = 0,
@@ -278,10 +274,10 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 				.count = 1,
 				.offset = 0,
 				.data = {DescriptorSet::WriteData(&*frame.ub)},
-			  },
+			  },*/
 			  DescriptorSet::CmdWriteInfo{
 				.target = &*frame.ds,
-				.bindPoint = 1,
+				.bindPoint = 0,
 				.type = DescriptorDataType::ImageAndSampler,
 				.count = 1,
 				.offset = 0,
@@ -289,24 +285,28 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 				  _imgSamplerBasic, TextureActiveUseType::ReadOnlyShader)},
 			  },
 			});
-
-	frame.cb.make(rt.d.getCommendPool(CommendPoolType::Default));
-	frame.cb->startRecording(CommendBufferUsage::None);
-	frame.cb->cmdBeginRender(*_renderPass, *frame.fb, vec4(1., 0., 0., 0.));
-	frame.cb->cmdBind(*_pipeline);
-	frame.cb->cmdBind(*frame.ds, *_pipeline);
-	frame.cb->cmdBind(*_vertBuff);
-	frame.cb->cmdBind(*_indexBuff);
-	// frame.cb->cmdDraw((uint)std::size(testVert) / 2);
-	frame.cb->cmdDrawIndexed(std::size(testInd));
-	frame.cb->cmdEndRender();
-	frame.cb->endRecording();
 }
 void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 	using namespace vk;
 	uint frameId = rt.getImageIndex();
 	// logger("vkFrameCallbackOnRender:", frameId);
 	auto& frame = _frames[frameId];
+
+	frame.cb.make(rt.d.getCommendPool(
+	  Flags(CommendPoolType::Shortlived) | CommendPoolType::Resetable));
+	frame.cb->startRecording(CommendBufferUsage::None);
+	frame.cb->cmdBeginRender(*_renderPass, *frame.fb, vec4(1., 0., 0., 0.));
+	frame.cb->cmdBind(*_pipeline);
+	frame.cb->cmdBind(*frame.ds, *_pipeline);
+	frame.cb->cmdBind(*_vertBuff);
+	frame.cb->cmdBind(*_indexBuff);
+	vec4 data{currentColor.x, currentColor.y, currentColor.z, 1.f};
+	frame.cb->cmdPushConstants(
+	  *_pipeline, ShaderType::Frag, 0, sizeof(vec4), &data);
+	// frame.cb->cmdDraw((uint)std::size(testVert) / 2);
+	frame.cb->cmdDrawIndexed(std::size(testInd));
+	frame.cb->cmdEndRender();
+	frame.cb->endRecording();
 
 	const float DELTA = 0.0001f;
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);

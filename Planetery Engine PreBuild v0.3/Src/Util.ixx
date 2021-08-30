@@ -534,6 +534,7 @@ export template<typename T>
 concept trivalType = std::is_trivial_v<T>;
 export template<typename T>
 concept integral_based = std::integral<typename std::underlying_type<T>::type>;
+
 export template<integral_based FlagType> class Flags
 {
 	using value = std::underlying_type<FlagType>::type;
@@ -599,7 +600,6 @@ export template<integral_based FlagType> class Flags
 		return Flags(~static_cast<value>(r));
 	}
 };
-
 
 export namespace util {
 

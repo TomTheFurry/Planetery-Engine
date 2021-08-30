@@ -78,7 +78,7 @@ export namespace vk {
 		QueueFamilyIndex queueIndex;
 		//FIXME: LogicalDevice missing getSwapchain() method!
 		util::OptionalUniquePtr<Swapchain> swapChain;
-		std::vector<CommendPool> commendPools;
+		std::map<uint, CommendPool> commendPools;
 		std::map<uint, MemoryPool> memoryPools;
 		std::pair<uint, MemoryPointer> allocMemory(
 		  uint bitFilter,
@@ -89,7 +89,7 @@ export namespace vk {
 		bool loadSwapchain(uvec2 preferredSize = uvec2(-1));
 		void unloadSwapchain();
 		bool isSwapchainLoaded() const;
-		CommendPool& getCommendPool(CommendPoolType type);
+		CommendPool& getCommendPool(Flags<CommendPoolType> type);
 		CommendBuffer getSingleUseCommendBuffer();
 		VkDevice operator->() { return d; }
 		const VkDevice operator->() const { return d; }

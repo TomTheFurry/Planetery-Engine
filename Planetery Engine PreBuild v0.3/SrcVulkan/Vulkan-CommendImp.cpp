@@ -16,21 +16,12 @@ import "Assert.h";
 import "VulkanExtModule.h";
 using namespace vk;
 
-CommendPool::CommendPool(LogicalDevice& device, CommendPoolType type):
+CommendPool::CommendPool(LogicalDevice& device, Flags<CommendPoolType> type):
   d(device) {
 	VkCommandPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	poolInfo.queueFamilyIndex = d.queueIndex;
-	switch (type) {
-	case CommendPoolType::Default: poolInfo.flags = 0; break;
-	case CommendPoolType::Shortlived:
-		poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-		break;
-	case CommendPoolType::Resetable:
-		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		break;
-	default: throw "VulkanInvalidEnum";
-	}
+	poolInfo.flags = (VkCommandPoolCreateFlags)type;
 	if (vkCreateCommandPool(d.d, &poolInfo, nullptr, &cp) != VK_SUCCESS) {
 		throw "VulkanCreateCommandPoolFailed";
 	}
@@ -127,6 +118,12 @@ void CommendBuffer::cmdChangeState(Image& target,
 	  VK_DEPENDENCY_BY_REGION_BIT, 0, nullptr, 0, nullptr, 1, &imb);
 	target.activeUsage = type;
 
+}
+
+void CommendBuffer::cmdPushConstants(const RenderPipeline& p,
+  Flags<ShaderType> shaders, uint offset, uint size, const void* data) {
+	vkCmdPushConstants(
+	  cb, p.pl, (VkShaderStageFlags)shaders, offset, size, data);
 }
 
 void CommendBuffer::cmdDraw(

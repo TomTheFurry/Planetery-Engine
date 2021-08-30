@@ -93,6 +93,16 @@ export namespace vk {
 	class RenderPipeline
 	{
 	  public:
+		class PushConstantLayout: private VkPushConstantRange
+		{
+			friend class RenderPipeline;
+
+		  public:
+			PushConstantLayout() = default;
+			PushConstantLayout(uint offset, uint size,
+			  Flags<ShaderType> shaders = ShaderType::All);
+		};
+
 		class AttachmentBlending: private VkPipelineColorBlendAttachmentState
 		{
 			friend class RenderPipeline;
@@ -165,6 +175,7 @@ export namespace vk {
 		};
 		RenderPipeline(LogicalDevice& device,
 		  std::initializer_list<DescriptorLayout*> descriptorLayouts,
+			std::initializer_list<PushConstantLayout> pushConstants,
 		  RenderPass& renderPass, uint32_t subpassId,
 		  std::initializer_list<ShaderStage> stages,
 		  VertexAttribute& vertAttribute, PrimitiveTopology vertTopology,

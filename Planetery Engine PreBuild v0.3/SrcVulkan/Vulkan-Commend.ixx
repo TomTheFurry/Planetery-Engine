@@ -10,7 +10,7 @@ export namespace vk {
 	class CommendPool
 	{
 	  public:
-		CommendPool(LogicalDevice& device, CommendPoolType type);
+		CommendPool(LogicalDevice& device, Flags<CommendPoolType> type);
 		CommendPool(const CommendPool&) = delete;
 		CommendPool(CommendPool&& other) noexcept;
 		~CommendPool();
@@ -28,7 +28,7 @@ export namespace vk {
 		void startRecording(Flags<CommendBufferUsage> usage);
 		void cmdBeginRender(
 		  const RenderPass& rp, const FrameBuffer& fb, vec4 bgColor);
-		void cmdBind(const RenderPipeline& cb);
+		void cmdBind(const RenderPipeline& p);
 		void cmdBind(
 		  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
 		void cmdBind(const IndexBuffer& ib,
@@ -39,6 +39,9 @@ export namespace vk {
 		void cmdChangeState(Image& target, TextureActiveUseType type,
 		  Flags<PipelineStage> srcStage, Flags<MemoryAccess> srcAccess,
 		  Flags<PipelineStage> dstStage, Flags<MemoryAccess> dstAccess);
+
+		void cmdPushConstants(const RenderPipeline& p,
+		  Flags<ShaderType> shaders, uint offset, uint size, const void* data);
 
 		void cmdDraw(
 		  uint vCount, uint iCount = 1, uint vOffset = 0, uint iOffset = 0);

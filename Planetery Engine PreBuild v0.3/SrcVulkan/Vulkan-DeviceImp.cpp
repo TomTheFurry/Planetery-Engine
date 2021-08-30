@@ -244,9 +244,6 @@ void LogicalDevice::_setup() {
 		throw "VulkanCreateGraphicalDeviceFailure";
 	}
 	vkGetDeviceQueue(d, queueIndex, 0, &queue);
-	commendPools.reserve(static_cast<uint>(CommendPoolType::MAX_ENUM));
-	for (uint i = 0; i < static_cast<uint>(CommendPoolType::MAX_ENUM); i++)
-		commendPools.emplace_back(*this, static_cast<CommendPoolType>(i));
 }
 
 LogicalDevice::LogicalDevice(
@@ -305,12 +302,8 @@ bool LogicalDevice::loadSwapchain(uvec2 size) {
 }
 void LogicalDevice::unloadSwapchain() { swapChain.reset(); }
 bool LogicalDevice::isSwapchainLoaded() const { return swapChain; }
-CommendPool& LogicalDevice::getCommendPool(CommendPoolType type) {
-	if constexpr (DO_SAFETY_CHECK)
-		if (static_cast<uint>(type)
-			>= static_cast<uint>(CommendPoolType::MAX_ENUM))
-			throw "VulkanInvalidEnum";
-	return commendPools.at(static_cast<uint>(type));
+CommendPool& LogicalDevice::getCommendPool(Flags<CommendPoolType> type) {
+	return commendPools.try_emplace(static_cast<uint>(type), *this, type).first->second;
 }
 CommendBuffer LogicalDevice::getSingleUseCommendBuffer() {
 	auto& cp = getCommendPool(CommendPoolType::Shortlived);

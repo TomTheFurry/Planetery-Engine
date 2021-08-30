@@ -233,5 +233,11 @@
     <None Include="shader\textRenderVk.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="cshader\testUniformPushTex.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="cshader\testUniformPushTex.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

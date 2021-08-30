@@ -254,6 +254,8 @@
     <None Include="cshader\testUniform.vert" />
     <None Include="cshader\testUniformAndTexture.frag" />
     <None Include="cshader\testUniformAndTexture.vert" />
+    <None Include="cshader\testUniformPushTex.frag" />
+    <None Include="cshader\testUniformPushTex.vert" />
     <None Include="shader\basic.frag">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glslc.exe --target-env=vulkan1.2 -O -o .%(Filename).spirv %(FullPath)</Command>

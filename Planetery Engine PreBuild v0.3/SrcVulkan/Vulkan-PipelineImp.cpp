@@ -227,6 +227,13 @@ RenderPass::~RenderPass() {
 	if (rp != nullptr) vkDestroyRenderPass(d.d, rp, nullptr);
 }
 
+RenderPipeline::PushConstantLayout::PushConstantLayout(
+  uint o, uint s, Flags<ShaderType> shaders) {
+	stageFlags = (VkShaderStageFlags)shaders;
+	offset = o;
+	size = s;
+}
+
 RenderPipeline::ShaderStage::ShaderStage(
   ShaderCompiled& shader, const char* entryName) {
 	sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -247,6 +254,7 @@ RenderPipeline::~RenderPipeline() {
 // TODO: add support for push constants
 RenderPipeline::RenderPipeline(LogicalDevice& d,
   std::initializer_list<DescriptorLayout*> descriptorLayouts,
+  std::initializer_list<PushConstantLayout> pushConstants,
   RenderPass& renderPass, uint32_t subpassId,
   std::initializer_list<ShaderStage> stages, VertexAttribute& vertAttribute,
   PrimitiveTopology vertTopology, bool primitiveRestartByIndex,
@@ -269,8 +277,9 @@ RenderPipeline::RenderPipeline(LogicalDevice& d,
 		for (auto ptr : descriptorLayouts) vkDescLayout.push_back(ptr->dsl);
 		layoutInfo.pSetLayouts = vkDescLayout.data();
 		// TODO: add support for push constants
-		layoutInfo.pushConstantRangeCount = 0;
-		layoutInfo.pPushConstantRanges = nullptr;
+		layoutInfo.pushConstantRangeCount = std::size(pushConstants);
+		layoutInfo.pPushConstantRanges =
+		  (VkPushConstantRange*)std::data(pushConstants);
 		if (vkCreatePipelineLayout(d.d, &layoutInfo, nullptr, &pl)
 			!= VK_SUCCESS) {
 			throw std::runtime_error(
@@ -280,23 +289,6 @@ RenderPipeline::RenderPipeline(LogicalDevice& d,
 	//TODO: add support for reuse
 	VkPipeline basePipeline = nullptr;
 	bool reuseable = false;
-	/*
-	std::initializer_list<ShaderStage> stages;
-	VertexAttribute& vertAttribute;
-	PrimitiveTopology vertTopology;
-	bool primitiveRestartByIndex = false;
-	std::initializer_list<VkViewport> viewports;
-	std::initializer_list<VkRect2D> scissors;
-	bool rasterizerClampDepth = false;
-	bool rasterizerDiscard = true;
-	PolygonMode polygonMode;
-	Flags<CullMode> cullMode;
-	FrontDirection frontDirection;
-	std::optional<DepthBias> depthBias;
-	float lineWidth = 1.f;
-	uint sampleCount = 1;
-	bool rasterizerSetAlphaToOne = false;  // Require feature: alpha to one
-	std::optional<DepthStencilSettings> depthStencilSettings;*/
 
 	VkGraphicsPipelineCreateInfo cInfo{};
 	cInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
