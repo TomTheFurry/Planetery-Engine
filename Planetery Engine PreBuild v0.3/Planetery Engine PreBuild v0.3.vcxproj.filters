@@ -239,5 +239,11 @@
     <None Include="cshader\testUniformPushTex.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="cshader\testSsbo.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="cshader\testSsbo.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

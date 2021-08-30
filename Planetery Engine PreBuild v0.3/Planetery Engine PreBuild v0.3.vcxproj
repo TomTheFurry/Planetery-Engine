@@ -250,6 +250,8 @@
     <ClInclude Include="TempFix\memory_resource">
       <FileType>Document</FileType>
     </ClInclude>
+    <None Include="cshader\testSsbo.frag" />
+    <None Include="cshader\testSsbo.vert" />
     <None Include="cshader\testUniform.frag" />
     <None Include="cshader\testUniform.vert" />
     <None Include="cshader\testUniformAndTexture.frag" />
