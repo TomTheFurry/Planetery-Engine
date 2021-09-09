@@ -187,7 +187,7 @@ namespace vk {
 	}
 	std::vector<DescriptorSet> DescriptorSet::makeBatch(DescriptorPool& dp,
 	  std::initializer_list<Ref<const DescriptorLayout>> uls) {
-		makeBatch(dp, asSpan(uls));
+		return makeBatch(dp, asSpan(uls));
 	}
 
 	void DescriptorSet::blockingWrite(uint bindPoint, DescriptorDataType type,
