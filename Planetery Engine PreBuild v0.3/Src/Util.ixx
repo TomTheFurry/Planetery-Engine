@@ -301,10 +301,31 @@ export namespace pmr {
 	struct CorruptedMemoryException {};
 
 	using Byte = std::byte;
-	template<typename T> using Allocator = std::pmr::polymorphic_allocator<T>;
+	template<typename T> using PolymorphicAllocator =
+	  std::pmr::polymorphic_allocator<T>;
 	using MemoryResource = std::pmr::memory_resource;
-	using ThreadUnsafePoolResource = std::pmr::unsynchronized_pool_resource;
+
+	template<typename T, typename MR> class Allocator: public std::allocator<T>
+	{
+		MR* mr;
+
+	  public:
+		using value_type = T;
+		using size_type = std::size_t;
+		using difference_type = std::ptrdiff_t;
+		using propagate_on_container_move_assignment = std::false_type;
+		Allocator(MR* memory_resource): mr(memory_resource) {}
+		template<typename U> Allocator(const Allocator<U, MR>& o): mr(o.getMemoryResource()) {}
+		MR* getMemoryResource() const { return mr; }
+
+		[[nodiscard]] T* allocate(size_t n) {
+			return (T*)(mr->allocate(n * sizeof(T), alignof(T)));
+		}
+		void deallocate(T* p, size_t n) { mr->deallocate(p, sizeof(T) * n); }
+	};
+
 	using ThreadSafePoolResource = std::pmr::synchronized_pool_resource;
+	using ThreadUnsafePoolResource = std::pmr::unsynchronized_pool_resource;
 	using MonotonicResource = std::pmr::monotonic_buffer_resource;
 
 	template<size_t AlignSize = DEFAULT_ALIGNMEMT> class StackMemoryResource:
@@ -314,6 +335,9 @@ export namespace pmr {
 		  "StackMemoryResource<>: AlignSize must be power of 2.");
 
 	  public:
+		template<class T> using AllocatorType =
+		  Allocator<T, StackMemoryResource>;
+
 		StackMemoryResource();
 		explicit StackMemoryResource(MemoryResource* upstream);
 		explicit StackMemoryResource(size_t blockSize);
@@ -378,31 +402,56 @@ export namespace pmr {
 		 */
 	};
 
-	template<typename T, typename MR> class pmrAllocator:
-	  public std::allocator<T>
-	{
-		MR* mr;
+	template<class Key, class T, template<class> class Allocator>
+	using UnorderedMultimap = std::unordered_multimap<Key, T, std::hash<Key>,
+	  std::equal_to<Key>, Allocator<std::pair<const Key, T>>>;
+	template<class Key, class T, template<class> class Allocator>
+	using UnorderedMap = std::unordered_multimap<Key, T, std::hash<Key>,
+	  std::equal_to<Key>, Allocator<std::pair<const Key, T>>>;
+	template<class Key, class T, template<class> class Allocator>
+	using Multimap =
+	  std::multimap<Key, T, std::less<Key>, Allocator<std::pair<const Key, T>>>;
+	template<class Key, class T, template<class> class Allocator> using Map =
+	  std::map<Key, T, std::less<Key>, Allocator<std::pair<const Key, T>>>;
 
-	  public:
-		pmrAllocator(MR* memory_resource): mr(memory_resource) {
-			auto ndr = std::pmr::new_delete_resource();
-		}
-		[[nodiscard]] constexpr T* allocate(size_t n) {
-			return (T*)(mr->allocate(n));
-		}
-		constexpr void deallocate(T* p, size_t n) { mr->deallocate(p, n); }
+	template<class Key, class T, class MR> using UnorderedMultimapMR =
+	  std::unordered_multimap<Key, T, std::hash<Key>, std::equal_to<Key>,
+		Allocator<std::pair<const Key, T>, MR>>;
+	template<class Key, class T, class MR> using UnorderedMapMR =
+	  std::unordered_multimap<Key, T, std::hash<Key>, std::equal_to<Key>,
+		Allocator<std::pair<const Key, T>, MR>>;
+	template<class Key, class T, class MR> using MultimapMR =
+	  std::multimap<Key, T, std::less<Key>, Allocator<std::pair<const Key, T>, MR>>;
+	template<class Key, class T, class MR> using MapMR =
+	  std::map<Key, T, std::less<Key>, Allocator<std::pair<const Key, T>, MR>>;
 
-		template<typename U> [[nodiscard]] U* allocate_object(size_t n) {
-			return (U*)(mr->allocate(sizeof(U) * n));
-		}
-		template<typename U> void deallocate_object(U* p, size_t n) {
-			mr->deallocate(p, sizeof(U) * n);
-		}
-	};
+	template<class T, template<class> class Allocator> using Vector =
+	  std::vector<T, Allocator<T>>;
+	template<class T, template<class> class Allocator> using List =
+	  std::list<T, Allocator<T>>;
+	template<class T, template<class> class Allocator> using ForwardList =
+	  std::forward_list<T, Allocator<T>>;
+
+	template<class T, class MR> using VectorMR =
+	  std::vector<T, Allocator<T, MR>>;
+	template<class T, class MR> using ListMR = std::list<T, Allocator<T, MR>>;
+	template<class T, class MR> using ForwardListMR =
+	  std::forward_list<T, Allocator<T, MR>>;
+
+	template<class Obj, class Alloc, class... Args>
+	requires requires(Alloc& a) {
+		{ a.allocate(1) } -> std::convertible_to<Obj*>;
+	}
+	Obj* make(Alloc& a, Args&&... args) {
+		return std::construct_at<Obj>(a.allocate(1), std::forward<Args>(args)...);
+	}
+	template<class T, class MR, class... Args>
+	T* make(MR* mr, Args&&... args) {
+		return std::construct_at(Allocator<T, MR>(mr).allocate(1),
+		  std::forward<Args>(args)...);
+	}
+
 }
-
-
-
 
 export template<typename T>
 concept Iterator = std::input_or_output_iterator<T>;
@@ -834,6 +883,28 @@ export namespace util {
 		return OptionalUniquePtr<T>(new T(std::forward<CtorArgs>(args)...));
 	}
 
+	template<typename T> class ManualLifetime
+	{
+		union {
+			T _v;
+		};
+
+	  public:
+		ManualLifetime(){};
+		ManualLifetime(ManualLifetime&& o) = delete;
+		ManualLifetime(const ManualLifetime& o) = delete;
+		operator const T&() const { return _v; }
+		operator T&() { return _v; }
+		const T* operator->() const { return &_v; }
+		T* operator->() { return &_v; }
+		const T& operator*() const { return _v; }
+		T& operator*() { return _v; }
+		template<typename... Args> T* make(Args&&... args) {
+			return std::construct_at(&_v, std::forward<Args>(args)...);
+		}
+		void destruct() { _v.~T(); }
+		~ManualLifetime(){};
+	};
 }
 
 

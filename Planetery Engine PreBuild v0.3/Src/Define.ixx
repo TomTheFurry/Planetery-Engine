@@ -6,7 +6,7 @@ import std.core;
 export {
 	template<typename T> using Ref = std::reference_wrapper<T>;
 	template<typename T>
-	std::span<const T> asSpan(std::initializer_list<T> & l) {
+	std::span<const T> asSpan(std::initializer_list<T> l) {
 		return std::span(l.begin(), l.end());
 	}
 	typedef unsigned short usint;
