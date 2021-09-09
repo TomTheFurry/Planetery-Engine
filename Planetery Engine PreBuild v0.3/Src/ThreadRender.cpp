@@ -336,17 +336,21 @@ static vk::VertexAttribute va{};
 static vk::DescriptorLayout* _dsl = nullptr;
 
 // Depend on Swapchain
+static vk::MonotonicLifetimeManager swapchainLM{};
+
 static vk::DescriptorContainer* _dpc = nullptr;
 static vk::RenderPass* _renderPass = nullptr;
 static vk::RenderPipeline* _pipeline = nullptr;
 
 // Depend on Frame
+
 struct FrameContainer {
-	util::OptionalUniquePtr<vk::DescriptorSet> ds;
-	util::OptionalUniquePtr<vk::StorageBuffer> ub;
+	util::OptionalUniquePtr<vk::MonotonicLifetimeManager> frameLM;
+	vk::DescriptorSet* ds;
+	vk::StorageBuffer* ub;
 	util::OptionalUniquePtr<vk::CommendBuffer> cb;
-	util::OptionalUniquePtr<vk::ImageView> sv;
-	util::OptionalUniquePtr<vk::FrameBuffer> fb;
+	vk::ImageView* sv;
+	vk::FrameBuffer* fb;
 };
 static std::vector<FrameContainer> _frames{};
 
@@ -375,7 +379,7 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 		_imgTest = new Image(d, uvec3{texWidth, texHeight, 1}, 2,
 		  VK_FORMAT_R8G8B8A8_SRGB, TextureUseType::ShaderSampling,
 		  MemoryFeature::IndirectWritable);
-		assert(_imgTest.texMemorySize == imageSize);
+		assert(_imgTest->texMemorySize == imageSize);
 		_imgTest->blockingIndirectWrite(pixels);
 		stbi_image_free(pixels);
 		_imgTest->blockingTransformActiveUsage(
@@ -418,12 +422,13 @@ void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	if (_vertShad != nullptr) delete _vertShad;
 	if (_fragShad != nullptr) delete _fragShad;
 }
+//static void* debugPtr = nullptr;
 void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	using namespace vk;
 	// logger("vkSwapchainCallbackOnCreate:", recreation ? " true" : " false");
-	assert(frames.empty());
-	_dpc =
-	  new DescriptorContainer(sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
+	assert(_frames.empty());
+	_dpc = swapchainLM.make<DescriptorContainer>(
+	  sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
 	// Make renderPass
 	VkFormat swapchainFormat = sc.surfaceFormat.format;
 	{
@@ -435,40 +440,49 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 		  PipelineStage::OutputAttachmentColor, MemoryAccess::None, 0,
 		  PipelineStage::OutputAttachmentColor,
 		  MemoryAccess::AttachmentColorWrite, false);
-		_renderPass =
-		  new RenderPass(sc.d, {swapchainAtm}, {subPass1}, {dependency1});
+		auto il_rp_a = {swapchainAtm};
+		auto il_rp_b = {subPass1};
+		auto il_rp_c = {dependency1};
+		// FIXME: the forwarding stops people from using std::initializer_list
+		_renderPass = swapchainLM.make<RenderPass>(
+		  sc.d, asSpan(il_rp_a), asSpan(il_rp_b), asSpan(il_rp_c));
 	}
 	// Setup frame containers
 	_frames.resize(sc.getImageCount());
 
 	// Make swapchain framebuffer
 	// Make Pipeline
-	_pipeline = new RenderPipeline(sc.d, {_dsl},
-	  {RenderPipeline::PushConstantLayout(0, sizeof(vec4), ShaderType::Frag)},
+	// FIXME: the forwarding stops people from using std::initializer_list
+	auto il_pl_a = {_dsl};
+	auto il_pl_b = {
+	  RenderPipeline::PushConstantLayout(0, sizeof(vec4), ShaderType::Frag)};
+	auto il_pl_c = {RenderPipeline::ShaderStage(*_vertShad, "main"),
+	  RenderPipeline::ShaderStage(*_fragShad, "main")};
+	auto il_pl_d = {VkViewport{
+	  .x = 0,
+	  .y = 0,
+	  .width = (float)sc.pixelSize.x,
+	  .height = (float)sc.pixelSize.y,
+	  .minDepth = 0,
+	  .maxDepth = 1,
+	}};
+	auto il_pl_e = {
+	  VkRect2D{VkOffset2D{0, 0}, VkExtent2D{sc.pixelSize.x, sc.pixelSize.y}}};
+	auto il_pl_f = {RenderPipeline::AttachmentBlending()};
+	_pipeline = swapchainLM.make<RenderPipeline>(sc.d, asSpan(il_pl_a),
+	  asSpan(il_pl_b),
 	  *_renderPass, 0,
-	  {RenderPipeline::ShaderStage(*_vertShad, "main"),
-		RenderPipeline::ShaderStage(*_fragShad, "main")},
-	  va, PrimitiveTopology::TriangleStrip, false,
-	  {VkViewport{
-		.x = 0,
-		.y = 0,
-		.width = (float)sc.pixelSize.x,
-		.height = (float)sc.pixelSize.y,
-		.minDepth = 0,
-		.maxDepth = 1,
-	  }},
-	  {VkRect2D{VkOffset2D{0, 0}, VkExtent2D{sc.pixelSize.x, sc.pixelSize.y}}},
+	  asSpan(il_pl_c),
+	  va, PrimitiveTopology::TriangleStrip, false, asSpan(il_pl_d), asSpan(il_pl_e),
 	  false, false, PolygonMode::Fill, CullMode::None,
 	  FrontDirection::Clockwise, std::optional<RenderPipeline::DepthBias>(),
 	  1.f, 1, true, std::optional<RenderPipeline::DepthStencilSettings>(),
-	  LogicOperator::None, {RenderPipeline::AttachmentBlending()}, vec4());
+	  LogicOperator::None, asSpan(il_pl_f), vec4());
 	assert(_pipeline->p != nullptr);
 }
 void vkSwapchainCallbackOnDestroy(vk::Swapchain& sc, bool recreation) {
 	// logger("vkSwapchainCallbackOnDestroy:", recreation ? " true" : " false");
-	if (_dpc != nullptr) delete _dpc;
-	if (_pipeline != nullptr) delete _pipeline;
-	if (_renderPass != nullptr) delete _renderPass;
+	swapchainLM.reset();
 }
 static std::atomic<bool> isPausedOnMinimized{false};
 void vkSwapchainCallbackOnSurfaceMinimized(vk::Swapchain&) {
@@ -486,17 +500,21 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 	uint frameId = rt.getImageIndex();
 	// logger("vkFrameCallbackOnCreate:", frameId);
 	auto& frame = _frames[frameId];
+	if (!frame.frameLM) frame.frameLM.make();
+	auto& alloc = *frame.frameLM;
+
 	// FIXME: RenderTick missing a getSwapchain() method!
 	auto& sc = *rt.d.swapChain;
 
-	frame.sv.make(sc.getChainImageView(frameId));
-	frame.fb.make(FrameBuffer{
+	frame.sv = alloc.make<ImageView>(sc.getChainImageView(frameId));
+	frame.fb = alloc.make<FrameBuffer>(FrameBuffer{
 	  rt.d, *_renderPass, (uvec2)sc.pixelSize, {std::cref(*frame.sv)}});
 
-	frame.ub.make(rt.d, sizeof(vec4)*_ssboTest.size(), MemoryFeature::Mappable);
+	frame.ub = alloc.make<StorageBuffer>(
+	  rt.d, sizeof(vec4) * _ssboTest.size(), MemoryFeature::Mappable);
 	frame.ub->directWrite(_ssboTest.data());
 
-	frame.ds.make(_dpc->allocNewSet());
+	frame.ds = alloc.make<DescriptorSet>(_dpc->allocNewSet());
 
 	DescriptorSet::blockingWrite(
 	  rt.d, {
@@ -525,8 +543,6 @@ void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 	// logger("vkFrameCallbackOnRender:", frameId);
 	auto& frame = _frames[frameId];
 
-
-
 	frame.ub->directWrite(_ssboTest.data());
 
 	frame.cb.make(rt.d.getCommendPool(
@@ -544,13 +560,13 @@ void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 	frame.cb->cmdDrawIndexed(std::size(testInd));
 	frame.cb->cmdEndRender();
 	frame.cb->endRecording();
-
+	 
 	const float DELTA = 0.0001f;
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
 	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
 	  1.f);
-	//frame.ub->directWrite(&currentColor);
+	// frame.ub->directWrite(&currentColor);
 	rt.addCmdStage(
 	  *frame.cb, {}, {}, {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
 }
@@ -558,11 +574,8 @@ void vkFrameCallbackOnDestroy(vk::RenderTick& rt) {
 	uint frameId = rt.getImageIndex();
 	// logger("vkFrameCallbackOnDestroy:", frameId);
 	auto& frame = _frames[frameId];
+	if (frame.frameLM) frame.frameLM->reset();
 	frame.cb.reset();
-	frame.ds.reset();
-	frame.ub.reset();
-	frame.fb.reset();
-	frame.sv.reset();
 }
 
 
