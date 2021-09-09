@@ -121,7 +121,7 @@ export namespace vk {
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
 	};
-	class Swapchain
+	class Swapchain: public ComplexObject
 	{
 		//TODO: Add support for setting preferred Swapchain Method
 		void _build(uvec2 preferredSize, uint preferredImageCount,

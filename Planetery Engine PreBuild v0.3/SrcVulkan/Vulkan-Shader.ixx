@@ -8,7 +8,7 @@ import "VulkanExtModule.h";
 
 // Shader class:
 export namespace vk {
-	class ShaderCompiled
+	class ShaderCompiled: public ComplexObject
 	{
 	  public:
 		ShaderCompiled(LogicalDevice& d, ShaderType shaderType,

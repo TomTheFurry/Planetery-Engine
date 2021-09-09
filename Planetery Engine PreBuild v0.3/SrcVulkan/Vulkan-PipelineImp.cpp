@@ -198,11 +198,9 @@ RenderPass::SubPassDependency::SubPassDependency(uint srcSpId,
 					  : 0;
 }
 
-RenderPass::RenderPass(LogicalDevice& device,
-  std::initializer_list<Attachment> attachments,
-  std::initializer_list<SubPass> subPasses,
-  std::initializer_list<SubPassDependency> dependencies):
-  d(device) {
+void RenderPass::_ctor(std::span<const Attachment> attachments,
+  std::span<const SubPass> subPasses,
+  std::span<const SubPassDependency> dependencies) {
 	std::vector<VkSubpassDescription> spDes{};
 	spDes.reserve(subPasses.size());
 	for (auto& sp : subPasses) spDes.push_back((VkSubpassDescription)sp);
@@ -219,6 +217,21 @@ RenderPass::RenderPass(LogicalDevice& device,
 		throw std::runtime_error("Failed to create render pass!");
 	}
 }
+
+RenderPass::RenderPass(LogicalDevice& device,
+  std::initializer_list<Attachment> attachments,
+  std::initializer_list<SubPass> subPasses,
+  std::initializer_list<SubPassDependency> dependencies):
+  d(device) {
+	_ctor(asSpan(attachments), asSpan(subPasses), asSpan(dependencies));
+}
+RenderPass::RenderPass(LogicalDevice& device,
+  std::span<const Attachment> attachments, std::span<const SubPass> subPasses,
+  std::span<const SubPassDependency> dependencies):
+  d(device) {
+	_ctor(attachments, subPasses, dependencies);
+}
+
 RenderPass::RenderPass(RenderPass&& o) noexcept: d(o.d) {
 	rp = o.rp;
 	o.rp = nullptr;
@@ -252,21 +265,20 @@ RenderPipeline::~RenderPipeline() {
 }
 
 // TODO: add support for push constants
+// TODO: Add back the std::initializer_list func
 RenderPipeline::RenderPipeline(LogicalDevice& d,
-  std::initializer_list<DescriptorLayout*> descriptorLayouts,
-  std::initializer_list<PushConstantLayout> pushConstants,
-  RenderPass& renderPass, uint32_t subpassId,
-  std::initializer_list<ShaderStage> stages, VertexAttribute& vertAttribute,
-  PrimitiveTopology vertTopology, bool primitiveRestartByIndex,
-  std::initializer_list<VkViewport> viewports,
-  std::initializer_list<VkRect2D> scissors, bool rasterizerClampDepth,
+  std::span<DescriptorLayout* const> descriptorLayouts,
+  std::span<const PushConstantLayout> pushConstants, RenderPass& renderPass,
+  uint32_t subpassId, std::span<const ShaderStage> stages,
+  VertexAttribute& vertAttribute, PrimitiveTopology vertTopology,
+  bool primitiveRestartByIndex, std::span<const VkViewport> viewports,
+  std::span<const VkRect2D> scissors, bool rasterizerClampDepth,
   bool rasterizerDiscard, PolygonMode polygonMode, Flags<CullMode> cullMode,
   FrontDirection frontDirection, std::optional<DepthBias> depthBias,
   float lineWidth, uint sampleCount, bool rasterizerSetAlphaToOne,
   std::optional<DepthStencilSettings> depthStencilSettings,
   LogicOperator colorBlendLogicOperator,
-  std::initializer_list<AttachmentBlending> attachmentBlending,
-  vec4 blendConstants = vec4(1.f)):
+  std::span<const AttachmentBlending> attachmentBlending, vec4 blendConstants):
   d(d) {
 	{
 		VkPipelineLayoutCreateInfo layoutInfo{};
@@ -286,7 +298,7 @@ RenderPipeline::RenderPipeline(LogicalDevice& d,
 			  "failed to create graphics pipeline layout!");
 		}
 	}
-	//TODO: add support for reuse
+	// TODO: add support for reuse
 	VkPipeline basePipeline = nullptr;
 	bool reuseable = false;
 

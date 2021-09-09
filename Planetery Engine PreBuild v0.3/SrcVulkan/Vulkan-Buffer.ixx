@@ -9,7 +9,7 @@ import "VulkanExtModule.h";
 export namespace vk {
 	// FIXME: Can't unmap part of memory...
 	// Effect: Only allowed to map one memory at a time
-	class Buffer
+	class Buffer : public ComplexObject
 	{
 		void _setup();
 

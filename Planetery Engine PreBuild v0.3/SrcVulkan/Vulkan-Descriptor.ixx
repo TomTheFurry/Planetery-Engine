@@ -14,7 +14,7 @@ export namespace vk {
 		uint count;
 		Flags<ShaderType> shader = ShaderType::All;
 	};
-	class DescriptorLayout
+	class DescriptorLayout: public ComplexObject
 	{
 		void _ctor(std::span<const DescriptorLayoutBinding> bindings);
 
@@ -38,7 +38,7 @@ export namespace vk {
 	  private:
 		std::vector<Size> _size;
 	};
-	class DescriptorPool
+	class DescriptorPool: public ComplexObject
 	{
 		void _ctor(uint setCount, std::span<const DescriptorLayout::Size> size,
 		  Flags<DescriptorPoolType> requirement);
@@ -65,7 +65,7 @@ export namespace vk {
 		LogicalDevice& d;
 	};
 	// Auto-Fitting DescriptorPool
-	class DescriptorContainer: protected DescriptorPool
+	class DescriptorContainer: public DescriptorPool
 	{
 	  public:
 		DescriptorContainer(vk::LogicalDevice& d, const DescriptorLayout& ul,
@@ -79,7 +79,7 @@ export namespace vk {
 		std::vector<DescriptorSet> allocNewSet(uint count);
 		const DescriptorLayout& ul;
 	};
-	class DescriptorSet
+	class DescriptorSet: public ComplexObject
 	{
 	  public:
 		struct WriteData {

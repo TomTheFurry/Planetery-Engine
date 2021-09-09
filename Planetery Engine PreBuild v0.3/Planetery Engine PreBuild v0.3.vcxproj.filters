@@ -180,6 +180,9 @@
     <ClCompile Include="SrcVulkan\Vulkan-MemoryImp.cpp">
       <Filter>Modules\Vulkan\Class</Filter>
     </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Lifetime.ixx">
+      <Filter>Modules\Vulkan\Class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TempFix\internal_shared.h">

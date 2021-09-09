@@ -9,7 +9,7 @@ import "VulkanExtModule.h";
 
 // Image class:
 export namespace vk {
-	class Image
+	class Image: public ComplexObject
 	{
 	  public:
 		// Super ctor
@@ -57,7 +57,7 @@ export namespace vk {
 		void* mappedPtr = nullptr;
 		LogicalDevice& d;
 	};
-	class ImageView
+	class ImageView: public ComplexObject
 	{
 	  public:
 		ImageView(LogicalDevice& d, const Image& img);
@@ -70,7 +70,7 @@ export namespace vk {
 		VkImageView imgView = nullptr;
 		LogicalDevice& d;
 	};
-	class ImageSampler
+	class ImageSampler: public ComplexObject
 	{
 	  public:
 		ImageSampler(LogicalDevice& d, SamplerFilter minFilter,
@@ -92,7 +92,7 @@ export namespace vk {
 		VkSampler smp = nullptr;
 		LogicalDevice& d;
 	};
-	class FrameBuffer
+	class FrameBuffer: public ComplexObject
 	{
 		void _ctor(RenderPass& rp,
 		  std::span<const Ref<const ImageView>> attachments, uint layers);

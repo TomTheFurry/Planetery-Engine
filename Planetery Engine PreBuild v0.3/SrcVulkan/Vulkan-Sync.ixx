@@ -8,7 +8,7 @@ import "VulkanExtModule.h";
 
 // Sync class:
 export namespace vk {
-	class Fence
+	class Fence: public ComplexObject
 	{
 	  public:
 		Fence(vk::LogicalDevice& d, bool signaled = false);
@@ -21,7 +21,7 @@ export namespace vk {
 		VkFence fc;
 		vk::LogicalDevice& d;
 	};
-	class Semaphore
+	class Semaphore: public ComplexObject
 	{
 	  public:
 		Semaphore(vk::LogicalDevice& d);
@@ -34,7 +34,7 @@ export namespace vk {
 		VkSemaphore sp;
 		vk::LogicalDevice& d;
 	};
-	class TimelineSemaphore
+	class TimelineSemaphore: public ComplexObject
 	{
 	  public:
 		TimelineSemaphore(vk::LogicalDevice& d, ulint initValue);

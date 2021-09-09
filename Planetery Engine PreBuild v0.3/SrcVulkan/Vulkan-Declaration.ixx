@@ -7,6 +7,22 @@ import Util;
 
 // Class Declaration:
 export namespace vk {
+	// Basics
+	using NativeHandle = size_t;
+
+	struct ComplexObject {
+		ComplexObject() = default;
+		//ComplexObject(ComplexObject&&) = delete;
+		//ComplexObject(const ComplexObject&) = default;
+		virtual ~ComplexObject() = default;
+	};
+	template<typename Class>
+	concept ComplexObjects = std::is_base_of_v<ComplexObject, Class>;
+
+	// Lifetime class:
+	class LifetimeManager;
+	class MonotonicLifetimeManager;
+
 	// Device class:
 	struct Layer;
 	struct Extension;
@@ -78,5 +94,3 @@ export namespace vk {
 	std::span<const char* const> getRequestedDeviceExtensions();
 	VkInstance getVkInstance();
 }
-
-

@@ -1,5 +1,6 @@
 export module Vulkan;
 export import: Enum;
+export import: Lifetime;
 export import: Device;
 export import: Buffer;
 export import: Image;
@@ -31,24 +32,5 @@ export namespace vk {
 	void setCallback(DeviceCallback dCallback);		 // Render Thread only
 	void setCallback(SwapchainCallback scCallback);	 // Render Thread only
 	void setCallback(FrameCallback fCallback);		 // Render Thread only
-
-
-	namespace device {
-		class PhysicalDevice;
-		class LogicalDevice;
-		class Queue;
-	}
-
-	namespace object {
-		class Buffer;
-		class VertexBuffer;
-		class FrameBuffer;
-		class Program;
-	}
-
-	namespace operation {
-		class Operator;
-		class Commeend;
-	}
 
 }

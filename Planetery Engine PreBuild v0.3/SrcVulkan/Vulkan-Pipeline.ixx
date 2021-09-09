@@ -23,7 +23,7 @@ export namespace vk {
 		uint strideSize = 0;
 		VkPipelineVertexInputStateCreateInfo getStructForPipeline();
 	};
-	class RenderPass
+	class RenderPass: public ComplexObject
 	{
 	  public:
 		class Attachment: private VkAttachmentDescription
@@ -81,6 +81,10 @@ export namespace vk {
 		  std::initializer_list<Attachment> attachments,
 		  std::initializer_list<SubPass> subPasses,
 		  std::initializer_list<SubPassDependency> dependencies);
+		RenderPass(LogicalDevice& d,
+		  std::span<const Attachment> attachments,
+		  std::span<const SubPass> subPasses,
+		  std::span<const SubPassDependency> dependencies);
 		RenderPass(const RenderPass& d) = delete;
 		RenderPass(RenderPass&& d) noexcept;
 		~RenderPass();
@@ -89,8 +93,13 @@ export namespace vk {
 		std::vector<SubPass> subpasses;
 		std::vector<VkSubpassDependency> subpassDependencies;
 		LogicalDevice& d;
+
+	  private:
+		void _ctor(std::span<const Attachment> attachments,
+		  std::span<const SubPass> subPasses,
+		  std::span<const SubPassDependency> dependencies);
 	};
-	class RenderPipeline
+	class RenderPipeline: public ComplexObject
 	{
 	  public:
 		class PushConstantLayout: private VkPushConstantRange
@@ -173,23 +182,22 @@ export namespace vk {
 			float slopeFactor;
 			float clamp;
 		};
+		//TODO: Add back the std::initializer_list func
 		RenderPipeline(LogicalDevice& device,
-		  std::initializer_list<DescriptorLayout*> descriptorLayouts,
-			std::initializer_list<PushConstantLayout> pushConstants,
-		  RenderPass& renderPass, uint32_t subpassId,
-		  std::initializer_list<ShaderStage> stages,
+		  std::span<DescriptorLayout* const> descriptorLayouts,
+		  std::span<const PushConstantLayout> pushConstants,
+		  RenderPass& renderPass, uint32_t subpassId, std::span<const ShaderStage> stages,
 		  VertexAttribute& vertAttribute, PrimitiveTopology vertTopology,
-		  bool primitiveRestartByIndex,
-		  std::initializer_list<VkViewport> viewports,
-		  std::initializer_list<VkRect2D> scissors, bool rasterizerClampDepth,
+		  bool primitiveRestartByIndex, std::span<const VkViewport> viewports,
+		  std::span<const VkRect2D> scissors, bool rasterizerClampDepth,
 		  bool rasterizerDiscard, PolygonMode polygonMode,
 		  Flags<CullMode> cullMode, FrontDirection frontDirection,
 		  std::optional<DepthBias> depthBias, float lineWidth, uint sampleCount,
 		  bool rasterizerSetAlphaToOne,
 		  std::optional<DepthStencilSettings> depthStencilSettings,
 		  LogicOperator colorBlendLogicOperator,
-		  std::initializer_list<AttachmentBlending> attachmentBlending,
-		  vec4 blendConstants);
+		  std::span<const AttachmentBlending> attachmentBlending,
+		  vec4 blendConstants = vec4(1.f));
 		RenderPipeline(const RenderPipeline&) = delete;
 		RenderPipeline(RenderPipeline&& other) noexcept;
 		~RenderPipeline();

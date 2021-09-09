@@ -7,7 +7,7 @@ import "VulkanExtModule.h";
 
 // Commend class:
 export namespace vk {
-	class CommendPool
+	class CommendPool: public ComplexObject
 	{
 	  public:
 		CommendPool(LogicalDevice& device, Flags<CommendPoolType> type);
@@ -18,7 +18,7 @@ export namespace vk {
 		VkCommandPool cp = nullptr;
 		LogicalDevice& d;
 	};
-	class CommendBuffer
+	class CommendBuffer: public ComplexObject
 	{
 	  public:
 		CommendBuffer(CommendPool& pool);

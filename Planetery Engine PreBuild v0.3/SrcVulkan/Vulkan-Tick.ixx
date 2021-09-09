@@ -14,7 +14,7 @@ export namespace vk {
 	struct OutdatedFrameException {};
 
 	constexpr size_t RENDERTICK_INITIAL_MBR_SIZE = 512;
-	class RenderTick
+	class RenderTick: public ComplexObject
 	{
 		friend class Swapchain;
 		void reset(Semaphore&& as);	 // call from swapchain

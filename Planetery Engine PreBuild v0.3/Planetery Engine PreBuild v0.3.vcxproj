@@ -78,18 +78,21 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
       <GenerateSourceDependencies>true</GenerateSourceDependencies>
       <EnableModules>true</EnableModules>
-      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <DisableSpecificWarnings>5050</DisableSpecificWarnings>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>VkLayer_utils.lib;vulkan-1.lib;glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapExports>false</MapExports>
     </Link>
     <Manifest />
   </ItemDefinitionGroup>
@@ -161,6 +164,7 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
     </ClCompile>
     <ClCompile Include="SrcVulkan\Vulkan-Declaration.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-Lifetime.ixx" />
     <ClCompile Include="SrcVulkan\Vulkan-Memory.ixx">
       <FileType>Document</FileType>
     </ClCompile>
