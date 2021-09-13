@@ -352,6 +352,7 @@ bool font::addFont(const std::string& fontSetName,
 			logger("Warning!! ", face->face->num_faces,
 			  " faces in a single font file detected! Currently only supports "
 			  "reading one font face per file!\n");
+#pragma warning(suppress : 26812)
 		if (face->face->charmap->encoding != FT_ENCODING_UNICODE)
 			logger("Warning!! This font file does not seem to support unicode! "
 				   "Currently only supports unicode charcode mapping! Treating "

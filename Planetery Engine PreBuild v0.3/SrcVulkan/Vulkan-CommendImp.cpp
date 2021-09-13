@@ -180,7 +180,7 @@ void CommendBuffer::cmdCopy(Image& src, Buffer& dst, TextureAspect aspect,
 	srl.aspectMask = _toBase(aspect);
 	bic.imageOffset = VkOffset3D{copyOffset.x, copyOffset.y, copyOffset.z};
 	bic.imageExtent = VkExtent3D{copySize.x, copySize.y, copySize.z};
-	//FIXME: What to wait on?????
+	//FIXME: Needs input to set what the cmd waits on
 	if (src.activeUsage != TextureActiveUseType::General
 		|| src.activeUsage != TextureActiveUseType::TransferSrc) {
 		cmdChangeState(src, TextureActiveUseType::TransferSrc,

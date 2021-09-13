@@ -854,7 +854,7 @@ export namespace util {
 		OptionalUniquePtr() = default;
 		explicit OptionalUniquePtr(T* ptr) { value = ptr; }
 		OptionalUniquePtr(const OptionalUniquePtr&) = delete;
-		OptionalUniquePtr(OptionalUniquePtr&& other) {
+		OptionalUniquePtr(OptionalUniquePtr&& other) noexcept {
 			value = other.value;
 			other.value = nullptr;
 		}

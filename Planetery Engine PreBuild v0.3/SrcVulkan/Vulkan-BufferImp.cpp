@@ -210,13 +210,13 @@ void Buffer::blockingIndirectWrite(size_t nSize, size_t offset, const void* data
 }
 void Buffer::directWrite(const void* data) 	{
 	memcpy(map(), data, size);
-	flush(); //FIXME: ????????? Is this needed?
+	flush();
 	unmap();
 }
 
 void Buffer::directWrite(size_t nSize, size_t offset, const void* data) {
 	memcpy(map(nSize, offset), data, nSize);
-	flush(); //FIXME: ????????? Is this needed?
+	flush();
 	unmap();
 }
 

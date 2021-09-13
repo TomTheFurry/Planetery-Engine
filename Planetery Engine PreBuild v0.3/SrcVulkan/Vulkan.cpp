@@ -15,13 +15,14 @@ import: Enum;
 import std.core;
 import Define;
 import Logger;
-//import "Assert.h";
+// import "Assert.h";
 import "VulkanExtModule.h";
 import "GlfwModule.h";
 using namespace vk;
 
 static VkInstance _vk = nullptr;
 #ifdef VULKAN_DEBUG
+#	pragma warning(suppress : 26812)
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
   VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
   VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -55,6 +56,7 @@ inline void createDebugger() {
 						   | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 	createInfo.pfnUserCallback = debugCallback;
 	createInfo.pUserData = nullptr;
+#	pragma warning(suppress : 26812)
 	if (vkCreateDebugUtilsMessengerEXT(
 		  _vk, &createInfo, nullptr, &_debugMessenger)
 		!= VK_SUCCESS) {
@@ -247,8 +249,10 @@ void vk::init() {
 	dCallback.onCreate(*_renderDevice);
 }
 bool vk::drawFrame(bool waitForVSync) {
-	if (!_renderDevice->isSwapchainValid() && !_renderDevice->loadSwapchain()) return false;
-	if (!_renderDevice->getSwapchain().renderNextFrame(waitForVSync)) return false;
+	if (!_renderDevice->isSwapchainValid() && !_renderDevice->loadSwapchain())
+		return false;
+	if (!_renderDevice->getSwapchain().renderNextFrame(waitForVSync))
+		return false;
 	_currentFrame++;
 	return true;
 }

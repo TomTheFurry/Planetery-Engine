@@ -351,6 +351,7 @@ struct FrameContainer {
 	util::OptionalUniquePtr<vk::CommendBuffer> cb;
 	vk::ImageView* sv;
 	vk::FrameBuffer* fb;
+#pragma warning(suppress : 26495)
 };
 static std::vector<FrameContainer> _frames{};
 
@@ -373,7 +374,7 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 		int texWidth, texHeight, texChannels;
 		stbi_uc* pixels = stbi_load("cshader/test.png", &texWidth, &texHeight,
 		  &texChannels, STBI_rgb_alpha);
-		VkDeviceSize imageSize = texWidth * texHeight * 4;
+		VkDeviceSize imageSize = size_t(texWidth) * texHeight * 4;
 		if (!pixels) throw "TEST_VulkanStbImageLoadFailure";
 
 		_imgTest = new Image(d, uvec3{texWidth, texHeight, 1}, 2,

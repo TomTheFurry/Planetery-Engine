@@ -1,6 +1,7 @@
 module;
 // This 'include' fixes redef error that happens if you use std::iostream...
 // somehow...
+#pragma warning(disable : 5 5103) 
 #include <glfw\glfw3.h>
 module StringBox;
 import "GladGlfwGlTempModule.h";

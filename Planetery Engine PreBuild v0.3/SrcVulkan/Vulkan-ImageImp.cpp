@@ -235,12 +235,12 @@ void Image::blockingIndirectWrite(
 }
 void Image::directWrite(const void* data) {
 	memcpy(map(), data, texMemorySize);
-	flush();  // FIXME: ????????? Is this needed?
+	flush();
 	unmap();
 }
 void Image::directWrite(size_t nSize, size_t offset, const void* data) {
 	memcpy(map(nSize, offset), data, nSize);
-	flush();  // FIXME: ????????? Is this needed?
+	flush();
 	unmap();
 }
 
@@ -265,7 +265,7 @@ ImageView::ImageView(LogicalDevice& d, const Image& img): d(d) {
 	VkImageViewCreateInfo cInfo{};
 	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	cInfo.image = img.img;
-	// FIXME: Hack for viewTpye value.
+	// FIXME: Hack for viewType value.
 	cInfo.viewType = (VkImageViewType)(img.dimension - 1);
 	cInfo.format = img.format;
 	cInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
