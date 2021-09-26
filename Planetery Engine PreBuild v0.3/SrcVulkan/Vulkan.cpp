@@ -12,6 +12,7 @@ import: Descriptor;
 import: Pipeline;
 import: Tick;
 import: Enum;
+import: Swapchain;
 import std.core;
 import Define;
 import Logger;
@@ -92,9 +93,10 @@ static std::vector<const char*> _extensionsEnabled;
 static std::vector<VkLayerProperties> _layersAvailable;
 static std::vector<VkExtensionProperties> _extensionsAvailable;
 static DeviceCallback dCallback;
-static OSRenderSurface* _OSSurface;
+static OSRenderSurface* _OSSurface = nullptr;
+static PhysicalDevice* _physicalDevice = nullptr;
 static LogicalDevice* _renderDevice = nullptr;
-static uint _currentFrame = 0;
+//unused static uint _currentFrame = 0;
 static bool _newSwapchain = true;
 static std::atomic_flag _swapchainNotOutdated;
 
@@ -180,7 +182,7 @@ VkInstance vk::getVkInstance() { return _vk; }
 inline void checkBaseRequiredPlugins() {
 	bool noMissingLayer = true;
 	for (const auto& l : getRequestedLayers()) {
-		if (l.name == "") continue;
+		if (l.name[0] == '\0') continue;
 		if (!requestLayer(l.name, l.version)) {
 			logger("Vulkan: Missing default requested layer: ", l.name,
 			  "(minV:", l.version, ")\n");
@@ -201,7 +203,7 @@ inline void checkBaseRequiredPlugins() {
 		}
 	}
 	for (const auto& e : getRequestedExtensions()) {
-		if (e.name == "") continue;
+		if (e.name[0] == '\0') continue;
 		if (!requestExtension(e.name, e.version)) {
 			logger("Vulkan: Missing default requested extension: ", e.name,
 			  "(minV:", e.version, ")\n");
@@ -243,26 +245,64 @@ void vk::init() {
 #endif
 	// Create the OS specific Render Surface (for display out)
 	_OSSurface = new OSRenderSurface();
-	// Create devices
-	_renderDevice = PhysicalDevice::getUsablePhysicalDevice(_OSSurface)
-					  .makeDevice(VK_QUEUE_GRAPHICS_BIT);
+	// Create physical device
+	_physicalDevice = PhysicalDevice::getUsablePhysicalDevice(_OSSurface);
+	// Calculate queue layout for this computer
+	QueuePoolLayout qpl{*_physicalDevice};
+	uint rQueueFamily = qpl.findFamilyBySupportType(QueueType::Graphics);
+	if constexpr (DO_SAFETY_CHECK)
+		if (rQueueFamily == uint(-1))
+			throw "VulkanInternalErrorPhysicalDeviceHasNoRenderQueue";
+	if (!qpl.checkQueuePresentSupport(rQueueFamily, *_OSSurface)) {
+		// TODO: Make this find another queue that support presenting on target
+		// surface
+		throw "TODOVulkanMainRenderQueueDoesNotSupportPresentOnTargetOSSurface";
+	}
+	uint mQueueFamily = qpl.findFamilyBySupportType(
+	  QueueType::MemoryTransfer, Flags(QueueType::Graphics) | QueueType::Compute);
+	logger(mQueueFamily);
+	if (mQueueFamily == uint(-1))
+		mQueueFamily = qpl.findFamilyBySupportType(
+		  QueueType::MemoryTransfer, QueueType::Graphics);
+	logger(mQueueFamily);
+	if (mQueueFamily == uint(-1) || mQueueFamily==rQueueFamily) {
+		// Use render family for memory transfer
+		uint rQueueCount =
+		  std::min(qpl.getFamilyMaxQueueCount(rQueueFamily), 12u);
+		qpl.addQueueGroup(rQueueFamily, rQueueCount);
+		qpl.hintGroupUsage(Memory, rQueueFamily);
+		qpl.hintGroupUsage(Present, rQueueFamily);
+		qpl.hintGroupUsage(Render, rQueueFamily);
+	} else {
+		uint rQueueCount =
+		  std::min(qpl.getFamilyMaxQueueCount(rQueueFamily), 8u);
+		uint mQueueCount = std::min(qpl.getFamilyMaxQueueCount(mQueueFamily), 4u);
+		qpl.addQueueGroup(rQueueFamily, rQueueCount);
+		qpl.addQueueGroup(mQueueFamily, mQueueCount);
+		qpl.hintGroupUsage(Memory, mQueueFamily);
+		qpl.hintGroupUsage(Present, rQueueFamily);
+		qpl.hintGroupUsage(Render, rQueueFamily);
+	}
+	_renderDevice = new LogicalDevice(*_physicalDevice, qpl);
 	dCallback.onCreate(*_renderDevice);
+
+	//Swapchain is lazily created when drawing via _OSSurface
 }
-bool vk::drawFrame(bool waitForVSync) {
-	if (!_renderDevice->isSwapchainValid() && !_renderDevice->loadSwapchain())
-		return false;
-	if (!_renderDevice->getSwapchain().renderNextFrame(waitForVSync))
-		return false;
-	_currentFrame++;
-	return true;
+bool vk::drawFrame(ulint timeout) {
+	try {
+		Swapchain* sc = &_OSSurface->querySwapchain(*_renderDevice);
+		if (sc == nullptr) return false;
+		sc->renderNextImage(timeout);
+		return true;
+	} catch (SurfaceMinimizedException) { return false; }
+	//unused _currentFrame++;
 }
 void vk::end() {
 	logger("VK Interface end.\n");
-	_renderDevice->unloadSwapchain();
-	dCallback.onDestroy(*_renderDevice);
-	if (_renderDevice != nullptr) delete _renderDevice;
-	// testPrograme end
-	if (_OSSurface != nullptr) delete _OSSurface;
+	if (_OSSurface != nullptr) _OSSurface->releaseSwapchain();
+	if (_renderDevice != nullptr) dCallback.onDestroy(*_renderDevice);
+	delete _renderDevice;
+	delete _OSSurface;
 #ifdef VULKAN_DEBUG
 	if (_debugMessenger)
 		vkDestroyDebugUtilsMessengerEXT(_vk, _debugMessenger, nullptr);
@@ -271,4 +311,4 @@ void vk::end() {
 }
 void vk::setCallback(DeviceCallback dC) { dCallback = dC; }
 void vk::setCallback(SwapchainCallback scC) { Swapchain::setCallback(scC); }
-void vk::setCallback(FrameCallback fC) { RenderTick::setCallback(fC); }
+void vk::setCallback(FrameCallback fC) { Swapchain::setCallback(fC); }

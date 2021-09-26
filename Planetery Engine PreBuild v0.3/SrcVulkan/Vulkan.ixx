@@ -2,6 +2,8 @@ export module Vulkan;
 export import: Enum;
 export import: Lifetime;
 export import: Device;
+export import: Swapchain;
+export import: Queue;
 export import: Buffer;
 export import: Image;
 export import: Shader;
@@ -27,7 +29,7 @@ export namespace vk {
 	void requestDeviceExtension(const char* name, bool optional = false);
 
 	void init();  // request all needed extension/layers before call!
-	bool drawFrame(bool waitForVSync = true);  // Render Thread only
+	bool drawFrame(ulint timeout = ulint(-1));  // Render Thread only
 	void end();
 	void setCallback(DeviceCallback dCallback);		 // Render Thread only
 	void setCallback(SwapchainCallback scCallback);	 // Render Thread only

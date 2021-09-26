@@ -23,7 +23,9 @@ export namespace vk {
 	class LifetimeManager;
 	class MonotonicLifetimeManager;
 
-	// Device class:
+	// TODO: Extension classes: Seperate it from Device class
+
+	// Device classes:
 	struct Layer;
 	struct Extension;
 	typedef uint QueueFamilyIndex;
@@ -34,13 +36,26 @@ export namespace vk {
 		void (*onDestroy)(LogicalDevice&) = nullptr;
 	};
 	class OSRenderSurface;
-	class SwapchainSupport;
+
+	// Queue classes:
+	class QueuePoolLayout;
+	class QueuePool;
+	class Queue;
+
+	// Swapchain class:
 	class Swapchain;
 	struct SwapchainCallback {
 		void (*onCreate)(Swapchain&, bool) = nullptr;
 		void (*onDestroy)(Swapchain&, bool) = nullptr;
 		void (*onSurfaceMinimized)(Swapchain&) = nullptr;
 	};
+	class SwapchainImage;
+	struct FrameCallback {
+		void (*onCreate)(SwapchainImage&) = nullptr;
+		void (*onDraw)(SwapchainImage&) = nullptr;
+		void (*onDestroy)(SwapchainImage&) = nullptr;
+	};
+
 	// Memory class:
 	struct DeviceMemory;
 	struct MemoryPointer;
@@ -78,13 +93,7 @@ export namespace vk {
 	class VertexAttribute;
 	class RenderPass;
 	class RenderPipeline;
-	// Tick class:
-	class RenderTick;
-	struct FrameCallback {
-		void (*onCreate)(RenderTick&) = nullptr;
-		void (*onDraw)(RenderTick&) = nullptr;
-		void (*onDestroy)(RenderTick&) = nullptr;
-	};
+	
 }
 
 // Internal Functions:

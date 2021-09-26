@@ -52,6 +52,12 @@ export namespace _toIndexTpye {
 	}
 }
 export namespace vk {
+	enum class QueueType : VkQueueFlags {
+		Graphics = VK_QUEUE_GRAPHICS_BIT,
+		Compute = VK_QUEUE_COMPUTE_BIT,
+		MemoryTransfer = VK_QUEUE_TRANSFER_BIT,
+	};
+
 	enum class WindowTransparentType : VkCompositeAlphaFlagsKHR {
 		RemoveAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		PreMultiplied = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
@@ -433,6 +439,7 @@ export namespace vk {
 	};
 
 }
+export template<> class Flags<vk::QueueType>;
 export template<> class Flags<vk::CommendPoolType>;
 export template<> class Flags<vk::TextureUseType>;
 export template<> class Flags<vk::BufferUseType>;

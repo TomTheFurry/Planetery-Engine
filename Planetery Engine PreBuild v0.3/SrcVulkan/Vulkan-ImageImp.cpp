@@ -204,19 +204,22 @@ void Image::blockingIndirectWrite(const void* data) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
 	}
+
 	auto sg = Buffer(d, texMemorySize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = d.getSingleUseCommendBuffer();
+	auto& q = d.getQueuePool().getExpressMemoryCopyQueue();
+	auto& cp = d.getQueuePool().queryCommendPool(
+	  q.familyIndex, CommendPoolType::Shortlived);
+	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
 	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
 
 	cb.endRecording();
-	cb.submit().wait();
+	cb.quickSubmit(q).wait();
 }
-void Image::blockingIndirectWrite(
-  size_t nSize, size_t offset, const void* data) {
+void Image::blockingIndirectWrite(size_t nSize, size_t offset, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
@@ -225,13 +228,16 @@ void Image::blockingIndirectWrite(
 	auto sg = Buffer(d, nSize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = d.getSingleUseCommendBuffer();
+	auto& q = d.getQueuePool().getExpressMemoryCopyQueue();
+	auto& cp = d.getQueuePool().queryCommendPool(
+	  q.familyIndex, CommendPoolType::Shortlived);
+	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
 	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
 
 	cb.endRecording();
-	cb.submit().wait();
+	cb.quickSubmit(q).wait();
 }
 void Image::directWrite(const void* data) {
 	memcpy(map(), data, texMemorySize);
@@ -248,14 +254,17 @@ void Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 	if constexpr (DO_SAFETY_CHECK) {
 		//??? What to check?
 	}
-	auto cb = d.getSingleUseCommendBuffer();
+	auto& q = d.getQueuePool().getExpressRenderQueue();
+	auto& cp = d.getQueuePool().queryCommendPool(
+	  q.familyIndex, CommendPoolType::Shortlived);
+	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
 	cb.cmdChangeState(*this, targetUsage, PipelineStage::TopOfPipe,
 	  MemoryAccess::None, PipelineStage::BottomOfPipe, MemoryAccess::None);
 
 	cb.endRecording();
-	cb.submit().wait();
+	cb.quickSubmit(q).wait();
 }
 
 //----------------------------------------------

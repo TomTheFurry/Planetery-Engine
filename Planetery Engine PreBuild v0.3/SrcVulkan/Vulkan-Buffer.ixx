@@ -9,7 +9,7 @@ import "VulkanExtModule.h";
 export namespace vk {
 	// FIXME: Can't unmap part of memory...
 	// Effect: Only allowed to map one memory at a time
-	class Buffer : public ComplexObject
+	class Buffer: public ComplexObject
 	{
 		void _setup();
 
@@ -25,11 +25,10 @@ export namespace vk {
 		void flush();
 		void flush(size_t size, size_t offset);
 		void unmap();
-		void cmdIndirectWrite(RenderTick& rt, CommendBuffer& cp, void* data);
-		void cmdIndirectWrite(RenderTick& rt, CommendBuffer& cp, size_t size,
-		  size_t offset, void* data);
-		Buffer& getStagingBuffer(RenderTick& rt);
-		Buffer& getStagingBuffer(RenderTick& rt, size_t size);
+		void cmdIndirectWrite(
+		  LifetimeManager& commendLifetime, CommendBuffer& cp, void* data);
+		void cmdIndirectWrite(LifetimeManager& commendLifetime,
+		  CommendBuffer& cp, size_t size, size_t offset, void* data);
 		void blockingIndirectWrite(const void* data);
 		void blockingIndirectWrite(
 		  size_t size, size_t offset, const void* data);

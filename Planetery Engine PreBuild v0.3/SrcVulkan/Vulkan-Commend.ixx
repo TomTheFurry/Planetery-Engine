@@ -9,14 +9,19 @@ import "VulkanExtModule.h";
 export namespace vk {
 	class CommendPool: public ComplexObject
 	{
+		LogicalDevice& d;
+		QueuePool& qp;
+
 	  public:
-		CommendPool(LogicalDevice& device, Flags<CommendPoolType> type);
+		// FIXME: Currently needs queue to get queue family index
+		CommendPool(QueuePool& queuePool, uint queueGroupIndex,
+		  Flags<CommendPoolType> type);
 		CommendPool(const CommendPool&) = delete;
 		CommendPool(CommendPool&& other) noexcept;
 		~CommendPool();
 		CommendBuffer makeCommendBuffer();
 		VkCommandPool cp = nullptr;
-		LogicalDevice& d;
+		LogicalDevice& getDevice() { return d; }
 	};
 	class CommendBuffer: public ComplexObject
 	{
@@ -60,8 +65,33 @@ export namespace vk {
 
 		void cmdEndRender();
 		void endRecording();
-		Fence submit();
+		Fence quickSubmit(Queue& queue);
 		VkCommandBuffer cb = nullptr;
 		CommendPool& cp;
 	};
+
+
+	// TODO: Add back multi-commend submittions
+	/*
+	class CommendGroup
+	{
+		std::list<SyncLine> syncLines;
+		std::vector<SyncPoint> syncPointStack;
+		std::vector<VkSubmitInfo> cmdStages;
+		LifetimeManager& lm;
+	  public:
+		CommendGroup(LifetimeManager& alloc);
+		SyncPoint makeSyncLine(SyncNumber initialValue = 0);
+		void addCmdStage(CommendBuffer& cb,
+		  std::initializer_list<SyncPoint> signalTo,
+		  std::initializer_list<SyncPoint> waitFor,
+		  std::initializer_list<VkPipelineStageFlags> waitType);
+		SyncPoint getTopSyncPoint();
+		// void addSyncPointToLayer();
+		// ^^^^Missing def... Forgot what this should do?
+		void pushSyncPointStack(SyncPoint syncPoint);
+		SyncPoint popSyncPointStack();
+
+	}*/
+
 }

@@ -7,6 +7,7 @@ import: Enum;
 import: Tick;
 import: Commend;
 import: Memory;
+import: Lifetime;
 import std.core;
 import Define;
 import Logger;
@@ -26,11 +27,13 @@ void Buffer::_setup() {
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(d.d, b, &memRequirements);
 	mSize = memRequirements.size;
-	auto pair = d.allocMemory(memRequirements.memoryTypeBits, feature, mSize, minAlignment);
+	auto pair = d.allocMemory(
+	  memRequirements.memoryTypeBits, feature, mSize, minAlignment);
 	memoryIndex = pair.first;
 	ptr = pair.second;
 
-	if (vkBindBufferMemory(d.d, b, ptr.dm.dm, ptr.offset) != VK_SUCCESS) throw "VulkanBufferBindMemoryFailure";
+	if (vkBindBufferMemory(d.d, b, ptr.dm.dm, ptr.offset) != VK_SUCCESS)
+		throw "VulkanBufferBindMemoryFailure";
 }
 
 Buffer::Buffer(LogicalDevice& device, size_t s,
@@ -55,7 +58,7 @@ Buffer::Buffer(LogicalDevice& device, size_t s,
 	if (feature.has(MemoryFeature::IndirectWritable)) {
 		usage.set(BufferUseType::TransferDst);
 	}
-	//HOTFIX: This is hotfix for min requirement for alignment
+	// HOTFIX: This is hotfix for min requirement for alignment
 	minAlignment = d.pd.properties10.properties.limits.nonCoherentAtomSize;
 	_setup();
 }
@@ -138,77 +141,76 @@ void Buffer::unmap() {
 		if (mappedPtr == nullptr) throw "VulkanBufferNotMapped";
 		mappedPtr = nullptr;
 	}
-	//FIXME: Can't unmap part of memory...
+	// FIXME: Can't unmap part of memory...
 	vkUnmapMemory(d.d, ptr.dm.dm);
 }
 
-void Buffer::cmdIndirectWrite(RenderTick& rt, CommendBuffer& cb, void* data) {
+void Buffer::cmdIndirectWrite(
+  LifetimeManager& commendLifetime, CommendBuffer& cb, void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!feature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
 	}
-	auto& s = rt.makeStagingBuffer(size);
-	memcpy(s.map(), data, size);
-	s.unmap();
-	cb.cmdCopy(s, *this, size);
+	auto& stagingBuffer = commendLifetime.make<Buffer>(d, size,
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
+	memcpy(stagingBuffer.map(), data, size);
+	stagingBuffer.unmap();
+	cb.cmdCopy(stagingBuffer, *this, size);
 }
-void Buffer::cmdIndirectWrite(
-  RenderTick& rt, CommendBuffer& cb, size_t nSize, size_t offset, void* data) {
+void Buffer::cmdIndirectWrite(LifetimeManager& commendLifetime,
+  CommendBuffer& cb, size_t nSize, size_t offset, void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!feature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
 		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
 	}
-	auto& s = rt.makeStagingBuffer(nSize);
-	memcpy(s.map(), data, nSize);
-	s.unmap();
-	cb.cmdCopy(s, *this, nSize, 0, offset);
-}
-Buffer& Buffer::getStagingBuffer(RenderTick& rt) {
-	if constexpr (DO_SAFETY_CHECK) {
-		if (!feature.has(MemoryFeature::IndirectWritable))
-			throw "VulkanBufferNotIndirectWritable";
-	}
-	return rt.makeStagingBuffer(size);
-}
-Buffer& Buffer::getStagingBuffer(RenderTick& rt, size_t nSize) {
-	if constexpr (DO_SAFETY_CHECK) {
-		if (!feature.has(MemoryFeature::IndirectWritable))
-			throw "VulkanBufferNotIndirectWritable";
-		if (nSize > size) throw "VulkanBufferOutOfRange";
-	}
-	return rt.makeStagingBuffer(size);
+	auto& stagingBuffer = commendLifetime.make<Buffer>(d, size,
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
+	memcpy(stagingBuffer.map(), data, nSize);
+	stagingBuffer.unmap();
+	cb.cmdCopy(stagingBuffer, *this, nSize, 0, offset);
 }
 void Buffer::blockingIndirectWrite(const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!feature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
+		// TODO: Add queue & stagingCmdPool Check
 	}
 	auto sg = Buffer(d, size,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = d.getSingleUseCommendBuffer();
+	auto& q = d.getQueuePool().getExpressMemoryCopyQueue();
+	auto& cp = d.getQueuePool().queryCommendPool(
+	  q.familyIndex, CommendPoolType::Shortlived);
+	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopy(sg, *this, size);
 	cb.endRecording();
-	cb.submit().wait();
+	// TODO: Make this able to return a 'future' like object to wait on
+	cb.quickSubmit(q).wait();
 }
-void Buffer::blockingIndirectWrite(size_t nSize, size_t offset, const void* data) {
+void Buffer::blockingIndirectWrite(
+  size_t nSize, size_t offset, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!feature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";
 		if (nSize + offset > size) throw "VulkanBufferOutOfRange";
+		// TODO: Add queue & stagingCmdPool Check
 	}
 	auto sg = Buffer(d, nSize,
 	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
-	auto cb = d.getSingleUseCommendBuffer();
+	auto& q = d.getQueuePool().getExpressMemoryCopyQueue();
+	auto& cp = d.getQueuePool().queryCommendPool(
+	  q.familyIndex, CommendPoolType::Shortlived);
+	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 	cb.cmdCopy(sg, *this, nSize, 0, offset);
 	cb.endRecording();
-	cb.submit().wait();
+	// TODO: Make this able to return a 'future' like object to wait on
+	cb.quickSubmit(q).wait();
 }
-void Buffer::directWrite(const void* data) 	{
+void Buffer::directWrite(const void* data) {
 	memcpy(map(), data, size);
 	flush();
 	unmap();
@@ -219,5 +221,3 @@ void Buffer::directWrite(size_t nSize, size_t offset, const void* data) {
 	flush();
 	unmap();
 }
-
-

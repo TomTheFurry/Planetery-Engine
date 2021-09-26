@@ -16,17 +16,18 @@ import "Assert.h";
 import "VulkanExtModule.h";
 using namespace vk;
 
-CommendPool::CommendPool(LogicalDevice& device, Flags<CommendPoolType> type):
-  d(device) {
+CommendPool::CommendPool(QueuePool& queuePool, uint queueGroupIndex, Flags<CommendPoolType> type):
+  qp(queuePool), d(queuePool.getDevice()) {
 	VkCommandPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	poolInfo.queueFamilyIndex = d.queueIndex;
+	//FIXME: Currently needs queue to get queue family index
+	poolInfo.queueFamilyIndex = queueGroupIndex;
 	poolInfo.flags = (VkCommandPoolCreateFlags)type;
 	if (vkCreateCommandPool(d.d, &poolInfo, nullptr, &cp) != VK_SUCCESS) {
 		throw "VulkanCreateCommandPoolFailed";
 	}
 }
-CommendPool::CommendPool(CommendPool&& other) noexcept: d(other.d) {
+CommendPool::CommendPool(CommendPool&& other) noexcept: d(other.d), qp(other.qp) {
 	cp = other.cp;
 	other.cp = nullptr;
 }
@@ -41,7 +42,7 @@ CommendBuffer::CommendBuffer(CommendPool& pool): cp(pool) {
 	allocInfo.commandPool = cp.cp;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	allocInfo.commandBufferCount = 1;
-	if (vkAllocateCommandBuffers(cp.d.d, &allocInfo, &cb) != VK_SUCCESS) {
+	if (vkAllocateCommandBuffers(cp.getDevice().d, &allocInfo, &cb) != VK_SUCCESS) {
 		throw std::runtime_error("failed to allocate command buffer!");
 	}
 }
@@ -50,7 +51,7 @@ CommendBuffer::CommendBuffer(CommendBuffer&& other) noexcept: cp(other.cp) {
 	other.cb = nullptr;
 }
 CommendBuffer::~CommendBuffer() {
-	if (cb != nullptr) vkFreeCommandBuffers(cp.d.d, cp.cp, 1, &cb);
+	if (cb != nullptr) vkFreeCommandBuffers(cp.getDevice().d, cp.cp, 1, &cb);
 }
 void CommendBuffer::startRecording(Flags<CommendBufferUsage> usage) {
 	VkCommandBufferBeginInfo beginInfo{};
@@ -200,14 +201,8 @@ void CommendBuffer::endRecording() {
 	}
 }
 
-Fence vk::CommendBuffer::submit() {
-	Fence fc{cp.d};
-	VkSubmitInfo sInfo{};
-	sInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	sInfo.waitSemaphoreCount = 0;
-	sInfo.commandBufferCount = 1;
-	sInfo.pCommandBuffers = &cb;
-	sInfo.signalSemaphoreCount = 0;
-	vkQueueSubmit(cp.d.queue, 1, &sInfo, fc.fc);
+Fence vk::CommendBuffer::quickSubmit(Queue& queue) {
+	Fence fc{cp.getDevice()};
+	queue.submit(*this, nullptr, PipelineStage::None, nullptr, &fc);
 	return fc;
 }

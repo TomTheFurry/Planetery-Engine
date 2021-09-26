@@ -1,9 +1,9 @@
 module Vulkan: DeviceImp;
 import: Device;
+import: Swapchain;
 import: Enum;
 import: Commend;
 import: Image;
-import: Tick;
 import std.core;
 import Define;
 import ThreadEvents;
@@ -13,11 +13,7 @@ import "VulkanExtModule.h";
 import "GlfwModule.h";
 using namespace vk;
 
-#define PREFERRED_IMAGE_COUNT 18u
-#define USE_MAILBOX_MODE
-#define PREFERRED_WIN_ALPHA_MODE
-
-PhysicalDevice PhysicalDevice::getUsablePhysicalDevice(
+PhysicalDevice* PhysicalDevice::getUsablePhysicalDevice(
   OSRenderSurface* osSurface) {
 	std::vector<VkPhysicalDevice> pDevices;
 	logger.newLayer();
@@ -34,10 +30,11 @@ PhysicalDevice PhysicalDevice::getUsablePhysicalDevice(
 		vkEnumeratePhysicalDevices(
 		  getVkInstance(), &deviceCount, pDevices.data());
 	}
-	std::vector<PhysicalDevice> objDevices;
+	std::vector<util::OptionalUniquePtr<PhysicalDevice>> objDevices;
 	objDevices.reserve(pDevices.size());
 	for (auto& dPtr : pDevices) {
-		if (!objDevices.emplace_back(dPtr, osSurface).meetRequirements)
+		auto& dOpPtr = objDevices.emplace_back(new PhysicalDevice(dPtr, osSurface));
+		if (!dOpPtr->meetRequirements)
 			objDevices.pop_back();
 	}
 	if (objDevices.empty()) {
@@ -46,8 +43,8 @@ PhysicalDevice PhysicalDevice::getUsablePhysicalDevice(
 		return nullptr;
 	}
 	logger.closeLayer();
-	return std::move(*std::max_element(objDevices.begin(), objDevices.end(),
-	  [](const auto& p1, const auto& p2) { return p1 < p2; }));
+	return std::max_element(objDevices.begin(), objDevices.end(),
+	  [](const auto& p1, const auto& p2) { return *p1 < *p2; })->getOwnership();
 }
 
 PhysicalDevice::PhysicalDevice(
@@ -83,12 +80,10 @@ PhysicalDevice::PhysicalDevice(
 	renderOut = renderSurface;
 	auto& limit = properties10.properties.limits;
 	logger << properties10.properties.deviceName << "...";
+
+	// ----Starting checks for requirements----
 	meetRequirements = true;
-	// GPU Requirements
-	if (!features10.features.geometryShader) meetRequirements = false;
-	if (!features10.features.tessellationShader) meetRequirements = false;
-	if (!features10.features.samplerAnisotropy) meetRequirements = false;
-	{
+	{  // Check extensions support
 		uint extensionCount;
 		vkEnumerateDeviceExtensionProperties(
 		  d, nullptr, &extensionCount, nullptr);
@@ -106,19 +101,44 @@ PhysicalDevice::PhysicalDevice(
 					  return std::strcmp(neededExt, p.extensionName) == 0;
 				  })
 				== availableExtensions.end()) {
+				logger << "Failed check: Missing requested device extension: "
+					   << neededExt << "\n";
 				meetRequirements = false;
-				break;
+				continue;
 			}
 		}
 	}
-	if (renderSurface != nullptr) {
-		if (getQueueFamily(VK_QUEUE_GRAPHICS_BIT, renderSurface) == uint(-1))
-			meetRequirements = false;
-		auto swapChain = SwapchainSupport(*this, *renderSurface);
-		if (swapChain.formats.empty() || swapChain.presentModes.empty())
-			meetRequirements = false;
+	if (!features10.features.geometryShader) {
+		logger << "Failed check: No support for geometry shader\n";
+		meetRequirements = false;
+	}
+	if (!features10.features.tessellationShader) {
+		logger << "Failed check: No support for tessellation shader\n";
+		meetRequirements = false;
+	}
+	if (!features10.features.samplerAnisotropy) {
+		logger << "Failed check: No support for anisotropic filtering\n";
+		meetRequirements = false;
 	}
 
+	// OPTI: Currently querying the queue support, and dump it afterwards.
+	// Is there some way to push that out for reusing when making the
+	// logical device? Maybe split up QueueSupport and QueuePoolLayout?
+	QueuePoolLayout qpl{*this};
+	uint graphicsQueue = qpl.findFamilyBySupportType(QueueType::Graphics);
+	if (graphicsQueue == uint(-1)) {
+		logger << "Failed check: No queue supports Graphics processing\n";
+		meetRequirements = false;
+	} else if (renderSurface != nullptr
+			   && !qpl.checkQueuePresentSupport(graphicsQueue, *renderSurface)) {
+		// FIXME: Currently only cares about first grapics queue support for
+		// presentation
+		logger << "Failed check: First Graphics queue " << graphicsQueue << " does not support "
+				  "presenting to target OSRenderSurface\n";
+		meetRequirements = false;
+	}
+
+	// ----Ending checks for requirements----
 	if (meetRequirements) {
 		logger << " Usable.";
 	} else {
@@ -145,6 +165,7 @@ PhysicalDevice::PhysicalDevice(
 	logger << std::to_string(rating) << "\n";
 	logger.closeLayer();
 }
+
 PhysicalDevice::PhysicalDevice(const PhysicalDevice& o):
   PhysicalDevice(o.d, o.renderOut){};
 
@@ -168,20 +189,6 @@ PhysicalDevice::PhysicalDevice(PhysicalDevice&& o) noexcept:
 	o.d = nullptr;
 }
 
-QueueFamilyIndex PhysicalDevice::getQueueFamily(
-  VkQueueFlags requirement, OSRenderSurface* surfaceOut) {
-	for (uint i = 0; i < queueFamilies.size(); i++) {
-		auto& q = queueFamilies[i];
-		if (((!q.queueFlags) & requirement) == 0) {
-			if (surfaceOut == nullptr) return i;
-			VkBool32 canRenderToSurface = VK_FALSE;
-			vkGetPhysicalDeviceSurfaceSupportKHR(
-			  d, i, surfaceOut->surface, &canRenderToSurface);
-			if (canRenderToSurface) return i;
-		}
-	}
-	return uint(-1);
-}
 uint PhysicalDevice::getMemoryTypeIndex(
   uint bitFilter, Flags<MemoryFeature> feature) const {
 	uint requirement = 0;
@@ -204,35 +211,14 @@ uint PhysicalDevice::getMemoryTypeIndex(
 	}
 	return uint(-1);
 }
-LogicalDevice* PhysicalDevice::makeDevice(
-  VkQueueFlags requirement, OSRenderSurface* renderSurface) & {
-	QueueFamilyIndex i = getQueueFamily(requirement, renderSurface);
-	if (i == uint(-1)) return nullptr;
-	return new LogicalDevice(*this, i);
-}
-LogicalDevice* PhysicalDevice::makeDevice(
-  VkQueueFlags requirement, OSRenderSurface* renderSurface) && {
-	QueueFamilyIndex i = getQueueFamily(requirement, renderSurface);
-	if (i == uint(-1)) return nullptr;
-	return new LogicalDevice(std::move(*this), i);
-}
-SwapchainSupport PhysicalDevice::getSwapchainSupport() const {
-	return SwapchainSupport(*this, *renderOut);
-}
 
-void LogicalDevice::_setup() {
-	const float One = 1.0f;
-	std::array<VkDeviceQueueCreateInfo, 1> queueInfo{};
-	queueInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueInfo[0].queueFamilyIndex = queueIndex;
-	queueInfo[0].queueCount = 2;
-	queueInfo[0].pQueuePriorities = &One;
-
+void LogicalDevice::_setup(const QueuePoolLayout& queueLayout) {
+	auto qInfos = queueLayout.getQueueCreateInfos();
 	VkDeviceCreateInfo deviceInfo{};
 	deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	deviceInfo.pNext = &pd.features10;
-	deviceInfo.pQueueCreateInfos = queueInfo.data();
-	deviceInfo.queueCreateInfoCount = 1;
+	deviceInfo.pQueueCreateInfos = qInfos.data();
+	deviceInfo.queueCreateInfoCount = qInfos.size();
 	deviceInfo.enabledExtensionCount =
 	  (uint)std::size(getRequestedDeviceExtensions());
 	deviceInfo.ppEnabledExtensionNames =
@@ -243,31 +229,27 @@ void LogicalDevice::_setup() {
 		logger("Vulkan failed to create main graphical device!\n");
 		throw "VulkanCreateGraphicalDeviceFailure";
 	}
-	vkGetDeviceQueue(d, queueIndex, 0, &queue);
+	queuePool.make(queueLayout, *this);
 }
 
 LogicalDevice::LogicalDevice(
-  const PhysicalDevice& p, QueueFamilyIndex queueFamilyIndex):
-  pd(p) {
-	queueIndex = queueFamilyIndex;
-	_setup();
+  PhysicalDevice& d, const QueuePoolLayout& queueLayout):
+  pd(d) {
+	_setup(queueLayout);
 }
-LogicalDevice::LogicalDevice(
-  PhysicalDevice&& p, QueueFamilyIndex queueFamilyIndex):
-  pd(std::move(p)) {
-	queueIndex = queueFamilyIndex;
-	_setup();
-}
+// FIXME: Currently disabled LogicalDevice move as most objects CANNOT handle
+// it!
+/*
 LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept:
   pd(std::move(o.pd)), commendPools(std::move(o.commendPools)) {
 	queue = o.queue;
 	queueIndex = o.queueIndex;
 	d = o.d;
 	o.d = nullptr;
-}
+}*/
 LogicalDevice::~LogicalDevice() {
 	if (swapChain) swapChain.reset();
-	commendPools.clear();
+	queuePool.reset();
 	if (d) vkDestroyDevice(d, nullptr);
 }
 std::pair<uint, MemoryPointer> LogicalDevice::allocMemory(
@@ -283,7 +265,7 @@ void LogicalDevice::freeMemory(uint memoryIndex, MemoryPointer ptr) {
 	// logger("Vulkan Freeing memId: ", memoryIndex);
 	memoryPools.at(memoryIndex).free(ptr);
 }
-
+/*
 bool LogicalDevice::isSwapchainValid() const {
 	return swapChain && swapChain->isValid();
 }
@@ -302,265 +284,10 @@ bool LogicalDevice::loadSwapchain(uvec2 size) {
 }
 void LogicalDevice::unloadSwapchain() { swapChain.reset(); }
 bool LogicalDevice::isSwapchainLoaded() const { return swapChain; }
-CommendPool& LogicalDevice::getCommendPool(Flags<CommendPoolType> type) {
-	return commendPools.try_emplace(static_cast<uint>(type), *this, type).first->second;
-}
+*/
+
+/*
 CommendBuffer LogicalDevice::getSingleUseCommendBuffer() {
 	auto& cp = getCommendPool(CommendPoolType::Shortlived);
 	return cp.makeCommendBuffer();
-}
-
-OSRenderSurface::OSRenderSurface() {
-	if (glfwCreateWindowSurface(getVkInstance(),
-		  (GLFWwindow*)events::ThreadEvents::getGLFWWindow(), nullptr, &surface)
-		!= VK_SUCCESS) {
-		logger("Vulkan and GLFW failed to get OS specific Render Surface!\n");
-		throw "VulkanGLFWCreateOSWindowSurfaceFailure";
-	}
-}
-OSRenderSurface::~OSRenderSurface() {
-	vkDestroySurfaceKHR(getVkInstance(), surface, nullptr);
-}
-
-SwapchainSupport::SwapchainSupport(
-  const PhysicalDevice& pd, const OSRenderSurface& s) {
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pd.d, s.surface, &capabilities);
-	uint fCount, pmCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(pd.d, s.surface, &fCount, nullptr);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(
-	  pd.d, s.surface, &pmCount, nullptr);
-	formats.resize(fCount);
-	presentModes.resize(pmCount);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(
-	  pd.d, s.surface, &fCount, formats.data());
-	vkGetPhysicalDeviceSurfacePresentModesKHR(
-	  pd.d, s.surface, &pmCount, presentModes.data());
-}
-VkSurfaceFormatKHR SwapchainSupport::getFormat() const {
-	assert(!formats.empty());
-	auto it = std::find_if(
-	  formats.begin(), formats.end(), [](const VkSurfaceFormatKHR& v) {
-		  return (v.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR
-				  && v.format == VK_FORMAT_R8G8B8A8_SRGB);
-	  });
-	return it == formats.end() ? formats.front() : *it;
-}
-VkPresentModeKHR SwapchainSupport::getPresentMode(
-  bool preferRelaxedVBlank) const {
-#ifdef USE_MAILBOX_MODE
-	return VK_PRESENT_MODE_MAILBOX_KHR;
-#endif
-	if (preferRelaxedVBlank
-		&& std::find(presentModes.begin(), presentModes.end(),
-			 VK_PRESENT_MODE_FIFO_RELAXED_KHR)
-			 != presentModes.end())
-		return VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-	else
-		return VK_PRESENT_MODE_FIFO_KHR;
-}
-uvec2 SwapchainSupport::getSwapchainSize(uvec2 ps) const {
-	if (capabilities.currentExtent.width != uint(-1)
-		&& capabilities.currentExtent.height != uint(-1))
-		return uvec2(
-		  capabilities.currentExtent.width, capabilities.currentExtent.height);
-	uvec2 min{
-	  capabilities.minImageExtent.width, capabilities.minImageExtent.height};
-	uvec2 max{
-	  capabilities.maxImageExtent.width, capabilities.maxImageExtent.height};
-	return glm::max(min, glm::min(max, ps));
-}
-uint SwapchainSupport::getImageCount(uint preferredCount) const {
-	/*logger("ImgCount: ",
-	  std::max(capabilities.minImageCount,
-		capabilities.maxImageCount == 0
-		  ? preferredCount
-		  : std::min(capabilities.maxImageCount, preferredCount)),
-	  " PreferredCount: ", preferredCount,
-	  " Capabilities: ", capabilities.minImageCount, "-",
-	  capabilities.maxImageCount);*/
-	return std::max(capabilities.minImageCount,
-	  capabilities.maxImageCount == 0
-		? preferredCount
-		: std::min(capabilities.maxImageCount, preferredCount));
-}
-
-static SwapchainCallback swapchainCallback;
-void Swapchain::setCallback(SwapchainCallback sc) { swapchainCallback = sc; }
-
-// NOTE: Three result from this _build() call:
-// 1: return & Successful. sc != nullptr. *old_sc invalidated.
-// 2: return & Failure. sc == nullptr. *old_sc invalidated.
-// 3: throw Exception. *sc not touched. *old_sc not touched.
-void Swapchain::_build(uvec2 preferredSize, uint preferredImageCount,
-  WindowTransparentType transparentWindowType) {
-	VkSwapchainKHR old_sc = sc;
-	auto sp = d.pd.getSwapchainSupport();
-	surfaceFormat = sp.getFormat();
-	auto presentMode = sp.getPresentMode(true);
-	pixelSize = sp.getSwapchainSize(preferredSize);
-	if (pixelSize == uvec2(0)) {
-		logger("Vulkan: Noted that window size is 0. Halting rendering...\n");
-		if (swapchainCallback.onSurfaceMinimized)
-			swapchainCallback.onSurfaceMinimized(*this);
-		throw SurfaceMinimizedException();
-	}
-
-	uint32_t bufferCount = sp.getImageCount(preferredImageCount);
-
-	if ((sp.capabilities.supportedCompositeAlpha
-		  & (VkCompositeAlphaFlagBitsKHR)transparentWindowType)
-		== 0) {
-		logger("Vulkan: WARNING: Window Surface does not support "
-			   "VkCompositeAlphaFlagBitsKHR: ",
-		  (VkCompositeAlphaFlagBitsKHR)transparentWindowType,
-		  ". Setting it to default.\n");
-		transparentWindowType = WindowTransparentType::RemoveAlpha;
-	}
-
-	VkSwapchainCreateInfoKHR createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	createInfo.surface = sf.surface;
-	createInfo.minImageCount = bufferCount;
-	createInfo.imageFormat = surfaceFormat.format;
-	createInfo.imageColorSpace = surfaceFormat.colorSpace;
-	createInfo.imageExtent = VkExtent2D{pixelSize.x, pixelSize.y};
-	createInfo.imageArrayLayers = 1;
-	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-	createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	createInfo.queueFamilyIndexCount = 0;
-	createInfo.pQueueFamilyIndices = nullptr;
-	createInfo.preTransform = sp.capabilities.currentTransform;
-	createInfo.compositeAlpha =
-	  (VkCompositeAlphaFlagBitsKHR)transparentWindowType;
-	createInfo.presentMode = presentMode;
-	createInfo.clipped = VK_TRUE;
-	createInfo.oldSwapchain = old_sc == nullptr ? VK_NULL_HANDLE : old_sc;
-	auto result = vkCreateSwapchainKHR(d.d, &createInfo, nullptr, &sc);
-	switch (result) {
-	case VK_SUCCESS:
-		vkGetSwapchainImagesKHR(d.d, sc, &bufferCount, nullptr);
-		swapChainImages.resize(bufferCount);
-		vkGetSwapchainImagesKHR(d.d, sc, &bufferCount, swapChainImages.data());
-		outdated = false;
-		break;
-	case VK_ERROR_OUT_OF_HOST_MEMORY:
-		throw "VulkanSwapchainCreateFailure::OutOfHostMemory";
-	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-		throw "VulkanSwapchainCreateFailure::OutOfDeviceMemory";
-	case VK_ERROR_DEVICE_LOST:
-		// TODO: Add handling for device lost
-		throw "TODOVulkanDeviceLostUnhandled";
-	case VK_ERROR_SURFACE_LOST_KHR:
-		// TODO: Add handling for surface lost
-		throw "TODOVulkanSurfaceLostUnhandled";
-	case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-		throw "VulkanSwapchainCreateFailure::NativeWindowInUse";
-	case VK_ERROR_INITIALIZATION_FAILED: sc = nullptr;
-	default: throw "VulkanSwapchainCreateFailure::UnhandledEnum";
-	}
-	if (old_sc != nullptr) {
-		vkDestroySwapchainKHR(d.d, old_sc, nullptr);
-		// TODO: Maybe seperate destruction of ticks and delay the
-		// onDestroy callback?
-		ticks.clear();
-		if (swapchainCallback.onDestroy)
-			swapchainCallback.onDestroy(*this, sc != nullptr);
-	}
-	if (sc != nullptr) {
-		ticks.resize(getImageCount());
-		if (swapchainCallback.onCreate)
-			swapchainCallback.onCreate(*this, old_sc != nullptr);
-	}
-}
-
-Swapchain::Swapchain(const OSRenderSurface& surface, LogicalDevice& device,
-  uvec2 preferredSize, uint preferredImageCount,
-  WindowTransparentType transparentWindowType):
-  d(device),
-  sf(surface) {
-	// logger("Create Swapchain...");
-	sc = nullptr;
-	_build(preferredSize, preferredImageCount, transparentWindowType);
-}
-void Swapchain::rebuild(uvec2 preferredSize, uint preferredImageCount,
-  WindowTransparentType transparentWindowType) {
-	// logger("Rebuild Swapchain...");
-	_build(preferredSize, preferredImageCount, transparentWindowType);
-}
-uint Swapchain::getImageCount() const { return swapChainImages.size(); }
-bool Swapchain::renderNextFrame(bool waitForVSync) {
-	uint imageId{uint(-1)};
-	Semaphore sp{d};
-	auto code =
-	  vkAcquireNextImageKHR(d.d, sc, 0, sp.sp, VK_NULL_HANDLE, &imageId);
-	switch (code) {
-	case VK_SUBOPTIMAL_KHR: outdated = true;
-	case VK_SUCCESS: {
-		auto& optPtr = ticks[imageId];
-		// logger("Swapchain Acquire ", imageId);
-		if (optPtr) {
-			// logger("Swapchain reset Tick ", imageId);
-			optPtr->reset(std::move(sp));
-		} else {
-			// logger("Swapchain Make Tick ", imageId);
-			optPtr.make(d, imageId, std::move(sp));
-		}
-		while (!optPtr->render()) {
-			// FIXME: Kinda hacky here using std::move on another obj's internal
-			// stuff Currently needs a placeholder to avoid self move asignment
-			// issue causing underfined(?) behavior or unspecified state.
-			Semaphore temp{std::move(optPtr->acquireSemaphore)};
-			optPtr.make(d, imageId, std::move(temp));
-		}
-		try {
-			optPtr->send();	 // May throw OutdatedSwapchainException()
-			return true;
-		} catch (OutdatedSwapchainException) {
-			outdated = true;
-			return false;
-		}
-	}
-	case VK_ERROR_OUT_OF_DATE_KHR: outdated = true; return false;
-	case VK_TIMEOUT: return false;
-	case VK_NOT_READY: return false;
-	case VK_ERROR_OUT_OF_HOST_MEMORY:
-		throw "VulkanSwapchainGetNextImageFailure::OutOfHostMemory";
-	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-		throw "VulkanSwapchainGetNextImageFailure::OutOfDeviceMemory";
-	case VK_ERROR_DEVICE_LOST:
-		// TODO: Add handling for device lost
-		throw "TODOVulkanDeviceLostUnhandled";
-	case VK_ERROR_SURFACE_LOST_KHR:
-		// TODO: Add handling for surface lost
-		throw "TODOVulkanSurfaceLostUnhandled";
-	default: throw "VulkanSwapchainGetNextImageFailure::UnhandledEnum";
-	}
-}
-
-bool Swapchain::isValid() const { return sc != nullptr && !outdated; }
-
-ImageView Swapchain::getChainImageView(uint index) {
-	VkImageViewCreateInfo cInfo{};
-	cInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	cInfo.image = swapChainImages.at(index);
-	cInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	cInfo.format = surfaceFormat.format;
-	cInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-	cInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	cInfo.subresourceRange.baseMipLevel = 0;
-	cInfo.subresourceRange.levelCount = 1;
-	cInfo.subresourceRange.baseArrayLayer = 0;
-	cInfo.subresourceRange.layerCount = 1;
-	return ImageView(d, cInfo);
-}
-Swapchain::~Swapchain() {
-	if (sc != nullptr) {
-		ticks.clear();
-		if (swapchainCallback.onDestroy)
-			swapchainCallback.onDestroy(*this, false);
-		vkDestroySwapchainKHR(d.d, sc, nullptr);
-	}
-}
+}*/

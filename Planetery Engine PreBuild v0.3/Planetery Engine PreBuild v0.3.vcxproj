@@ -128,6 +128,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>VkLayer_utils.lib;vulkan-1.lib;glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,20 +180,26 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
     </ClCompile>
+    <ClCompile Include="SrcVulkan\Vulkan-Queue.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-QueueImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
+    </ClCompile>
     <ClCompile Include="SrcVulkan\Vulkan-Shader.ixx" />
     <ClCompile Include="SrcVulkan\Vulkan-ShaderImp.cpp">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
     </ClCompile>
-    <ClCompile Include="SrcVulkan\Vulkan-Sync.ixx" />
-    <ClCompile Include="SrcVulkan\Vulkan-SyncImp.cpp">
+    <ClCompile Include="SrcVulkan\Vulkan-Swapchain.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-SwapchainImp.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
     </ClCompile>
-    <ClCompile Include="SrcVulkan\Vulkan-Tick.ixx" />
-    <ClCompile Include="SrcVulkan\Vulkan-TickImp.cpp">
+    <ClCompile Include="SrcVulkan\Vulkan-Sync.ixx" />
+    <ClCompile Include="SrcVulkan\Vulkan-SyncImp.cpp">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Sanitize|x64'">CompileAsCppModuleInternalPartition</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCppModuleInternalPartition</CompileAs>
