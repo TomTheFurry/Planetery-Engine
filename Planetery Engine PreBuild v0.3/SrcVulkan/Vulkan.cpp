@@ -10,7 +10,6 @@ import: Sync;
 import: Commend;
 import: Descriptor;
 import: Pipeline;
-import: Tick;
 import: Enum;
 import: Swapchain;
 import std.core;
@@ -260,11 +259,11 @@ void vk::init() {
 	}
 	uint mQueueFamily = qpl.findFamilyBySupportType(
 	  QueueType::MemoryTransfer, Flags(QueueType::Graphics) | QueueType::Compute);
-	logger(mQueueFamily);
+	//logger(mQueueFamily);
 	if (mQueueFamily == uint(-1))
 		mQueueFamily = qpl.findFamilyBySupportType(
 		  QueueType::MemoryTransfer, QueueType::Graphics);
-	logger(mQueueFamily);
+	//logger(mQueueFamily);
 	if (mQueueFamily == uint(-1) || mQueueFamily==rQueueFamily) {
 		// Use render family for memory transfer
 		uint rQueueCount =

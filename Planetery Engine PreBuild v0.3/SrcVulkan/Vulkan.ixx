@@ -11,7 +11,6 @@ export import: Sync;
 export import: Commend;
 export import: Descriptor;
 export import: Pipeline;
-export import: Tick;
 
 import: Declaration;
 
