@@ -117,14 +117,14 @@ static vk::RenderPass* _renderPass = nullptr;
 static vk::RenderPipeline* _pipeline = nullptr;
 
 // Depend on Frame
-struct FrameContainer {
+struct ImageContainer {
 	util::OptionalUniquePtr<vk::DescriptorSet> ds;
 	util::OptionalUniquePtr<vk::UniformBuffer> ub;
 	util::OptionalUniquePtr<vk::CommendBuffer> cb;
 	util::OptionalUniquePtr<vk::ImageView> sv;
 	util::OptionalUniquePtr<vk::FrameBuffer> fb;
 };
-static std::vector<FrameContainer> _frames{};
+static std::vector<ImageContainer> _Images{};
 
 void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 	using namespace vk;
@@ -206,8 +206,8 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 		_renderPass =
 		  new RenderPass(sc.d, {swapchainAtm}, {subPass1}, {dependency1});
 	}
-	// Setup frame containers
-	_frames.resize(sc.getImageCount());
+	// Setup imgData containers
+	_Images.resize(sc.getImageCount());
 
 	// Make swapchain framebuffer
 	// Make Pipeline
@@ -251,25 +251,25 @@ void glfwVkFrameBufferResizeWakeupInlineCallback(events::WindowEventType) {
 }
 void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 	using namespace vk;
-	uint frameId = rt.getImageIndex();
-	// logger("vkFrameCallbackOnCreate:", frameId);
-	auto& frame = _frames[frameId];
+	uint imageId = rt.getImageIndex();
+	// logger("vkFrameCallbackOnCreate:", imageId);
+	auto& imgData = _Images[imageId];
 	// FIXME: RenderTick missing a getSwapchain() method!
 	auto& sc = *rt.d.swapChain;
 
-	frame.sv.make(sc.getChainImageView(frameId));
-	frame.fb.make(FrameBuffer{
-	  rt.d, *_renderPass, (uvec2)sc.pixelSize, {std::cref(*frame.sv)}});
+	imgData.sv.make(sc.getChainImageView(imageId));
+	imgData.fb.make(FrameBuffer{
+	  rt.d, *_renderPass, (uvec2)sc.pixelSize, {std::cref(*imgData.sv)}});
 
-	frame.ub.make(rt.d, sizeof(START_COLOR), MemoryFeature::Mappable);
-	frame.ub->directWrite(&START_COLOR);
+	imgData.ub.make(rt.d, sizeof(START_COLOR), MemoryFeature::Mappable);
+	imgData.ub->directWrite(&START_COLOR);
 
-	frame.ds.make(_dpc->allocNewSet());
+	imgData.ds.make(_dpc->allocNewSet());
 
 	DescriptorSet::blockingWrite(
 	  rt.d, {
 			  DescriptorSet::CmdWriteInfo{
-				.target = &*frame.ds,
+				.target = &*imgData.ds,
 				.bindPoint = 0,
 				.type = DescriptorDataType::ImageAndSampler,
 				.count = 1,
@@ -281,44 +281,44 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 }
 void vkFrameCallbackOnRender(vk::RenderTick& rt) {
 	using namespace vk;
-	uint frameId = rt.getImageIndex();
-	// logger("vkFrameCallbackOnRender:", frameId);
-	auto& frame = _frames[frameId];
+	uint imageId = rt.getImageIndex();
+	// logger("vkFrameCallbackOnRender:", imageId);
+	auto& imgData = _Images[imageId];
 
-	frame.cb.make(rt.d.getCommendPool(
+	imgData.cb.make(rt.d.getCommendPool(
 	  Flags(CommendPoolType::Shortlived) | CommendPoolType::Resetable));
-	frame.cb->startRecording(CommendBufferUsage::None);
-	frame.cb->cmdBeginRender(*_renderPass, *frame.fb, vec4(1., 0., 0., 0.));
-	frame.cb->cmdBind(*_pipeline);
-	frame.cb->cmdBind(*frame.ds, *_pipeline);
-	frame.cb->cmdBind(*_vertBuff);
-	frame.cb->cmdBind(*_indexBuff);
+	imgData.cb->startRecording(CommendBufferUsage::None);
+	imgData.cb->cmdBeginRender(*_renderPass, *imgData.fb, vec4(1., 0., 0., 0.));
+	imgData.cb->cmdBind(*_pipeline);
+	imgData.cb->cmdBind(*imgData.ds, *_pipeline);
+	imgData.cb->cmdBind(*_vertBuff);
+	imgData.cb->cmdBind(*_indexBuff);
 	vec4 data{currentColor.x, currentColor.y, currentColor.z, 1.f};
-	frame.cb->cmdPushConstants(
+	imgData.cb->cmdPushConstants(
 	  *_pipeline, ShaderType::Frag, 0, sizeof(vec4), &data);
-	// frame.cb->cmdDraw((uint)std::size(testVert) / 2);
-	frame.cb->cmdDrawIndexed(std::size(testInd));
-	frame.cb->cmdEndRender();
-	frame.cb->endRecording();
+	// imgData.cb->cmdDraw((uint)std::size(testVert) / 2);
+	imgData.cb->cmdDrawIndexed(std::size(testInd));
+	imgData.cb->cmdEndRender();
+	imgData.cb->endRecording();
 
 	const float DELTA = 0.0001f;
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
 	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
 	  1.f);
-	frame.ub->directWrite(&currentColor);
+	imgData.ub->directWrite(&currentColor);
 	rt.addCmdStage(
-	  *frame.cb, {}, {}, {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
+	  *imgData.cb, {}, {}, {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
 }
 void vkFrameCallbackOnDestroy(vk::RenderTick& rt) {
-	uint frameId = rt.getImageIndex();
-	// logger("vkFrameCallbackOnDestroy:", frameId);
-	auto& frame = _frames[frameId];
-	frame.cb.reset();
-	frame.ds.reset();
-	frame.ub.reset();
-	frame.fb.reset();
-	frame.sv.reset();
+	uint imageId = rt.getImageIndex();
+	// logger("vkFrameCallbackOnDestroy:", imageId);
+	auto& imgData = _Images[imageId];
+	imgData.cb.reset();
+	imgData.ds.reset();
+	imgData.ub.reset();
+	imgData.fb.reset();
+	imgData.sv.reset();
 }
 */
 
@@ -334,26 +334,27 @@ static vk::ShaderCompiled* _fragShad = nullptr;
 static vk::VertexAttribute va{};
 
 static vk::DescriptorLayout* _dsl = nullptr;
+static vk::Queue* _presentQueue = nullptr;
 
 // Depend on Swapchain
-static vk::MonotonicLifetimeManager swapchainLM{};
-
 static vk::DescriptorContainer* _dpc = nullptr;
 static vk::RenderPass* _renderPass = nullptr;
 static vk::RenderPipeline* _pipeline = nullptr;
 
 // Depend on Frame
 
-struct FrameContainer {
-	util::OptionalUniquePtr<vk::MonotonicLifetimeManager> frameLM;
+struct ImageContainer {
+	vk::MonotonicLifetimeManager* perFrameLM;
+	vk::MonotonicLifetimeManager* perImageLM;
 	vk::DescriptorSet* ds;
 	vk::StorageBuffer* ub;
-	util::OptionalUniquePtr<vk::CommendBuffer> cb;
 	vk::ImageView* sv;
 	vk::FrameBuffer* fb;
-#pragma warning(suppress : 26495)
+	vk::Queue* q;
+	vk::CommendPool* cp;
+	//#pragma warning(suppress : 26495)
 };
-static std::vector<FrameContainer> _frames{};
+static std::vector<ImageContainer> _Images{};
 
 static std::vector<vec4> _ssboTest{};
 
@@ -411,6 +412,12 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 								  .shader = ShaderType::Vert,
 								},
 							  });
+
+	// Get present queue
+	auto& qp = d.getQueuePool();
+	uint gId = qp.getGroupByHint(HintUsage::Present);
+	_presentQueue = qp.queryQueueNotInUse(gId);
+	if (_presentQueue == nullptr) qp.queryQueueInUse(gId);
 }
 void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	using namespace vk;
@@ -423,15 +430,17 @@ void vkDeviceCallbackOnDestroy(vk::LogicalDevice& d) {
 	if (_vertShad != nullptr) delete _vertShad;
 	if (_fragShad != nullptr) delete _fragShad;
 }
-//static void* debugPtr = nullptr;
+// static void* debugPtr = nullptr;
 void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	using namespace vk;
+	auto& d = sc.getDevice();
+	auto& swapchainLM = sc.getPerSwapchainResource();
 	// logger("vkSwapchainCallbackOnCreate:", recreation ? " true" : " false");
-	assert(_frames.empty());
-	_dpc = swapchainLM.make<DescriptorContainer>(
-	  sc.d, *_dsl, 16, DescriptorPoolType::Dynamic);
+	assert(_Images.empty());
+	_dpc = &swapchainLM.make<DescriptorContainer>(
+	  d, *_dsl, 16, DescriptorPoolType::Dynamic);
 	// Make renderPass
-	VkFormat swapchainFormat = sc.surfaceFormat.format;
+	VkFormat swapchainFormat = sc.getImageFormat();
 	{
 		RenderPass::Attachment swapchainAtm(swapchainFormat,
 		  TextureActiveUseType::Undefined, AttachmentReadOp::Clear,
@@ -445,11 +454,11 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 		auto il_rp_b = {subPass1};
 		auto il_rp_c = {dependency1};
 		// FIXME: the forwarding stops people from using std::initializer_list
-		_renderPass = swapchainLM.make<RenderPass>(
-		  sc.d, asSpan(il_rp_a), asSpan(il_rp_b), asSpan(il_rp_c));
+		_renderPass = &swapchainLM.make<RenderPass>(
+		  d, asSpan(il_rp_a), asSpan(il_rp_b), asSpan(il_rp_c));
 	}
-	// Setup frame containers
-	_frames.resize(sc.getImageCount());
+	// Setup imgData containers
+	_Images.resize(sc.getImageCount());
 
 	// Make swapchain framebuffer
 	// Make Pipeline
@@ -459,22 +468,22 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	  RenderPipeline::PushConstantLayout(0, sizeof(vec4), ShaderType::Frag)};
 	auto il_pl_c = {RenderPipeline::ShaderStage(*_vertShad, "main"),
 	  RenderPipeline::ShaderStage(*_fragShad, "main")};
+	auto pixSize = sc.getPixelSize();
 	auto il_pl_d = {VkViewport{
 	  .x = 0,
 	  .y = 0,
-	  .width = (float)sc.pixelSize.x,
-	  .height = (float)sc.pixelSize.y,
+	  .width = (float)pixSize.x,
+	  .height = (float)pixSize.y,
 	  .minDepth = 0,
 	  .maxDepth = 1,
 	}};
+	auto scPixSize = sc.getPixelSize();
 	auto il_pl_e = {
-	  VkRect2D{VkOffset2D{0, 0}, VkExtent2D{sc.pixelSize.x, sc.pixelSize.y}}};
+	  VkRect2D{VkOffset2D{0, 0}, VkExtent2D{scPixSize.x, scPixSize.y}}};
 	auto il_pl_f = {RenderPipeline::AttachmentBlending()};
-	_pipeline = swapchainLM.make<RenderPipeline>(sc.d, asSpan(il_pl_a),
-	  asSpan(il_pl_b),
-	  *_renderPass, 0,
-	  asSpan(il_pl_c),
-	  va, PrimitiveTopology::TriangleStrip, false, asSpan(il_pl_d), asSpan(il_pl_e),
+	_pipeline = &swapchainLM.make<RenderPipeline>(d, asSpan(il_pl_a),
+	  asSpan(il_pl_b), *_renderPass, 0, asSpan(il_pl_c), va,
+	  PrimitiveTopology::TriangleStrip, false, asSpan(il_pl_d), asSpan(il_pl_e),
 	  false, false, PolygonMode::Fill, CullMode::None,
 	  FrontDirection::Clockwise, std::optional<RenderPipeline::DepthBias>(),
 	  1.f, 1, true, std::optional<RenderPipeline::DepthStencilSettings>(),
@@ -483,7 +492,6 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 }
 void vkSwapchainCallbackOnDestroy(vk::Swapchain& sc, bool recreation) {
 	// logger("vkSwapchainCallbackOnDestroy:", recreation ? " true" : " false");
-	swapchainLM.reset();
 }
 static std::atomic<bool> isPausedOnMinimized{false};
 void vkSwapchainCallbackOnSurfaceMinimized(vk::Swapchain&) {
@@ -496,87 +504,114 @@ void glfwVkFrameBufferResizeWakeupInlineCallback(events::WindowEventType) {
 		ThreadRender::unpause();
 	}
 }
-void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
+void vkFrameCallbackOnCreate(vk::SwapchainImage& scImg) {
 	using namespace vk;
-	uint frameId = rt.getImageIndex();
-	// logger("vkFrameCallbackOnCreate:", frameId);
-	auto& frame = _frames[frameId];
-	if (!frame.frameLM) frame.frameLM.make();
-	auto& alloc = *frame.frameLM;
+	auto& d = scImg.getDevice();
+	uint imageId = scImg.getImageIndex();
+	// logger("vkFrameCallbackOnCreate:", imageId);
+	auto& imgData = _Images[imageId];
+	imgData.perFrameLM = &scImg.getPerFrameResource();
+	imgData.perImageLM = &scImg.getPerImageResource();
 
-	// FIXME: RenderTick missing a getSwapchain() method!
-	auto& sc = *rt.d.swapChain;
+	auto& alloc = *imgData.perImageLM;
 
-	frame.sv = alloc.make<ImageView>(sc.getChainImageView(frameId));
-	frame.fb = alloc.make<FrameBuffer>(FrameBuffer{
-	  rt.d, *_renderPass, (uvec2)sc.pixelSize, {std::cref(*frame.sv)}});
+	auto& sc = scImg.getSwapchain();
 
-	frame.ub = alloc.make<StorageBuffer>(
-	  rt.d, sizeof(vec4) * _ssboTest.size(), MemoryFeature::Mappable);
-	frame.ub->directWrite(_ssboTest.data());
+	imgData.sv = &scImg.makeImageView(alloc);
+	imgData.fb = &alloc.make<FrameBuffer>(FrameBuffer{
+	  d, *_renderPass, sc.getPixelSize(), {std::cref(*imgData.sv)}});
 
-	frame.ds = alloc.make<DescriptorSet>(_dpc->allocNewSet());
+	imgData.ub = &alloc.make<StorageBuffer>(
+	  d, sizeof(vec4) * _ssboTest.size(), MemoryFeature::Mappable);
+	imgData.ub->directWrite(_ssboTest.data());
+
+	imgData.ds = &alloc.make<DescriptorSet>(_dpc->allocNewSet());
 
 	DescriptorSet::blockingWrite(
-	  rt.d, {
-			  DescriptorSet::CmdWriteInfo{
-				.target = &*frame.ds,
-				.bindPoint = 0,
-				.type = DescriptorDataType::ImageAndSampler,
-				.count = 1,
-				.offset = 0,
-				.data = {DescriptorSet::WriteData(_imgViewTest,
-				  _imgSamplerBasic, TextureActiveUseType::ReadOnlyShader)},
-			  },
-			  DescriptorSet::CmdWriteInfo{
-				.target = &*frame.ds,
-				.bindPoint = 1,
-				.type = DescriptorDataType::StorageBuffer,
-				.count = 1,
-				.offset = 0,
-				.data = {DescriptorSet::WriteData(&*frame.ub)},
-			  },
-			});
+	  d, {
+		   DescriptorSet::CmdWriteInfo{
+			 .target = &*imgData.ds,
+			 .bindPoint = 0,
+			 .type = DescriptorDataType::ImageAndSampler,
+			 .count = 1,
+			 .offset = 0,
+			 .data = {DescriptorSet::WriteData(_imgViewTest, _imgSamplerBasic,
+			   TextureActiveUseType::ReadOnlyShader)},
+		   },
+		   DescriptorSet::CmdWriteInfo{
+			 .target = &*imgData.ds,
+			 .bindPoint = 1,
+			 .type = DescriptorDataType::StorageBuffer,
+			 .count = 1,
+			 .offset = 0,
+			 .data = {DescriptorSet::WriteData(&*imgData.ub)},
+		   },
+		 });
+
+	auto& qp = d.getQueuePool();
+	uint qgIndex = qp.getGroupByHint(HintUsage::Render);
+	if (qgIndex == uint(-1)) {
+		logger("Warning: Vulkan failed to get queue with hint: Render. Using "
+			   "Fallback\n");
+		qgIndex = qp.findGroupBySupportType(QueueType::Graphics);
+		assert(qgIndex != uint(-1));
+	}
+	imgData.q = qp.queryQueueNotInUse(qgIndex);
+	if (imgData.q == nullptr) qp.queryQueueInUse(qgIndex);
+	assert(imgData.q != nullptr);
+
+	imgData.cp = &qp.queryCommendPool(
+	  qgIndex, Flags(CommendPoolType::Shortlived) | CommendPoolType::Resetable);
 }
-void vkFrameCallbackOnRender(vk::RenderTick& rt) {
+void vkFrameCallbackOnRender(vk::SwapchainImage& scImg) {
 	using namespace vk;
-	uint frameId = rt.getImageIndex();
-	// logger("vkFrameCallbackOnRender:", frameId);
-	auto& frame = _frames[frameId];
+	auto& d = scImg.getDevice();
+	uint imageId = scImg.getImageIndex();
+	// logger("vkFrameCallbackOnRender:", imageId);
+	auto& imgData = _Images[imageId];
+	auto& alloc = *imgData.perFrameLM;
 
-	frame.ub->directWrite(_ssboTest.data());
+	// TODO: make this indirectWrite
+	imgData.ub->directWrite(_ssboTest.data());
 
-	frame.cb.make(rt.d.getCommendPool(
-	  Flags(CommendPoolType::Shortlived) | CommendPoolType::Resetable));
-	frame.cb->startRecording(CommendBufferUsage::None);
-	frame.cb->cmdBeginRender(*_renderPass, *frame.fb, vec4(1., 0., 0., 0.));
-	frame.cb->cmdBind(*_pipeline);
-	frame.cb->cmdBind(*frame.ds, *_pipeline);
-	frame.cb->cmdBind(*_vertBuff);
-	frame.cb->cmdBind(*_indexBuff);
+	// Note: this commend buffer will be cleaned up by the lifetime manager
+	auto& cb = alloc.make<CommendBuffer>(*imgData.cp);
+
 	vec4 data{currentColor.x, currentColor.y, currentColor.z, 1.f};
-	frame.cb->cmdPushConstants(
-	  *_pipeline, ShaderType::Frag, 0, sizeof(vec4), &data);
-	// frame.cb->cmdDraw((uint)std::size(testVert) / 2);
-	frame.cb->cmdDrawIndexed(std::size(testInd));
-	frame.cb->cmdEndRender();
-	frame.cb->endRecording();
-	 
+	cb.startRecording(CommendBufferUsage::Streaming);
+	cb.cmdBeginRender(*_renderPass, *imgData.fb, vec4(1., 0., 0., 0.));
+	cb.cmdBind(*_pipeline);
+	cb.cmdBind(*imgData.ds, *_pipeline);
+	cb.cmdBind(*_vertBuff);
+	cb.cmdBind(*_indexBuff);
+	cb.cmdPushConstants(*_pipeline, ShaderType::Frag, 0, sizeof(vec4), &data);
+	cb.cmdDrawIndexed(std::size(testInd));
+	cb.cmdEndRender();
+	cb.endRecording();
+
 	const float DELTA = 0.0001f;
 	currentColor = util::transformHSV(currentColor, 0.1f, 1.f, 1.f);
 	currentColor = glm::vec4(glm::normalize(glm::vec3{currentColor.x + DELTA,
 							   currentColor.y + DELTA, currentColor.z + DELTA}),
 	  1.f);
-	// frame.ub->directWrite(&currentColor);
-	rt.addCmdStage(
-	  *frame.cb, {}, {}, {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT});
+
+	// Note: this semaphore will be cleaned up by the lifetime manager
+	auto& cmdDoneSp = alloc.make<Semaphore>(d);
+	auto& cmdDoneFc = alloc.make<Fence>(d);
+	// Submit commend
+	imgData.q->submit(cb, &scImg.getImageRecievedSemaphore(),
+	  PipelineStage::OutputAttachmentColor, &cmdDoneSp, &cmdDoneFc);
+	// Submit image present commend (that waits for pre commend to finish)
+	_presentQueue->presentImage(scImg, cmdDoneSp, cmdDoneFc);
 }
-void vkFrameCallbackOnDestroy(vk::RenderTick& rt) {
-	uint frameId = rt.getImageIndex();
-	// logger("vkFrameCallbackOnDestroy:", frameId);
-	auto& frame = _frames[frameId];
-	if (frame.frameLM) frame.frameLM->reset();
-	frame.cb.reset();
+
+void vkFrameCallbackOnDestroy(vk::SwapchainImage& scImg) {
+	using namespace vk;
+	auto& d = scImg.getDevice();
+	uint imageId = scImg.getImageIndex();
+	// logger("vkFrameCallbackOnDestroy:", imageId);
+	auto& imgData = _Images[imageId];
+	d.getQueuePool().markQueueNotInUse(*imgData.q);
 }
 
 
