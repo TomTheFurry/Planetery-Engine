@@ -5,6 +5,10 @@ export import "GlmModule.h";
 import std.core;
 export {
 	template<typename T> using Ref = std::reference_wrapper<T>;
+	template<typename T> using UniquePtr = std::unique_ptr<T>;
+	template<typename... T> using Variant = std::variant<T...>;
+	template<typename T> using Optional = std::optional<T>;
+
 	template<typename T>
 	std::span<const T> asSpan(std::initializer_list<T> l) {
 		return std::span(l.begin(), l.end());
@@ -60,24 +64,24 @@ export {
 	constexpr auto B_PER_TB = 1099511627776;
 	constexpr auto B_PER_TB_F = 1099511627776.;
 #ifdef _DEBUG
-	constexpr bool IS_DEBUG_MODE = true;
+	constexpr auto IS_DEBUG_MODE = true;
 #else
-	constexpr bool IS_DEBUG_MODE = false;
+	constexpr auto IS_DEBUG_MODE = false;
 #endif
 #ifdef SAFETY_CHECK
-	constexpr bool DO_SAFETY_CHECK = true;
+	constexpr auto DO_SAFETY_CHECK = true;
 #else
-	constexpr bool DO_SAFETY_CHECK = false;
+	constexpr auto DO_SAFETY_CHECK = false;
 #endif
 #ifdef USE_VULKAN
-	constexpr bool USING_VULKAN = true;
+	constexpr auto USING_VULKAN = true;
 #else
-	constexpr bool USING_VULKAN = false;
+	constexpr auto USING_VULKAN = false;
 #endif
 #ifdef USE_OPENGL
-	constexpr bool USING_OPENGL = true;
+	constexpr auto USING_OPENGL = true;
 #else
-	constexpr bool USING_OPENGL = false;
+	constexpr auto USING_OPENGL = false;
 #endif
 }
 

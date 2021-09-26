@@ -315,7 +315,8 @@ export namespace pmr {
 		using difference_type = std::ptrdiff_t;
 		using propagate_on_container_move_assignment = std::false_type;
 		Allocator(MR* memory_resource): mr(memory_resource) {}
-		template<typename U> Allocator(const Allocator<U, MR>& o): mr(o.getMemoryResource()) {}
+		template<typename U> Allocator(const Allocator<U, MR>& o):
+		  mr(o.getMemoryResource()) {}
 		MR* getMemoryResource() const { return mr; }
 
 		[[nodiscard]] T* allocate(size_t n) {
@@ -420,8 +421,8 @@ export namespace pmr {
 	template<class Key, class T, class MR> using UnorderedMapMR =
 	  std::unordered_multimap<Key, T, std::hash<Key>, std::equal_to<Key>,
 		Allocator<std::pair<const Key, T>, MR>>;
-	template<class Key, class T, class MR> using MultimapMR =
-	  std::multimap<Key, T, std::less<Key>, Allocator<std::pair<const Key, T>, MR>>;
+	template<class Key, class T, class MR> using MultimapMR = std::multimap<Key,
+	  T, std::less<Key>, Allocator<std::pair<const Key, T>, MR>>;
 	template<class Key, class T, class MR> using MapMR =
 	  std::map<Key, T, std::less<Key>, Allocator<std::pair<const Key, T>, MR>>;
 
@@ -438,20 +439,46 @@ export namespace pmr {
 	template<class T, class MR> using ForwardListMR =
 	  std::forward_list<T, Allocator<T, MR>>;
 
-	template<class Obj, class Alloc, class... Args>
+	template<class T, class Alloc, class... Args>
 	requires requires(Alloc& a) {
-		{ a.allocate(1) } -> std::convertible_to<Obj*>;
+		{ a.allocate(1) } -> std::convertible_to<T*>;
 	}
-	Obj* make(Alloc& a, Args&&... args) {
-		return std::construct_at<Obj>(a.allocate(1), std::forward<Args>(args)...);
+	T* make(Alloc& a, Args&&... args) {
+		return std::construct_at<T>(a.allocate(1), std::forward<Args>(args)...);
 	}
-	template<class T, class MR, class... Args>
-	T* make(MR* mr, Args&&... args) {
-		return std::construct_at(Allocator<T, MR>(mr).allocate(1),
-		  std::forward<Args>(args)...);
+	template<class T, class MR, class... Args> T* make(MR* mr, Args&&... args) {
+		return std::construct_at(
+		  Allocator<T, MR>(mr).allocate(1), std::forward<Args>(args)...);
 	}
 
+	template<class T, class Alloc>
+	requires requires(Alloc& a) {
+		{ a.allocate(1) } -> std::convertible_to<T*>;
+	}
+	void free(Alloc& a, T* obj) {
+		obj->~Obj();
+		a.deallocate(obj, 1);
+	}
+	template<class T, class MR> void free(MR* mr, T* obj) {
+		obj->~obj();
+		Allocator<T, MR>(mr).deallocate(obj, 1);
+	}
 }
+
+/*TODO: Add this:
+// EnableIfTrue
+export {
+	template<typename T, bool shouldEnable> requires shouldEnable class
+EnableIfTrue: public T
+	{
+	  public:
+		using T::T;
+	};
+	template<typename T, bool shouldEnable> requires !shouldEnable class
+EnableIfTrue{};
+}
+*/
+
 
 export template<typename T>
 concept Iterator = std::input_or_output_iterator<T>;
@@ -608,6 +635,7 @@ export template<integral_based FlagType> class Flags
 	constexpr Flags operator^(FlagType f) const {
 		return _v ^ static_cast<value>(f);
 	}
+	constexpr Flags operator~() const { return ~_v; }
 
 	constexpr Flags& operator|=(Flags b) { return (_v |= b._v, *this); }
 	constexpr Flags& operator|=(FlagType f) {
@@ -626,8 +654,20 @@ export template<integral_based FlagType> class Flags
 		return static_cast<value>(f) == _v;
 	}
 
+	// has either
 	constexpr bool has(Flags b) const { return _v & b._v; }
 	constexpr bool has(FlagType f) const { return _v & static_cast<value>(f); }
+
+	constexpr bool hasAny(Flags b) const { return _v & b._v; }
+	constexpr bool hasAny(FlagType f) const {
+		return _v & static_cast<value>(f);
+	}
+
+	constexpr bool hasAll(Flags b) const { return (_v & b._v) == b._v; }
+	constexpr bool hasAll(FlagType f) const {
+		return (_v & static_cast<value>(f)) == static_cast<value>(f);
+	}
+
 	constexpr Flags& set(Flags b) { return (_v |= b._v, *this); }
 	constexpr Flags& set(FlagType f) {
 		return (_v |= static_cast<value>(f), *this);
@@ -862,9 +902,10 @@ export namespace util {
 			value = other.value;
 			other.value = nullptr;
 		}
-		template<typename... CtorArgs> void make(CtorArgs&&... args) {
+		template<typename... CtorArgs> T& make(CtorArgs&&... args) {
 			delete value;
 			value = new T(std::forward<CtorArgs>(args)...);
+			return *value;
 		}
 		T* operator->() { return value; }
 		const T* operator->() const { return value; }
@@ -872,16 +913,74 @@ export namespace util {
 		const T& operator*() const { return *value; }
 		operator bool() const { return !isNull(); }
 		bool isNull() const { return value == nullptr; }
+		bool has_value() const { return value != nullptr; }
 		void reset() {
 			delete value;
 			value = nullptr;
 		}
+		T* getOwnership() { return std::exchange(value, nullptr); }
 		~OptionalUniquePtr() { delete value; }
 	};
 	template<typename T, typename... CtorArgs>
 	static OptionalUniquePtr<T> makeOptionalUniquePtr(CtorArgs&&... args) {
 		return OptionalUniquePtr<T>(new T(std::forward<CtorArgs>(args)...));
 	}
+
+	template<typename T> class OptionalUnique
+	{
+		bool isConstructed = false;
+		union {
+			T _v;
+		};
+
+	  public:
+		OptionalUnique(){};
+		OptionalUnique(const OptionalUnique&) = delete;
+		// Safe
+		template<typename... Args> T& make(Args&&... args) {
+			if (isConstructed) _v.~T();
+			std::construct_at(&_v, std::forward<Args>(args)...);
+			isConstructed = true;
+			return _v;
+		}
+		// Unsafe
+		operator const T&() const { return _v; }
+		// Unsafe
+		operator T&() { return _v; }
+		// Unsafe
+		const T* operator->() const { return &_v; }
+		// Unsafe
+		T* operator->() { return &_v; }
+		// Unsafe
+		const T& operator*() const { return _v; }
+		// Unsafe
+		T& operator*() { return _v; }
+		// Safe
+		T* asPtr() { return isConstructed ? &_v : nullptr; }
+		// Safe
+		const T* asPtr() const { return isConstructed ? &_v : nullptr; }
+		// Unsafe
+		void destruct() {
+			isConstructed = false;
+			_v.~T();
+		}
+		// Unsafe
+		void free() {
+			isConstructed = false;
+			_v.~T();
+		}
+		// Safe
+		void reset() {
+			if (isConstructed) _v.~T();
+			isConstructed = false;
+		}
+		bool isNull() { return !isConstructed; }
+		bool has_value() { return isConstructed; }
+		// Safe
+		~OptionalUnique() {
+			if (isConstructed) _v.~T();
+		}
+	};
 
 	template<typename T> class ManualLifetime
 	{
@@ -904,6 +1003,40 @@ export namespace util {
 		}
 		void destruct() { _v.~T(); }
 		~ManualLifetime(){};
+	};
+
+	template<typename T> class DeferredCtor
+	{
+		union {
+			T _v;
+		};
+#ifdef SAFETY_CHECK
+		bool _isValueInited = false;
+#endif
+	  public:
+		DeferredCtor() = default;
+		DeferredCtor(DeferredCtor&& o) = default;
+		DeferredCtor(const DeferredCtor& o) = default;
+		operator const T&() const { return _v; }
+		operator T&() { return _v; }
+		const T* operator->() const { return &_v; }
+		T* operator->() { return &_v; }
+		const T& operator*() const { return _v; }
+		T& operator*() { return _v; }
+		template<typename... Args> T& make(Args&&... args) {
+#ifdef SAFETY_CHECK
+			if (_isValueInited) throw "UtilSaftyCheckDeferredCtorDoubleMake";
+			_isValueInited = true;
+#endif
+			return std::construct_at(&_v, std::forward<Args>(args)...);
+		}
+		~DeferredCtor() {
+#ifdef SAFETY_CHECK
+			if (!_isValueInited) throw "UtilSaftyCheckDeferredCtorBadLifetime";
+			_isValueInited = false;
+#endif
+			_v.~T();
+		}
 	};
 }
 
