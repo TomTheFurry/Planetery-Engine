@@ -137,6 +137,9 @@ export namespace vk {
 		static std::vector<DescriptorSet> makeBatch(DescriptorPool& dp,
 		  std::initializer_list<Ref<const DescriptorLayout>> uls);
 
+		// Note: Any Writes to the set must NOT happen between the binding of
+		// the set to a commend buffer and the completion of said commend buffer
+		// TODO: Check if above safety can be checked.
 		void blockingWrite(uint bindPoint, DescriptorDataType type, uint count,
 		  uint offset, std::initializer_list<WriteData> data);
 
