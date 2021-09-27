@@ -38,7 +38,6 @@ export namespace vk {
 
 		void blockingTransformActiveUsage(TextureActiveUseType targetUsage);
 
-		// TODO: Check if below is okay with vkMinAlignment
 		size_t texMemorySize;
 		size_t mSize;
 		uvec3 size;

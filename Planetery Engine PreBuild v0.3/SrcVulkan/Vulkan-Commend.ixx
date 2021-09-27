@@ -13,7 +13,6 @@ export namespace vk {
 		QueuePool& qp;
 
 	  public:
-		// FIXME: Currently needs queue to get queue family index
 		CommendPool(QueuePool& queuePool, uint queueGroupIndex,
 		  Flags<CommendPoolType> type);
 		CommendPool(const CommendPool&) = delete;
@@ -38,8 +37,8 @@ export namespace vk {
 		  const VertexBuffer& vb, uint bindingPoint = 0, size_t offset = 0);
 		void cmdBind(const IndexBuffer& ib,
 		  VkIndexType dataType = _toIndexTpye::val<uint>(), size_t offset = 0);
-		void cmdBind(const DescriptorSet& ds,
-		  const RenderPipeline& p);	 // TODO: add multibinding
+		// TODO: add multibinding for descriptor sets
+		void cmdBind(const DescriptorSet& ds, const RenderPipeline& p);
 
 		void cmdChangeState(Image& target, TextureActiveUseType type,
 		  Flags<PipelineStage> srcStage, Flags<MemoryAccess> srcAccess,

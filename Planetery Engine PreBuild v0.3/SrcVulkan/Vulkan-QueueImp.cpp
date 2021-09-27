@@ -256,7 +256,6 @@ void Queue::presentImage(
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = &scImg.sc.sc;
 	presentInfo.pImageIndices = &scImg.imgId;
-	// FIXME: Make this allow to set queue
 	auto pCode = vkQueuePresentKHR(q, &presentInfo);
 	switch (pCode) {
 	case VK_SUCCESS: break;

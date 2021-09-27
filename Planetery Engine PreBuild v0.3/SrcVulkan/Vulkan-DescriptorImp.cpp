@@ -148,6 +148,7 @@ namespace vk {
 		if (vkAllocateDescriptorSets(dp.d.d, &aInfo, &ds) != VK_SUCCESS) {
 			throw "VulkanDescriptorSetCreateFailure";
 		}
+		_resetable = dp.settings.has(DescriptorPoolType::Resetable);
 	}
 	DescriptorSet::DescriptorSet(DescriptorPool& dp, VkDescriptorSet _ds):
 	  dp(dp) {
@@ -158,9 +159,8 @@ namespace vk {
 		o.ds = nullptr;
 	}
 	DescriptorSet::~DescriptorSet() {
-		// TODO: Keep track of whether clean up is required as call to free Desc
-		// set may not be needed
-		if (ds != nullptr && dp.settings.has(DescriptorPoolType::Resetable)) {
+		// Check if clean up is required as call to free may not be needed
+		if (ds != nullptr && _resetable) {
 			vkFreeDescriptorSets(dp.d.d, dp.dp, 1, &ds);
 		}
 	}

@@ -251,7 +251,6 @@ LogicalDevice::LogicalDevice(LogicalDevice&& o) noexcept:
 	o.d = nullptr;
 }*/
 LogicalDevice::~LogicalDevice() {
-	if (swapChain) swapChain.reset();
 	queuePool.reset();
 	if (d) vkDestroyDevice(d, nullptr);
 }

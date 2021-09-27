@@ -81,6 +81,7 @@ export namespace vk {
 	};
 	class DescriptorSet: public ComplexObject
 	{
+		bool _resetable;
 	  public:
 		struct WriteData {
 			struct BufferType {

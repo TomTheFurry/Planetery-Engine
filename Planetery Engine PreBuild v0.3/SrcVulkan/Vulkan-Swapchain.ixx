@@ -33,7 +33,7 @@ export namespace vk {
 		// Return false if image failed to render this time, and requires
 		// querying swapchain again
 		bool renderNextImage(ulint timeout = ulint(-1));
-		void invalidateAllImages();	 // TODO
+		void invalidateAllImages();	 // TODO: invalidateAllImages()
 		void invalidateSwapchain();
 
 
@@ -146,7 +146,7 @@ export namespace vk {
 
 		// return false for timeout
 		bool waitForCompletion(ulint timeout = -1) const;
-		void invalidateImage();	 // TODO
+		void invalidateImage();	 // TODO: add invalidateImage()
 		ImageView makeImageView() const;
 		template<typename LM>
 		requires std::derived_from<LM, LifetimeManager> ImageView&

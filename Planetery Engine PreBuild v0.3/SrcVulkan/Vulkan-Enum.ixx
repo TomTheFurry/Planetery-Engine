@@ -231,9 +231,8 @@ export namespace vk {
 		Fill = VK_POLYGON_MODE_FILL,
 		Line = VK_POLYGON_MODE_LINE,
 		Point = VK_POLYGON_MODE_POINT,
-		ExtRectangleFill =
-		  VK_POLYGON_MODE_FILL_RECTANGLE_NV,  // TODO: add support for
-											  // VK_POLYGON_MODE_FILL_RECTANGLE_NV
+		// TODO: add support for VK_POLYGON_MODE_FILL_RECTANGLE_NV
+		ExtRectangleFill = VK_POLYGON_MODE_FILL_RECTANGLE_NV,
 	};
 	enum class PrimitiveTopology : std::underlying_type_t<VkPrimitiveTopology> {
 		PointList = VK_PRIMITIVE_TOPOLOGY_POINT_LIST,

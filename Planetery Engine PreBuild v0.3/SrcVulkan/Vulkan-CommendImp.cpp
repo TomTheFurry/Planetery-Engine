@@ -22,7 +22,6 @@ CommendPool::CommendPool(
   d(queuePool.getDevice()) {
 	VkCommandPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	// FIXME: Currently needs queue to get queue family index
 	poolInfo.queueFamilyIndex = queueGroupIndex;
 	poolInfo.flags = (VkCommandPoolCreateFlags)type;
 	if (vkCreateCommandPool(d.d, &poolInfo, nullptr, &cp) != VK_SUCCESS) {

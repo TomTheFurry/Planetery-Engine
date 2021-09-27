@@ -74,8 +74,6 @@ export namespace vk {
 		// LogicalDevice(LogicalDevice&&) noexcept;
 		LogicalDevice(LogicalDevice&&) = delete;
 		VkDevice d;
-		// FIXME: LogicalDevice missing getSwapchain() method!
-		util::OptionalUniquePtr<Swapchain> swapChain;
 		std::map<uint, MemoryPool> memoryPools;
 		std::pair<uint, MemoryPointer> allocMemory(
 		  uint bitFilter, Flags<MemoryFeature> feature, size_t n, size_t align);

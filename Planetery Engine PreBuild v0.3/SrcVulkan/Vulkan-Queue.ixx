@@ -111,7 +111,7 @@ export namespace vk {
 		LogicalDevice& getDevice() { return qp.getDevice(); }
 		QueuePool& getQueuePool() { return qp; }
 
-		// TODO: Add back multi-commend submittions
+		// TODO: Add back multi-commend submitions
 		void submit(CommendBuffer& cb, Semaphore* waitFor,
 		  PipelineStage waitType, Semaphore* signalToSemaphore,
 		  Fence* signalToFence);

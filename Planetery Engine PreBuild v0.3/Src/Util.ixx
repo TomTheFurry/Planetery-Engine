@@ -5,6 +5,9 @@ import std.threading;
 import std.memory;
 import Define;
 
+//TODO: Cleanup / Split up the Util Module
+
+
 export typedef std::pmr::monotonic_buffer_resource MonotonicBufferResource;
 
 export namespace sync {
@@ -465,7 +468,7 @@ export namespace pmr {
 	}
 }
 
-/*TODO: Add this:
+/*TODO: Add this concept: EnableIfTrue
 // EnableIfTrue
 export {
 	template<typename T, bool shouldEnable> requires shouldEnable class

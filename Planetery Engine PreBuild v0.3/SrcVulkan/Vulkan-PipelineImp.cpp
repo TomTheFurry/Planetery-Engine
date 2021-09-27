@@ -298,7 +298,7 @@ RenderPipeline::RenderPipeline(LogicalDevice& d,
 			  "failed to create graphics pipeline layout!");
 		}
 	}
-	// TODO: add support for reuse
+	// TODO: add support for reuse pipelines
 	VkPipeline basePipeline = nullptr;
 	bool reuseable = false;
 
@@ -324,7 +324,7 @@ RenderPipeline::RenderPipeline(LogicalDevice& d,
 	// Vertex Input Attrubutes
 	VkPipelineVertexInputStateCreateInfo vertInputInfo{};
 	{
-		// TODO: Add dynamic
+		// TODO: Add dynamic vertex attrubutes
 		vertInputInfo = vertAttribute.getStructForPipeline();
 		cInfo.pVertexInputState = &vertInputInfo;
 	}
