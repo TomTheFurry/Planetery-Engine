@@ -101,8 +101,8 @@ export namespace vk {
 		virtual ~HeapLifetimeManager() final override {}
 		HeapLifetimeManager(HeapLifetimeManager&&) = delete;
 		HeapLifetimeManager(const HeapLifetimeManager&) = delete;
-		// FIXME: It is supposed to use new delete resource but the linking to said
-		// func is broken due to c++2y standard lib module feature
+		// FIXME: It is supposed to use new delete resource but the linking to
+		// said func is broken due to c++2y standard lib module feature
 		virtual pmr::MemoryResource* getResource() final override {
 			return std::pmr::get_default_resource();
 		}

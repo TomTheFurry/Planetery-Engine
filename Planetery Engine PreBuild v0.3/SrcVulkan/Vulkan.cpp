@@ -95,7 +95,7 @@ static DeviceCallback dCallback;
 static OSRenderSurface* _OSSurface = nullptr;
 static PhysicalDevice* _physicalDevice = nullptr;
 static LogicalDevice* _renderDevice = nullptr;
-//unused static uint _currentFrame = 0;
+// unused static uint _currentFrame = 0;
 static bool _newSwapchain = true;
 static std::atomic_flag _swapchainNotOutdated;
 
@@ -257,14 +257,14 @@ void vk::init() {
 		// surface
 		throw "TODOVulkanMainRenderQueueDoesNotSupportPresentOnTargetOSSurface";
 	}
-	uint mQueueFamily = qpl.findFamilyBySupportType(
-	  QueueType::MemoryTransfer, Flags(QueueType::Graphics) | QueueType::Compute);
-	//logger(mQueueFamily);
+	uint mQueueFamily = qpl.findFamilyBySupportType(QueueType::MemoryTransfer,
+	  Flags(QueueType::Graphics) | QueueType::Compute);
+	// logger(mQueueFamily);
 	if (mQueueFamily == uint(-1))
 		mQueueFamily = qpl.findFamilyBySupportType(
 		  QueueType::MemoryTransfer, QueueType::Graphics);
-	//logger(mQueueFamily);
-	if (mQueueFamily == uint(-1) || mQueueFamily==rQueueFamily) {
+	// logger(mQueueFamily);
+	if (mQueueFamily == uint(-1) || mQueueFamily == rQueueFamily) {
 		// Use render family for memory transfer
 		uint rQueueCount =
 		  std::min(qpl.getFamilyMaxQueueCount(rQueueFamily), 12u);
@@ -275,7 +275,8 @@ void vk::init() {
 	} else {
 		uint rQueueCount =
 		  std::min(qpl.getFamilyMaxQueueCount(rQueueFamily), 8u);
-		uint mQueueCount = std::min(qpl.getFamilyMaxQueueCount(mQueueFamily), 4u);
+		uint mQueueCount =
+		  std::min(qpl.getFamilyMaxQueueCount(mQueueFamily), 4u);
 		qpl.addQueueGroup(rQueueFamily, rQueueCount);
 		qpl.addQueueGroup(mQueueFamily, mQueueCount);
 		qpl.hintGroupUsage(Memory, mQueueFamily);
@@ -285,7 +286,7 @@ void vk::init() {
 	_renderDevice = new LogicalDevice(*_physicalDevice, qpl);
 	dCallback.onCreate(*_renderDevice);
 
-	//Swapchain is lazily created when drawing via _OSSurface
+	// Swapchain is lazily created when drawing via _OSSurface
 }
 bool vk::drawFrame(ulint timeout) {
 	try {
@@ -294,7 +295,7 @@ bool vk::drawFrame(ulint timeout) {
 		sc->renderNextImage(timeout);
 		return true;
 	} catch (SurfaceMinimizedException) { return false; }
-	//unused _currentFrame++;
+	// unused _currentFrame++;
 }
 void vk::end() {
 	logger("VK Interface end.\n");

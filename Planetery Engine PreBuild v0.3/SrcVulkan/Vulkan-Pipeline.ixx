@@ -81,8 +81,7 @@ export namespace vk {
 		  std::initializer_list<Attachment> attachments,
 		  std::initializer_list<SubPass> subPasses,
 		  std::initializer_list<SubPassDependency> dependencies);
-		RenderPass(LogicalDevice& d,
-		  std::span<const Attachment> attachments,
+		RenderPass(LogicalDevice& d, std::span<const Attachment> attachments,
 		  std::span<const SubPass> subPasses,
 		  std::span<const SubPassDependency> dependencies);
 		RenderPass(const RenderPass& d) = delete;
@@ -182,13 +181,14 @@ export namespace vk {
 			float slopeFactor;
 			float clamp;
 		};
-		//TODO: Add back the std::initializer_list func
+		// TODO: Add back the std::initializer_list func
 		RenderPipeline(LogicalDevice& device,
 		  std::span<DescriptorLayout* const> descriptorLayouts,
 		  std::span<const PushConstantLayout> pushConstants,
-		  RenderPass& renderPass, uint32_t subpassId, std::span<const ShaderStage> stages,
-		  VertexAttribute& vertAttribute, PrimitiveTopology vertTopology,
-		  bool primitiveRestartByIndex, std::span<const VkViewport> viewports,
+		  RenderPass& renderPass, uint32_t subpassId,
+		  std::span<const ShaderStage> stages, VertexAttribute& vertAttribute,
+		  PrimitiveTopology vertTopology, bool primitiveRestartByIndex,
+		  std::span<const VkViewport> viewports,
 		  std::span<const VkRect2D> scissors, bool rasterizerClampDepth,
 		  bool rasterizerDiscard, PolygonMode polygonMode,
 		  Flags<CullMode> cullMode, FrontDirection frontDirection,

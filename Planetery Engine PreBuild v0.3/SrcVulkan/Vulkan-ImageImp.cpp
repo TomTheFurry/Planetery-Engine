@@ -219,7 +219,8 @@ void Image::blockingIndirectWrite(const void* data) {
 	cb.endRecording();
 	cb.quickSubmit(q).wait();
 }
-void Image::blockingIndirectWrite(size_t nSize, size_t offset, const void* data) {
+void Image::blockingIndirectWrite(
+  size_t nSize, size_t offset, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanBufferNotIndirectWritable";

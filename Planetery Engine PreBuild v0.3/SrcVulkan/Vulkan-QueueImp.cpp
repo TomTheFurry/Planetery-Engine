@@ -246,7 +246,8 @@ void vk::Queue::submit(CommendBuffer& cb, Semaphore* waitFor,
 	vkQueueSubmit(q, 1, &sInfo, signalToFc ? signalToFc->fc : nullptr);
 }
 
-void Queue::presentImage(SwapchainImage& scImg, Semaphore& presentSemaphore, Fence& cleanupFence) {
+void Queue::presentImage(
+  SwapchainImage& scImg, Semaphore& presentSemaphore, Fence& cleanupFence) {
 	scImg.imgAquireSpOrCompleteFc.emplace<Fence*>(&cleanupFence);
 	VkPresentInfoKHR presentInfo{};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

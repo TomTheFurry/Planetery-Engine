@@ -132,6 +132,7 @@ export namespace vk {
 		friend class Swapchain;
 		friend class Queue;
 		void setImageAquired(Semaphore&& sp);
+
 	  public:
 		// Lifetime
 		SwapchainImage(Swapchain& sc, uint imgId, VkImage img, Semaphore&& sp);

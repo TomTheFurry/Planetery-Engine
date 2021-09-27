@@ -14,7 +14,8 @@ export namespace vk {
 		Fence(vk::LogicalDevice& d, bool signaled = false);
 		Fence(const Fence&) = delete;
 		Fence(Fence&& o) noexcept;
-		Fence& operator=(Fence&&); //FIXME: Does not set the new LogicalDevice Ref
+		Fence& operator=(
+		  Fence&&);	 // FIXME: Does not set the new LogicalDevice Ref
 		~Fence();
 		void wait();
 		void reset();

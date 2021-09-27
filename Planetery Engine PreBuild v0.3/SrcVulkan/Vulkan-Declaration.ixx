@@ -12,8 +12,8 @@ export namespace vk {
 
 	struct ComplexObject {
 		ComplexObject() = default;
-		//ComplexObject(ComplexObject&&) = delete;
-		//ComplexObject(const ComplexObject&) = default;
+		// ComplexObject(ComplexObject&&) = delete;
+		// ComplexObject(const ComplexObject&) = default;
 		virtual ~ComplexObject() = default;
 	};
 	template<typename Class>
@@ -93,7 +93,7 @@ export namespace vk {
 	class VertexAttribute;
 	class RenderPass;
 	class RenderPipeline;
-	
+
 }
 
 // Internal Functions:

@@ -33,9 +33,9 @@ PhysicalDevice* PhysicalDevice::getUsablePhysicalDevice(
 	std::vector<util::OptionalUniquePtr<PhysicalDevice>> objDevices;
 	objDevices.reserve(pDevices.size());
 	for (auto& dPtr : pDevices) {
-		auto& dOpPtr = objDevices.emplace_back(new PhysicalDevice(dPtr, osSurface));
-		if (!dOpPtr->meetRequirements)
-			objDevices.pop_back();
+		auto& dOpPtr =
+		  objDevices.emplace_back(new PhysicalDevice(dPtr, osSurface));
+		if (!dOpPtr->meetRequirements) objDevices.pop_back();
 	}
 	if (objDevices.empty()) {
 		logger("Vulkan did not find any usable graphic cards!\n");
@@ -44,7 +44,8 @@ PhysicalDevice* PhysicalDevice::getUsablePhysicalDevice(
 	}
 	logger.closeLayer();
 	return std::max_element(objDevices.begin(), objDevices.end(),
-	  [](const auto& p1, const auto& p2) { return *p1 < *p2; })->getOwnership();
+	  [](const auto& p1, const auto& p2) { return *p1 < *p2; })
+	  ->getOwnership();
 }
 
 PhysicalDevice::PhysicalDevice(
@@ -130,10 +131,12 @@ PhysicalDevice::PhysicalDevice(
 		logger << "Failed check: No queue supports Graphics processing\n";
 		meetRequirements = false;
 	} else if (renderSurface != nullptr
-			   && !qpl.checkQueuePresentSupport(graphicsQueue, *renderSurface)) {
+			   && !qpl.checkQueuePresentSupport(
+				 graphicsQueue, *renderSurface)) {
 		// FIXME: Currently only cares about first grapics queue support for
 		// presentation
-		logger << "Failed check: First Graphics queue " << graphicsQueue << " does not support "
+		logger << "Failed check: First Graphics queue " << graphicsQueue
+			   << " does not support "
 				  "presenting to target OSRenderSurface\n";
 		meetRequirements = false;
 	}

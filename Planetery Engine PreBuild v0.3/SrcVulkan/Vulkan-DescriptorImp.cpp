@@ -271,4 +271,3 @@ namespace vk {
 		// vkDeviceWaitIdle(d.d); //Unsure if needed
 	}
 }
-

@@ -19,8 +19,7 @@ namespace vk {
 	class MemoryAllocator
 	{
 	  public:
-		MemoryAllocator(
-		  LogicalDevice& d, uint memoryIndex);
+		MemoryAllocator(LogicalDevice& d, uint memoryIndex);
 		MemoryAllocator(const MemoryAllocator&) = default;
 		MemoryAllocator(MemoryAllocator&&) = default;
 		DeviceMemory alloc(size_t n);

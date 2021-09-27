@@ -16,11 +16,9 @@ template<class T> inline auto Next(T iter) { return ++iter; }
 template<class T> inline auto Prev(T iter) { return --iter; }
 
 
-MemoryAllocator::MemoryAllocator(
-  LogicalDevice& d, uint memoryIndex):
-  d(d) {
+MemoryAllocator::MemoryAllocator(LogicalDevice& d, uint memoryIndex): d(d) {
 	this->memoryIndex = memoryIndex;
-	//logger("VulkanMemory(", memoryIndex, "): Init\n");
+	// logger("VulkanMemory(", memoryIndex, "): Init\n");
 }
 DeviceMemory MemoryAllocator::alloc(size_t n) {
 	VkMemoryAllocateInfo allocInfo{
@@ -31,12 +29,13 @@ DeviceMemory MemoryAllocator::alloc(size_t n) {
 	};
 	DeviceMemory dm{};
 	vkAllocateMemory(d.d, &allocInfo, nullptr, &dm.dm);
-	//logger(
-	//  "VulkanMemory(", memoryIndex, "): Alloc ", byte(n), " at ", address(dm.dm), "\n");
+	// logger(
+	//  "VulkanMemory(", memoryIndex, "): Alloc ", byte(n), " at ",
+	//  address(dm.dm), "\n");
 	return dm;
 }
 void MemoryAllocator::free(DeviceMemory m) {
-	//logger("VulkanMemory(", memoryIndex, "): Free ",
+	// logger("VulkanMemory(", memoryIndex, "): Free ",
 	//  address(m.dm), "\n");
 	vkFreeMemory(d.d, m.dm, nullptr);
 }
@@ -67,9 +66,7 @@ size_t MemoryPool::Group::alloc(size_t n, size_t align) {
 		}
 
 		if (nOffset - nextPoint >= MIN_NODE_SIZE) {
-
 			if (nState.isFree != freeNodes.end()) {
-
 				nodes.erase(Next(freeIter->second));
 				freeNodes.erase(Next(freeIter));
 			}
@@ -108,7 +105,6 @@ void MemoryPool::Group::free(size_t ptr) {
 	bool nextFree = Next(iter)->second.isFree != freeNodes.end();
 
 	if (nextFree) {
-
 		freeNodes.erase(Next(iter)->second.isFree);
 		nodes.erase(Next(iter));
 	}
@@ -117,7 +113,6 @@ void MemoryPool::Group::free(size_t ptr) {
 		// deleting current node
 		nodes.erase(iter);
 	} else {
-
 		iter->second.isFree =
 		  freeNodes.emplace(iter->first, iter).first;  // Slow... Design flaw :(
 	}
