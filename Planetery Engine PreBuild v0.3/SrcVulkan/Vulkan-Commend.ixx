@@ -40,8 +40,9 @@ export namespace vk {
 		// TODO: add multibinding for descriptor sets
 		void cmdBind(const DescriptorSet& ds, const RenderPipeline& p);
 
-		void cmdChangeState(Image& target, TextureActiveUseType type,
-		  Flags<PipelineStage> srcStage, Flags<MemoryAccess> srcAccess,
+		void cmdChangeState(Image& target, TextureSubRegion subRegion,
+		  ImageActiveUsage start, Flags<PipelineStage> srcStage,
+		  Flags<MemoryAccess> srcAccess, ImageActiveUsage end,
 		  Flags<PipelineStage> dstStage, Flags<MemoryAccess> dstAccess);
 
 		void cmdPushConstants(const RenderPipeline& p,
@@ -53,14 +54,12 @@ export namespace vk {
 		  uint indOffset = 0, uint vertOffset = 0, uint insOffset = 0);
 		void cmdCopy(const Buffer& src, Buffer& dst, size_t size,
 		  size_t srcOffset = 0, size_t dstOffset = 0);
-		void cmdCopy(const Buffer& src, Image& dst, TextureAspect aspect,
-		  uvec3 inputSize, uvec3 copySize, ivec3 copyOffset = ivec3(0, 0, 0),
-		  size_t inputOffset = 0, uint mipLevel = 0, uint layerOffset = 0,
-		  uint layerCount = 1);
-		void cmdCopy(Image& src, Buffer& dst, TextureAspect aspect,
-		  uvec3 outputSize, uvec3 copySize, ivec3 copyOffset = ivec3(0, 0, 0),
-		  size_t outputOffset = 0, uint mipLevel = 0, uint layerOffset = 0,
-		  uint layerCount = 1);
+		void cmdCopy(const Buffer& src, Image& dst, ImageActiveUsage usage,
+		  TextureSubLayers subLayers, uvec3 inputTextureSize,
+		  size_t inputDataOffset, uvec3 copyRegion, ivec3 copyOffset);
+		void cmdCopy(const Image& src, ImageActiveUsage usage, Buffer& dst,
+		  TextureSubLayers subLayers, uvec3 copyRegion, ivec3 copyOffset,
+		  uvec3 outputTextureSize, size_t outputDataOffset);
 
 		void cmdEndRender();
 		void endRecording();

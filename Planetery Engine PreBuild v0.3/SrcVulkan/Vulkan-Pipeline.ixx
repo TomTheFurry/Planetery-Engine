@@ -32,13 +32,13 @@ export namespace vk {
 
 		  public:
 			Attachment(VkFormat colorFormat,
-			  TextureActiveUseType currentActiveUsage, AttachmentReadOp readOp,
-			  TextureActiveUseType outputActiveUsage, AttachmentWriteOp writeOp,
+			  ImageActiveUsage currentActiveUsage, AttachmentReadOp readOp,
+			  ImageActiveUsage outputActiveUsage, AttachmentWriteOp writeOp,
 			  uint samples = 1);
 			Attachment(VkFormat depthStencilformat,
-			  TextureActiveUseType currentActiveUsage,
+			  ImageActiveUsage currentActiveUsage,
 			  AttachmentReadOp depthReadOp, AttachmentReadOp stencilReadOp,
-			  TextureActiveUseType outputActiveUsage,
+			  ImageActiveUsage outputActiveUsage,
 			  AttachmentWriteOp depthWriteOp, AttachmentWriteOp stencilWriteOp,
 			  uint samples = 1);
 		};

@@ -67,6 +67,20 @@ export namespace vk {
 	class IndexBuffer;
 	class UniformBuffer;
 	// Image class:
+
+	struct TextureSubRegion {
+		Flags<TextureAspect> aspect;
+		uint mipLevelOffset = 0;
+		uint mipLevels = 1;
+		uint layerOffset = 0;
+		uint layers = 1;
+	};	// Require same layout as VkImageSubresourceRange
+	struct TextureSubLayers {
+		Flags<TextureAspect> aspect;
+		uint mipLevel = 0;
+		uint layerOffset = 0;
+		uint layers = 1;
+	};	// Require same layout as VkImageSubresourceLayers
 	class Image;
 	class ImageView;
 	class ImageSampler;

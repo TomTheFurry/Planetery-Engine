@@ -43,8 +43,8 @@ VkPipelineVertexInputStateCreateInfo VertexAttribute::getStructForPipeline() {
 
 
 RenderPass::Attachment::Attachment(VkFormat colorFormat,
-  TextureActiveUseType currentActiveUsage, AttachmentReadOp readOp,
-  TextureActiveUseType outputActiveUsage, AttachmentWriteOp writeOp, uint sam) {
+  ImageActiveUsage currentActiveUsage, AttachmentReadOp readOp,
+  ImageActiveUsage outputActiveUsage, AttachmentWriteOp writeOp, uint sam) {
 	flags = 0;
 	format = colorFormat;
 	samples = (VkSampleCountFlagBits)sam;
@@ -56,8 +56,8 @@ RenderPass::Attachment::Attachment(VkFormat colorFormat,
 	finalLayout = (VkImageLayout)outputActiveUsage;
 }
 RenderPass::Attachment::Attachment(VkFormat depthStencilformat,
-  TextureActiveUseType currentActiveUsage, AttachmentReadOp depthReadOp,
-  AttachmentReadOp sReadOp, TextureActiveUseType outputActiveUsage,
+  ImageActiveUsage currentActiveUsage, AttachmentReadOp depthReadOp,
+  AttachmentReadOp sReadOp, ImageActiveUsage outputActiveUsage,
   AttachmentWriteOp depthWriteOp, AttachmentWriteOp sWriteOp, uint sam) {
 	flags = 0;
 	format = depthStencilformat;
@@ -78,27 +78,27 @@ enum class _AtmUsage {
 	Resolve = 16,
 	Forward = 32,
 };
-TextureActiveUseType _getSubPassAtmGoodActiveUseType(Flags<_AtmUsage> v) {
+ImageActiveUsage _getSubPassAtmGoodActiveUseType(Flags<_AtmUsage> v) {
 	switch (v.toVal()) {
 	case Flags(_AtmUsage::InputColor).toVal():
-		return TextureActiveUseType::ReadOnlyShader;
+		return ImageActiveUsage::ReadOnlyShader;
 	case Flags(_AtmUsage::InputDepthStencil).toVal():
-		return TextureActiveUseType::ReadOnlyAttachmentDepthStencil;
+		return ImageActiveUsage::ReadOnlyAttachmentDepthStencil;
 
 	case Flags(_AtmUsage::Color).toVal():
-		return TextureActiveUseType::AttachmentColor;
+		return ImageActiveUsage::AttachmentColor;
 	case Flags(_AtmUsage::DepthStencil).toVal():
-		return TextureActiveUseType::AttachmentDepthStencil;
+		return ImageActiveUsage::AttachmentDepthStencil;
 
 	case Flags(_AtmUsage::Forward).toVal():
-		return TextureActiveUseType::Undefined;	 // dont care
+		return ImageActiveUsage::Undefined;	 // dont care
 
 	default:
 		if (v.has(_AtmUsage::Forward))
 			throw "VulkanSubPassInvalidAttachmentUsage:UniqueForward";
 		if (v.has(_AtmUsage::Color) && v.has(_AtmUsage::DepthStencil))
 			throw "VulkanSubPassInvalidAttachmentUsage:ColorOrDepthStencil";
-		return TextureActiveUseType::General;
+		return ImageActiveUsage::General;
 	}
 }
 
@@ -122,7 +122,7 @@ RenderPass::SubPass::SubPass(std::initializer_list<uint> inputColorAtm,
 	for (auto& id : depthStencilAtm) atm[id] |= _AtmUsage::DepthStencil;
 	for (auto& id : resolveAtm) atm[id] |= _AtmUsage::Resolve;
 	atm.erase(uint(-1));
-	std::unordered_map<uint, TextureActiveUseType> atmType{};
+	std::unordered_map<uint, ImageActiveUsage> atmType{};
 	atmType.reserve(atm.size());
 	for (auto it : atm) {
 		atmType[it.first] = _getSubPassAtmGoodActiveUseType(it.second);

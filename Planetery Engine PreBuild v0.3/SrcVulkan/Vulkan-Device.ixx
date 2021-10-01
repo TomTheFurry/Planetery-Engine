@@ -79,12 +79,6 @@ export namespace vk {
 		  uint bitFilter, Flags<MemoryFeature> feature, size_t n, size_t align);
 		void freeMemory(uint memoryIndex, MemoryPointer ptr);
 
-		// TODO: Move all this to static in Swapchain class
-		// bool isSwapchainValid() const;
-		// Swapchain& getSwapchain();
-		// bool loadSwapchain(uvec2 preferredSize = uvec2(-1));
-		// void unloadSwapchain();
-		// bool isSwapchainLoaded() const;
 		QueuePool& getQueuePool() { return *queuePool; }
 		const QueuePool& getQueuePool() const { return *queuePool; }
 		VkDevice operator->() { return d; }

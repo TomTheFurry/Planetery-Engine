@@ -57,9 +57,6 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	memFeature = texMemFeature;
 	usage = texUsage;
 	dimension = texDimension;
-	activeUsage = texMemFeature.has(MemoryFeature::Mappable)
-				  ? TextureActiveUseType::HostWritable
-				  : TextureActiveUseType::Undefined;
 	format = texFormat;
 	this->mipLevels = mipLevels;
 	this->layers = layers;
@@ -84,7 +81,10 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	iInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	// iInfo.queueFamilyIndexCount;
 	// iInfo.pQueueFamilyIndices;
-	iInfo.initialLayout = (VkImageLayout)activeUsage;
+	iInfo.initialLayout =
+	  (VkImageLayout)(texMemFeature.has(MemoryFeature::Mappable)
+						? ImageActiveUsage::HostWritable
+						: ImageActiveUsage::Undefined);
 
 	if (vkCreateImage(d.d, &iInfo, nullptr, &img) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create image!");
@@ -112,7 +112,6 @@ Image::Image(Image&& other) noexcept: d(other.d) {
 	mappedPtr = other.mappedPtr;
 	memFeature = other.memFeature;
 	usage = other.usage;
-	activeUsage = other.activeUsage;
 	dimension = other.dimension;
 	mipLevels = other.mipLevels;
 	layers = other.layers;
@@ -132,9 +131,6 @@ void* Image::map() {
 		if (!memFeature.has(MemoryFeature::Mappable))
 			throw "VulkanImageNotMappable";
 		if (mappedPtr != nullptr) throw "VulkanImageAlreadyMapped";
-		if (activeUsage != TextureActiveUseType::General
-			&& activeUsage != TextureActiveUseType::HostWritable)
-			throw "VulkanImageIncorrectActiveUsage";
 	}
 	vkMapMemory(d.d, ptr.dm.dm, ptr.offset, mSize, 0, &mappedPtr);
 	return mappedPtr;
@@ -147,9 +143,6 @@ void* Image::map(size_t nSize, size_t offset) {
 		if (mappedPtr != nullptr) throw "VulkanImageAlreadyMapped";
 		if (nSize % minAlignment != 0) throw "VulkanImageNotOnMinAlignment";
 		if (offset % minAlignment != 0) throw "VulkanImageNotOnMinAlignment";
-		if (activeUsage != TextureActiveUseType::General
-			&& activeUsage != TextureActiveUseType::HostWritable)
-			throw "VulkanImageIncorrectActiveUsage";
 	}
 	vkMapMemory(d.d, ptr.dm.dm, ptr.offset + offset, nSize, 0, &mappedPtr);
 	return mappedPtr;
@@ -190,19 +183,17 @@ void Image::unmap() {
 		if (!memFeature.has(MemoryFeature::Mappable))
 			throw "VulkanImageNotMappable";
 		if (mappedPtr == nullptr) throw "VulkanImageNotMapped";
-		if (activeUsage != TextureActiveUseType::General
-			&& activeUsage != TextureActiveUseType::HostWritable)
-			throw "VulkanImageIncorrectActiveUsage";
 		mappedPtr = nullptr;
 	}
 	// FIXME: Can't unmap part of memory...
 	vkUnmapMemory(d.d, ptr.dm.dm);
 }
 
-void Image::blockingIndirectWrite(const void* data) {
+void Image::blockingIndirectWrite(
+  ImageActiveUsage usage, TextureAspect targetAspect, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
-			throw "VulkanBufferNotIndirectWritable";
+			throw "VulkanImageNotIndirectWritable";
 	}
 
 	auto sg = Buffer(d, texMemorySize,
@@ -214,20 +205,33 @@ void Image::blockingIndirectWrite(const void* data) {
 	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
-	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
+	cb.cmdCopy(sg, *this, usage, TextureSubLayers{.aspect = targetAspect}, size,
+	  0, size, ivec3(0));
 
 	cb.endRecording();
 	cb.quickSubmit(q).wait();
 }
-void Image::blockingIndirectWrite(
-  size_t nSize, size_t offset, const void* data) {
+void Image::blockingIndirectWrite(ImageActiveUsage usage,
+  TextureSubLayers layers, uvec3 copyRegion, ivec3 copyOffset,
+  uvec3 inputTextureSize, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
-			throw "VulkanBufferNotIndirectWritable";
-		if (nSize + offset > texMemorySize) throw "VulkanBufferOutOfRange";
+			throw "VulkanImageNotIndirectWritable";
+		ivec3 o = copyOffset;
+		ivec3 r = ivec3(copyRegion) + copyOffset;
+		if (o.x < 0 || r.x > size.x || o.y < 0 || r.y > size.y || o.z < 0
+			|| r.z > size.z)
+			throw "VulkanImageCopyRegionOutsideImage";
+		uvec3 i = inputTextureSize;
+		uvec3 c = copyRegion;
+		if (c.x > i.x || c.y > i.y || c.z > i.z)
+			throw "VulkanImageCopyRegionLargerThenInputData";
 	}
-	auto sg = Buffer(d, nSize,
-	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
+	// OPTI: Instead of copying the full data, just copy the copyRegion into
+	// buffer and translate it myself somehow.
+	auto sg =
+	  Buffer(d, inputTextureSize.x * inputTextureSize.y * inputTextureSize.z,
+		Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
 	sg.directWrite(data);
 	auto& q = d.getQueuePool().getExpressMemoryCopyQueue();
 	auto& cp = d.getQueuePool().queryCommendPool(
@@ -235,7 +239,8 @@ void Image::blockingIndirectWrite(
 	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
 
-	cb.cmdCopy(sg, *this, TextureAspect::Color, size, size);
+	cb.cmdCopy(
+	  sg, *this, usage, layers, inputTextureSize, 0, copyRegion, copyOffset);
 
 	cb.endRecording();
 	cb.quickSubmit(q).wait();
@@ -251,7 +256,8 @@ void Image::directWrite(size_t nSize, size_t offset, const void* data) {
 	unmap();
 }
 
-void Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
+void Image::blockingTransformActiveUsage(
+  ImageActiveUsage start, ImageActiveUsage end, TextureSubRegion subRegion) {
 	if constexpr (DO_SAFETY_CHECK) {
 		//??? What to check?
 	}
@@ -260,10 +266,8 @@ void Image::blockingTransformActiveUsage(TextureActiveUseType targetUsage) {
 	  q.familyIndex, CommendPoolType::Shortlived);
 	auto cb = cp.makeCommendBuffer();
 	cb.startRecording(CommendBufferUsage::Streaming);
-
-	cb.cmdChangeState(*this, targetUsage, PipelineStage::TopOfPipe,
-	  MemoryAccess::None, PipelineStage::BottomOfPipe, MemoryAccess::None);
-
+	cb.cmdChangeState(*this, subRegion, start, PipelineStage::TopOfPipe,
+	  MemoryAccess::None, end, PipelineStage::BottomOfPipe, MemoryAccess::None);
 	cb.endRecording();
 	cb.quickSubmit(q).wait();
 }

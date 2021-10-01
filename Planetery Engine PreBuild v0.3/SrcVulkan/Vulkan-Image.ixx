@@ -9,6 +9,8 @@ import "VulkanExtModule.h";
 
 // Image class:
 export namespace vk {
+	// Note: It's starting ActiveUsage is HostWritable if it has
+	// MemoryFeature::Mappable, or else Undefined
 	class Image: public ComplexObject
 	{
 	  public:
@@ -30,13 +32,18 @@ export namespace vk {
 		void flush();
 		void flush(size_t size, size_t offset);
 		void unmap();
-		void blockingIndirectWrite(const void* data);
 		void blockingIndirectWrite(
-		  size_t size, size_t offset, const void* data);
+		  ImageActiveUsage usage, TextureAspect targetAspect, const void* data);
+		void blockingIndirectWrite(ImageActiveUsage usage,
+		  TextureSubLayers layers, uvec3 copyRegion, ivec3 copyOffset,
+		  uvec3 inputTextureSize, const void* data);
+		// Unsafe
 		void directWrite(const void* data);
+		// Unsafe
 		void directWrite(size_t size, size_t offset, const void* data);
 
-		void blockingTransformActiveUsage(TextureActiveUseType targetUsage);
+		void blockingTransformActiveUsage(ImageActiveUsage start,
+		  ImageActiveUsage end, TextureSubRegion subRegion);
 
 		size_t texMemorySize;
 		size_t mSize;
@@ -49,7 +56,6 @@ export namespace vk {
 		Flags<MemoryFeature> memFeature;
 		Flags<TextureFeature> feature;
 		Flags<TextureUseType> usage;
-		TextureActiveUseType activeUsage;
 		VkImage img = nullptr;
 		uint memoryIndex;
 		MemoryPointer ptr;

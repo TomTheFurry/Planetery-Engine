@@ -52,6 +52,8 @@ export namespace _toIndexTpye {
 	}
 }
 export namespace vk {
+	//TODO: Reorder/Group the enum classes
+
 	enum class QueueType : VkQueueFlags {
 		Graphics = VK_QUEUE_GRAPHICS_BIT,
 		Compute = VK_QUEUE_COMPUTE_BIT,
@@ -323,24 +325,18 @@ export namespace vk {
 		ExtIntCustom = VK_BORDER_COLOR_INT_CUSTOM_EXT,
 	};
 
-	enum class TextureAspect {
-		Color,
-		Depth,
-		Stencil,
-		DepthStencil,
+	enum class TextureAspect : VkImageAspectFlags {
+		Color = VK_IMAGE_ASPECT_COLOR_BIT,
+		Depth = VK_IMAGE_ASPECT_DEPTH_BIT,
+		Stencil = VK_IMAGE_ASPECT_STENCIL_BIT,
+		DepthStencil = Depth | Stencil,
+		Metadata = VK_IMAGE_ASPECT_METADATA_BIT,
+		Plane0 = VK_IMAGE_ASPECT_PLANE_0_BIT,
+		Plane1 = VK_IMAGE_ASPECT_PLANE_1_BIT,
+		Plane2 = VK_IMAGE_ASPECT_PLANE_2_BIT,
 	};
-	inline VkImageAspectFlags _toBase(TextureAspect v) {
-		switch (v) {
-		case TextureAspect::Color: return VK_IMAGE_ASPECT_COLOR_BIT;
-		case TextureAspect::Depth: return VK_IMAGE_ASPECT_DEPTH_BIT;
-		case TextureAspect::Stencil: return VK_IMAGE_ASPECT_STENCIL_BIT;
-		case TextureAspect::DepthStencil:
-			return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-		default: throw "VulkanInvalidTextureAspect";
-		}
-	}
 
-	enum class TextureActiveUseType : std::underlying_type_t<VkImageLayout> {
+	enum class ImageActiveUsage : std::underlying_type_t<VkImageLayout> {
 		Undefined = VK_IMAGE_LAYOUT_UNDEFINED,
 		General = VK_IMAGE_LAYOUT_GENERAL,
 		AttachmentColor = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -452,3 +448,4 @@ export template<> class Flags<vk::MemoryAccess>;
 export template<> class Flags<vk::ColorComponents>;
 export template<> class Flags<vk::SampleCount>;
 export template<> class Flags<vk::CullMode>;
+export template<> class Flags<vk::TextureAspect>;

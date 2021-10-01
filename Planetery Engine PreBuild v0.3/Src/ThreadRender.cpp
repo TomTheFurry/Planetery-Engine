@@ -153,7 +153,7 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 		_imgTest->blockingIndirectWrite(pixels);
 		stbi_image_free(pixels);
 		_imgTest->blockingTransformActiveUsage(
-		  TextureActiveUseType::ReadOnlyShader);
+		  ImageActiveUsage::ReadOnlyShader);
 
 		_imgViewTest = new ImageView(d, *_imgTest);
 		_imgSamplerBasic =
@@ -196,8 +196,8 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	VkFormat swapchainFormat = sc.surfaceFormat.format;
 	{
 		RenderPass::Attachment swapchainAtm(swapchainFormat,
-		  TextureActiveUseType::Undefined, AttachmentReadOp::Clear,
-		  TextureActiveUseType::Present, AttachmentWriteOp::Write);
+		  ImageActiveUsage::Undefined, AttachmentReadOp::Clear,
+		  ImageActiveUsage::Present, AttachmentWriteOp::Write);
 		RenderPass::SubPass subPass1({}, {}, {0}, {}, {}, {});
 		RenderPass::SubPassDependency dependency1(uint(-1),
 		  PipelineStage::OutputAttachmentColor, MemoryAccess::None, 0,
@@ -275,7 +275,7 @@ void vkFrameCallbackOnCreate(vk::RenderTick& rt) {
 				.count = 1,
 				.offset = 0,
 				.data = {DescriptorSet::WriteData(_imgViewTest,
-				  _imgSamplerBasic, TextureActiveUseType::ReadOnlyShader)},
+				  _imgSamplerBasic, ImageActiveUsage::ReadOnlyShader)},
 			  },
 			});
 }
@@ -382,10 +382,15 @@ void vkDeviceCallbackOnCreate(vk::LogicalDevice& d) {
 		  VK_FORMAT_R8G8B8A8_SRGB, TextureUseType::ShaderSampling,
 		  MemoryFeature::IndirectWritable);
 		assert(_imgTest->texMemorySize == imageSize);
-		_imgTest->blockingIndirectWrite(pixels);
+		_imgTest->blockingTransformActiveUsage(ImageActiveUsage::Undefined,
+		  ImageActiveUsage::TransferDst,
+		  TextureSubRegion{.aspect = TextureAspect::Color});
+		_imgTest->blockingIndirectWrite(
+		  ImageActiveUsage::TransferDst, TextureAspect::Color, pixels);
 		stbi_image_free(pixels);
-		_imgTest->blockingTransformActiveUsage(
-		  TextureActiveUseType::ReadOnlyShader);
+		_imgTest->blockingTransformActiveUsage(ImageActiveUsage::TransferDst,
+		  ImageActiveUsage::ReadOnlyShader,
+		  TextureSubRegion{.aspect = TextureAspect::Color});
 
 		_imgViewTest = new ImageView(d, *_imgTest);
 		_imgSamplerBasic =
@@ -443,8 +448,8 @@ void vkSwapchainCallbackOnCreate(vk::Swapchain& sc, bool recreation) {
 	VkFormat swapchainFormat = sc.getImageFormat();
 	{
 		RenderPass::Attachment swapchainAtm(swapchainFormat,
-		  TextureActiveUseType::Undefined, AttachmentReadOp::Clear,
-		  TextureActiveUseType::Present, AttachmentWriteOp::Write);
+		  ImageActiveUsage::Undefined, AttachmentReadOp::Clear,
+		  ImageActiveUsage::Present, AttachmentWriteOp::Write);
 		RenderPass::SubPass subPass1({}, {}, {0}, {}, {}, {});
 		RenderPass::SubPassDependency dependency1(uint(-1),
 		  PipelineStage::OutputAttachmentColor, MemoryAccess::None, 0,
@@ -536,7 +541,7 @@ void vkFrameCallbackOnCreate(vk::SwapchainImage& scImg) {
 			 .count = 1,
 			 .offset = 0,
 			 .data = {DescriptorSet::WriteData(_imgViewTest, _imgSamplerBasic,
-			   TextureActiveUseType::ReadOnlyShader)},
+			   ImageActiveUsage::ReadOnlyShader)},
 		   },
 		   DescriptorSet::CmdWriteInfo{
 			 .target = &*imgData.ds,
