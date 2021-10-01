@@ -264,7 +264,6 @@ RenderPipeline::~RenderPipeline() {
 	if (p != nullptr) vkDestroyPipeline(d.d, p, nullptr);
 }
 
-// TODO: add support for push constants
 // TODO: Add back the std::initializer_list func
 RenderPipeline::RenderPipeline(LogicalDevice& d,
   std::span<DescriptorLayout* const> descriptorLayouts,
@@ -288,7 +287,6 @@ RenderPipeline::RenderPipeline(LogicalDevice& d,
 		vkDescLayout.reserve(std::size(descriptorLayouts));
 		for (auto ptr : descriptorLayouts) vkDescLayout.push_back(ptr->dsl);
 		layoutInfo.pSetLayouts = vkDescLayout.data();
-		// TODO: add support for push constants
 		layoutInfo.pushConstantRangeCount = std::size(pushConstants);
 		layoutInfo.pPushConstantRanges =
 		  (VkPushConstantRange*)std::data(pushConstants);

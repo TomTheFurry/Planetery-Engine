@@ -54,13 +54,24 @@ export namespace _toIndexTpye {
 export namespace vk {
 	//TODO: Reorder/Group the enum classes
 
+	enum class SurfacePresentMode : std::underlying_type_t<VkPresentModeKHR> {
+		Immediate = VK_PRESENT_MODE_IMMEDIATE_KHR,
+		Mailbox = VK_PRESENT_MODE_MAILBOX_KHR,
+		Fifo = VK_PRESENT_MODE_FIFO_KHR,
+		FifoRelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR,
+	};
+	enum class SurfaceColorSpace : std::underlying_type_t<VkColorSpaceKHR> {
+		SrgbNonLinear = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+		//TODO: Add other color spaces (Extension required)
+	};
+
 	enum class QueueType : VkQueueFlags {
 		Graphics = VK_QUEUE_GRAPHICS_BIT,
 		Compute = VK_QUEUE_COMPUTE_BIT,
 		MemoryTransfer = VK_QUEUE_TRANSFER_BIT,
 	};
 
-	enum class WindowTransparentType : VkCompositeAlphaFlagsKHR {
+	enum class SurfaceTransparentAction : VkCompositeAlphaFlagsKHR {
 		RemoveAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		PreMultiplied = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
 		PostMultiplied = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,

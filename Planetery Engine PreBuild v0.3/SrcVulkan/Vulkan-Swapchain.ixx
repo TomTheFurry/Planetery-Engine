@@ -46,14 +46,14 @@ export namespace vk {
 		uvec2 getPixelSize() const { return pixelSize; }
 		bool isValid() const { return sc != nullptr && !outdated; }
 		uint getImageCount() const { return imgs.size(); }
-		VkFormat getImageFormat() const { return surfaceFormat.format; }
+		VkFormat getImageFormat() const { return surfaceFormat; }
 		LogicalDevice& getDevice() const { return d; }
 
 	  private:
 		LogicalDevice& d;
 		OSRenderSurface& sf;
 		VkSwapchainKHR sc;
-		VkSurfaceFormatKHR surfaceFormat;
+		VkFormat surfaceFormat;
 		uvec2 pixelSize;
 		bool outdated = false;
 
@@ -83,7 +83,7 @@ export namespace vk {
 			uint calculateImageCount(uint preferredCount) const;
 			// TODO: make VKPresentModeKHR a enum class
 			VkPresentModeKHR calculatePresentMode() const;
-			VkSurfaceFormatKHR getFormat() const;
+			VkFormat getFormat() const;
 
 		  private:
 			VkSurfaceCapabilitiesKHR capabilities{};
@@ -101,8 +101,8 @@ export namespace vk {
 		// Public values
 		uvec2 preferredImageSize = uvec2(-1);
 		uint preferredImageCount = 4;
-		WindowTransparentType preferredTransparencyAction =
-		  WindowTransparentType::RemoveAlpha;
+		SurfaceTransparentAction preferredTransparencyAction =
+		  SurfaceTransparentAction::RemoveAlpha;
 
 		// Action
 

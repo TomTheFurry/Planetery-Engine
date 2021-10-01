@@ -31,14 +31,14 @@ OSRenderSurface::Support::Support(
 	vkGetPhysicalDeviceSurfacePresentModesKHR(
 	  pd.d, s.surface, &pmCount, presentModes.data());
 }
-VkSurfaceFormatKHR OSRenderSurface::Support::getFormat() const {
+VkFormat OSRenderSurface::Support::getFormat() const {
 	assert(!formats.empty());
 	auto it = std::find_if(
 	  formats.begin(), formats.end(), [](const VkSurfaceFormatKHR& v) {
 		  return (v.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR
 				  && v.format == VK_FORMAT_R8G8B8A8_SRGB);
 	  });
-	return it == formats.end() ? formats.front() : *it;
+	return it == formats.end() ? formats.front().format : it->format;
 }
 VkPresentModeKHR OSRenderSurface::Support::calculatePresentMode() const {
 	if constexpr (USE_MAILBOX_MODE) return VK_PRESENT_MODE_MAILBOX_KHR;
@@ -123,22 +123,22 @@ void Swapchain::_make() {
 	}
 
 	uint32_t bufferCount = sp.calculateImageCount(sf.preferredImageCount);
-	WindowTransparentType tType = sf.preferredTransparencyAction;
+	SurfaceTransparentAction tType = sf.preferredTransparencyAction;
 	if ((sp.capabilities.supportedCompositeAlpha
 		  & (VkCompositeAlphaFlagBitsKHR)tType)
 		== 0) {
 		logger("Vulkan: WARNING: Window Surface does not support "
 			   "VkCompositeAlphaFlagBitsKHR: ",
 		  (VkCompositeAlphaFlagBitsKHR)tType, ". Setting it to default.\n");
-		tType = WindowTransparentType::RemoveAlpha;
+		tType = SurfaceTransparentAction::RemoveAlpha;
 	}
 
 	VkSwapchainCreateInfoKHR createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	createInfo.surface = sf.surface;
 	createInfo.minImageCount = bufferCount;
-	createInfo.imageFormat = surfaceFormat.format;
-	createInfo.imageColorSpace = surfaceFormat.colorSpace;
+	createInfo.imageFormat = surfaceFormat;
+	createInfo.imageColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 	createInfo.imageExtent = VkExtent2D{pixelSize.x, pixelSize.y};
 	createInfo.imageArrayLayers = 1;
 	// FIXME: Hardcoded image usage (???)

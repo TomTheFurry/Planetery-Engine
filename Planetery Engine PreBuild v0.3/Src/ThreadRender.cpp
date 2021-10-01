@@ -352,9 +352,6 @@ void vkFrameCallbackOnRender(vk::SwapchainImage& scImg) {
 	auto& imgData = _Images[imageId];
 	auto& alloc = *imgData.perFrameLM;
 
-	// TODO: make this indirectWrite
-	// imgData.ub->directWrite(_ssboTest.data());
-
 	// Note: this commend buffer will be cleaned up by the lifetime manager
 	auto& cb = alloc.make<CommendBuffer>(*imgData.cp);
 
