@@ -7,6 +7,7 @@ import: Commend;
 import: Sync;
 import: Pipeline;
 import: Memory;
+import: Lifetime;
 import std.core;
 import Define;
 import Logger;
@@ -189,6 +190,45 @@ void Image::unmap() {
 	vkUnmapMemory(d.d, ptr.dm.dm);
 }
 
+void vk::Image::cmdIndirectWrite(LifetimeManager& cmdLifetime,
+  CommendBuffer& cb, ImageActiveUsage usage, TextureAspect targetAspect,
+  const void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!memFeature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanImageNotIndirectWritable";
+	}
+	auto& sg = cmdLifetime.make<Buffer>(d, texMemorySize,
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
+	sg.directWrite(data);
+	cb.cmdCopy(sg, *this, usage, TextureSubLayers{.aspect = targetAspect}, size,
+	  0, size, ivec3(0));
+}
+
+void vk::Image::cmdIndirectWrite(LifetimeManager& cmdLifetime,
+  CommendBuffer& cb, ImageActiveUsage usage, TextureSubLayers layers,
+  uvec3 copyRegion, ivec3 copyOffset, uvec3 inputTextureSize,
+  const void* data) {
+	if constexpr (DO_SAFETY_CHECK) {
+		if (!memFeature.has(MemoryFeature::IndirectWritable))
+			throw "VulkanImageNotIndirectWritable";
+		ivec3 o = copyOffset;
+		ivec3 r = ivec3(copyRegion) + copyOffset;
+		if (o.x < 0 || r.x > size.x || o.y < 0 || r.y > size.y || o.z < 0
+			|| r.z > size.z)
+			throw "VulkanImageCopyRegionOutsideImage";
+		uvec3 i = inputTextureSize;
+		uvec3 c = copyRegion;
+		if (c.x > i.x || c.y > i.y || c.z > i.z)
+			throw "VulkanImageCopyRegionLargerThenInputData";
+	}
+	auto& sg = cmdLifetime.make<Buffer>(d,
+	  inputTextureSize.x * inputTextureSize.y * inputTextureSize.z,
+	  Flags(MemoryFeature::Mappable) | MemoryFeature::IndirectReadable);
+	sg.directWrite(data);
+	cb.cmdCopy(
+	  sg, *this, usage, layers, inputTextureSize, 0, copyRegion, copyOffset);
+}
+
 void Image::blockingIndirectWrite(
   ImageActiveUsage usage, TextureAspect targetAspect, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
@@ -211,6 +251,7 @@ void Image::blockingIndirectWrite(
 	cb.endRecording();
 	cb.quickSubmit(q).wait();
 }
+
 void Image::blockingIndirectWrite(ImageActiveUsage usage,
   TextureSubLayers layers, uvec3 copyRegion, ivec3 copyOffset,
   uvec3 inputTextureSize, const void* data) {

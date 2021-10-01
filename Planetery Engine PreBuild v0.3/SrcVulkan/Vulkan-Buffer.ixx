@@ -25,13 +25,16 @@ export namespace vk {
 		void flush();
 		void flush(size_t size, size_t offset);
 		void unmap();
+
 		void cmdIndirectWrite(
-		  LifetimeManager& commendLifetime, CommendBuffer& cp, void* data);
+		  LifetimeManager& commendLifetime, CommendBuffer& cb, void* data);
 		void cmdIndirectWrite(LifetimeManager& commendLifetime,
-		  CommendBuffer& cp, size_t size, size_t offset, void* data);
+		  CommendBuffer& cb, size_t size, size_t offset, void* data);
+
 		void blockingIndirectWrite(const void* data);
 		void blockingIndirectWrite(
 		  size_t size, size_t offset, const void* data);
+
 		void directWrite(const void* data);
 		void directWrite(size_t size, size_t offset, const void* data);
 

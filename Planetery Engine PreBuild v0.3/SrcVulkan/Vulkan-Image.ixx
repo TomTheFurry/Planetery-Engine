@@ -32,11 +32,19 @@ export namespace vk {
 		void flush();
 		void flush(size_t size, size_t offset);
 		void unmap();
+
+		void cmdIndirectWrite(LifetimeManager& cmdLifetime, CommendBuffer& cp,
+		  ImageActiveUsage usage, TextureAspect targetAspect, const void* data);
+		void cmdIndirectWrite(LifetimeManager& cmdLifetime, CommendBuffer& cp,
+		  ImageActiveUsage usage, TextureSubLayers layers, uvec3 copyRegion,
+		  ivec3 copyOffset, uvec3 inputTextureSize, const void* data);
+
 		void blockingIndirectWrite(
 		  ImageActiveUsage usage, TextureAspect targetAspect, const void* data);
 		void blockingIndirectWrite(ImageActiveUsage usage,
 		  TextureSubLayers layers, uvec3 copyRegion, ivec3 copyOffset,
 		  uvec3 inputTextureSize, const void* data);
+
 		// Unsafe
 		void directWrite(const void* data);
 		// Unsafe
