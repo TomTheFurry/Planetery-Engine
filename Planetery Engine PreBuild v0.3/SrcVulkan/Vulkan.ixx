@@ -1,6 +1,7 @@
 export module Vulkan;
 export import: Enum;
 export import: Lifetime;
+export import: Memory;
 export import: Device;
 export import: Swapchain;
 export import: Queue;
