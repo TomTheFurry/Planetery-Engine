@@ -18,6 +18,10 @@ import: Declaration;
 import std.core;
 import Define;
 
+/// @defgroup vulkan Vulkan Interface
+/// @namespace vk
+/// @ingroup vulkan
+/// A helper Interface to the entire Vulkan API
 export namespace vk {
 
 

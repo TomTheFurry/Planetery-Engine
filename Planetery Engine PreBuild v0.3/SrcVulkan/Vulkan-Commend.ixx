@@ -41,8 +41,8 @@ export namespace vk {
 		void cmdBind(const DescriptorSet& ds, const RenderPipeline& p);
 
 		void cmdChangeState(Image& target, TextureSubRegion subRegion,
-		  ImageActiveUsage start, Flags<PipelineStage> srcStage,
-		  Flags<MemoryAccess> srcAccess, ImageActiveUsage end,
+		  ImageRegionState start, Flags<PipelineStage> srcStage,
+		  Flags<MemoryAccess> srcAccess, ImageRegionState end,
 		  Flags<PipelineStage> dstStage, Flags<MemoryAccess> dstAccess);
 
 		void cmdPushConstants(const RenderPipeline& p,
@@ -54,10 +54,10 @@ export namespace vk {
 		  uint indOffset = 0, uint vertOffset = 0, uint insOffset = 0);
 		void cmdCopy(const Buffer& src, Buffer& dst, size_t size,
 		  size_t srcOffset = 0, size_t dstOffset = 0);
-		void cmdCopy(const Buffer& src, Image& dst, ImageActiveUsage usage,
+		void cmdCopy(const Buffer& src, Image& dst, ImageRegionState usage,
 		  TextureSubLayers subLayers, uvec3 inputTextureSize,
 		  size_t inputDataOffset, uvec3 copyRegion, ivec3 copyOffset);
-		void cmdCopy(const Image& src, ImageActiveUsage usage, Buffer& dst,
+		void cmdCopy(const Image& src, ImageRegionState usage, Buffer& dst,
 		  TextureSubLayers subLayers, uvec3 copyRegion, ivec3 copyOffset,
 		  uvec3 outputTextureSize, size_t outputDataOffset);
 

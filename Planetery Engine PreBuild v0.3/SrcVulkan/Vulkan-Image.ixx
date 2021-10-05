@@ -17,7 +17,7 @@ export namespace vk {
 		// Super ctor
 		Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 		  VkFormat texFormat,
-		  Flags<TextureUseType> texUsage = TextureUseType::None,
+		  Flags<ImageUseType> texUsage = ImageUseType::None,
 		  Flags<MemoryFeature> texMemFeature = MemoryFeature::None,
 		  Flags<TextureFeature> texFeature = TextureFeature::None,
 		  uint mipLevels = 1, uint layers = 1, uint subsamples = 1);
@@ -34,14 +34,14 @@ export namespace vk {
 		void unmap();
 
 		void cmdIndirectWrite(LifetimeManager& cmdLifetime, CommendBuffer& cp,
-		  ImageActiveUsage usage, TextureAspect targetAspect, const void* data);
+		  ImageRegionState usage, TextureAspect targetAspect, const void* data);
 		void cmdIndirectWrite(LifetimeManager& cmdLifetime, CommendBuffer& cp,
-		  ImageActiveUsage usage, TextureSubLayers layers, uvec3 copyRegion,
+		  ImageRegionState usage, TextureSubLayers layers, uvec3 copyRegion,
 		  ivec3 copyOffset, uvec3 inputTextureSize, const void* data);
 
 		void blockingIndirectWrite(
-		  ImageActiveUsage usage, TextureAspect targetAspect, const void* data);
-		void blockingIndirectWrite(ImageActiveUsage usage,
+		  ImageRegionState usage, TextureAspect targetAspect, const void* data);
+		void blockingIndirectWrite(ImageRegionState usage,
 		  TextureSubLayers layers, uvec3 copyRegion, ivec3 copyOffset,
 		  uvec3 inputTextureSize, const void* data);
 
@@ -50,8 +50,8 @@ export namespace vk {
 		// Unsafe
 		void directWrite(size_t size, size_t offset, const void* data);
 
-		void blockingTransformActiveUsage(ImageActiveUsage start,
-		  ImageActiveUsage end, TextureSubRegion subRegion);
+		void blockingTransformActiveUsage(ImageRegionState start,
+		  ImageRegionState end, TextureSubRegion subRegion);
 
 		size_t texMemorySize;
 		size_t mSize;
@@ -63,7 +63,7 @@ export namespace vk {
 		VkFormat format;
 		Flags<MemoryFeature> memFeature;
 		Flags<TextureFeature> feature;
-		Flags<TextureUseType> usage;
+		Flags<ImageUseType> usage;
 		VkImage img = nullptr;
 		uint memoryIndex;
 		MemoryPointer ptr;

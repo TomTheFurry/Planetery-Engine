@@ -30,7 +30,7 @@ size_t formatUnitSize(VkFormat format) {
 //------------------Image-----------------------
 //----------------------------------------------
 Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
-  VkFormat texFormat, Flags<TextureUseType> texUsage,
+  VkFormat texFormat, Flags<ImageUseType> texUsage,
   Flags<MemoryFeature> texMemFeature, Flags<TextureFeature> texFeature,
   uint mipLevels, uint layers, uint subsamples):
   d(d) {
@@ -45,10 +45,10 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 		minAlignment = 1;
 	}
 	if (texMemFeature.has(MemoryFeature::IndirectWritable)) {
-		texUsage.set(TextureUseType::TransferDst);
+		texUsage.set(ImageUseType::TransferDst);
 	}
 	if (texMemFeature.has(MemoryFeature::IndirectReadable)) {
-		texUsage.set(TextureUseType::TransferSrc);
+		texUsage.set(ImageUseType::TransferSrc);
 	}
 	// HOTFIX: This is hotfix for min requirement for alignment
 	minAlignment = d.pd.properties10.properties.limits.nonCoherentAtomSize;
@@ -84,8 +84,8 @@ Image::Image(LogicalDevice& d, uvec3 texSize, uint texDimension,
 	// iInfo.pQueueFamilyIndices;
 	iInfo.initialLayout =
 	  (VkImageLayout)(texMemFeature.has(MemoryFeature::Mappable)
-						? ImageActiveUsage::HostWritable
-						: ImageActiveUsage::Undefined);
+						? ImageRegionState::HostWritable
+						: ImageRegionState::Undefined);
 
 	if (vkCreateImage(d.d, &iInfo, nullptr, &img) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create image!");
@@ -191,7 +191,7 @@ void Image::unmap() {
 }
 
 void vk::Image::cmdIndirectWrite(LifetimeManager& cmdLifetime,
-  CommendBuffer& cb, ImageActiveUsage usage, TextureAspect targetAspect,
+  CommendBuffer& cb, ImageRegionState usage, TextureAspect targetAspect,
   const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
@@ -205,7 +205,7 @@ void vk::Image::cmdIndirectWrite(LifetimeManager& cmdLifetime,
 }
 
 void vk::Image::cmdIndirectWrite(LifetimeManager& cmdLifetime,
-  CommendBuffer& cb, ImageActiveUsage usage, TextureSubLayers layers,
+  CommendBuffer& cb, ImageRegionState usage, TextureSubLayers layers,
   uvec3 copyRegion, ivec3 copyOffset, uvec3 inputTextureSize,
   const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
@@ -230,7 +230,7 @@ void vk::Image::cmdIndirectWrite(LifetimeManager& cmdLifetime,
 }
 
 void Image::blockingIndirectWrite(
-  ImageActiveUsage usage, TextureAspect targetAspect, const void* data) {
+  ImageRegionState usage, TextureAspect targetAspect, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
 		if (!memFeature.has(MemoryFeature::IndirectWritable))
 			throw "VulkanImageNotIndirectWritable";
@@ -252,7 +252,7 @@ void Image::blockingIndirectWrite(
 	cb.quickSubmit(q).wait();
 }
 
-void Image::blockingIndirectWrite(ImageActiveUsage usage,
+void Image::blockingIndirectWrite(ImageRegionState usage,
   TextureSubLayers layers, uvec3 copyRegion, ivec3 copyOffset,
   uvec3 inputTextureSize, const void* data) {
 	if constexpr (DO_SAFETY_CHECK) {
@@ -298,7 +298,7 @@ void Image::directWrite(size_t nSize, size_t offset, const void* data) {
 }
 
 void Image::blockingTransformActiveUsage(
-  ImageActiveUsage start, ImageActiveUsage end, TextureSubRegion subRegion) {
+  ImageRegionState start, ImageRegionState end, TextureSubRegion subRegion) {
 	if constexpr (DO_SAFETY_CHECK) {
 		//??? What to check?
 	}
