@@ -92,7 +92,7 @@ export namespace vk {
 			struct ImageAndSamplerType {
 				const ImageView* imageView;
 				const ImageSampler* sampler;
-				ImageActiveUsage imageActiveUsage;
+				ImageRegionState imageActiveUsage;
 			};
 			union {
 				BufferType asBuffer;
@@ -105,16 +105,16 @@ export namespace vk {
 				asBuffer.length = len;
 			}
 			WriteData(const ImageView* imgView, const ImageSampler* s,
-			  ImageActiveUsage imgActiveUsage) {
+			  ImageRegionState imgActiveUsage) {
 				asImage.imageView = imgView;
 				asImage.sampler = s;
 				asImage.imageActiveUsage = imgActiveUsage;
 			}
 			WriteData(
-			  const ImageView* imgView, ImageActiveUsage imgActiveUsage):
+			  const ImageView* imgView, ImageRegionState imgActiveUsage):
 			  WriteData(imgView, nullptr, imgActiveUsage) {}
 			WriteData(const ImageSampler* s):
-			  WriteData(nullptr, s, ImageActiveUsage::Undefined) {}
+			  WriteData(nullptr, s, ImageRegionState::Undefined) {}
 		};
 
 		struct CmdWriteInfo {

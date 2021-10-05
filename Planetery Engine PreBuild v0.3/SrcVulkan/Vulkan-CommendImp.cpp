@@ -98,8 +98,8 @@ void CommendBuffer::cmdBind(const DescriptorSet& ds, const RenderPipeline& p) {
 	  cb, VK_PIPELINE_BIND_POINT_GRAPHICS, p.pl, 0, 1, &ds.ds, 0, nullptr);
 }
 void CommendBuffer::cmdChangeState(Image& target, TextureSubRegion subRegion,
-  ImageActiveUsage start, Flags<PipelineStage> srcStage,
-  Flags<MemoryAccess> srcAccess, ImageActiveUsage end,
+  ImageRegionState start, Flags<PipelineStage> srcStage,
+  Flags<MemoryAccess> srcAccess, ImageRegionState end,
   Flags<PipelineStage> dstStage, Flags<MemoryAccess> dstAccess) {
 	VkImageMemoryBarrier imb{};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -139,7 +139,7 @@ void CommendBuffer::cmdCopy(const Buffer& src, Buffer& dst, size_t size,
 	vkCmdCopyBuffer(cb, src.b, dst.b, 1, &bInfo);
 }
 void CommendBuffer::cmdCopy(const Buffer& src, Image& dst,
-  ImageActiveUsage usage, TextureSubLayers subLayers, uvec3 inputTextureSize,
+  ImageRegionState usage, TextureSubLayers subLayers, uvec3 inputTextureSize,
   size_t inputDataOffset, uvec3 copyRegion, ivec3 copyOffset) {
 	VkBufferImageCopy bic{};
 	bic.bufferOffset = inputDataOffset;
@@ -150,7 +150,7 @@ void CommendBuffer::cmdCopy(const Buffer& src, Image& dst,
 	bic.imageExtent = VkExtent3D{copyRegion.x, copyRegion.y, copyRegion.z};
 	vkCmdCopyBufferToImage(cb, src.b, dst.img, (VkImageLayout)usage, 1, &bic);
 }
-void CommendBuffer::cmdCopy(const Image& src, ImageActiveUsage usage,
+void CommendBuffer::cmdCopy(const Image& src, ImageRegionState usage,
   Buffer& dst, TextureSubLayers subLayers, uvec3 copyRegion, ivec3 copyOffset,
   uvec3 outputTextureSize, size_t outputDataOffset) {
 	VkBufferImageCopy bic{};

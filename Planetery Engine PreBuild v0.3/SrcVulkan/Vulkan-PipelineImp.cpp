@@ -43,8 +43,8 @@ VkPipelineVertexInputStateCreateInfo VertexAttribute::getStructForPipeline() {
 
 
 RenderPass::Attachment::Attachment(VkFormat colorFormat,
-  ImageActiveUsage currentActiveUsage, AttachmentReadOp readOp,
-  ImageActiveUsage outputActiveUsage, AttachmentWriteOp writeOp, uint sam) {
+  ImageRegionState currentActiveUsage, AttachmentReadOp readOp,
+  ImageRegionState outputActiveUsage, AttachmentWriteOp writeOp, uint sam) {
 	flags = 0;
 	format = colorFormat;
 	samples = (VkSampleCountFlagBits)sam;
@@ -56,8 +56,8 @@ RenderPass::Attachment::Attachment(VkFormat colorFormat,
 	finalLayout = (VkImageLayout)outputActiveUsage;
 }
 RenderPass::Attachment::Attachment(VkFormat depthStencilformat,
-  ImageActiveUsage currentActiveUsage, AttachmentReadOp depthReadOp,
-  AttachmentReadOp sReadOp, ImageActiveUsage outputActiveUsage,
+  ImageRegionState currentActiveUsage, AttachmentReadOp depthReadOp,
+  AttachmentReadOp sReadOp, ImageRegionState outputActiveUsage,
   AttachmentWriteOp depthWriteOp, AttachmentWriteOp sWriteOp, uint sam) {
 	flags = 0;
 	format = depthStencilformat;
@@ -78,27 +78,27 @@ enum class _AtmUsage {
 	Resolve = 16,
 	Forward = 32,
 };
-ImageActiveUsage _getSubPassAtmGoodActiveUseType(Flags<_AtmUsage> v) {
+ImageRegionState _getSubPassAtmGoodActiveUseType(Flags<_AtmUsage> v) {
 	switch (v.toVal()) {
 	case Flags(_AtmUsage::InputColor).toVal():
-		return ImageActiveUsage::ReadOnlyShader;
+		return ImageRegionState::ReadOnlyShader;
 	case Flags(_AtmUsage::InputDepthStencil).toVal():
-		return ImageActiveUsage::ReadOnlyAttachmentDepthStencil;
+		return ImageRegionState::ReadOnlyAttachmentDepthStencil;
 
 	case Flags(_AtmUsage::Color).toVal():
-		return ImageActiveUsage::AttachmentColor;
+		return ImageRegionState::AttachmentColor;
 	case Flags(_AtmUsage::DepthStencil).toVal():
-		return ImageActiveUsage::AttachmentDepthStencil;
+		return ImageRegionState::AttachmentDepthStencil;
 
 	case Flags(_AtmUsage::Forward).toVal():
-		return ImageActiveUsage::Undefined;	 // dont care
+		return ImageRegionState::Undefined;	 // dont care
 
 	default:
 		if (v.has(_AtmUsage::Forward))
 			throw "VulkanSubPassInvalidAttachmentUsage:UniqueForward";
 		if (v.has(_AtmUsage::Color) && v.has(_AtmUsage::DepthStencil))
 			throw "VulkanSubPassInvalidAttachmentUsage:ColorOrDepthStencil";
-		return ImageActiveUsage::General;
+		return ImageRegionState::General;
 	}
 }
 
@@ -122,7 +122,7 @@ RenderPass::SubPass::SubPass(std::initializer_list<uint> inputColorAtm,
 	for (auto& id : depthStencilAtm) atm[id] |= _AtmUsage::DepthStencil;
 	for (auto& id : resolveAtm) atm[id] |= _AtmUsage::Resolve;
 	atm.erase(uint(-1));
-	std::unordered_map<uint, ImageActiveUsage> atmType{};
+	std::unordered_map<uint, ImageRegionState> atmType{};
 	atmType.reserve(atm.size());
 	for (auto it : atm) {
 		atmType[it.first] = _getSubPassAtmGoodActiveUseType(it.second);
