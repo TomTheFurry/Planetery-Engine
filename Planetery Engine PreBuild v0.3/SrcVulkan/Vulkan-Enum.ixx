@@ -583,70 +583,190 @@ export namespace vk {}
 
 // Commend
 export namespace vk {
+	/// @addtogroup commendEnum Commend Enums
+	/// @ingroup enum
+	/// @{
+	
+	/// @enum CommendPoolType
+	/// <summary>
+	/// Flag to designate different CommendPool type
+	/// </summary>
+	/// Control how the child CommendBuffer lifetime works
+	/// @note Has Flags version. See Flags<CommendPoolType>
 	enum class CommendPoolType : VkCommandPoolCreateFlags {
+		/// Default
 		Default = 0,
+		/// CommendBuffer created from this pool is shortlived. Hint for Vulkan drivers for better optimization
 		Shortlived = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+		/// CommendBuffer created from this pool can be freed/reset. (Without resetting entire Commend Pool)
 		Resetable = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+		/// Using protected memory. @todo link to Protected
 		Protected = VK_COMMAND_POOL_CREATE_PROTECTED_BIT,
 	};
+	/// @class Flags<CommendPoolType>
+	/// <summary>
+	/// Flags type of CommendPoolType
+	/// </summary>
+	/// See vk::CommendPoolType for availble flags.
 	template<> class Flags<CommendPoolType>;
+
+	/// @enum CommendBufferUsage
+	/// <summary>
+	/// Flag to designate how the CommendBuffer will be used
+	/// </summary>
+	/// Signal how this commend buffer is used. This allows better optimizations.
+	/// @note Has Flags version. See Flags<CommendBufferUsage>
 	enum class CommendBufferUsage : VkCommandBufferUsageFlags {
+		/// None. Nothing special is needed
 		None = 0,
+		/// Streaming buffer. Each submition requires recording it again.
+		/// @todo Need testing for statement: It will reset automatically after submition, not caring the parent CommendPool CommendPoolType::Resetable flag.
 		Streaming = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+		/// For Secondary buffer. Signal that this secondary buffer is entirely inside a render pass
 		RenderPassOwned = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
+		/// Allow parallel submition. Signal that this commend buffer can be submitted multiple times without waiting for previous usage be completed
 		ParallelSubmit = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
 	};
+	/// @class Flags<CommendBufferUsage>
+	/// <summary>
+	/// Flags type of CommendBufferUsage
+	/// </summary>
+	/// See vk::CommendBufferUsage for availble flags.
 	template<> class Flags<CommendBufferUsage>;
+
+	/// @}
 }
 
 // Descriptor
 export namespace vk {
+	/// @addtogroup descriptorEnum Descriptor Enums
+	/// @ingroup enum
+	/// @{
+	
+	/// @enum DescriptorPoolType
+	/// <summary>
+	/// Flag to designate different DescriptorPool type
+	/// </summary>
+	/// Control how the child DescriptorSet lifetime works
+	/// @note Has Flags version. See Flags<DescriptorPoolType>
 	enum class DescriptorPoolType : VkDescriptorPoolCreateFlags {
+		/// None. Nothing special
 		None = 0,
+		/// DescriptorSet created from this pool can be freed/reset. (Without resetting entire Descriptor Pool)
 		Resetable = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+		/// DescriptorSet created from this pool has bindings that can be updated after bind
 		Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
+		/// DescriptorSet created from this pool will be in host memory, allowing updating mutliple different DescriptorSets from multiple threads
+		/// @note This still does not allow updating the same DescriptorSet from multiple threads!
 		HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 	};
+	/// @class Flags<DescriptorPoolType>
+	/// <summary>
+	/// Flags type of DescriptorPoolType
+	/// </summary>
+	/// See vk::DescriptorPoolType for availble flags.
 	template<> class Flags<DescriptorPoolType>;
+
+	/// @enum DescriptorDataType
+	/// <summary>
+	/// Enum to designate data type in a DescriptorBinding
+	/// </summary>
 	enum class DescriptorDataType : std::underlying_type_t<VkDescriptorType> {
+		/// Store a reference to a UniformBuffer
 		UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		/// Store a reference to a StorageBuffer
 		StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+		/// Store an image view
 		Image = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+		/// Store a sampler
 		Sampler = VK_DESCRIPTOR_TYPE_SAMPLER,
+		/// Store an image view and a sampler (combined)
 		ImageAndSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 		// TODO: Add many more types of descriptor
 	};
+
+	/// @}
 }
 
 // Pipeline
 export namespace vk {
+	/// @addtogroup pipelineEnum Pipeline Enums
+	/// @ingroup enum
+	/// @{
 
-	// Attachments
+	/// Attachments
+	
+	/// @enum AttachmentReadOp
+	/// <summary>
+	/// Enum to set the read operation for an attachment
+	/// </summary>
+	/// Control when reading / inputing an attachment, what action can be done on the attachment
+	/// @todo Better names? Perhaps LoadOp/InputOp instead of ReadOp?
 	enum class AttachmentReadOp : std::underlying_type_t<VkAttachmentLoadOp> {
+		/// Load the attachment data. Signal that the inputted value is needed and don\'t change it when loading in the attachment
 		Read = VK_ATTACHMENT_LOAD_OP_LOAD,
+		/// Clear the attachment data. Signal that while the value before is not needed/read, it should be cleared (set to a clear value)
 		Clear = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		/// Don\'t care about the attachment data. Signal that the value before is not needed/read, and that the following write operations will override it entirely
 		Undefined = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 	};
+	
+	/// @enum AttachmentWriteOp
+	/// <summary>
+	/// Enum to set the write operation for an attachment
+	/// </summary>
+	/// Control when writing / outputing an attachment, what action can be done on the attachment
+	/// @todo Better names? Perhaps StoreOp/OutputOp instead of WriteOp?
 	enum class AttachmentWriteOp : std::underlying_type_t<VkAttachmentStoreOp> {
+		/// Store the written attachment data. Signal that the attachment values will/may be read, and don't throw the value away
 		Write = VK_ATTACHMENT_STORE_OP_STORE,
+		/// Don\'t care about
 		Undefined = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 	};
+	
+	/// @enum ColorComponents
+	/// <summary>
+	/// Flag for color components in a color value
+	/// </summary>
 	enum class ColorComponents : VkColorComponentFlags {
+		/// None
 		None = 0,
+		/// Red value
 		Red = VK_COLOR_COMPONENT_R_BIT,
+		/// Green value
 		Green = VK_COLOR_COMPONENT_G_BIT,
+		/// Blue value
 		Blue = VK_COLOR_COMPONENT_B_BIT,
+		/// Alpha value
 		Alpha = VK_COLOR_COMPONENT_A_BIT,
+		/// All values, including Red, Green, Blue, and Alpha
 		All = Red | Green | Blue | Alpha,
 	};
+	/// @class Flags<ColorComponents>
+	/// <summary>
+	/// Flags type of ColorComponents
+	/// </summary>
+	/// See vk::ColorComponents for availble flags.
 	template<> class Flags<ColorComponents>;
 
-	// Blending
+	/// Blending
+	
+	/// @enum BlendOperator
+	/// <summary>
+	/// Enum to set the blending operation
+	/// </summary>
+	/// Control how the blending is done.
+	/// @todo: Add more for advanced blend op
 	enum class BlendOperator : std::underlying_type_t<VkBlendOp> {
+		/// RGBA: Destination += Source \(with weights from blend factor\)
 		Add = VK_BLEND_OP_ADD,
+		/// RGBA: Destination -= Source \(with weights from blend factor\)
 		Subtract = VK_BLEND_OP_SUBTRACT,
+		/// RGBA: Destination = Source - Destination \(with weights from blend factor\)
 		ReverseSubtract = VK_BLEND_OP_REVERSE_SUBTRACT,
+		/// RGBA: Destination = min(Source, Destination)
 		Min = VK_BLEND_OP_MIN,
+		/// RGBA: Destination = max(Source, Destination)
 		Max = VK_BLEND_OP_MAX,
 		// TODO: Maybe add support for advanced blend op
 		/* Provided by VK_EXT_blend_operation_advanced
@@ -697,55 +817,123 @@ export namespace vk {
 		= VK_BLEND_OP_GREEN_EXT,
 		= VK_BLEND_OP_BLUE_EXT, */
 	};
+	
+	/// @enum BlendFactor
+	/// <summary>
+	/// Enum to set the blending factor
+	/// </summary>
+	/// Effects the blending result based on the used BlendOperator
 	enum class BlendFactor : std::underlying_type_t<VkBlendFactor> {
+		/// 0.0
 		Zero = VK_BLEND_FACTOR_ZERO,
+		/// 1.0
 		One = VK_BLEND_FACTOR_ONE,
+		/// Respective channel value from source color
 		SrcColor = VK_BLEND_FACTOR_SRC_COLOR,
+		/// One minus respective channel value from source color
 		OneMinusSrcColor = VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+		/// Respective channel value from destination color
 		DstColor = VK_BLEND_FACTOR_DST_COLOR,
+		/// One minus respective channel value from destination color
 		OneMinusDstColor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+		/// Alpha channel value from source color
 		SrcAlpha = VK_BLEND_FACTOR_SRC_ALPHA,
+		/// One minus alpha channel value from source color
 		OneMinusSrcAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+		/// Alpha channel value from destination color
 		DstAlpha = VK_BLEND_FACTOR_DST_ALPHA,
+		/// One minus alpha channel value from destination color
 		OneMinusDstAlpha = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA,
+		/// Constant blend factor color
 		ConstColor = VK_BLEND_FACTOR_CONSTANT_COLOR,
+		/// One minus constant blend factor color
 		OneMinusConstColor = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR,
+		/// Alpha channel value from constant blend factor color
 		ConstAlpha = VK_BLEND_FACTOR_CONSTANT_ALPHA,
+		/// One minus alpha channel value from constant blend factor color
 		OneMinusConstAlpha = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA,
+		/// RGB: min(Source Alpha, 1 - Destination Alpha) \n
+		/// Alpha: 1.0
 		SrcAlphaSaturate = VK_BLEND_FACTOR_SRC_ALPHA_SATURATE,
+		/// Respective channel value from 2nd source color (used in dual source blending mode)
 		Src1Color = VK_BLEND_FACTOR_SRC1_COLOR,
+		/// One minus respective channel value from 2nd source color (used in dual source blending mode)
 		OneMinusSrc1Color = VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR,
+		/// Alpha channel value from 2nd source color (used in dual source blending mode)
 		Src1Alpha = VK_BLEND_FACTOR_SRC1_ALPHA,
+		/// One minus alpha channel value from 2nd source color (used in dual source blending mode)
 		OneMinusSrc1Alpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA,
 	};
 
+	/// Stencil
+
+	/// @enum CompareOperator
+	/// <summary>
+	/// Enum to set the stencil compare operator
+	/// </summary>
+	/// Control how stencil works
 	enum class CompareOperator : std::underlying_type_t<VkCompareOp> {
+		/// false
 		AlwaysFalse = VK_COMPARE_OP_NEVER,
+		/// A \< B
 		Less = VK_COMPARE_OP_LESS,
+		/// A == B
 		Equal = VK_COMPARE_OP_EQUAL,
+		/// A <= B
 		LessOrEqual = VK_COMPARE_OP_LESS_OR_EQUAL,
+		/// A > B
 		Greater = VK_COMPARE_OP_GREATER,
+		/// A != B
 		NotEqual = VK_COMPARE_OP_NOT_EQUAL,
+		/// A >= B
 		GreaterOrEqual = VK_COMPARE_OP_GREATER_OR_EQUAL,
+		/// true
 		AlwaysTrue = VK_COMPARE_OP_ALWAYS,
 	};
+
+	/// @enum LogicOperator
+	/// <summary>
+	/// Enum setting operator used on writing fragment value to color attachment
+	/// </summary>
+	/// Control what operator is applied when outputing to the color attachment
+
+	/// @bug Need to disignate a value to turn off logic operator
+
+	/// @todo Check the statement about blending is disabled when logic operation is turned on
+	
+	/// The following table assume that \'S\' == source value from fragment output, and \'d\' == destination value from the color attachment
 	enum class LogicOperator : std::underlying_type_t<VkLogicOp> {
-		None = 0,
+		/// Set to zero
 		Zeros = VK_LOGIC_OP_CLEAR,
+		/// S & D
 		IAndD = VK_LOGIC_OP_AND,
+		/// S & ~D
 		IAndNotD = VK_LOGIC_OP_AND_REVERSE,
+		/// S \(Copy\)
 		I = VK_LOGIC_OP_COPY,
+		/// ~S & D
 		NotIAndD = VK_LOGIC_OP_AND_INVERTED,
+		/// D \(No-op\)
 		D = VK_LOGIC_OP_NO_OP,
+		/// S ^ D
 		IXorD = VK_LOGIC_OP_XOR,
+		/// S | D
 		IOrD = VK_LOGIC_OP_OR,
+		/// ~ S|D
 		INorD = VK_LOGIC_OP_NOR,
+		/// ~ S^D
 		IXnorD = VK_LOGIC_OP_EQUIVALENT,
+		/// ~D
 		NotD = VK_LOGIC_OP_INVERT,
+		/// S | ~D
 		IOrNotD = VK_LOGIC_OP_OR_REVERSE,
+		/// ~S
 		NotI = VK_LOGIC_OP_COPY_INVERTED,
+		/// ~S | D
 		NotIOrD = VK_LOGIC_OP_OR_INVERTED,
+		/// ~ S&D
 		INandD = VK_LOGIC_OP_NAND,
+		/// Set to one
 		Ones = VK_LOGIC_OP_SET,
 	};
 
