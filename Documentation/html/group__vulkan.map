@@ -1,4 +1,5 @@
 <map id="Vulkan Interface" name="Vulkan Interface">
-<area shape="rect" id="node1" href="$group__enum.html" title=" " alt="" coords="168,5,231,31"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,120,31"/>
+<area shape="rect" id="node1" href="$group__vkDevice.html" title=" " alt="" coords="168,5,235,31"/>
+<area shape="rect" id="node2" href="$group__vkEnum.html" title=" " alt="" coords="170,55,233,80"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,31,120,56"/>
 </map>

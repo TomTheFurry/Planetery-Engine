@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['bufferusetype_0',['BufferUseType',['../group__bufferEnum.html#gaa28524e4c5dea828d7014d4e4da7bc6c',1,'vk']]]
+  ['attachmentreadop_0',['AttachmentReadOp',['../group__vkPipelineEnum.html#ga8830590168c0d5983ba674400b0c0f0c',1,'vk']]],
+  ['attachmentwriteop_1',['AttachmentWriteOp',['../group__vkPipelineEnum.html#ga33f20afed1cd00721bde23d1e84b6dc0',1,'vk']]]
 ];

@@ -1,11 +1,22 @@
 var searchData=
 [
-  ['immediate_0',['Immediate',['../group__swapchainEnum.html#gga5e5f7e8b5e9d193a167aa710d6d5638ea43f6615bbb2c40a5306ff804094420b1',1,'vk']]],
-  ['index_1',['Index',['../group__bufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6ca88fa71f0a6e0dfedbb46d91cc0b37a50',1,'vk']]],
-  ['indirectdraw_2',['IndirectDraw',['../group__bufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6ca2737349e4921b08b4b5a97a2cf46d5df',1,'vk']]],
-  ['indirectreadable_3',['IndirectReadable',['../group__memoryEnum.html#gga3776a8012f3872aca8a50158d95a504ba3364d006914a891e5bb8e983302dc7cb',1,'vk']]],
-  ['indirectwritable_4',['IndirectWritable',['../group__memoryEnum.html#gga3776a8012f3872aca8a50158d95a504bad2392aa94408ec1a66ddf3c5578e8bbb',1,'vk']]],
-  ['intblack_5',['IntBlack',['../group__imageEnum.html#gga5b44864fc40858e321bb5d5d2db588c5a10905d9f5fe91890e745508f2ba0ed3b',1,'vk']]],
-  ['inttransparentblack_6',['IntTransparentBlack',['../group__imageEnum.html#gga5b44864fc40858e321bb5d5d2db588c5aded8060984b07828e975b74bc692e0b2',1,'vk']]],
-  ['intwhite_7',['IntWhite',['../group__imageEnum.html#gga5b44864fc40858e321bb5d5d2db588c5a21a48992e64aeafb2fd9ab14cc5d5b6d',1,'vk']]]
+  ['i_0',['I',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7eadd7536794b63bf90eccfd37f9b147d7f',1,'vk']]],
+  ['iandd_1',['IAndD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7ea832e1dcd467c90ff5b0c76f90b7feced',1,'vk']]],
+  ['iandnotd_2',['IAndNotD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7ea8fda8575122cf2d83322dc27e7f54594',1,'vk']]],
+  ['image_3',['Image',['../group__vkDescriptorEnum.html#gga4614ed1d77c9a74dc92003adec9abf36abe53a0541a6d36f6ecb879fa2c584b08',1,'vk']]],
+  ['imageandsampler_4',['ImageAndSampler',['../group__vkDescriptorEnum.html#gga4614ed1d77c9a74dc92003adec9abf36af99d673020b8b26397cd27b51f3e3397',1,'vk']]],
+  ['immediate_5',['Immediate',['../group__vkSwapchainEnum.html#gga5e5f7e8b5e9d193a167aa710d6d5638ea43f6615bbb2c40a5306ff804094420b1',1,'vk']]],
+  ['inandd_6',['INandD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7ea75b214929a273b50221492b1d7e676eb',1,'vk']]],
+  ['index_7',['Index',['../group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6ca88fa71f0a6e0dfedbb46d91cc0b37a50',1,'vk']]],
+  ['indirectdraw_8',['IndirectDraw',['../group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6ca2737349e4921b08b4b5a97a2cf46d5df',1,'vk']]],
+  ['indirectreadable_9',['IndirectReadable',['../group__vkMemoryEnum.html#gga3776a8012f3872aca8a50158d95a504ba3364d006914a891e5bb8e983302dc7cb',1,'vk']]],
+  ['indirectwritable_10',['IndirectWritable',['../group__vkMemoryEnum.html#gga3776a8012f3872aca8a50158d95a504bad2392aa94408ec1a66ddf3c5578e8bbb',1,'vk']]],
+  ['inord_11',['INorD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7ea14377bbc1898cbaa60a0110d0f31766e',1,'vk']]],
+  ['intblack_12',['IntBlack',['../group__vkImageEnum.html#gga5b44864fc40858e321bb5d5d2db588c5a10905d9f5fe91890e745508f2ba0ed3b',1,'vk']]],
+  ['inttransparentblack_13',['IntTransparentBlack',['../group__vkImageEnum.html#gga5b44864fc40858e321bb5d5d2db588c5aded8060984b07828e975b74bc692e0b2',1,'vk']]],
+  ['intwhite_14',['IntWhite',['../group__vkImageEnum.html#gga5b44864fc40858e321bb5d5d2db588c5a21a48992e64aeafb2fd9ab14cc5d5b6d',1,'vk']]],
+  ['iord_15',['IOrD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7eaf83786a87050fb684c5422110131e4ca',1,'vk']]],
+  ['iornotd_16',['IOrNotD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7ea9359b1d6e5d315cf3cb620e55d82bbba',1,'vk']]],
+  ['ixnord_17',['IXnorD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7eac99bff22b841a1d9fd76d3342aee8566',1,'vk']]],
+  ['ixord_18',['IXorD',['../group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7eaf2ab600d59ede479e23de9254b74254e',1,'vk']]]
 ];

@@ -79,8 +79,8 @@ export namespace vk {
 	/// Flag for Memory Access type
 	/// </summary>
 	/// This define what this section of memory can be used for. Setting as
-	/// litte of them will increase performance.
-	/// @note Has Flags version. See Flags<MemoryAccess>
+	/// litte of them as needed will increase performance.
+	/// @note Has Flags version. See \c Flags<MemoryAccess>
 	enum class MemoryAccess : VkAccessFlags {
 		/// None needed
 		None = VK_ACCESS_NONE_KHR,
@@ -90,22 +90,22 @@ export namespace vk {
 		VertexInputIndexRead = VK_ACCESS_INDEX_READ_BIT,
 		/// Read as vertex input attribute by a pipeline
 		VertexInputAttributeRead = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-		/// Read as Uniform data by any shaders
+		/// Read as uniform data by any shaders
 		ShaderUniformRead = VK_ACCESS_UNIFORM_READ_BIT,
-		/// Read as Input Attachment by a pipeline
+		/// Read as input attachment by a pipeline
 		AttachmentInputRead = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
 		/// Read as any type of data by any shaders
 		ShaderAnyRead = VK_ACCESS_SHADER_READ_BIT,
 		/// Written to as any type of data by any shaders
 		ShaderAnyWrite = VK_ACCESS_SHADER_WRITE_BIT,
-		/// Read as Color Attachment by a pipeline
+		/// Read as color attachment by a pipeline
 		AttachmentColorRead = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
-		/// Written to as Color Attachment by a pipeline
+		/// Written to as color attachment by a pipeline
 		AttachmentColorWrite = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		/// Read as Depth/Stencil Attachment by a pipeline
+		/// Read as depth/stencil attachment by a pipeline
 		AttachmentDepthStencilRead =
 		  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-		/// Written to as Depth/Stencil Attachment by a pipeline
+		/// Written to as depth/stencil attachment by a pipeline
 		AttachmentDepthStencilWrite =
 		  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
 		/// Read by memory transfer commend
@@ -120,14 +120,13 @@ export namespace vk {
 		AnyRead = VK_ACCESS_MEMORY_READ_BIT,
 		/// Written via any valid means
 		AnyWrite = VK_ACCESS_MEMORY_WRITE_BIT,
-
 	};
 
 	/// @class Flags<MemoryAccess>
 	/// <summary>
-	/// Flags type of MemoryAccess
+	/// Flags type of \c vk::MemoryAccess
 	/// </summary>
-	/// See vk::MemoryAccess for availble flags.
+	/// See \c vk::MemoryAccess for availble flags.
 	template<> class Flags<MemoryAccess>;
 
 	/// @enum MemoryFeature
@@ -136,7 +135,7 @@ export namespace vk {
 	/// </summary>
 	/// This control the allowed
 	/// \ref CommendBuffer::cmdCopy() "memory transfer method"
-	/// @note Has Flags version. See Flags<MemoryFeature>
+	/// @note Has Flags version. See \c Flags<MemoryFeature>
 	enum class MemoryFeature {
 		/// None
 		None = 0,
@@ -144,21 +143,21 @@ export namespace vk {
 		IndirectWritable = 1,
 		/// Readable by commends
 		IndirectReadable = 2,
-		/// Mappable to host memory, Read/Write control is set via MemoryAccess
-		/// flag
+		/// Mappable to host memory, Read/Write control is set via
+		/// \c MemoryAccess flag
 		Mappable = 4,
-		/// Mapped memory is coherent. Any Read/Write does not have to be
+		/// Mapped memory is coherent. Any read/write does not have to be
 		/// flushed
 		Coherent = 8,
-		/// Equal to Coherent \| Mappable
+		/// Equal to <tt>Coherent \| Mappable</tt>
 		CoherentMappable = Coherent | Mappable,
 	};
 
 	/// @class Flags<MemoryFeature>
 	/// <summary>
-	/// Flags type of MemoryFeature
+	/// Flags type of \c vk::MemoryFeature
 	/// </summary>
-	/// See vk::MemoryFeature for availble flags.
+	/// See \c vk::MemoryFeature for availble flags.
 	template<> class Flags<MemoryFeature>;
 
 	/// @}
@@ -175,10 +174,10 @@ export namespace vk {
 
 	/// @enum SurfacePresentMode
 	/// <summary>
-	/// Enum for OSRenderSurface present mode
+	/// Enum for \c OSRenderSurface present mode
 	/// </summary>
-	/// This define how the swapchain works, like what type of vsync \(or no
-	/// vsync\)
+	/// This define how \c Swapchain works. It affect what type of Vsync \(or no
+	/// vsync\) to use
 	///
 	/// <a
 	/// href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPresentModeKHR.html#_description">
@@ -199,7 +198,7 @@ export namespace vk {
 	/// <summary>
 	/// Enum for OSRenderSurface color space
 	/// </summary>
-	/// This refers to what the OSRenderSurface color space its in.
+	/// This refers to what the \c OSRenderSurface color space its in.
 	/// @todo Add more color spaces
 	///
 	/// <a
@@ -217,15 +216,16 @@ export namespace vk {
 	/// <summary>
 	/// Enum for what action to do for the transparentcy channel
 	/// </summary>
-	/// This changes the action that applies when the SwapchainImage is
-	/// presented to the native OSRenderSurface. Note that currently most
-	/// Operating Systems only support RemoveAlpha.
+	/// This changes the action that applies when the \c SwapchainImage is
+	/// presented to the native \c OSRenderSurface.
+	/// @note Operating Systems only support
+	/// \c SurfaceTransparentAction::RemoveAlpha.
 	///
 	/// <a
 	/// href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkCompositeAlphaFlagBitsKHR.html#_description">
 	/// See vulkan docs... </a>
 	enum class SurfaceTransparentAction : VkCompositeAlphaFlagsKHR {
-		/// Set alpha channel to 1.0. Supported by most type of OS
+		/// Set alpha channel to <tt>1.0</tt>. Supported by most type of OS
 		RemoveAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		/// Notify no action is needed as alpha channel is pre-multiplied
 		PreMultiplied = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
@@ -245,20 +245,23 @@ export namespace vk {
 	/// @{
 	/// @enum QueueType
 	/// <summary>
-	/// Flag to designate what group of commends the Queue support
+	/// Flag to designate \c Queue support type
 	/// </summary>
-	/// @note Has Flags version. See Flags<QueueType>
+	/// @note Has Flags version. See \c Flags<QueueType>
 	enum class QueueType : VkQueueFlags {
+		/// Graphics related operations
 		Graphics = VK_QUEUE_GRAPHICS_BIT,
+		/// Compute related operations
 		Compute = VK_QUEUE_COMPUTE_BIT,
+		/// Basic memory transfer operations
 		MemoryTransfer = VK_QUEUE_TRANSFER_BIT,
 	};
 
 	/// @class Flags<QueueType>
 	/// <summary>
-	/// Flags type of QueueType
+	/// Flags type of \c vk::QueueType
 	/// </summary>
-	/// See vk::QueueType for availble flags.
+	/// See \c vk::QueueType for availble flags.
 	template<> class Flags<QueueType>;
 
 	/// @}
@@ -271,9 +274,9 @@ export namespace vk {
 	/// @{
 	/// @enum BufferUseType
 	/// <summary>
-	/// Flag to designate how this buffer can be used
+	/// Flag to designate how \c Buffer can be used
 	/// </summary>
-	/// @note Has Flags version. See Flags<BufferUseType>
+	/// @note Has Flags version. See \c Flags<BufferUseType>
 	enum class BufferUseType : VkBufferUsageFlags {
 		/// None
 		None = 0,
@@ -301,9 +304,9 @@ export namespace vk {
 
 	/// @class Flags<BufferUseType>
 	/// <summary>
-	/// Flags type of BufferUseType
+	/// Flags type of \c vk::BufferUseType
 	/// </summary>
-	/// See vk::BufferUseType for availble flags.
+	/// See \c vk::BufferUseType for availble flags.
 	template<> class Flags<BufferUseType>;
 
 	/// @}
@@ -319,9 +322,9 @@ export namespace vk {
 
 	/// @enum ImageUseType
 	/// <summary>
-	/// Flag to designate how this image can be used
+	/// Flag to designate how \c Image can be used
 	/// </summary>
-	/// @note Has Flags version. See Flags<ImageUseType>
+	/// @note Has Flags version. See \c Flags<ImageUseType>
 	enum class ImageUseType : VkImageUsageFlags {
 		/// None
 		None = 0,
@@ -329,50 +332,50 @@ export namespace vk {
 		TransferSrc = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 		/// Destination for transfer commend
 		TransferDst = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-		/// Image sampling by ImageView from shaders
+		/// \c Image sampling by \c ImageView from shaders
 		ShaderSampling = VK_IMAGE_USAGE_SAMPLED_BIT,
 		/// Storage image for shaders
 		ShaderStorage = VK_IMAGE_USAGE_STORAGE_BIT,
-		/// As Color Attachment
+		/// As color attachment
 		AttachmentColor = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		/// As Depth/Stencil Attachment
+		/// As depth/stencil attachment
 		AttachmentDepthStencil = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 		/// Added on flag that mark the attachemnt as lazily allocated
 		AttachmentLazyAllocated = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
-		/// As Input Attachment
+		/// As input attachment
 		AttachmentInput = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
 	};
 	/// @class Flags<ImageUseType>
 	/// <summary>
-	/// Flags type of ImageUseType
+	/// Flags type of \c vk::ImageUseType
 	/// </summary>
-	/// See vk::ImageUseType for availble flags.
+	/// See \c vk::ImageUseType for availble flags.
 	template<> class Flags<ImageUseType>;
 
 	/// @enum TextureFeature
 	/// <summary>
-	/// Flag to designate what image view can be created
+	/// Flag to designate what \c ImageView can be created
 	/// </summary>
-	/// @note Has Flags version. See Flags<TextureFeature>
+	/// @note Has Flags version. See \c Flags<TextureFeature>
 	enum class TextureFeature : VkImageCreateFlags {
 		/// None
 		None = 0,
+		// TODO: sparse stuff
 		// VK_IMAGE_CREATE_SPARSE_BINDING_BIT,
 		// VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT,
 		// VK_IMAGE_CREATE_SPARSE_ALIASED_BIT,
+		// VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
 		/// Mutable view
 		MutableView = VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT,
 		/// Cube image view
 		CubeView = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
 		/// Aliased underlying memory
 		AliasMemory = VK_IMAGE_CREATE_ALIAS_BIT,
-		// Provided by VK_VERSION_1_1
-		// VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
 		/// 2D array view
 		Array2DView = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT,
 		/// Compressed block memory
 		CompressedBlockView = VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT,
-		/// @todo WTF is extended useage?
+		/// @todo What is extended usage?
 		ViewUsageSupport = VK_IMAGE_CREATE_EXTENDED_USAGE_BIT,
 		/// Protected underlying memory
 		Protected = VK_IMAGE_CREATE_PROTECTED_BIT,
@@ -381,62 +384,75 @@ export namespace vk {
 	};
 	/// @class Flags<TextureFeature>
 	/// <summary>
-	/// Flags type of TextureFeature
+	/// Flags type of \c vk::TextureFeature
 	/// </summary>
-	/// See vk::TextureFeature for availble flags.
+	/// See \c vk::TextureFeature for availble flags.
 	template<> class Flags<TextureFeature>;
 
 	/// @enum SampleCount
 	/// <summary>
-	/// Flag to designate sample count of the image
+	/// Flag to designate sample count of an image
 	/// </summary>
-	/// @note Has Flags version. See Flags<SampleCount>
+	/// @note Has Flags version. See \c Flags<SampleCount>
 	enum class SampleCount : VkSampleCountFlags {
-		Bit1 = VK_SAMPLE_COUNT_1_BIT,	 ///< 1
-		Bit2 = VK_SAMPLE_COUNT_2_BIT,	 ///< 2
-		Bit4 = VK_SAMPLE_COUNT_4_BIT,	 ///< 4
-		Bit8 = VK_SAMPLE_COUNT_8_BIT,	 ///< 8
-		Bit16 = VK_SAMPLE_COUNT_16_BIT,	 ///< 16
-		Bit32 = VK_SAMPLE_COUNT_32_BIT,	 ///< 32
-		Bit64 = VK_SAMPLE_COUNT_64_BIT,	 ///< 64
+		Bit1 = VK_SAMPLE_COUNT_1_BIT,	 ///< \c 1
+		Bit2 = VK_SAMPLE_COUNT_2_BIT,	 ///< \c 2
+		Bit4 = VK_SAMPLE_COUNT_4_BIT,	 ///< \c 4
+		Bit8 = VK_SAMPLE_COUNT_8_BIT,	 ///< \c 8
+		Bit16 = VK_SAMPLE_COUNT_16_BIT,	 ///< \c 16
+		Bit32 = VK_SAMPLE_COUNT_32_BIT,	 ///< \c 32
+		Bit64 = VK_SAMPLE_COUNT_64_BIT,	 ///< \c 64
 	};
 	/// @class Flags<SampleCount>
 	/// <summary>
-	/// Flags type of SampleCount
+	/// Flags type of \c vk::SampleCount
 	/// </summary>
-	/// See vk::SampleCount for availble flags.
+	/// See \c vk::SampleCount for availble flags.
 	template<> class Flags<SampleCount>;
 
 	/// @enum TextureAspect
 	/// <summary>
 	/// Flag to designate an aspect of a texture
 	/// </summary>
-	/// @note Has Flags version. See Flags<TextureAspect>
+	/// @note Has Flags version. See \c Flags<TextureAspect>
 	enum class TextureAspect : VkImageAspectFlags {
+		/// Color aspect like RGBA
 		Color = VK_IMAGE_ASPECT_COLOR_BIT,
+		/// Depth aspect
 		Depth = VK_IMAGE_ASPECT_DEPTH_BIT,
+		/// Stencil aspect
 		Stencil = VK_IMAGE_ASPECT_STENCIL_BIT,
+		/// Depth and stencil aspect
 		DepthStencil = Depth | Stencil,
+		/// Metadata
+		/// @todo Figure out what this is for
 		Metadata = VK_IMAGE_ASPECT_METADATA_BIT,
+		/// Plane0
+		/// @todo Figure out what this is for
 		Plane0 = VK_IMAGE_ASPECT_PLANE_0_BIT,
+		/// Plane1
+		/// @todo Figure out what this is for
 		Plane1 = VK_IMAGE_ASPECT_PLANE_1_BIT,
+		/// Plane2
+		/// @todo Figure out what this is for
 		Plane2 = VK_IMAGE_ASPECT_PLANE_2_BIT,
 	};
 	/// @class Flags<TextureAspect>
 	/// <summary>
-	/// Flags type of TextureAspect
+	/// Flags type of \c vk::TextureAspect
 	/// </summary>
-	/// See vk::TextureAspect for availble flags.
+	/// See \c vk::TextureAspect for availble flags.
 	template<> class Flags<TextureAspect>;
 
 	/// Texture Regional Properties
 
 	/// @enum ImageRegionState
 	/// <summary>
-	/// Enum designating the active usage for (sections of) image
+	/// Enum designating the state of \c Image sections
 	/// </summary>
 	/// To use Images in different actions/commends, you need to make sure the
-	/// the accessed section of the image is in correct State.
+	/// the accessed section of the image is in correct state.
+	/// @todo Add depth/stencil attachment ImageRegionState
 	enum class ImageRegionState : std::underlying_type_t<VkImageLayout> {
 		/// Undefined \(default initial state\)
 		Undefined = VK_IMAGE_LAYOUT_UNDEFINED,
@@ -467,14 +483,14 @@ export namespace vk {
 		// VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL = 1000241001,
 		// VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL = 1000241002,
 		// VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL = 1000241003,
-		// Provided by VK_KHR_swapchain
-		/// Prsentation to an OSRnderSurface
+		/// Prsentation to an \c OSRnderSurface
+		/// @note Provided by \c VK_KHR_swapchain
 		Present = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 		/// General read only
-		/// @note Provided by VK_KHR_synchronization2
+		/// @note Provided by \c VK_KHR_synchronization2
 		ReadOnly = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR,
 		/// General Attachment
-		/// @note Provided by VK_KHR_synchronization2
+		/// @note Provided by \c VK_KHR_synchronization2
 		Attachment = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR,
 	};
 
@@ -490,7 +506,7 @@ export namespace vk {
 		/// Linear interpolation between samples
 		Linear = VK_FILTER_LINEAR,
 		/// Cubic interpolation between samples
-		/// @note Requires VK_EXT_Filter_cuble Extension
+		/// @note Requires Extension: \c VK_IMG_filter_cubic
 		ExtCubic = VK_FILTER_CUBIC_IMG,
 	};
 
@@ -527,23 +543,23 @@ export namespace vk {
 	/// Enum setting the border color for a sampler
 	/// </summary>
 	enum class SamplerBorderColor : std::underlying_type_t<VkBorderColor> {
-		/// Transparent black as float
+		/// Transparent black as \c float
 		FloatTransparentBlack = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
-		/// Transparent black as int
+		/// Transparent black as \c int
 		IntTransparentBlack = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
-		/// Black as float
+		/// Black as \c float
 		FloatBlack = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,
-		/// Black as int
+		/// Black as \c int
 		IntBlack = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-		/// White as float
+		/// White as \c float
 		FloatWhite = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
-		/// White as int
+		/// White as \c int
 		IntWhite = VK_BORDER_COLOR_INT_OPAQUE_WHITE,
-		/// Custom float color
-		/// @note Needs extension: VK_EXT_custom_border_color
+		/// Custom \c float color
+		/// @note Requires Extension: \c VK_EXT_custom_border_color
 		ExtFloatCustom = VK_BORDER_COLOR_FLOAT_CUSTOM_EXT,
-		/// Custom int color
-		/// @note Needs extension: VK_EXT_custom_border_color
+		/// Custom \c int color
+		/// @note Requires Extension: \c VK_EXT_custom_border_color
 		ExtIntCustom = VK_BORDER_COLOR_INT_CUSTOM_EXT,
 	};
 
@@ -560,11 +576,11 @@ export namespace vk {
 	/// <summary>
 	/// Flag to designate different shader type
 	/// </summary>
-	/// @note Has Flags version. See Flags<ShaderType>
+	/// @note Has Flags version. See \c Flags<ShaderType>
 
 	/// @todo Add more types
 	enum class ShaderType : VkShaderStageFlags {
-		/// None / Not aplicable
+		/// None/Not aplicable
 		None = 0,
 		/// Vertex Shader
 		Vert = VK_SHADER_STAGE_VERTEX_BIT,
@@ -577,9 +593,9 @@ export namespace vk {
 	};
 	/// @class Flags<ShaderType>
 	/// <summary>
-	/// Flags type of ShaderType
+	/// Flags type of \c vk::ShaderType
 	/// </summary>
-	/// See vk::ShaderType for availble flags.
+	/// See \c vk::ShaderType for availble flags.
 	template<> class Flags<ShaderType>;
 
 	/// @}
@@ -596,49 +612,57 @@ export namespace vk {
 
 	/// @enum CommendPoolType
 	/// <summary>
-	/// Flag to designate different CommendPool type
+	/// Flag to designate different \c CommendPool type
 	/// </summary>
-	/// Control how the child CommendBuffer lifetime works
-	/// @note Has Flags version. See Flags<CommendPoolType>
+	/// Control how the child \c CommendBuffer lifetime works
+	/// @note Has Flags version. See \c Flags<CommendPoolType>
 	enum class CommendPoolType : VkCommandPoolCreateFlags {
 		/// Default
 		Default = 0,
-		/// CommendBuffer created from this pool is shortlived. Hint for Vulkan drivers for better optimization
+		/// \c CommendBuffer created from this pool is shortlived. Hint for
+		/// Vulkan drivers for better optimization
 		Shortlived = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
-		/// CommendBuffer created from this pool can be freed/reset. (Without resetting entire Commend Pool)
+		/// \c CommendBuffer created from this pool can be freed/reset. (Without
+		/// resetting entire commend pool)
 		Resetable = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 		/// Using protected memory. @todo link to Protected
 		Protected = VK_COMMAND_POOL_CREATE_PROTECTED_BIT,
 	};
 	/// @class Flags<CommendPoolType>
 	/// <summary>
-	/// Flags type of CommendPoolType
+	/// Flags type of \c vk::CommendPoolType
 	/// </summary>
-	/// See vk::CommendPoolType for availble flags.
+	/// See \c vk::CommendPoolType for availble flags.
 	template<> class Flags<CommendPoolType>;
 
 	/// @enum CommendBufferUsage
 	/// <summary>
-	/// Flag to designate how the CommendBuffer will be used
+	/// Flag to designate how the \c CommendBuffer will be used
 	/// </summary>
-	/// Signal how this commend buffer is used. This allows better optimizations.
-	/// @note Has Flags version. See Flags<CommendBufferUsage>
+	/// Signal how this commend buffer is used. This allows better
+	/// optimizations.
+	/// @note Has Flags version. See \c Flags<CommendBufferUsage>
 	enum class CommendBufferUsage : VkCommandBufferUsageFlags {
 		/// None. Nothing special is needed
 		None = 0,
 		/// Streaming buffer. Each submition requires recording it again.
-		/// @todo Need testing for statement: It will reset automatically after submition, not caring the parent CommendPool CommendPoolType::Resetable flag.
+		/// @todo Need testing for statement: It will reset automatically after
+		/// submition, not caring the parent \c CommendPool \c
+		/// CommendPoolType::Resetable flag.
 		Streaming = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-		/// For Secondary buffer. Signal that this secondary buffer is entirely inside a render pass
+		/// For secondary commend buffer. Signal that this secondary buffer is
+		/// entirely inside a render pass
 		RenderPassOwned = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT,
-		/// Allow parallel submition. Signal that this commend buffer can be submitted multiple times without waiting for previous usage be completed
+		/// Allow parallel submition. Signal that this commend buffer can be
+		/// submitted multiple times without waiting for previous usage be
+		/// completed
 		ParallelSubmit = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
 	};
 	/// @class Flags<CommendBufferUsage>
 	/// <summary>
-	/// Flags type of CommendBufferUsage
+	/// Flags type of \c vk::CommendBufferUsage
 	/// </summary>
-	/// See vk::CommendBufferUsage for availble flags.
+	/// See \c vk::CommendBufferUsage for availble flags.
 	template<> class Flags<CommendBufferUsage>;
 
 	/// @}
@@ -652,36 +676,41 @@ export namespace vk {
 
 	/// @enum DescriptorPoolType
 	/// <summary>
-	/// Flag to designate different DescriptorPool type
+	/// Flag to designate different \c DescriptorPool type
 	/// </summary>
-	/// Control how the child DescriptorSet lifetime works
-	/// @note Has Flags version. See Flags<DescriptorPoolType>
+	/// Control how the child \c DescriptorSet lifetime works
+	/// @note Has Flags version. See \c Flags<DescriptorPoolType>
 	enum class DescriptorPoolType : VkDescriptorPoolCreateFlags {
 		/// None. Nothing special
 		None = 0,
-		/// DescriptorSet created from this pool can be freed/reset. (Without resetting entire Descriptor Pool)
+		/// \c DescriptorSet created from this pool can be freed/reset. (Without
+		/// resetting entire descriptor pool)
 		Resetable = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-		/// DescriptorSet created from this pool has bindings that can be updated after bind
+		/// \c DescriptorSet created from this pool has bindings that can be
+		/// updated after bind
 		Dynamic = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
-		/// DescriptorSet created from this pool will be in host memory, allowing updating mutliple different DescriptorSets from multiple threads
-		/// @note This still does not allow updating the same DescriptorSet from multiple threads!
+		/// \c DescriptorSet created from this pool will be in host memory,
+		/// allowing updating mutliple different \c DescriptorSets from multiple
+		/// threads
+		/// @note This still does not allow updating the same DescriptorSet from
+		/// multiple threads!
 		HostOnly = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 	};
 	/// @class Flags<DescriptorPoolType>
 	/// <summary>
-	/// Flags type of DescriptorPoolType
+	/// Flags type of \c vk::DescriptorPoolType
 	/// </summary>
-	/// See vk::DescriptorPoolType for availble flags.
+	/// See \c vk::DescriptorPoolType for availble flags.
 	template<> class Flags<DescriptorPoolType>;
 
 	/// @enum DescriptorDataType
 	/// <summary>
-	/// Enum to designate data type in a DescriptorBinding
+	/// Enum to designate data type in a \c DescriptorBinding
 	/// </summary>
 	enum class DescriptorDataType : std::underlying_type_t<VkDescriptorType> {
-		/// Store a reference to a UniformBuffer
+		/// Store a reference to an \c UniformBuffer
 		UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-		/// Store a reference to a StorageBuffer
+		/// Store a reference to a \c StorageBuffer
 		StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 		/// Store an image view
 		Image = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
@@ -707,27 +736,34 @@ export namespace vk {
 	/// <summary>
 	/// Enum to set the read operation for an attachment
 	/// </summary>
-	/// Control when reading / inputing an attachment, what action can be done on the attachment
+	/// Control when reading/inputing an attachment, what action can be done on
+	/// the attachment
 	/// @todo Better names? Perhaps LoadOp/InputOp instead of ReadOp?
 	enum class AttachmentReadOp : std::underlying_type_t<VkAttachmentLoadOp> {
-		/// Load the attachment data. Signal that the inputted value is needed and don\'t change it when loading in the attachment
+		/// Load the attachment data. Signal that the inputted value is needed
+		/// and don\'t change it when loading in the attachment
 		Read = VK_ATTACHMENT_LOAD_OP_LOAD,
-		/// Clear the attachment data. Signal that while the value before is not needed/read, it should be cleared (set to a clear value)
+		/// Clear the attachment data. Signal that while the value before is not
+		/// needed/read, it should be cleared (set to a clear value)
 		Clear = VK_ATTACHMENT_LOAD_OP_CLEAR,
-		/// Don\'t care about the attachment data. Signal that the value before is not needed/read, and that the following write operations will override it entirely
+		/// Don\'t care about the attachment data. Signal that the value before
+		/// is not needed/read, and that the following write operations will
+		/// override it entirely
 		Undefined = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 	};
-	
+
 	/// @enum AttachmentWriteOp
 	/// <summary>
 	/// Enum to set the write operation for an attachment
 	/// </summary>
-	/// Control when writing / outputing an attachment, what action can be done on the attachment
+	/// Control when writing/outputing an attachment, what action can be done on
+	/// the attachment
 	/// @todo Better names? Perhaps StoreOp/OutputOp instead of WriteOp?
 	enum class AttachmentWriteOp : std::underlying_type_t<VkAttachmentStoreOp> {
-		/// Store the written attachment data. Signal that the attachment values will/may be read, and don't throw the value away
+		/// Store the written attachment data. Signal that the attachment values
+		/// may be read, and don't throw the value away
 		Write = VK_ATTACHMENT_STORE_OP_STORE,
-		/// Don\'t care about
+		/// Don't care about
 		Undefined = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 	};
 
@@ -735,7 +771,7 @@ export namespace vk {
 	/// <summary>
 	/// Flag for color components in a color value
 	/// </summary>
-	/// @note Has Flags version. See Flags<ColorComponents>
+	/// @note Has Flags version. See \c Flags<ColorComponents>
 	enum class ColorComponents : VkColorComponentFlags {
 		/// None
 		None = 0,
@@ -752,13 +788,13 @@ export namespace vk {
 	};
 	/// @class Flags<ColorComponents>
 	/// <summary>
-	/// Flags type of ColorComponents
+	/// Flags type of \c vk::ColorComponents
 	/// </summary>
-	/// See vk::ColorComponents for availble flags.
+	/// See \c vk::ColorComponents for availble flags.
 	template<> class Flags<ColorComponents>;
 
 	/// Blending
-	
+
 	/// @enum BlendOperator
 	/// <summary>
 	/// Enum to set the blending operation
@@ -766,15 +802,18 @@ export namespace vk {
 	/// Control how the blending is done.
 	/// @todo: Add more for advanced blend op
 	enum class BlendOperator : std::underlying_type_t<VkBlendOp> {
-		/// RGBA: Destination += Source \(with weights from blend factor\)
+		/// RGBA: <tt>Destination += Source</tt> \(with weights from blend
+		/// factor\)
 		Add = VK_BLEND_OP_ADD,
-		/// RGBA: Destination -= Source \(with weights from blend factor\)
+		/// RGBA: <tt>Destination -= Source</tt> \(with weights from blend
+		/// factor\)
 		Subtract = VK_BLEND_OP_SUBTRACT,
-		/// RGBA: Destination = Source - Destination \(with weights from blend factor\)
+		/// RGBA: <tt>Destination = Source - Destination</tt> \(with weights
+		/// from blend factor\)
 		ReverseSubtract = VK_BLEND_OP_REVERSE_SUBTRACT,
-		/// RGBA: Destination = min(Source, Destination)
+		/// RGBA: <tt>Destination = min(Source, Destination)</tt>
 		Min = VK_BLEND_OP_MIN,
-		/// RGBA: Destination = max(Source, Destination)
+		/// RGBA: <tt>Destination = max(Source, Destination)</tt>
 		Max = VK_BLEND_OP_MAX,
 		// TODO: Maybe add support for advanced blend op
 		/* Provided by VK_EXT_blend_operation_advanced
@@ -825,16 +864,16 @@ export namespace vk {
 		= VK_BLEND_OP_GREEN_EXT,
 		= VK_BLEND_OP_BLUE_EXT, */
 	};
-	
+
 	/// @enum BlendFactor
 	/// <summary>
 	/// Enum to set the blending factor
 	/// </summary>
 	/// Effects the blending result based on the used BlendOperator
 	enum class BlendFactor : std::underlying_type_t<VkBlendFactor> {
-		/// 0.0
+		/// <tt>0.0</tt>
 		Zero = VK_BLEND_FACTOR_ZERO,
-		/// 1.0
+		/// <tt>1.0</tt>
 		One = VK_BLEND_FACTOR_ONE,
 		/// Respective channel value from source color
 		SrcColor = VK_BLEND_FACTOR_SRC_COLOR,
@@ -860,16 +899,20 @@ export namespace vk {
 		ConstAlpha = VK_BLEND_FACTOR_CONSTANT_ALPHA,
 		/// One minus alpha channel value from constant blend factor color
 		OneMinusConstAlpha = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA,
-		/// RGB: min(Source Alpha, 1 - Destination Alpha) \n
-		/// Alpha: 1.0
+		/// RGB: <tt>min(Source Alpha, 1 - Destination Alpha)</tt> \n
+		/// Alpha: <tt>1.0</tt>
 		SrcAlphaSaturate = VK_BLEND_FACTOR_SRC_ALPHA_SATURATE,
-		/// Respective channel value from 2nd source color (used in dual source blending mode)
+		/// Respective channel value from 2nd source color (used in dual source
+		/// blending mode)
 		Src1Color = VK_BLEND_FACTOR_SRC1_COLOR,
-		/// One minus respective channel value from 2nd source color (used in dual source blending mode)
+		/// One minus respective channel value from 2nd source color (used in
+		/// dual source blending mode)
 		OneMinusSrc1Color = VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR,
-		/// Alpha channel value from 2nd source color (used in dual source blending mode)
+		/// Alpha channel value from 2nd source color (used in dual source
+		/// blending mode)
 		Src1Alpha = VK_BLEND_FACTOR_SRC1_ALPHA,
-		/// One minus alpha channel value from 2nd source color (used in dual source blending mode)
+		/// One minus alpha channel value from 2nd source color (used in dual
+		/// source blending mode)
 		OneMinusSrc1Alpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA,
 	};
 
@@ -881,21 +924,21 @@ export namespace vk {
 	/// </summary>
 	/// Control how stencil works
 	enum class CompareOperator : std::underlying_type_t<VkCompareOp> {
-		/// false
+		/// <tt>false</tt>
 		AlwaysFalse = VK_COMPARE_OP_NEVER,
-		/// A \< B
+		/// <tt>A \< B</tt>
 		Less = VK_COMPARE_OP_LESS,
-		/// A == B
+		/// <tt>A == B</tt>
 		Equal = VK_COMPARE_OP_EQUAL,
-		/// A <= B
+		/// <tt>A <= B</tt>
 		LessOrEqual = VK_COMPARE_OP_LESS_OR_EQUAL,
-		/// A > B
+		/// <tt>A > B</tt>
 		Greater = VK_COMPARE_OP_GREATER,
-		/// A != B
+		/// <tt>A != B</tt>
 		NotEqual = VK_COMPARE_OP_NOT_EQUAL,
-		/// A >= B
+		/// <tt>A >= B</tt>
 		GreaterOrEqual = VK_COMPARE_OP_GREATER_OR_EQUAL,
-		/// true
+		/// <tt>true</tt>
 		AlwaysTrue = VK_COMPARE_OP_ALWAYS,
 	};
 
@@ -907,39 +950,41 @@ export namespace vk {
 
 	/// @bug Need to disignate a value to turn off logic operator
 
-	/// @todo Check the statement about blending is disabled when logic operation is turned on
-	
-	/// The following table assume that \'S\' == source value from fragment output, and \'d\' == destination value from the color attachment
+	/// @todo Check the statement about blending is disabled when logic
+	/// operation is turned on
+
+	/// The following table assume that \c 'S' as source value from fragment
+	/// output, and \c 'd' as destination value from the color attachment
 	enum class LogicOperator : std::underlying_type_t<VkLogicOp> {
 		/// Set to zero
 		Zeros = VK_LOGIC_OP_CLEAR,
-		/// S & D
+		/// <tt>S & D</tt>
 		IAndD = VK_LOGIC_OP_AND,
-		/// S & ~D
+		/// <tt>S & ~D</tt>
 		IAndNotD = VK_LOGIC_OP_AND_REVERSE,
-		/// S \(Copy\)
+		/// <tt>S \(Copy\)</tt>
 		I = VK_LOGIC_OP_COPY,
-		/// ~S & D
+		/// <tt>~S & D</tt>
 		NotIAndD = VK_LOGIC_OP_AND_INVERTED,
-		/// D \(No-op\)
+		/// <tt>D \(No-op\)</tt>
 		D = VK_LOGIC_OP_NO_OP,
-		/// S ^ D
+		/// <tt> ^ D</tt>
 		IXorD = VK_LOGIC_OP_XOR,
-		/// S | D
+		/// <tt>S | D</tt>
 		IOrD = VK_LOGIC_OP_OR,
-		/// ~ S|D
+		/// <tt>~ S|D</tt>
 		INorD = VK_LOGIC_OP_NOR,
-		/// ~ S^D
+		/// <tt>~ S^D</tt>
 		IXnorD = VK_LOGIC_OP_EQUIVALENT,
-		/// ~D
+		/// <tt>~D</tt>
 		NotD = VK_LOGIC_OP_INVERT,
-		/// S | ~D
+		/// <tt>S | ~D</tt>
 		IOrNotD = VK_LOGIC_OP_OR_REVERSE,
-		/// ~S
+		/// <tt>~S</tt>
 		NotI = VK_LOGIC_OP_COPY_INVERTED,
-		/// ~S | D
+		/// <tt>~S | D</tt>
 		NotIOrD = VK_LOGIC_OP_OR_INVERTED,
-		/// ~ S&D
+		/// <tt>~ S&D</tt>
 		INandD = VK_LOGIC_OP_NAND,
 		/// Set to one
 		Ones = VK_LOGIC_OP_SET,
@@ -960,8 +1005,8 @@ export namespace vk {
 		/// Draw the points of the primitives
 		Point = VK_POLYGON_MODE_POINT,
 		/// Fill the rectangles
-        /// @note Requires Extension: VK_POLYGON_MODE_FILL_RECTANGLE_NV
-        /// @todo check if need additional support
+		/// @note Requires Extension: \c VK_POLYGON_MODE_FILL_RECTANGLE_NV
+		/// @todo check if need additional support
 		ExtRectangleFill = VK_POLYGON_MODE_FILL_RECTANGLE_NV,
 	};
 
@@ -970,52 +1015,59 @@ export namespace vk {
 	/// Enum to set the type of input primitives
 	/// </summary>
 	/// Effects the input of primitives.
-    /// @note If there are geometry shaders, this effects the geometry shader input primitives, not the output primitives
+	/// @note If there are geometry shaders, this effects the geometry shader
+	/// input primitives, not the output primitives
 	enum class PrimitiveTopology : std::underlying_type_t<VkPrimitiveTopology> {
 		/// List of points. \n
-        /// P == Points: {P[0], P[1], P[2]...}
+		/// P as Points: <tt>{P[0], P[1], P[2]...}</tt>
 		PointList = VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
 		/// List of lines. \n
-        /// L == Lines: {L0[0], L0[1], L1[0], L1[1]...} \n
-        /// Number of points: vertexCount
+		/// L as Lines: <tt>{L0[0], L0[1], L1[0], L1[1]...}</tt> \n
+		/// Number of points: vertexCount
 		LineList = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
 		/// Continuous segment\(s\) of lines. \n
-        /// L == Line Segments: {S[0][0], S[0][1]... S[0][n], -1, S[1][0]...} \n
-        /// Number of lines: vertexCount/2
-        /// @todo Using -1 requires some settings?
+		/// S as Line Segments: <tt>{S[0][0], S[0][1]... S[0][n], -1,
+		/// S[1][0]...}</tt> \n
+		/// Number of lines: <tt>vertexCount/2</tt>
+		/// @todo Using -1 requires some settings?
 		LineStrip = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
 		/// List of triangles. \n
-        /// T == Triangles: {T[0][0], T[0][1], T[0][2], T[1][0], T[1][1]...} \n
-        /// Number of lines: vertexCount-1 \(or 0 if vertexCount<=1\)
+		/// T as Triangles: <tt>{T[0][0], T[0][1], T[0][2], T[1][0],
+		/// T[1][1]...}</tt> \n
+		/// Number of lines: <tt>vertexCount-1</tt> \(or \c 0 if
+		/// <tt>vertexCount<=1</tt>\)
 		TriangleList = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 		/// Continuous strip\(s\) of triangles. \n
-        /// Number of triangles: vertexCount/3 \n
-        /// @todo Add explaination
+		/// Number of triangles: <tt>vertexCount/3</tt> \n
+		/// @todo Add explaination
 		TriangleStrip = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
 		/// Continuous fan\(s\) of triangles. \n
-        /// Number of triangles: vertexCount-2 \(or 0 if vertexCount<=2\) \n
-        /// @todo Add explaination
+		/// Number of triangles: <tt>vertexCount-2</tt> \(or \c 0 if
+		/// <tt>vertexCount<=2</tt>\) \n
+		/// @todo Add explaination
 		TriangleFan = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN,
 		/// List of lines with adjacency provided but not drawn. \n
-        /// Number of triangles: vertexCount-2 \(or 0 if vertexCount<=2\) \n
-        /// @todo Add explaination
+		/// Number of triangles: <tt>vertexCount-2</tt> \(or \c 0 if
+		/// <tt>vertexCount<=2</tt>\) \n
+		/// @todo Add explaination
 		LineListAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
 		/// Segment\(s\) of lines with adjacency provided but not drawn. \n
-        /// Number of lines: vertexCount/4 \n
-        /// @todo Add explaination
+		/// Number of lines: <tt>vertexCount/4</tt> \n
+		/// @todo Add explaination
 		LineStripAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY,
 		/// List of triangles with adjacency \n
-        /// Number of triangles: vertexCount/6 \n
-        /// @todo Add explaination
+		/// Number of triangles: <tt>vertexCount/6</tt> \n
+		/// @todo Add explaination
 		TriangleListAdjacency =
 		  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY,
 		/// Continuous strip\(s\) of triangles with adjacency. \n
-        /// Number of triangles: \(vertexCount-4\)/2 \(or 0 if vertexCount<=5\) \n
-        /// @todo Add explaination
+		/// Number of triangles: <tt>\(vertexCount-4\)/2</tt> \(or \c 0 if
+		/// <tt>vertexCount<=5</tt>\) \n
+		/// @todo Add explaination
 		TriangleStripAdjacency =
 		  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY,
 		/// List of patches, used for Tessellation point control. \n
-        /// @todo Add support for patches. Add tessellation stuff
+		/// @todo Add support for patches. Add tessellation stuff
 		PatchList = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST,
 	};
 
@@ -1024,9 +1076,10 @@ export namespace vk {
 	/// Flag to set the what face to cull out
 	/// </summary>
 	/// Setting the corresponding flag means enable culling for said faces.
-	/// @note Has Flags version. See Flags<CullMode>
+	/// @note Has Flags version. See \c Flags<CullMode>
 
-	/// @todo Add explaination on where culling happens. Check what primitives this effects
+	/// @todo Add explaination on where culling happens. Check what primitives
+	/// this effects
 	enum class CullMode : VkCullModeFlags {
 		/// No culling
 		None = VK_CULL_MODE_NONE,
@@ -1037,19 +1090,19 @@ export namespace vk {
 	};
 	/// @class Flags<CullMode>
 	/// <summary>
-	/// Flags type of CullMode
+	/// Flags type of \c vk::CullMode
 	/// </summary>
-	/// See vk::CullMode for availble flags.
+	/// See \c vk::CullMode for availble flags.
 	template<> class Flags<CullMode>;
 
 	/// @enum FrontDirection
 	/// <summary>
 	/// Enum to set which way is front facing
 	/// </summary>
-	/// This effects what gets culled based on the setted vk::CullMode
+	/// This affect what gets culled based on the setted \c vk::CullMode
 	/// @todo How this works with rect, line, or point?
 	enum class FrontDirection : std::underlying_type_t<VkFrontFace> {
-		/// Vertices in a front facing triangle are ordered counter clockwise 
+		/// Vertices in a front facing triangle are ordered counter clockwise
 		CounterClockwise = VK_FRONT_FACE_COUNTER_CLOCKWISE,
 		/// Vertices in a front facing triangle are ordered clockwise
 		Clockwise = VK_FRONT_FACE_CLOCKWISE,
@@ -1059,7 +1112,8 @@ export namespace vk {
 	/// <summary>
 	/// Enum to set input rate of the binding
 	/// </summary>
-	/// @todo Test if perVertex vs perInstance means different bindings can have different input rate
+	/// @todo Test if perVertex vs perInstance means different bindings can have
+	/// different input rate
 	enum class BufferInputRate : std::underlying_type_t<VkVertexInputRate> {
 		/// Input once per vertex, use vertex id to access data
 		PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
@@ -1073,7 +1127,7 @@ export namespace vk {
 	/// <summary>
 	/// Flag for different pipeline stages
 	/// </summary>
-	/// @note Has Flags version. See Flags<PipelineStage>
+	/// @note Has Flags version. See \c Flags<PipelineStage>
 	enum class PipelineStage : VkPipelineStageFlags {
 		/// None / Not in the pipeline / Not applicable
 		None = VK_PIPELINE_STAGE_NONE_KHR,
@@ -1105,19 +1159,20 @@ export namespace vk {
 		Transfer = VK_PIPELINE_STAGE_TRANSFER_BIT,
 		/// End/completion of the pipeline
 		BottomOfPipe = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-		/// Host memory access pseudo-stage \(noy used by commends\)
-        /// @todo Why is this here? What is his usage?
+		/// Host memory access pseudo-stage \(not used by commends\)
+		/// @todo Why is this here? What is his usage?
 		HostMemoryAccess = VK_PIPELINE_STAGE_HOST_BIT,
 		/// Any graphics pipeline stages
 		AnyGraphics = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-		/// Any operations preformed by any supported commends on the in-use queue
+		/// Any operations preformed by any supported commends on the in-use
+		/// queue
 		AnyCommands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
 	};
 	/// @class Flags<PipelineStage>
 	/// <summary>
-	/// Flags type of PipelineStage
+	/// Flags type of \c vk::PipelineStage
 	/// </summary>
-	/// See vk::PipelineStage for availble flags.
+	/// See \c vk::PipelineStage for availble flags.
 	template<> class Flags<PipelineStage>;
 
 	/// @}

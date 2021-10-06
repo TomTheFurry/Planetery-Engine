@@ -54,7 +54,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "ConsoleFormat_8h_source.html",
-"group__bufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6cafc2b74588602de2090079ac53957dfdd"
+"group__vkCommendEnum.html#classFlags_3_01CommendBufferUsage_01_4",
+"group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7eaf623e75af30e62bbd73d6df5b50bb7b5"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

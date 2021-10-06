@@ -86,10 +86,60 @@ $(document).ready(function(){initNavTree('todo.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt>Member <a class="el" href="group__swapchainEnum.html#gac5a7cc037f23002da0340e5b8bfaf748">vk::SurfaceColorSpace</a>  </dt>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#ga8830590168c0d5983ba674400b0c0f0c">vk::AttachmentReadOp</a>  </dt>
+<dd><a class="anchor" id="_todo000011"></a>Better names? Perhaps LoadOp/InputOp instead of ReadOp?  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#ga33f20afed1cd00721bde23d1e84b6dc0">vk::AttachmentWriteOp</a>  </dt>
+<dd><a class="anchor" id="_todo000012"></a>Better names? Perhaps StoreOp/OutputOp instead of WriteOp?  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#ga5f68cea2b14ac0aa42e387c4d9ffb0c5">vk::BlendOperator</a>  </dt>
+<dd><a class="anchor" id="_todo000013"></a>: Add more for advanced blend op  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#ga24f8885f9edd4eeff016ca24bb26bce4">vk::BufferInputRate</a>  </dt>
+<dd><a class="anchor" id="_todo000017"></a>Test if perVertex vs perInstance means different bindings can have different input rate  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gacba812b40d2ca20ab32a205568f4539f">vk::CullMode</a>  </dt>
+<dd><a class="anchor" id="_todo000015"></a>Add explaination on where culling happens. Check what primitives this effects  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga7a7f2e27f2658a8c9327d4c830a06d1ba3258d46f6c59f21918768d3b82e995d6">vk::ExtRectangleFill</a>  </dt>
+<dd><a class="anchor" id="_todo000018"></a>check if need additional support  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#ga7197191f019fd7b177bb143153213ee5">vk::FrontDirection</a>  </dt>
+<dd><a class="anchor" id="_todo000016"></a>How this works with rect, line, or point?  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga4a4e720588a7b36b283a468d01f01c2ea7d3cb9943ec56a2c3fd77e46b57a1ae1">vk::HostMemoryAccess</a>  </dt>
+<dd><a class="anchor" id="_todo000027"></a>Why is this here? What is his usage?  </dd>
+<dt>Member <a class="el" href="group__vkImageEnum.html#ga79613372ab9102819abfe1f8d34e22a9">vk::ImageRegionState</a>  </dt>
+<dd><a class="anchor" id="_todo000002"></a>Add depth/stencil attachment ImageRegionState  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a9d531a360634c1569d3f1e57a484e52b">vk::LineListAdjacency</a>  </dt>
+<dd><a class="anchor" id="_todo000022"></a>Add explaination  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1ae7f9e73b8edd21f420a63b3ace5768a2">vk::LineStrip</a>  </dt>
+<dd><a class="anchor" id="_todo000019"></a>Using -1 requires some settings?  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a826457761e4d352b8f54d7d47b80dbaa">vk::LineStripAdjacency</a>  </dt>
+<dd><a class="anchor" id="_todo000023"></a>Add explaination  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gaf6ed084a6c53ab72c7ec3e3d541fea7e">vk::LogicOperator</a>  </dt>
+<dd><a class="anchor" id="_todo000014"></a>Check the statement about blending is disabled when logic operation is turned on  </dd>
+<dt>Member <a class="el" href="group__vkImageEnum.html#ggafbae9639ba151d658990a986acbd05bcace21470ab49d1d1976bc3dc72438c183">vk::Metadata</a>  </dt>
+<dd><a class="anchor" id="_todo000004"></a>Figure out what this is for  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1af1b220525e3cc747140a46b7e2d7532e">vk::PatchList</a>  </dt>
+<dd><a class="anchor" id="_todo000026"></a>Add support for patches. Add tessellation stuff  </dd>
+<dt>Member <a class="el" href="group__vkImageEnum.html#ggafbae9639ba151d658990a986acbd05bcaeda4931fa17297e6eb672084e23bd195">vk::Plane0</a>  </dt>
+<dd><a class="anchor" id="_todo000005"></a>Figure out what this is for  </dd>
+<dt>Member <a class="el" href="group__vkImageEnum.html#ggafbae9639ba151d658990a986acbd05bcaaf7421b0ef09b4d968c67aafc9b0e6bb">vk::Plane1</a>  </dt>
+<dd><a class="anchor" id="_todo000006"></a>Figure out what this is for  </dd>
+<dt>Member <a class="el" href="group__vkImageEnum.html#ggafbae9639ba151d658990a986acbd05bca80e64599275db522b706710034d810cb">vk::Plane2</a>  </dt>
+<dd><a class="anchor" id="_todo000007"></a>Figure out what this is for  </dd>
+<dt>Member <a class="el" href="group__vkCommendEnum.html#ggac6d0aa539dc2aa38bc0797739598626da56f0605c9795b173abd2e34fab7fc164">vk::Protected</a>  </dt>
+<dd><a class="anchor" id="_todo000009"></a>link to Protected  </dd>
+<dt>Member <a class="el" href="group__vkShaderEnum.html#gaeed6b23bea06c5aefd00770185aec630">vk::ShaderType</a>  </dt>
+<dd><a class="anchor" id="_todo000008"></a>Add more types  </dd>
+<dt>Member <a class="el" href="group__vkCommendEnum.html#gga2790d3cff6cab9eac4625473f2e72b24aac21d502848247aa2f578d0f718f5d1d">vk::Streaming</a>  </dt>
+<dd><a class="anchor" id="_todo000010"></a>Need testing for statement: It will reset automatically after submition, not caring the parent <code><a class="el" href="classvk_1_1CommendPool.html">CommendPool</a></code> <code><a class="el" href="group__vkCommendEnum.html#ggac6d0aa539dc2aa38bc0797739598626da3d0f3c61d1f49611925bd15d12bf949f">CommendPoolType::Resetable</a></code> flag.  </dd>
+<dt>Member <a class="el" href="group__vkSwapchainEnum.html#gac5a7cc037f23002da0340e5b8bfaf748">vk::SurfaceColorSpace</a>  </dt>
 <dd><a class="anchor" id="_todo000001"></a>Add more color spaces </dd>
-<dt>Member <a class="el" href="group__imageEnum.html#ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e">vk::ViewUsageSupport</a>  </dt>
-<dd><a class="anchor" id="_todo000002"></a>WTF is extended useage? </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a18d58fde618e4a30e2dfdc122e693047">vk::TriangleFan</a>  </dt>
+<dd><a class="anchor" id="_todo000021"></a>Add explaination  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1adc65ac0780576a2a44127bf9c24c5c47">vk::TriangleListAdjacency</a>  </dt>
+<dd><a class="anchor" id="_todo000024"></a>Add explaination  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a1da0b9ead8b051940a89214bae22831c">vk::TriangleStrip</a>  </dt>
+<dd><a class="anchor" id="_todo000020"></a>Add explaination  </dd>
+<dt>Member <a class="el" href="group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a6b682fd6550f90f75722e4a7d38f3949">vk::TriangleStripAdjacency</a>  </dt>
+<dd><a class="anchor" id="_todo000025"></a>Add explaination  </dd>
+<dt>Member <a class="el" href="group__vkImageEnum.html#ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e">vk::ViewUsageSupport</a>  </dt>
+<dd><a class="anchor" id="_todo000003"></a>What is extended usage? </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -97,7 +147,7 @@ $(document).ready(function(){initNavTree('todo.html',''); initResizable(); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Oct 4 2021 14:33:56 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Wed Oct 6 2021 22:01:29 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 </body>

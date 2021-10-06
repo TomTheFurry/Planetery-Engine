@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['textureaspect_0',['TextureAspect',['../group__imageEnum.html#gafbae9639ba151d658990a986acbd05bc',1,'vk']]],
-  ['texturefeature_1',['TextureFeature',['../group__imageEnum.html#gaa5936aa22562776a7daf57b0bf4c0f52',1,'vk']]]
+  ['imageregionstate_0',['ImageRegionState',['../group__vkImageEnum.html#ga79613372ab9102819abfe1f8d34e22a9',1,'vk']]],
+  ['imageusetype_1',['ImageUseType',['../group__vkImageEnum.html#ga9b097cea7cbbb01e0d5496cb6a27423e',1,'vk']]]
 ];

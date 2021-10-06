@@ -136,7 +136,7 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>QueuePool</b> (const <a class="el" href="classvk_1_1QueuePoolLayout.html">QueuePoolLayout</a> &amp;layout, <a class="el" href="classvk_1_1LogicalDevice.html">LogicalDevice</a> &amp;device)</td></tr>
 <tr class="separator:ab71bd2dc5881008bb4e263d043c5c2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52cc0c48696b05431037ad7518ef2954"><td class="memItemLeft" align="right" valign="top"><a id="a52cc0c48696b05431037ad7518ef2954" name="a52cc0c48696b05431037ad7518ef2954"></a>
-uint&#160;</td><td class="memItemRight" valign="bottom"><b>findGroupBySupportType</b> (<a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__queueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt; mustSupport, <a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__queueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt; mustNotSupport=<a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__queueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt;()) const</td></tr>
+uint&#160;</td><td class="memItemRight" valign="bottom"><b>findGroupBySupportType</b> (<a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkQueueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt; mustSupport, <a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkQueueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt; mustNotSupport=<a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkQueueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt;()) const</td></tr>
 <tr class="separator:a52cc0c48696b05431037ad7518ef2954"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a721387813a86162a1e51ad788065f3a2"><td class="memItemLeft" align="right" valign="top"><a id="a721387813a86162a1e51ad788065f3a2" name="a721387813a86162a1e51ad788065f3a2"></a>
 <a class="el" href="classvk_1_1Queue.html">Queue</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>queryQueueInUse</b> (uint groupId)</td></tr>
@@ -154,7 +154,7 @@ uint&#160;</td><td class="memItemRight" valign="bottom"><b>getGroupByHint</b> (<
 <a class="el" href="classvk_1_1LogicalDevice.html">LogicalDevice</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getDevice</b> () const</td></tr>
 <tr class="separator:abead6757ce3b1493c7ba6be05a7eb5b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1556a550e118111e2b9ec56ed5deac37"><td class="memItemLeft" align="right" valign="top"><a id="a1556a550e118111e2b9ec56ed5deac37" name="a1556a550e118111e2b9ec56ed5deac37"></a>
-<a class="el" href="classvk_1_1CommendPool.html">CommendPool</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>queryCommendPool</b> (uint groupId, <a class="el" href="classFlags.html">Flags</a>&lt; CommendPoolType &gt; type)</td></tr>
+<a class="el" href="classvk_1_1CommendPool.html">CommendPool</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>queryCommendPool</b> (uint groupId, <a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkCommendEnum.html#gac6d0aa539dc2aa38bc0797739598626d">CommendPoolType</a> &gt; type)</td></tr>
 <tr class="separator:a1556a550e118111e2b9ec56ed5deac37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1db302ee4d674d3d9b711ec85e922f7"><td class="memItemLeft" align="right" valign="top"><a id="ae1db302ee4d674d3d9b711ec85e922f7" name="ae1db302ee4d674d3d9b711ec85e922f7"></a>
 <a class="el" href="classvk_1_1Queue.html">Queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getExpressMemoryCopyQueue</b> ()</td></tr>
@@ -203,7 +203,7 @@ std::unordered_map&lt; uint, <a class="el" href="classvk_1_1QueuePool.html#struc
 <table class="fieldtable">
 <tr><th colspan="3">Class Members</th></tr>
 <tr><td class="fieldtype">
-<a id="ad5111bb275b9e956beaf4f7f5f6bb612" name="ad5111bb275b9e956beaf4f7f5f6bb612"></a><a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__queueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt;</td>
+<a id="ad5111bb275b9e956beaf4f7f5f6bb612" name="ad5111bb275b9e956beaf4f7f5f6bb612"></a><a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkQueueEnum.html#ga4166760d3982c46dd18923b19f24b660">QueueType</a> &gt;</td>
 <td class="fieldname">
 allowedUsages</td>
 <td class="fielddoc">
@@ -234,7 +234,7 @@ queues</td>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacevk.html">vk</a></li><li class="navelem"><a class="el" href="classvk_1_1QueuePool.html">QueuePool</a></li>
-    <li class="footer">Generated on Mon Oct 4 2021 14:33:57 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Wed Oct 6 2021 22:01:29 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 </body>

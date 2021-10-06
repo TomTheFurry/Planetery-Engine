@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['vertex_0',['Vertex',['../group__bufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6cab22b929ba52471a02d18bb3a4e4472e6',1,'vk']]],
-  ['vertexinputattributeread_1',['VertexInputAttributeRead',['../group__memoryEnum.html#ggad3905d63091f95e3c7669512efd82e22a82bf071d03477673e2f06df3529d81f4',1,'vk']]],
-  ['vertexinputindexread_2',['VertexInputIndexRead',['../group__memoryEnum.html#ggad3905d63091f95e3c7669512efd82e22ad4159a8935fbbdd1012be13a52e63809',1,'vk']]],
-  ['viewusagesupport_3',['ViewUsageSupport',['../group__imageEnum.html#ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e',1,'vk']]]
+  ['undefined_0',['Undefined',['../group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9aec0fc0100c4fc1ce4eea230c3dc10360',1,'vk::Undefined()'],['../group__vkPipelineEnum.html#gga8830590168c0d5983ba674400b0c0f0caec0fc0100c4fc1ce4eea230c3dc10360',1,'vk::Undefined()'],['../group__vkPipelineEnum.html#gga33f20afed1cd00721bde23d1e84b6dc0aec0fc0100c4fc1ce4eea230c3dc10360',1,'vk::Undefined()']]],
+  ['uniform_1',['Uniform',['../group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6caf19516d11f2946f894070e92fcb56b6d',1,'vk']]],
+  ['uniformbuffer_2',['UniformBuffer',['../group__vkDescriptorEnum.html#gga4614ed1d77c9a74dc92003adec9abf36a88f133adfed6c854e5731cdffbf208cf',1,'vk']]],
+  ['uniformtexel_3',['UniformTexel',['../group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6caa349c4dcabe0e729a53bc04a1664fdfe',1,'vk']]]
 ];
