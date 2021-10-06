@@ -9,7 +9,13 @@ import Util;
 import "VulkanExtModule.h";
 
 // Device class:
+
 export namespace vk {
+	/// @addtogroup vkDevice Devices
+	/// @ingroup vulkan
+	/// @{
+    
+
 	struct SurfaceMinimizedException {};
 
 	struct Layer {
@@ -86,4 +92,6 @@ export namespace vk {
 		~LogicalDevice();
 		PhysicalDevice& pd;
 	};
+	
+	///@}
 }
