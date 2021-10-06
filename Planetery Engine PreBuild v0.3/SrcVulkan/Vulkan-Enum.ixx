@@ -61,7 +61,7 @@ export namespace _toIndexTpye {
 	}
 }
 
-/// @addtogroup enum Enums
+/// @addtogroup vkEnum Enums
 /// @ingroup vulkan
 
 // Lifetime
@@ -70,8 +70,8 @@ export namespace vk {}
 // Memory
 export namespace vk {
 
-	/// @addtogroup memoryEnum Memory Enums
-	/// @ingroup enum
+	/// @addtogroup vkMemoryEnum Memory Enums
+	/// @ingroup vkEnum
 	/// @{
 
 	/// @enum MemoryAccess
@@ -169,8 +169,8 @@ export namespace vk {}
 
 // Swapchain
 export namespace vk {
-	/// @addtogroup swapchainEnum Swachain Enums
-	/// @ingroup enum
+	/// @addtogroup vkSwapchainEnum Swachain Enums
+	/// @ingroup vkEnum
 	/// @{
 
 	/// @enum SurfacePresentMode
@@ -240,8 +240,8 @@ export namespace vk {
 
 // Queue
 export namespace vk {
-	/// @addtogroup queueEnum Queue Enums
-	/// @ingroup enum
+	/// @addtogroup vkQueueEnum Queue Enums
+	/// @ingroup vkEnum
 	/// @{
 	/// @enum QueueType
 	/// <summary>
@@ -266,8 +266,8 @@ export namespace vk {
 
 // Buffer
 export namespace vk {
-	/// @addtogroup bufferEnum Buffer Enums
-	/// @ingroup enum
+	/// @addtogroup vkBufferEnum Buffer Enums
+	/// @ingroup vkEnum
 	/// @{
 	/// @enum BufferUseType
 	/// <summary>
@@ -311,8 +311,8 @@ export namespace vk {
 
 // Image
 export namespace vk {
-	/// @addtogroup imageEnum Image Enums
-	/// @ingroup enum
+	/// @addtogroup vkImageEnum Image Enums
+	/// @ingroup vkEnum
 	/// @{
 
 	/// Texture Overall Properties
@@ -552,16 +552,16 @@ export namespace vk {
 
 // Shader
 export namespace vk {
-	/// @addtogroup shaderEnum Shader Enums
-	/// @ingroup enum
+	/// @addtogroup vkShaderEnum Shader Enums
+	/// @ingroup vkEnum
 	/// @{
-	
+
 	/// @enum ShaderType
 	/// <summary>
 	/// Flag to designate different shader type
 	/// </summary>
 	/// @note Has Flags version. See Flags<ShaderType>
-    
+
 	/// @todo Add more types
 	enum class ShaderType : VkShaderStageFlags {
 		/// None / Not aplicable
@@ -590,10 +590,10 @@ export namespace vk {}
 
 // Commend
 export namespace vk {
-	/// @addtogroup commendEnum Commend Enums
-	/// @ingroup enum
+	/// @addtogroup vkCommendEnum Commend Enums
+	/// @ingroup vkEnum
 	/// @{
-	
+
 	/// @enum CommendPoolType
 	/// <summary>
 	/// Flag to designate different CommendPool type
@@ -646,10 +646,10 @@ export namespace vk {
 
 // Descriptor
 export namespace vk {
-	/// @addtogroup descriptorEnum Descriptor Enums
-	/// @ingroup enum
+	/// @addtogroup vkDescriptorEnum Descriptor Enums
+	/// @ingroup vkEnum
 	/// @{
-	
+
 	/// @enum DescriptorPoolType
 	/// <summary>
 	/// Flag to designate different DescriptorPool type
@@ -697,12 +697,12 @@ export namespace vk {
 
 // Pipeline
 export namespace vk {
-	/// @addtogroup pipelineEnum Pipeline Enums
-	/// @ingroup enum
+	/// @addtogroup vkPipelineEnum Pipeline Enums
+	/// @ingroup vkEnum
 	/// @{
 
 	/// Attachments
-	
+
 	/// @enum AttachmentReadOp
 	/// <summary>
 	/// Enum to set the read operation for an attachment
