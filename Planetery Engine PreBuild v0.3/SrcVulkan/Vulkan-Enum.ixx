@@ -561,11 +561,18 @@ export namespace vk {
 	/// Flag to designate different shader type
 	/// </summary>
 	/// @note Has Flags version. See Flags<ShaderType>
+    
+	/// @todo Add more types
 	enum class ShaderType : VkShaderStageFlags {
+		/// None / Not aplicable
 		None = 0,
+		/// Vertex Shader
 		Vert = VK_SHADER_STAGE_VERTEX_BIT,
+		/// Geometry Shader
 		Geom = VK_SHADER_STAGE_GEOMETRY_BIT,
+		/// Fragment Shader
 		Frag = VK_SHADER_STAGE_FRAGMENT_BIT,
+		/// Any Shaders
 		All = VK_SHADER_STAGE_ALL,
 	};
 	/// @class Flags<ShaderType>
@@ -723,11 +730,12 @@ export namespace vk {
 		/// Don\'t care about
 		Undefined = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 	};
-	
+
 	/// @enum ColorComponents
 	/// <summary>
 	/// Flag for color components in a color value
 	/// </summary>
+	/// @note Has Flags version. See Flags<ColorComponents>
 	enum class ColorComponents : VkColorComponentFlags {
 		/// None
 		None = 0,
@@ -937,64 +945,180 @@ export namespace vk {
 		Ones = VK_LOGIC_OP_SET,
 	};
 
-	// Polygon Settings
+	/// Polygon Settings
+
+	/// @enum PolygonMode
+	/// <summary>
+	/// Enum to set the polygon render mode
+	/// </summary>
+	/// Whether to render in fill, line, or point mode
 	enum class PolygonMode : std::underlying_type_t<VkPolygonMode> {
+		/// Fill the primitives
 		Fill = VK_POLYGON_MODE_FILL,
+		/// Draw the lines of the primitives
 		Line = VK_POLYGON_MODE_LINE,
+		/// Draw the points of the primitives
 		Point = VK_POLYGON_MODE_POINT,
-		// TODO: add support for VK_POLYGON_MODE_FILL_RECTANGLE_NV
+		/// Fill the rectangles
+        /// @note Requires Extension: VK_POLYGON_MODE_FILL_RECTANGLE_NV
+        /// @todo check if need additional support
 		ExtRectangleFill = VK_POLYGON_MODE_FILL_RECTANGLE_NV,
 	};
+
+	/// @enum PrimitiveTopology
+	/// <summary>
+	/// Enum to set the type of input primitives
+	/// </summary>
+	/// Effects the input of primitives.
+    /// @note If there are geometry shaders, this effects the geometry shader input primitives, not the output primitives
 	enum class PrimitiveTopology : std::underlying_type_t<VkPrimitiveTopology> {
+		/// List of points. \n
+        /// P == Points: {P[0], P[1], P[2]...}
 		PointList = VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
+		/// List of lines. \n
+        /// L == Lines: {L0[0], L0[1], L1[0], L1[1]...} \n
+        /// Number of points: vertexCount
 		LineList = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+		/// Continuous segment\(s\) of lines. \n
+        /// L == Line Segments: {S[0][0], S[0][1]... S[0][n], -1, S[1][0]...} \n
+        /// Number of lines: vertexCount/2
+        /// @todo Using -1 requires some settings?
 		LineStrip = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
+		/// List of triangles. \n
+        /// T == Triangles: {T[0][0], T[0][1], T[0][2], T[1][0], T[1][1]...} \n
+        /// Number of lines: vertexCount-1 \(or 0 if vertexCount<=1\)
 		TriangleList = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+		/// Continuous strip\(s\) of triangles. \n
+        /// Number of triangles: vertexCount/3 \n
+        /// @todo Add explaination
 		TriangleStrip = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
+		/// Continuous fan\(s\) of triangles. \n
+        /// Number of triangles: vertexCount-2 \(or 0 if vertexCount<=2\) \n
+        /// @todo Add explaination
 		TriangleFan = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN,
+		/// List of lines with adjacency provided but not drawn. \n
+        /// Number of triangles: vertexCount-2 \(or 0 if vertexCount<=2\) \n
+        /// @todo Add explaination
 		LineListAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY,
+		/// Segment\(s\) of lines with adjacency provided but not drawn. \n
+        /// Number of lines: vertexCount/4 \n
+        /// @todo Add explaination
 		LineStripAdjacency = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY,
+		/// List of triangles with adjacency \n
+        /// Number of triangles: vertexCount/6 \n
+        /// @todo Add explaination
 		TriangleListAdjacency =
 		  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY,
+		/// Continuous strip\(s\) of triangles with adjacency. \n
+        /// Number of triangles: \(vertexCount-4\)/2 \(or 0 if vertexCount<=5\) \n
+        /// @todo Add explaination
 		TriangleStripAdjacency =
 		  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY,
+		/// List of patches, used for Tessellation point control. \n
+        /// @todo Add support for patches. Add tessellation stuff
 		PatchList = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST,
 	};
+
+	/// @enum CullMode
+	/// <summary>
+	/// Flag to set the what face to cull out
+	/// </summary>
+	/// Setting the corresponding flag means enable culling for said faces.
+	/// @note Has Flags version. See Flags<CullMode>
+
+	/// @todo Add explaination on where culling happens. Check what primitives this effects
 	enum class CullMode : VkCullModeFlags {
+		/// No culling
 		None = VK_CULL_MODE_NONE,
+		/// Cull the front facing primitives
 		Front = VK_CULL_MODE_FRONT_BIT,
+		/// Cull the back facing primitives
 		Back = VK_CULL_MODE_BACK_BIT,
 	};
+	/// @class Flags<CullMode>
+	/// <summary>
+	/// Flags type of CullMode
+	/// </summary>
+	/// See vk::CullMode for availble flags.
 	template<> class Flags<CullMode>;
+
+	/// @enum FrontDirection
+	/// <summary>
+	/// Enum to set which way is front facing
+	/// </summary>
+	/// This effects what gets culled based on the setted vk::CullMode
+	/// @todo How this works with rect, line, or point?
 	enum class FrontDirection : std::underlying_type_t<VkFrontFace> {
+		/// Vertices in a front facing triangle are ordered counter clockwise 
 		CounterClockwise = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+		/// Vertices in a front facing triangle are ordered clockwise
 		Clockwise = VK_FRONT_FACE_CLOCKWISE,
 	};
+
+	/// @enum BufferInputRate
+	/// <summary>
+	/// Enum to set input rate of the binding
+	/// </summary>
+	/// @todo Test if perVertex vs perInstance means different bindings can have different input rate
 	enum class BufferInputRate : std::underlying_type_t<VkVertexInputRate> {
+		/// Input once per vertex, use vertex id to access data
 		PerVertex = VK_VERTEX_INPUT_RATE_VERTEX,
+		/// Input once per instance, use instance id to access data
 		PerInstance = VK_VERTEX_INPUT_RATE_INSTANCE,
 	};
 
-	// Stage
+	/// Stage
+
+	/// @enum PipelineStage
+	/// <summary>
+	/// Flag for different pipeline stages
+	/// </summary>
+	/// @note Has Flags version. See Flags<PipelineStage>
 	enum class PipelineStage : VkPipelineStageFlags {
+		/// None / Not in the pipeline / Not applicable
 		None = VK_PIPELINE_STAGE_NONE_KHR,
+		/// Top/start of the pipeline
 		TopOfPipe = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		/// Indirect draw commend processing stage
 		DrawIndirect = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
+		/// Vertex input processing stage
 		VertexInput = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
+		/// Vertex shader execution stage
 		ShaderVertex = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
+		/// Tessellation control shader execution stage
 		ShaderTessControl = VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT,
+		/// Tessellation evaluation shader execution stage
 		ShaderTessEval = VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT,
+		/// Geometry shader execution stage
 		ShaderGeometry = VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT,
-		ShaderFragment = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		/// Early fragment testing stage
 		FragmentEarlyTest = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
+		/// Fragment shader execution stage
+		ShaderFragment = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		/// Late fragment testing stage
 		FragmentLateTest = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+		/// Color attachment store/output stage
 		OutputAttachmentColor = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+		/// Coumpute shader execution stage
 		ShaderCompute = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+		/// Transfer commend processing stage
 		Transfer = VK_PIPELINE_STAGE_TRANSFER_BIT,
+		/// End/completion of the pipeline
 		BottomOfPipe = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		/// Host memory access pseudo-stage \(noy used by commends\)
+        /// @todo Why is this here? What is his usage?
 		HostMemoryAccess = VK_PIPELINE_STAGE_HOST_BIT,
+		/// Any graphics pipeline stages
 		AnyGraphics = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
+		/// Any operations preformed by any supported commends on the in-use queue
 		AnyCommands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
 	};
+	/// @class Flags<PipelineStage>
+	/// <summary>
+	/// Flags type of PipelineStage
+	/// </summary>
+	/// See vk::PipelineStage for availble flags.
 	template<> class Flags<PipelineStage>;
+
+	/// @}
 }
