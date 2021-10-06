@@ -15,7 +15,7 @@ var searchData=
   ['subpass_12',['SubPass',['../classvk_1_1RenderPass_1_1SubPass.html',1,'vk::RenderPass']]],
   ['subpassdependency_13',['SubPassDependency',['../classvk_1_1RenderPass_1_1SubPassDependency.html',1,'vk::RenderPass']]],
   ['support_14',['Support',['../classvk_1_1OSRenderSurface_1_1Support.html',1,'vk::OSRenderSurface']]],
-  ['surfaceminimizedexception_15',['SurfaceMinimizedException',['../namespacevk.html#structvk_1_1SurfaceMinimizedException',1,'vk']]],
+  ['surfaceminimizedexception_15',['SurfaceMinimizedException',['../group__vkDevice.html#structvk_1_1SurfaceMinimizedException',1,'vk']]],
   ['swapchain_16',['Swapchain',['../classvk_1_1Swapchain.html',1,'vk']]],
   ['swapchaincallback_17',['SwapchainCallback',['../structvk_1_1SwapchainCallback.html',1,'vk']]],
   ['swapchainimage_18',['SwapchainImage',['../classvk_1_1SwapchainImage.html',1,'vk']]],

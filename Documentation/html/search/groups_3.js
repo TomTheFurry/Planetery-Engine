@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['memory_20enums_0',['Memory Enums',['../group__memoryEnum.html',1,'']]]
+  ['enums_0',['Enums',['../group__vkEnum.html',1,'']]]
 ];

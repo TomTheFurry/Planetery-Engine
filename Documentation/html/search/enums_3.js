@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['memoryaccess_0',['MemoryAccess',['../group__memoryEnum.html#gad3905d63091f95e3c7669512efd82e22',1,'vk']]],
-  ['memoryfeature_1',['MemoryFeature',['../group__memoryEnum.html#ga3776a8012f3872aca8a50158d95a504b',1,'vk']]]
+  ['descriptordatatype_0',['DescriptorDataType',['../group__vkDescriptorEnum.html#ga4614ed1d77c9a74dc92003adec9abf36',1,'vk']]],
+  ['descriptorpooltype_1',['DescriptorPoolType',['../group__vkDescriptorEnum.html#ga1351c24aa41700688ce1c6336c2fc5b3',1,'vk']]]
 ];

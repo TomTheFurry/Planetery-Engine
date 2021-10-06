@@ -1,11 +1,19 @@
 var searchData=
 [
-  ['layer_0',['Layer',['../namespacevk.html#structvk_1_1Layer',1,'vk']]],
-  ['lifetimemanager_1',['LifetimeManager',['../classvk_1_1LifetimeManager.html',1,'vk']]],
-  ['linear_2',['Linear',['../group__imageEnum.html#ggab8d50b0ae44f707e4973d0c7c1e5f729a32a843da6ea40ab3b17a3421ccdf671b',1,'vk::Linear()'],['../group__imageEnum.html#gga54bd86859a75978270fa9501511aca9fa32a843da6ea40ab3b17a3421ccdf671b',1,'vk::Linear()']]],
-  ['log_3',['Log',['../classLog.html',1,'']]],
-  ['logicaldevice_4',['LogicalDevice',['../classvk_1_1LogicalDevice.html',1,'vk']]],
-  ['loglayerbase_5',['LogLayerBase',['../classLogger_1_1LogLayerBase.html',1,'Logger']]],
-  ['loglayercontainer_6',['LogLayerContainer',['../classLogger_1_1LogLayerContainer.html',1,'Logger']]],
-  ['loglayerstring_7',['LogLayerString',['../classLogger_1_1LogLayerString.html',1,'Logger']]]
+  ['layer_0',['Layer',['../group__vkDevice.html#structvk_1_1Layer',1,'vk']]],
+  ['less_1',['Less',['../group__vkPipelineEnum.html#gga1329f8663c6833b535925ac736982a49a1cfdf0e8d0c87a228c1f40d9bee7888b',1,'vk']]],
+  ['lessorequal_2',['LessOrEqual',['../group__vkPipelineEnum.html#gga1329f8663c6833b535925ac736982a49aa4cbdbb6070a5abb35fc95ecf1e22c14',1,'vk']]],
+  ['lifetimemanager_3',['LifetimeManager',['../classvk_1_1LifetimeManager.html',1,'vk']]],
+  ['line_4',['Line',['../group__vkPipelineEnum.html#gga7a7f2e27f2658a8c9327d4c830a06d1ba4803e6b9e63dabf04de980788d6a13c4',1,'vk']]],
+  ['linear_5',['Linear',['../group__vkImageEnum.html#ggab8d50b0ae44f707e4973d0c7c1e5f729a32a843da6ea40ab3b17a3421ccdf671b',1,'vk::Linear()'],['../group__vkImageEnum.html#gga54bd86859a75978270fa9501511aca9fa32a843da6ea40ab3b17a3421ccdf671b',1,'vk::Linear()']]],
+  ['linelist_6',['LineList',['../group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a596e1b7afe8925f3f578c716d5af8fef',1,'vk']]],
+  ['linelistadjacency_7',['LineListAdjacency',['../group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a9d531a360634c1569d3f1e57a484e52b',1,'vk']]],
+  ['linestrip_8',['LineStrip',['../group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1ae7f9e73b8edd21f420a63b3ace5768a2',1,'vk']]],
+  ['linestripadjacency_9',['LineStripAdjacency',['../group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a826457761e4d352b8f54d7d47b80dbaa',1,'vk']]],
+  ['log_10',['Log',['../classLog.html',1,'']]],
+  ['logicaldevice_11',['LogicalDevice',['../classvk_1_1LogicalDevice.html',1,'vk']]],
+  ['logicoperator_12',['LogicOperator',['../group__vkPipelineEnum.html#gaf6ed084a6c53ab72c7ec3e3d541fea7e',1,'vk']]],
+  ['loglayerbase_13',['LogLayerBase',['../classLogger_1_1LogLayerBase.html',1,'Logger']]],
+  ['loglayercontainer_14',['LogLayerContainer',['../classLogger_1_1LogLayerContainer.html',1,'Logger']]],
+  ['loglayerstring_15',['LogLayerString',['../classLogger_1_1LogLayerString.html',1,'Logger']]]
 ];
