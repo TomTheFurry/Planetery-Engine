@@ -134,7 +134,7 @@ export namespace vk {
 	/// Types of Memory Feature
 	/// </summary>
 	/// This control the allowed
-	/// \ref CommendBuffer::cmdCopy() "memory transfer method"
+	/// \link CommendBuffer::cmdCopy() memory transfer method \endlink
 	/// @note Has Flags version. See \c Flags<MemoryFeature>
 	enum class MemoryFeature {
 		/// None

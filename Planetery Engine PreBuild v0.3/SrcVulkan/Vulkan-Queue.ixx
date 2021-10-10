@@ -15,27 +15,22 @@ export namespace vk {
 	/// See also LogicalDevice.
 	/// @{
 
-	/// <summary>
 	/// Hint struct for queues usage
-	/// </summary>
 	struct QueueHint {
 		uint memoryIndex = uint(-1);
 		uint presentIndex = uint(-1);
 		uint renderIndex = uint(-1);
 	};
 
-	/// <summary>
 	/// Hint enum
-	/// </summary>
 	enum HintUsage {
 		Memory,	  ///< Memory Copy Operations
 		Present,  ///< Presentation Operations
 		Render,	  ///< Render Operations
 	};
 
-	/// <summary>
-	/// QueuePool layout
-	/// </summary>
+	/// @brief QueuePool layout
+	///
 	/// A layout object for setting up the desired QueuePool layout. On
 	/// construction, this loads the constraint of the layout, which then can be
 	/// queried via its const function. Call the non-const function to setup the
@@ -61,50 +56,44 @@ export namespace vk {
 		};
 		// Note that there is no futher access to PhysicalDevice after Ctor
 
-		/// <summary>
 		/// Construct a QueuePool layout constrainted to the physical device
-		/// </summary>
-		/// <param name="pd">A physical device that the layout should be
-		/// compatible with</param>
+		/// @param pd A physical device that the layout should be
+		/// compatible with
 		/// @note There are no futher access to pd after the constructer returns
 		QueuePoolLayout(const PhysicalDevice& pd);
 		/// Get the allowed queue operations of a queue family
-		/// <param name="familyIndex">The queue family index</param>
-		/// <returns>The allowed queue opertions</returns>
+		/// @param familyIndex The queue family index
+		/// @return The allowed queue opertions
 		Flags<QueueType> getFamilySupportType(uint familyIndex) const;
 		/// Get the max allowed queue count of a queue family
-		/// <param name="familyIndex">The queue family index</param>
-		/// <returns>The max allowed queue count</returns>
+		/// @param familyIndex The queue family index
+		/// @return The max allowed queue count
 		uint getFamilyMaxQueueCount(uint familyIndex) const;
 		/// Find a queue family filtered by its allowed queue operations
-		/// <param name="mustSupport">The queue operations it must
-		/// support</param>
-		/// <param name="mustNotSupport">The queue operations it
-		/// must not support</param>
-		/// <returns>The queue family index</returns>
+		/// @param mustSupport The queue operations it must support
+		/// @param mustNotSupport The queue operations it must not support
+		/// @return The queue family index
 		/// @todo This will be changed to use Iteratiors or Ranges for better
 		/// filtering
 		uint findFamilyBySupportType(Flags<QueueType> mustSupport,
 		  Flags<QueueType> mustNotSupport = Flags<QueueType>()) const;
 		/// Check if a queue family supports presenting a SwapchainImage to the
 		/// specified OSRenderSurface
-		/// <param name="familyIndex">The queue family index</param>
-		/// <param name="surface">The surface to check against</param>
-		/// <returns>A boolean where \c true means it supports the
-		/// surface</returns>
+		/// @param familyIndex The queue family index
+		/// @param surface The surface to check against
+		/// @return A boolean where \c true means it supports the surface
 		bool checkQueuePresentSupport(
 		  uint familyIndex, const OSRenderSurface& surface) const;
 		/// Add a queue group to the layout
-		/// <param name="familyIndex">The family index that the queue group
-		/// should use</param> <param name="count">The max queue count of the
-		/// queue group</param>
+		/// @param familyIndex The family index that the queue group should use
+		/// @param count The max queue count of the queue group
 		/// @warning The family index must be unique currently as each queue
 		/// families must only be linked to at most one queue group.
 		/// @todo This behaviour may change later.
 		void addQueueGroup(uint familyIndex, uint count);
 		/// Provide a hint for how to use a group
-		/// <param name="usage">The hinted usage</param>
-		/// <param name="familyIndex">The group's familyIndex</param>
+		/// @param usage The hinted usage
+		/// @param familyIndex The group's familyIndex
 		void hintGroupUsage(HintUsage usage, uint familyIndex);
 
 	  private:
@@ -114,9 +103,8 @@ export namespace vk {
 		VkPhysicalDevice pd;
 	};
 
-	/// <summary>
-	/// Queue pool
-	/// </summary>
+	/// @brief Queue pool
+	///
 	/// An object owned by a LogicalDevice. It manages the lifetime and usages
 	/// of Queues.
 	/// @warning This object should NEVER be constructed manually. Instead, this
@@ -147,37 +135,33 @@ export namespace vk {
 
 		// TODO: Better search function via giving out Iterators (ranges?)
 		/// Find a queue group filtered by its allowed queue operations
-		/// <param name="mustSupport">The queue operations it must
-		/// support</param>
-		/// <param name="mustNotSupport">The queue operations it
-		/// must not support</param>
-		/// <returns>The queue family index of the group</returns>
+		/// @param mustSupport The queue operations it must support
+		/// @param mustNotSupport The queue operations it must not support
+		/// @return The queue family index of the group
 		/// @todo This will be changed to use Iteratiors or Ranges for better
 		/// filtering
 		uint findGroupBySupportType(Flags<QueueType> mustSupport,
 		  Flags<QueueType> mustNotSupport = Flags<QueueType>()) const;
 		/// Query a Queue object that is \ref vkInUseQueue "in-use"
-		/// <param name="groupId">The group index</param>
-		/// <returns>A valid queue pointer, or \c nullptr if no queue is in
-		/// use</returns>
+		/// @param groupId The group index
+		/// @return A valid queue pointer, or \c nullptr if no queue is in use
 		Queue* queryQueueInUse(uint groupId);
 		/// Query a Queue object that is not \ref vkInUseQueue "in-use"
-		/// <param name="groupId">The group index</param>
-		/// <returns>A valid queue pointer, or \c nullptr if no queue is in
-		/// use</returns>
+		/// @param groupId The group index
+		/// @return A valid queue pointer, or \c nullptr if no queue is in use
 		/// @note Concider calling markQueueNotInUse() when the queue is not
 		/// needed anymore. This is only a suggestion as the \ref
 		/// vkInUseQueue in-use thing is not really fully functional.
 		Queue* queryQueueNotInUse(uint groupId);
 		/// Mark a Queue object as not \ref vkInUseQueue "in-use"
-		/// <param name="queue">The target Queue object</param>
+		/// @param queue The target Queue object
 		void markQueueNotInUse(Queue& queue);
 
 		/// Get a Queue group using the hint provided when setting up the
 		/// QueuePoolLayout
-		/// <param name="usage">The type of usage</param>
-		/// <returns>The Queue group index, or \c uint(-1) if the hint of the
-		/// usage is not set</returns>
+		/// @param usage The type of usage
+		/// @return The Queue group index, or \c uint(-1) if the hint of the
+		/// usage is not set
 		/// @note This is faster than using findGroupBySupportType() as it uses
 		/// constant time, independant of how many groups there are.
 		uint getGroupByHint(HintUsage usage) const;
@@ -187,15 +171,15 @@ export namespace vk {
 		// CommendPool& getCommendPool(Flags<CommendPoolType> type);
 		// CommendBuffer getSingleUseCommendBuffer();
 
-		/// <summary>
-		/// Query a CommendPool for a Queue group
-		/// </summary>
+		/// @brief Query a CommendPool for a Queue group
+		///
 		/// Query a CommendPool that is compatible with the queue group. If one
 		/// with the same CommendPoolType and in the same queue group is not
 		/// present, it will make a new one.
-		/// <param name="groupId">The queue group it sould be compatible
-		/// to</param> <param name="type">The CommendPool type</param>
-		/// <returns>A CommendPool</returns>
+		///
+		/// @param groupId The queue group it sould be compatible to
+		/// @param type The CommendPool type
+		/// @return A CommendPool
 		/// @note The queried CommendPool's CommendBuffer should be submitable,
 		/// and \b only submitable to a Queue in the targeted queue group. See
 		/// also Queue::Submit()
@@ -215,9 +199,8 @@ export namespace vk {
 		QueueHint hint;
 	};
 
-	/// <summary>
-	/// A queue object for submiting commends
-	/// </summary>
+	/// @brief A queue object for submiting commends
+	///
 	/// @p This repesent a queue for the underlying LogicalDevice. It recieves
 	/// commends via collecting CommendBuffer. See Queue::submit()
 	///
@@ -239,12 +222,10 @@ export namespace vk {
 		Queue(QueuePool& queuePool, uint familyIndex, uint queueIndex);
 		Queue(const Queue&) = delete;
 		Queue(Queue&&) = delete;
-		/// <summary>
-		/// Queue destructor
-		/// </summary>
+		/// @brief Queue destructor
 		/// Its underlying object's lifetime is linked to LogicalDevice and
 		/// therefore no special destructor is needed
-		~Queue() final = default;  // Lifetime linked to LogicalDevices
+		~Queue() final = default;
 		/// Get the underlying LogicalDevice
 		LogicalDevice& getDevice() { return qp.getDevice(); }
 		/// Get the QueuePool that the Queue is in
@@ -252,29 +233,28 @@ export namespace vk {
 
 		// TODO: Add back multi-commend submitions
 
-		/// <summary>
-		/// Submit a CommendBuffer for execution
-		/// </summary>
+		/// @brief Submit a CommendBuffer for execution
+		///
 		/// The queue collects CommendBuffer to a multithread-safe queue, and
 		/// after an undetermined delay, will start executing the
 		/// CommendBuffers' commend in order and in parrellal.
 		///
-		/// <param name="cb">The commend buffer to submit</param>
+		/// @param cb The commend buffer to submit
 		///
-		/// <param name="waitFor">For cross queue syncing.\n
+		/// @param waitFor For cross queue syncing.\n
 		/// What Semaphore object to wait for, or \c nullptr if no waiting is
-		/// needed</param>
+		/// needed
 		///
-		/// <param name="waitType">For same queue syncing.\n
-		/// What PipelineStage of the previous commend to wait for</param>
+		/// @param waitType For same queue syncing.\n
+		/// What PipelineStage of the previous commend to wait for
 		///
-		/// <param name="signalToSemaphore">For cross queue syncing.\n
+		/// @param signalToSemaphore For cross queue syncing.\n
 		/// What Semaphore object to signal to, or \c nullptr if no signaling is
-		/// needed</param>
+		/// needed
 		///
-		/// <param name="signalToFence">For syncing to user process.\n
+		/// @param signalToFence For syncing to user process.\n
 		/// What Fence object to signal to, or \c nullptr if no signaling is
-		/// needed</param>
+		/// needed
 		///
 		/// @warning While CommendBuffer is executed in order,
 		/// CommendBuffers dependent on each other submitted to the same queue
@@ -289,23 +269,18 @@ export namespace vk {
 		void submit(CommendBuffer& cb, Semaphore* waitFor,
 		  PipelineStage waitType, Semaphore* signalToSemaphore,
 		  Fence* signalToFence);
-		/// <summary>
-		/// Presents a SwapchainImage to the Swapchain
-		/// </summary>
+		/// @brief Presents a SwapchainImage to the Swapchain
+		///
 		/// This presents a previously aquired SwapchainImage to the Swapchain.
 		/// The execution order obeys the same rule as normal CommendBuffer
 		/// submit(), except that it must be synchronized using Semaphore
 		///
-		/// <param name="scImg">The target SwapchainImage</param>
-		///
-		/// <param name="presentSemaphore">The Semaphore to wait for
-		/// presentation</param>
-		///
-		/// <param name="cleanupFence">The Fence that is signaled when all
-		/// previous commends that uses the Swapchain's LifetimeManager's
-		/// allocated object has completed, and that cleanups can be
-		/// called</param>
-		/// @exception OutdatedSwapchainException Signal that Swapchain is
+		/// @param scImg The target SwapchainImage
+		/// @param presentSemaphore The Semaphore to wait for presentation
+		/// @param cleanupFence The Fence that is signaled when all previous
+		/// commends that uses the Swapchain's LifetimeManager's allocated
+		/// object has completed, and that cleanups can be called
+		/// @exception OutdatedSwapchainException: Signal that Swapchain is
 		/// outdated when trying to present the image
 		void presentImage(SwapchainImage& scImg, Semaphore& presentSemaphore,
 		  Fence& cleanupFence);

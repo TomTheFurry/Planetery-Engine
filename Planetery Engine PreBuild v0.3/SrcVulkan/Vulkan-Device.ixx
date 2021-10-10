@@ -16,23 +16,20 @@ export namespace vk {
 	/// A group of vulkan classes that is related to device.
 	/// @{
 
-	/// <summary>
-	/// Surface minimization is detected
-	/// </summary>
+	/// @brief Surface minimization is detected
+	///
 	/// @todo move to Swapchain module
 	struct SurfaceMinimizedException {};
 
-	/// <summary>
-	/// Vulkan API Layer
-	/// </summary>
+	/// @brief Vulkan API Layer
+	///
 	/// @todo Move to new Extension module
 	struct Layer {
 		const char* name;
 		uint version;
 	};
-	/// <summary>
-	/// Vulkan API Extension
-	/// </summary>
+	/// @brief Vulkan API Extension
+	///
 	/// @todo Move to new Extension module
 	struct Extension {
 		const char* name;
@@ -42,18 +39,16 @@ export namespace vk {
 	// physical device. Maybe fix that via splitting physicalDevice &
 	// physicalDeviceProperties Or maybe change that to PhysicalDeviceHandle...?
 
-	/// <summary>
-	/// A physical device
-	/// </summary>
+	/// @brief A physical device
+	///
 	/// This is a repesentation of a hardware, like a GPU. It caches the
 	/// hardware related informations, used by other classes to properly
 	/// construct an object that is compatible with the underlying hardware
 	class PhysicalDevice
 	{
 	  public:
-		/** <summary>
-		 * Get a usable physical device
-		 * </summary>
+		/** @brief Get a usable physical device
+		 *
 		 * Calling this function will run a series of check on all avalible
 		 * physical devices, and pick the most suitable device. The checks
 		 * include:
@@ -98,9 +93,9 @@ export namespace vk {
 		 * </li>
 		 * </ul>
 		 *
-		 * <param name="osSurface">The surface that the returned device should
-		 * be complitible with \(Optional\)</param>
-		 * <returns>A physical device that matches requirements</returns>
+		 * @param osSurface The surface that the returned device should
+		 * be complatible with (Optional)
+		 * @returns A physical device that meet the above requirements
 		 */
 		static PhysicalDevice* getUsablePhysicalDevice(
 		  OSRenderSurface* osSurface);
@@ -109,15 +104,13 @@ export namespace vk {
 		  VkPhysicalDevice _d, OSRenderSurface* renderSurface = nullptr);
 		/// @todo Make this private
 		PhysicalDevice() = default;
-		/// <summary>
-		/// Copy Constructer
-		/// </summary>
+		/// @brief Copy Constructer
+		///
 		/// @note You are only copying the computed cache of the physical device
 		/// properties. Therefore it is safe to be copyed around.
 		PhysicalDevice(const PhysicalDevice& other);
-		/// <summary>
-		/// Move Constructer
-		/// </summary>
+		/// @brief Move Constructer
+		///
 		/// @warning Only safe if no other objects are using the cache stored in
 		/// the object!
 		PhysicalDevice(PhysicalDevice&& other) noexcept;
@@ -156,9 +149,8 @@ export namespace vk {
 		// TODO: cache the result
 		/// Get an index for an avaliable Memory Type that passes the bit filter
 		/// and supports certain \c vk::MemoryFeature.
-		/// <param name="bitFilter">Memory index that should be filtered
-		/// out</param> <param name="feature">Flags of required \c
-		/// vk::MemoryFeature</param>
+		/// @param bitFilter Memory index that should be filtered out
+		/// @param feature Flags of required \c vk::MemoryFeature
 		uint getMemoryTypeIndex(
 		  uint bitFilter, Flags<MemoryFeature> feature) const;
 		/// Returns the underlying native handle
@@ -180,13 +172,13 @@ export namespace vk {
 		~PhysicalDevice() = default;
 	};
 
-	/// <summary>
-	/// A logical device
-	/// </summary>
+	/// @ brief A logical device
+	///
 	/// A logical repesentation of an device. Since an device may be used by
 	/// multiple different programs, this repesent the \e program that runs on
 	/// the specified PhysicalDevice. It also contains a QueuePool that holds
 	/// Queue for submition of commends to the \e program.
+	///
 	/// @note Almost all vulkan objects store a reference to its LogicalDevice,
 	/// as the construction/destruction is handled by the \e program repesented
 	/// by the LogicalDevice.
@@ -197,13 +189,10 @@ export namespace vk {
 	  public:
 		/// @todo Move to private
 		void _setup(const QueuePoolLayout& queueLayout);
-		/// <summary>
 		/// Make a logical device
-		/// </summary>
-		/// <param name="pd">The physical device it should use</param>
-		/// <param name="queueLayout">A QueuePool layout it should try and make.
-		/// Error if QueuePoolLayout is invalid with provided physical
-		/// device</param>
+		/// @param pd The physical device it should use
+		/// @param queueLayout A QueuePool layout it should try and make. Error
+		/// if QueuePoolLayout is invalid with provided physical device
 		LogicalDevice(PhysicalDevice& pd, const QueuePoolLayout& queueLayout);
 		LogicalDevice(const LogicalDevice&) = delete;
 		/// @note Move ctor is disabled as futher test for other obj handling
@@ -213,26 +202,19 @@ export namespace vk {
 		VkDevice d;
 		/// @todo Move this private & make a func
 		std::map<uint, MemoryPool> memoryPools;
-		/// <summary>
 		/// Allocate a memory section
-		/// </summary>
-		/// <param name="bitFilter">The memory type to filter out</param>
-		/// <param name="feature">The requested memory features</param>
-		/// <param name="n">The size of requested memory</param>
-		/// <param name="align">The alignment of requiested memory</param>
-		/// <returns>
+		/// @param bitFilter The memory type to filter out
+		/// @param feature The requested memory features
+		/// @param n The size of requested memory
+		/// @param align The alignment of requiested memory
+		/// @return
 		/// uint: The memoryPool index \n
-		/// MemoryPointer: The allocated memory section pointer
-		/// </returns>
+		/// MemoryPointer: The allocated memory section
 		std::pair<uint, MemoryPointer> allocMemory(
 		  uint bitFilter, Flags<MemoryFeature> feature, size_t n, size_t align);
-		/// <summary>
 		/// Free a memory section
-		/// </summary>
-		/// <param name="memoryIndex">The MemoryPool index</param>
-		/// <param name="ptr">
-		/// The to-be-freed memory section pointer
-		/// </param>
+		/// @param memoryIndex The MemoryPool index
+		/// @param ptr The to-be-freed memory section
 		/// @warning Requires that the provided memory section be the same one
 		/// that is returned by calling this object's allocMemory(), which has
 		/// not been freed yet
