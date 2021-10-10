@@ -22,7 +22,7 @@ var namespacevk =
     [ "IndexBuffer", "classvk_1_1IndexBuffer.html", null ],
     [ "Layer", "group__vkDevice.html#structvk_1_1Layer", null ],
     [ "LifetimeManager", "classvk_1_1LifetimeManager.html", null ],
-    [ "LogicalDevice", "classvk_1_1LogicalDevice.html", null ],
+    [ "LogicalDevice", "classvk_1_1LogicalDevice.html", "classvk_1_1LogicalDevice" ],
     [ "MemoryAllocator", "classvk_1_1MemoryAllocator.html", null ],
     [ "MemoryPointer", "namespacevk.html#structvk_1_1MemoryPointer", null ],
     [ "MemoryPool", "classvk_1_1MemoryPool.html", "classvk_1_1MemoryPool" ],
@@ -30,9 +30,9 @@ var namespacevk =
     [ "OSRenderSurface", "classvk_1_1OSRenderSurface.html", "classvk_1_1OSRenderSurface" ],
     [ "OutdatedFrameException", "namespacevk.html#structvk_1_1OutdatedFrameException", null ],
     [ "OutdatedSwapchainException", "namespacevk.html#structvk_1_1OutdatedSwapchainException", null ],
-    [ "PhysicalDevice", "classvk_1_1PhysicalDevice.html", null ],
-    [ "Queue", "classvk_1_1Queue.html", null ],
-    [ "QueueHint", "namespacevk.html#structvk_1_1QueueHint", null ],
+    [ "PhysicalDevice", "classvk_1_1PhysicalDevice.html", "classvk_1_1PhysicalDevice" ],
+    [ "Queue", "classvk_1_1Queue.html", "classvk_1_1Queue" ],
+    [ "QueueHint", "group__vkQueue.html#structvk_1_1QueueHint", null ],
     [ "QueuePool", "classvk_1_1QueuePool.html", "classvk_1_1QueuePool" ],
     [ "QueuePoolLayout", "classvk_1_1QueuePoolLayout.html", "classvk_1_1QueuePoolLayout" ],
     [ "RenderPass", "classvk_1_1RenderPass.html", "classvk_1_1RenderPass" ],
@@ -161,11 +161,11 @@ var namespacevk =
       [ "CounterClockwise", "group__vkPipelineEnum.html#gga7197191f019fd7b177bb143153213ee5a8f23635f9ec49db2161fc5cddf033a79", null ],
       [ "Clockwise", "group__vkPipelineEnum.html#gga7197191f019fd7b177bb143153213ee5aba360a794737bcc8657a5b6e870d7ba8", null ]
     ] ],
-    [ "HintUsage", "namespacevk.html#ab9e96a04eedaa66813ee07ea2044f056", [
-      [ "Memory", "namespacevk.html#ab9e96a04eedaa66813ee07ea2044f056a116503e044c1a9ba15ae5b8706040ff6", null ],
-      [ "Present", "namespacevk.html#ab9e96a04eedaa66813ee07ea2044f056abc6a2fdd83909c4c530bd285c9770526", null ],
-      [ "Present", "group__vkImageEnum.html#gab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6", null ],
-      [ "Render", "namespacevk.html#ab9e96a04eedaa66813ee07ea2044f056a9a3cd5cfe1389fe0b33999de887de41a", null ]
+    [ "HintUsage", "group__vkQueue.html#gab9e96a04eedaa66813ee07ea2044f056", [
+      [ "Memory", "group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056a116503e044c1a9ba15ae5b8706040ff6", null ],
+      [ "Present", "group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056abc6a2fdd83909c4c530bd285c9770526", null ],
+      [ "Present", "group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6", null ],
+      [ "Render", "group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056a9a3cd5cfe1389fe0b33999de887de41a", null ]
     ] ],
     [ "ImageRegionState", "group__vkImageEnum.html#ga79613372ab9102819abfe1f8d34e22a9", [
       [ "Undefined", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9aec0fc0100c4fc1ce4eea230c3dc10360", null ],
@@ -177,7 +177,7 @@ var namespacevk =
       [ "TransferSrc", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9ac1b703f2c13fac2fff3e72d3e307d4c0", null ],
       [ "TransferDst", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9afc2b74588602de2090079ac53957dfdd", null ],
       [ "HostWritable", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9abf4f076160af8ee55c931d0c91dae5fd", null ],
-      [ "Present", "group__vkImageEnum.html#gab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6", null ],
+      [ "Present", "group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6", null ],
       [ "ReadOnly", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9a131fb182a881796e7606ed6da27f1197", null ],
       [ "Attachment", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9ae9cb217697088a98b1937d111d936281", null ]
     ] ],

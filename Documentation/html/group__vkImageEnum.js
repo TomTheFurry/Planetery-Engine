@@ -14,7 +14,7 @@ var group__vkImageEnum =
       [ "vk::ImageRegionState::TransferSrc", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9ac1b703f2c13fac2fff3e72d3e307d4c0", null ],
       [ "vk::ImageRegionState::TransferDst", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9afc2b74588602de2090079ac53957dfdd", null ],
       [ "vk::ImageRegionState::HostWritable", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9abf4f076160af8ee55c931d0c91dae5fd", null ],
-      [ "vk::Present", "group__vkImageEnum.html#gab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6", null ],
+      [ "vk::Present", "group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6", null ],
       [ "vk::ImageRegionState::ReadOnly", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9a131fb182a881796e7606ed6da27f1197", null ],
       [ "vk::ImageRegionState::Attachment", "group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9ae9cb217697088a98b1937d111d936281", null ]
     ] ],

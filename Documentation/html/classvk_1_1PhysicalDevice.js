@@ -1,0 +1,28 @@
+var classvk_1_1PhysicalDevice =
+[
+    [ "PhysicalDevice", "classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819", null ],
+    [ "PhysicalDevice", "classvk_1_1PhysicalDevice.html#a4f225004186fceea59e1f5feec4bfe76", null ],
+    [ "PhysicalDevice", "classvk_1_1PhysicalDevice.html#a33b7413c963b07f19ea336242ce85b58", null ],
+    [ "PhysicalDevice", "classvk_1_1PhysicalDevice.html#a9352d20a6d544e776fc98b78a2c7323f", null ],
+    [ "~PhysicalDevice", "classvk_1_1PhysicalDevice.html#acd24eaa6c554f0de088eab3bc6d7b572", null ],
+    [ "getMemoryTypeIndex", "classvk_1_1PhysicalDevice.html#a9b382736f3450cce8c0e795479c747b3", null ],
+    [ "getUsablePhysicalDevice", "classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905", null ],
+    [ "operator->", "classvk_1_1PhysicalDevice.html#a707788912ab40a92ed43809e58980cd9", null ],
+    [ "operator->", "classvk_1_1PhysicalDevice.html#ab1a61c1831b07f71236c0a0ca3734047", null ],
+    [ "operator<=>", "classvk_1_1PhysicalDevice.html#a116ada381954f111939063c643ef90e0", null ],
+    [ "operator=", "classvk_1_1PhysicalDevice.html#ae0f84769275dff77d82bbfe76f8e6e04", null ],
+    [ "operator=", "classvk_1_1PhysicalDevice.html#a88f80c84ae69f319727522d957d23dc5", null ],
+    [ "operator==", "classvk_1_1PhysicalDevice.html#af51b5681167b83871a7c86ac0a60ea62", null ],
+    [ "d", "classvk_1_1PhysicalDevice.html#a1c88178106c28b045fe8ba9a0a3d5997", null ],
+    [ "features10", "classvk_1_1PhysicalDevice.html#a685160267f84ba0688d60e20b7f5b12e", null ],
+    [ "features11", "classvk_1_1PhysicalDevice.html#a7ea2f034edbb4007968953e49d979f59", null ],
+    [ "features12", "classvk_1_1PhysicalDevice.html#a4b464ece871a2543a4583c629dbf94d2", null ],
+    [ "meetRequirements", "classvk_1_1PhysicalDevice.html#a9e343a27b71ab6a5740b74390e09f9bd", null ],
+    [ "memProperties", "classvk_1_1PhysicalDevice.html#aa06c584538bc00fa75b4425ef3e02b59", null ],
+    [ "properties10", "classvk_1_1PhysicalDevice.html#a765adf3d9e172977ae7009c884ed24ab", null ],
+    [ "properties11", "classvk_1_1PhysicalDevice.html#a347bb7496d8f416ed4fae0234a8ed912", null ],
+    [ "properties12", "classvk_1_1PhysicalDevice.html#ae7b37ac8b98c6f377aff87f151947f34", null ],
+    [ "queueFamilies", "classvk_1_1PhysicalDevice.html#a358b8108dc46e6a7b3d5298378b696f9", null ],
+    [ "rating", "classvk_1_1PhysicalDevice.html#a931e5c0389c104bdf22cd232db0c07cd", null ],
+    [ "renderOut", "classvk_1_1PhysicalDevice.html#ac579cf4ea7afb9f7484459511e2873cf", null ]
+];

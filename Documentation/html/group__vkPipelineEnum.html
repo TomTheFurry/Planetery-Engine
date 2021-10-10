@@ -356,7 +356,7 @@ Enumerations</h2></td></tr>
 
 <p>Attachments. </p>
 <p >Enum to set the read operation for an attachment </p>
-<p >Control when reading/inputing an attachment, what action can be done on the attachment </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo:</a></b></dt><dd>Better names? Perhaps LoadOp/InputOp instead of ReadOp? </dd></dl>
+<p >Control when reading/inputing an attachment, what action can be done on the attachment </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000038">Todo:</a></b></dt><dd>Better names? Perhaps LoadOp/InputOp instead of ReadOp? </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga8830590168c0d5983ba674400b0c0f0ca7a1a5f3e79fdc91edf2f5ead9d66abb4" name="gga8830590168c0d5983ba674400b0c0f0ca7a1a5f3e79fdc91edf2f5ead9d66abb4"></a>Read&#160;</td><td class="fielddoc"><p >Load the attachment data. Signal that the inputted value is needed and don\'t change it when loading in the attachment </p>
 </td></tr>
@@ -389,7 +389,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Enum to set the write operation for an attachment </p>
-<p >Control when writing/outputing an attachment, what action can be done on the attachment </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo:</a></b></dt><dd>Better names? Perhaps StoreOp/OutputOp instead of WriteOp? </dd></dl>
+<p >Control when writing/outputing an attachment, what action can be done on the attachment </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000039">Todo:</a></b></dt><dd>Better names? Perhaps StoreOp/OutputOp instead of WriteOp? </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga33f20afed1cd00721bde23d1e84b6dc0a1129c0e4d43f2d121652a7302712cff6" name="gga33f20afed1cd00721bde23d1e84b6dc0a1129c0e4d43f2d121652a7302712cff6"></a>Write&#160;</td><td class="fielddoc"><p >Store the written attachment data. Signal that the attachment values may be read, and don't throw the value away </p>
 </td></tr>
@@ -487,7 +487,7 @@ Enumerations</h2></td></tr>
 
 <p>Blending. </p>
 <p >Enum to set the blending operation </p>
-<p >Control how the blending is done. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>: Add more for advanced blend op </dd></dl>
+<p >Control how the blending is done. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000040">Todo:</a></b></dt><dd>: Add more for advanced blend op </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga5f68cea2b14ac0aa42e387c4d9ffb0c5aec211f7c20af43e742bf2570c3cb84f9" name="gga5f68cea2b14ac0aa42e387c4d9ffb0c5aec211f7c20af43e742bf2570c3cb84f9"></a>Add&#160;</td><td class="fielddoc"><p >RGBA: <code>Destination += Source</code> (with weights from blend factor) </p>
 </td></tr>
@@ -524,7 +524,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Enum to set input rate of the binding </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>Test if perVertex vs perInstance means different bindings can have different input rate </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000044">Todo:</a></b></dt><dd>Test if perVertex vs perInstance means different bindings can have different input rate </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga24f8885f9edd4eeff016ca24bb26bce4a47e73954b650524c96a2c612bfda4029" name="gga24f8885f9edd4eeff016ca24bb26bce4a47e73954b650524c96a2c612bfda4029"></a>PerVertex&#160;</td><td class="fielddoc"><p >Input once per vertex, use vertex id to access data. </p>
 </td></tr>
@@ -638,7 +638,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Flag to set the what face to cull out </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>Add explaination on where culling happens. Check what primitives this effects </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000042">Todo:</a></b></dt><dd>Add explaination on where culling happens. Check what primitives this effects </dd></dl>
 <p >Setting the corresponding flag means enable culling for said faces. </p><dl class="section note"><dt>Note</dt><dd>Has <a class="el" href="classFlags.html">Flags</a> version. See <code><a class="el" href="group__vkPipelineEnum.html#classFlags_3_01CullMode_01_4" title="Flags type of vk::CullMode">Flags&lt;CullMode&gt;</a></code> </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggacba812b40d2ca20ab32a205568f4539fa6adf97f83acf6453d4a6a4b1070f3754" name="ggacba812b40d2ca20ab32a205568f4539fa6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p >No culling. </p>
@@ -672,7 +672,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Enum to set which way is front facing </p>
-<p >This affect what gets culled based on the setted <code><a class="el" href="group__vkPipelineEnum.html#gacba812b40d2ca20ab32a205568f4539f" title="Flag to set the what face to cull out">vk::CullMode</a></code> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>How this works with rect, line, or point? </dd></dl>
+<p >This affect what gets culled based on the setted <code><a class="el" href="group__vkPipelineEnum.html#gacba812b40d2ca20ab32a205568f4539f" title="Flag to set the what face to cull out">vk::CullMode</a></code> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000043">Todo:</a></b></dt><dd>How this works with rect, line, or point? </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga7197191f019fd7b177bb143153213ee5a8f23635f9ec49db2161fc5cddf033a79" name="gga7197191f019fd7b177bb143153213ee5a8f23635f9ec49db2161fc5cddf033a79"></a>CounterClockwise&#160;</td><td class="fielddoc"><p >Vertices in a front facing triangle are ordered counter clockwise. </p>
 </td></tr>
@@ -703,8 +703,8 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Enum setting operator used on writing fragment value to color attachment </p>
-<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000002">Bug:</a></b></dt><dd>Need to disignate a value to turn off logic operator </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>Check the statement about blending is disabled when logic operation is turned on </dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000004">Bug:</a></b></dt><dd>Need to disignate a value to turn off logic operator </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000041">Todo:</a></b></dt><dd>Check the statement about blending is disabled when logic operation is turned on </dd></dl>
 <p>The following table assume that <code>'S'</code> as source value from fragment output, and <code>'d'</code> as destination value from the color attachment</p>
 <p >Control what operator is applied when outputing to the color attachment </p>
 <table class="fieldtable">
@@ -798,7 +798,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga4a4e720588a7b36b283a468d01f01c2ea59504c17c51b321c240a88a49ecb8cdf" name="gga4a4e720588a7b36b283a468d01f01c2ea59504c17c51b321c240a88a49ecb8cdf"></a>BottomOfPipe&#160;</td><td class="fielddoc"><p >End/completion of the pipeline. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga4a4e720588a7b36b283a468d01f01c2ea7d3cb9943ec56a2c3fd77e46b57a1ae1" name="gga4a4e720588a7b36b283a468d01f01c2ea7d3cb9943ec56a2c3fd77e46b57a1ae1"></a>HostMemoryAccess&#160;</td><td class="fielddoc"><p >Host memory access pseudo-stage (not used by commends) </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000027">Todo:</a></b></dt><dd>Why is this here? What is his usage? </dd></dl>
+<tr><td class="fieldname"><a id="gga4a4e720588a7b36b283a468d01f01c2ea7d3cb9943ec56a2c3fd77e46b57a1ae1" name="gga4a4e720588a7b36b283a468d01f01c2ea7d3cb9943ec56a2c3fd77e46b57a1ae1"></a>HostMemoryAccess&#160;</td><td class="fielddoc"><p >Host memory access pseudo-stage (not used by commends) </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000054">Todo:</a></b></dt><dd>Why is this here? What is his usage? </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga4a4e720588a7b36b283a468d01f01c2ea9824784ba94299788dcacfb8e4b62a2d" name="gga4a4e720588a7b36b283a468d01f01c2ea9824784ba94299788dcacfb8e4b62a2d"></a>AnyGraphics&#160;</td><td class="fielddoc"><p >Any graphics pipeline stages. </p>
 </td></tr>
@@ -838,8 +838,8 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga7a7f2e27f2658a8c9327d4c830a06d1ba2a3cd5946cfd317eb99c3d32e35e2d4c" name="gga7a7f2e27f2658a8c9327d4c830a06d1ba2a3cd5946cfd317eb99c3d32e35e2d4c"></a>Point&#160;</td><td class="fielddoc"><p >Draw the points of the primitives. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga7a7f2e27f2658a8c9327d4c830a06d1ba3258d46f6c59f21918768d3b82e995d6" name="gga7a7f2e27f2658a8c9327d4c830a06d1ba3258d46f6c59f21918768d3b82e995d6"></a>ExtRectangleFill&#160;</td><td class="fielddoc"><p >Fill the rectangles </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension">Extension</a>: <code>VK_POLYGON_MODE_FILL_RECTANGLE_NV</code> </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000018">Todo:</a></b></dt><dd>check if need additional support </dd></dl>
+<tr><td class="fieldname"><a id="gga7a7f2e27f2658a8c9327d4c830a06d1ba3258d46f6c59f21918768d3b82e995d6" name="gga7a7f2e27f2658a8c9327d4c830a06d1ba3258d46f6c59f21918768d3b82e995d6"></a>ExtRectangleFill&#160;</td><td class="fielddoc"><p >Fill the rectangles </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension" title="Vulkan API Extension">Extension</a>: <code>VK_POLYGON_MODE_FILL_RECTANGLE_NV</code> </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000045">Todo:</a></b></dt><dd>check if need additional support </dd></dl>
 </td></tr>
 </table>
 
@@ -876,8 +876,8 @@ Enumerations</h2></td></tr>
  Number of points: vertexCount </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1ae7f9e73b8edd21f420a63b3ace5768a2" name="gga16102bba9f188d187e0aa539825e5ca1ae7f9e73b8edd21f420a63b3ace5768a2"></a>LineStrip&#160;</td><td class="fielddoc"><p >Continuous segment(s) of lines. <br  />
- L as Line Segments: <code>{S[0][0], S[0][1]... S[0][n], -1, S[1][0]...}</code> <br  />
- Number of lines: <code>vertexCount/2</code> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000019">Todo:</a></b></dt><dd>Using -1 requires some settings? </dd></dl>
+ S as Line Segments: <code>{S[0][0], S[0][1]... S[0][n], -1, S[1][0]...}</code> <br  />
+ Number of lines: <code>vertexCount/2</code> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000046">Todo:</a></b></dt><dd>Using -1 requires some settings? </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1af5beeab7a1f452e5b0e9b03b44f0de92" name="gga16102bba9f188d187e0aa539825e5ca1af5beeab7a1f452e5b0e9b03b44f0de92"></a>TriangleList&#160;</td><td class="fielddoc"><p >List of triangles. <br  />
  T as Triangles: <code>{T[0][0], T[0][1], T[0][2], T[1][0], T[1][1]...}</code> <br  />
@@ -885,30 +885,30 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1a1da0b9ead8b051940a89214bae22831c" name="gga16102bba9f188d187e0aa539825e5ca1a1da0b9ead8b051940a89214bae22831c"></a>TriangleStrip&#160;</td><td class="fielddoc"><p >Continuous strip(s) of triangles. <br  />
  Number of triangles: <code>vertexCount/3</code> <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000020">Todo:</a></b></dt><dd>Add explaination </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000047">Todo:</a></b></dt><dd>Add explaination </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1a18d58fde618e4a30e2dfdc122e693047" name="gga16102bba9f188d187e0aa539825e5ca1a18d58fde618e4a30e2dfdc122e693047"></a>TriangleFan&#160;</td><td class="fielddoc"><p >Continuous fan(s) of triangles. <br  />
  Number of triangles: <code>vertexCount-2</code> (or <code>0</code> if <code>vertexCount&lt;=2</code>) <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000021">Todo:</a></b></dt><dd>Add explaination </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000048">Todo:</a></b></dt><dd>Add explaination </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1a9d531a360634c1569d3f1e57a484e52b" name="gga16102bba9f188d187e0aa539825e5ca1a9d531a360634c1569d3f1e57a484e52b"></a>LineListAdjacency&#160;</td><td class="fielddoc"><p >List of lines with adjacency provided but not drawn. <br  />
  Number of triangles: <code>vertexCount-2</code> (or <code>0</code> if <code>vertexCount&lt;=2</code>) <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000022">Todo:</a></b></dt><dd>Add explaination </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000049">Todo:</a></b></dt><dd>Add explaination </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1a826457761e4d352b8f54d7d47b80dbaa" name="gga16102bba9f188d187e0aa539825e5ca1a826457761e4d352b8f54d7d47b80dbaa"></a>LineStripAdjacency&#160;</td><td class="fielddoc"><p >Segment(s) of lines with adjacency provided but not drawn. <br  />
  Number of lines: <code>vertexCount/4</code> <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000023">Todo:</a></b></dt><dd>Add explaination </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000050">Todo:</a></b></dt><dd>Add explaination </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1adc65ac0780576a2a44127bf9c24c5c47" name="gga16102bba9f188d187e0aa539825e5ca1adc65ac0780576a2a44127bf9c24c5c47"></a>TriangleListAdjacency&#160;</td><td class="fielddoc"><p >List of triangles with adjacency <br  />
  Number of triangles: <code>vertexCount/6</code> <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000024">Todo:</a></b></dt><dd>Add explaination </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000051">Todo:</a></b></dt><dd>Add explaination </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1a6b682fd6550f90f75722e4a7d38f3949" name="gga16102bba9f188d187e0aa539825e5ca1a6b682fd6550f90f75722e4a7d38f3949"></a>TriangleStripAdjacency&#160;</td><td class="fielddoc"><p >Continuous strip(s) of triangles with adjacency. <br  />
  Number of triangles: <code>(vertexCount-4)/2</code> (or <code>0</code> if <code>vertexCount&lt;=5</code>) <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000025">Todo:</a></b></dt><dd>Add explaination </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000052">Todo:</a></b></dt><dd>Add explaination </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga16102bba9f188d187e0aa539825e5ca1af1b220525e3cc747140a46b7e2d7532e" name="gga16102bba9f188d187e0aa539825e5ca1af1b220525e3cc747140a46b7e2d7532e"></a>PatchList&#160;</td><td class="fielddoc"><p >List of patches, used for Tessellation point control. <br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000026">Todo:</a></b></dt><dd>Add support for patches. Add tessellation stuff </dd></dl>
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000053">Todo:</a></b></dt><dd>Add support for patches. Add tessellation stuff </dd></dl>
 </td></tr>
 </table>
 
@@ -919,7 +919,7 @@ Enumerations</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Oct 6 2021 22:01:29 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Sun Oct 10 2021 15:52:53 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 </body>

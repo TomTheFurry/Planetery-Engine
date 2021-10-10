@@ -11,7 +11,7 @@ var searchData=
   ['linestrip_8',['LineStrip',['../group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1ae7f9e73b8edd21f420a63b3ace5768a2',1,'vk']]],
   ['linestripadjacency_9',['LineStripAdjacency',['../group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1a826457761e4d352b8f54d7d47b80dbaa',1,'vk']]],
   ['log_10',['Log',['../classLog.html',1,'']]],
-  ['logicaldevice_11',['LogicalDevice',['../classvk_1_1LogicalDevice.html',1,'vk']]],
+  ['logicaldevice_11',['LogicalDevice',['../classvk_1_1LogicalDevice.html#abc40aa56c386b75accc9f3a1eb4e45ca',1,'vk::LogicalDevice::LogicalDevice(PhysicalDevice &amp;pd, const QueuePoolLayout &amp;queueLayout)'],['../classvk_1_1LogicalDevice.html#a5b6789cb0cbd9811ee5ba0309fe133bb',1,'vk::LogicalDevice::LogicalDevice(LogicalDevice &amp;&amp;)=delete'],['../classvk_1_1LogicalDevice.html',1,'vk::LogicalDevice']]],
   ['logicoperator_12',['LogicOperator',['../group__vkPipelineEnum.html#gaf6ed084a6c53ab72c7ec3e3d541fea7e',1,'vk']]],
   ['loglayerbase_13',['LogLayerBase',['../classLogger_1_1LogLayerBase.html',1,'Logger']]],
   ['loglayercontainer_14',['LogLayerContainer',['../classLogger_1_1LogLayerContainer.html',1,'Logger']]],

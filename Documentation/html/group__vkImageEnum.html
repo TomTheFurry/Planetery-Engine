@@ -188,7 +188,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9afc2b74588602de2090079ac53957dfdd">vk::ImageRegionState::TransferDst</a> = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 , <br />
 &#160;&#160;<a class="el" href="group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9abf4f076160af8ee55c931d0c91dae5fd">vk::ImageRegionState::HostWritable</a> = VK_IMAGE_LAYOUT_PREINITIALIZED
-, <a class="el" href="group__vkImageEnum.html#gab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6">vk::Present</a> = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+, <a class="el" href="group__vkQueue.html#ggab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6">vk::Present</a> = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 , <a class="el" href="group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9a131fb182a881796e7606ed6da27f1197">vk::ImageRegionState::ReadOnly</a> = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR
 , <a class="el" href="group__vkImageEnum.html#gga79613372ab9102819abfe1f8d34e22a9ae9cb217697088a98b1937d111d936281">vk::ImageRegionState::Attachment</a> = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR
 <br />
@@ -321,7 +321,7 @@ Enumerations</h2></td></tr>
 
 <p>Texture Regional Properties. </p>
 <p >Enum designating the state of <code><a class="el" href="classvk_1_1Image.html">Image</a></code> sections </p>
-<p >To use Images in different actions/commends, you need to make sure the the accessed section of the image is in correct state. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>Add depth/stencil attachment ImageRegionState </dd></dl>
+<p >To use Images in different actions/commends, you need to make sure the the accessed section of the image is in correct state. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000029">Todo:</a></b></dt><dd>Add depth/stencil attachment ImageRegionState </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga79613372ab9102819abfe1f8d34e22a9aec0fc0100c4fc1ce4eea230c3dc10360" name="gga79613372ab9102819abfe1f8d34e22a9aec0fc0100c4fc1ce4eea230c3dc10360"></a>Undefined&#160;</td><td class="fielddoc"><p >Undefined (default initial state) </p>
 </td></tr>
@@ -341,7 +341,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga79613372ab9102819abfe1f8d34e22a9abf4f076160af8ee55c931d0c91dae5fd" name="gga79613372ab9102819abfe1f8d34e22a9abf4f076160af8ee55c931d0c91dae5fd"></a>HostWritable&#160;</td><td class="fielddoc"><p >Mappable and writable directly. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6" name="gab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6"></a>Present&#160;</td><td class="fielddoc"><p >Prsentation to an <code>OSRnderSurface</code> </p><dl class="section note"><dt>Note</dt><dd>Provided by <code>VK_KHR_swapchain</code> </dd></dl>
+<tr><td class="fieldname"><a id="ggab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6" name="ggab9e96a04eedaa66813ee07ea2044f056add058df87f5c88e3285a28ad7406a3c6"></a>Present&#160;</td><td class="fielddoc"><p >Prsentation to an <code>OSRnderSurface</code> </p><dl class="section note"><dt>Note</dt><dd>Provided by <code>VK_KHR_swapchain</code> </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="gga79613372ab9102819abfe1f8d34e22a9a131fb182a881796e7606ed6da27f1197" name="gga79613372ab9102819abfe1f8d34e22a9a131fb182a881796e7606ed6da27f1197"></a>ReadOnly&#160;</td><td class="fielddoc"><p >General read only </p><dl class="section note"><dt>Note</dt><dd>Provided by <code>VK_KHR_synchronization2</code> </dd></dl>
 </td></tr>
@@ -472,9 +472,9 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga5b44864fc40858e321bb5d5d2db588c5a21a48992e64aeafb2fd9ab14cc5d5b6d" name="gga5b44864fc40858e321bb5d5d2db588c5a21a48992e64aeafb2fd9ab14cc5d5b6d"></a>IntWhite&#160;</td><td class="fielddoc"><p >White as <code>int</code>. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga5b44864fc40858e321bb5d5d2db588c5abb14405819464715f82e131e242e26d3" name="gga5b44864fc40858e321bb5d5d2db588c5abb14405819464715f82e131e242e26d3"></a>ExtFloatCustom&#160;</td><td class="fielddoc"><p >Custom <code>float</code> color </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension">Extension</a>: <code>VK_EXT_custom_border_color</code> </dd></dl>
+<tr><td class="fieldname"><a id="gga5b44864fc40858e321bb5d5d2db588c5abb14405819464715f82e131e242e26d3" name="gga5b44864fc40858e321bb5d5d2db588c5abb14405819464715f82e131e242e26d3"></a>ExtFloatCustom&#160;</td><td class="fielddoc"><p >Custom <code>float</code> color </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension" title="Vulkan API Extension">Extension</a>: <code>VK_EXT_custom_border_color</code> </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="gga5b44864fc40858e321bb5d5d2db588c5a35cae9e0ad50ffea1939666cb3f9527f" name="gga5b44864fc40858e321bb5d5d2db588c5a35cae9e0ad50ffea1939666cb3f9527f"></a>ExtIntCustom&#160;</td><td class="fielddoc"><p >Custom <code>int</code> color </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension">Extension</a>: <code>VK_EXT_custom_border_color</code> </dd></dl>
+<tr><td class="fieldname"><a id="gga5b44864fc40858e321bb5d5d2db588c5a35cae9e0ad50ffea1939666cb3f9527f" name="gga5b44864fc40858e321bb5d5d2db588c5a35cae9e0ad50ffea1939666cb3f9527f"></a>ExtIntCustom&#160;</td><td class="fielddoc"><p >Custom <code>int</code> color </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension" title="Vulkan API Extension">Extension</a>: <code>VK_EXT_custom_border_color</code> </dd></dl>
 </td></tr>
 </table>
 
@@ -543,7 +543,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ggab8d50b0ae44f707e4973d0c7c1e5f729a32a843da6ea40ab3b17a3421ccdf671b" name="ggab8d50b0ae44f707e4973d0c7c1e5f729a32a843da6ea40ab3b17a3421ccdf671b"></a>Linear&#160;</td><td class="fielddoc"><p >Linear interpolation between samples. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggab8d50b0ae44f707e4973d0c7c1e5f729a9ac3ef6676006bfaf039d48da742839a" name="ggab8d50b0ae44f707e4973d0c7c1e5f729a9ac3ef6676006bfaf039d48da742839a"></a>ExtCubic&#160;</td><td class="fielddoc"><p >Cubic interpolation between samples </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension">Extension</a>: <code>VK_IMG_filter_cubic</code> </dd></dl>
+<tr><td class="fieldname"><a id="ggab8d50b0ae44f707e4973d0c7c1e5f729a9ac3ef6676006bfaf039d48da742839a" name="ggab8d50b0ae44f707e4973d0c7c1e5f729a9ac3ef6676006bfaf039d48da742839a"></a>ExtCubic&#160;</td><td class="fielddoc"><p >Cubic interpolation between samples </p><dl class="section note"><dt>Note</dt><dd>Requires <a class="el" href="group__vkDevice.html#structvk_1_1Extension" title="Vulkan API Extension">Extension</a>: <code>VK_IMG_filter_cubic</code> </dd></dl>
 </td></tr>
 </table>
 
@@ -610,13 +610,13 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bca2fa8076285272883c91e14402975a441" name="ggafbae9639ba151d658990a986acbd05bca2fa8076285272883c91e14402975a441"></a>DepthStencil&#160;</td><td class="fielddoc"><p >Depth and stencil aspect. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bcace21470ab49d1d1976bc3dc72438c183" name="ggafbae9639ba151d658990a986acbd05bcace21470ab49d1d1976bc3dc72438c183"></a>Metadata&#160;</td><td class="fielddoc"><p >Metadata </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
+<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bcace21470ab49d1d1976bc3dc72438c183" name="ggafbae9639ba151d658990a986acbd05bcace21470ab49d1d1976bc3dc72438c183"></a>Metadata&#160;</td><td class="fielddoc"><p >Metadata </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000031">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bcaeda4931fa17297e6eb672084e23bd195" name="ggafbae9639ba151d658990a986acbd05bcaeda4931fa17297e6eb672084e23bd195"></a>Plane0&#160;</td><td class="fielddoc"><p >Plane0 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
+<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bcaeda4931fa17297e6eb672084e23bd195" name="ggafbae9639ba151d658990a986acbd05bcaeda4931fa17297e6eb672084e23bd195"></a>Plane0&#160;</td><td class="fielddoc"><p >Plane0 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000032">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bcaaf7421b0ef09b4d968c67aafc9b0e6bb" name="ggafbae9639ba151d658990a986acbd05bcaaf7421b0ef09b4d968c67aafc9b0e6bb"></a>Plane1&#160;</td><td class="fielddoc"><p >Plane1 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
+<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bcaaf7421b0ef09b4d968c67aafc9b0e6bb" name="ggafbae9639ba151d658990a986acbd05bcaaf7421b0ef09b4d968c67aafc9b0e6bb"></a>Plane1&#160;</td><td class="fielddoc"><p >Plane1 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000033">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bca80e64599275db522b706710034d810cb" name="ggafbae9639ba151d658990a986acbd05bca80e64599275db522b706710034d810cb"></a>Plane2&#160;</td><td class="fielddoc"><p >Plane2 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
+<tr><td class="fieldname"><a id="ggafbae9639ba151d658990a986acbd05bca80e64599275db522b706710034d810cb" name="ggafbae9639ba151d658990a986acbd05bca80e64599275db522b706710034d810cb"></a>Plane2&#160;</td><td class="fielddoc"><p >Plane2 </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000034">Todo:</a></b></dt><dd>Figure out what this is for </dd></dl>
 </td></tr>
 </table>
 
@@ -657,7 +657,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaa5936aa22562776a7daf57b0bf4c0f52a4af455791be0560246589101b683f811" name="ggaa5936aa22562776a7daf57b0bf4c0f52a4af455791be0560246589101b683f811"></a>CompressedBlockView&#160;</td><td class="fielddoc"><p >Compressed block memory. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e" name="ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e"></a>ViewUsageSupport&#160;</td><td class="fielddoc"><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>What is extended usage? </dd></dl>
+<tr><td class="fieldname"><a id="ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e" name="ggaa5936aa22562776a7daf57b0bf4c0f52a8445e8174d07c37fd5921668e3e9260e"></a>ViewUsageSupport&#160;</td><td class="fielddoc"><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000030">Todo:</a></b></dt><dd>What is extended usage? </dd></dl>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaa5936aa22562776a7daf57b0bf4c0f52a56f0605c9795b173abd2e34fab7fc164" name="ggaa5936aa22562776a7daf57b0bf4c0f52a56f0605c9795b173abd2e34fab7fc164"></a>Protected&#160;</td><td class="fielddoc"><p >Protected underlying memory. </p>
 </td></tr>
@@ -672,7 +672,7 @@ Enumerations</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Oct 6 2021 22:01:29 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Sun Oct 10 2021 15:52:53 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 </body>
