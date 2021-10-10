@@ -172,7 +172,8 @@ void Swapchain::_make() {
 		throw "TODOVulkanSurfaceLostUnhandled";
 	case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
 		throw "VulkanSwapchainCreateFailure::NativeWindowInUse";
-	case VK_ERROR_INITIALIZATION_FAILED: sc = nullptr;
+	case VK_ERROR_INITIALIZATION_FAILED:
+		throw "VulkanSwapchainCreateFailure::NativeInitializationFailure";
 	default: throw "VulkanSwapchainCreateFailure::UnhandledEnum";
 	}
 	if (old_sc != nullptr) {
