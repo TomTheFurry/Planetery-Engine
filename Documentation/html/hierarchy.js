@@ -136,7 +136,7 @@ var hierarchy =
     [ "sync::Promisee< bool >", "classsync_1_1Promisee_3_01bool_01_4.html", null ],
     [ "sync::Promisor< T >", "classsync_1_1Promisor.html", null ],
     [ "sync::Promisor< bool >", "classsync_1_1Promisor_3_01bool_01_4.html", null ],
-    [ "vk::QueueHint", "namespacevk.html#structvk_1_1QueueHint", null ],
+    [ "vk::QueueHint", "group__vkQueue.html#structvk_1_1QueueHint", null ],
     [ "vk::QueuePool", "classvk_1_1QueuePool.html", null ],
     [ "vk::QueuePoolLayout", "classvk_1_1QueuePoolLayout.html", null ],
     [ "font::Reader", "classfont_1_1Reader.html", null ],

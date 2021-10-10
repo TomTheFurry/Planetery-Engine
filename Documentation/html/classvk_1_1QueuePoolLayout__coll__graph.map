@@ -1,7 +1,7 @@
 <map id="vk::QueuePoolLayout" name="vk::QueuePoolLayout">
-<area shape="rect" id="node1" title=" " alt="" coords="133,228,278,255"/>
+<area shape="rect" id="node1" title="QueuePool layout" alt="" coords="133,228,278,255"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,124,69,151"/>
-<area shape="rect" id="node3" href="$namespacevk.html#structvk_1_1QueueHint" title=" " alt="" coords="123,124,226,151"/>
+<area shape="rect" id="node3" href="$group__vkQueue.html#structvk_1_1QueueHint" title="Hint struct for queues usage" alt="" coords="123,124,226,151"/>
 <area shape="rect" id="node4" title=" " alt="" coords="155,5,194,32"/>
 <area shape="rect" id="node5" title=" " alt="" coords="250,124,377,151"/>
 </map>

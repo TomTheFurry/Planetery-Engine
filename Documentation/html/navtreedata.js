@@ -42,7 +42,8 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -54,8 +55,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "ConsoleFormat_8h_source.html",
-"group__vkCommendEnum.html#classFlags_3_01CommendBufferUsage_01_4",
-"group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7eaf623e75af30e62bbd73d6df5b50bb7b5"
+"classvk_1_1RenderPipeline.html",
+"group__vkPipelineEnum.html#gga16102bba9f188d187e0aa539825e5ca1af5beeab7a1f452e5b0e9b03b44f0de92"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

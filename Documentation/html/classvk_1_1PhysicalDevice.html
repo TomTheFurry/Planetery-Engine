@@ -87,9 +87,12 @@ $(document).ready(function(){initNavTree('classvk_1_1PhysicalDevice.html',''); i
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classvk_1_1PhysicalDevice-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">vk::PhysicalDevice Class Reference<div class="ingroups"><a class="el" href="group__vulkan.html">Vulkan Interface</a> &raquo; <a class="el" href="group__vkDevice.html">Devices</a></div></div></div>
+  <div class="headertitle"><div class="title">vk::PhysicalDevice Class Reference<div class="ingroups"><a class="el" href="group__vulkan.html">Vulkan Interface</a> &raquo; <a class="el" href="group__vkDevice.html">Device</a></div></div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>A physical device  
+ <a href="classvk_1_1PhysicalDevice.html#details">More...</a></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for vk::PhysicalDevice:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -97,7 +100,7 @@ $(document).ready(function(){initNavTree('classvk_1_1PhysicalDevice.html',''); i
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="classvk_1_1PhysicalDevice__coll__graph.png" border="0" usemap="#avk_1_1PhysicalDevice_coll__map" alt="Collaboration graph"/></div>
 <map name="avk_1_1PhysicalDevice_coll__map" id="avk_1_1PhysicalDevice_coll__map">
-<area shape="rect" title=" " alt="" coords="787,337,917,364"/>
+<area shape="rect" title="A physical device" alt="" coords="787,337,917,364"/>
 <area shape="rect" title=" " alt="" coords="446,12,573,39"/>
 <area shape="rect" title=" " alt="" coords="417,63,601,89"/>
 <area shape="rect" title=" " alt="" coords="419,114,599,155"/>
@@ -107,95 +110,657 @@ $(document).ready(function(){initNavTree('classvk_1_1PhysicalDevice.html',''); i
 <area shape="rect" title=" " alt="" coords="419,362,599,403"/>
 <area shape="rect" title=" " alt="" coords="393,428,625,455"/>
 <area shape="rect" title=" " alt="" coords="477,479,541,505"/>
-<area shape="rect" title=" " alt="" coords="486,529,533,556"/>
+<area shape="rect" href="classvk_1_1OSRenderSurface.html" title=" " alt="" coords="436,529,583,556"/>
+<area shape="rect" title=" " alt="" coords="56,428,125,455"/>
+<area shape="rect" title=" " alt="" coords="71,479,110,505"/>
+<area shape="rect" title=" " alt="" coords="5,529,176,556"/>
+<area shape="rect" title=" " alt="" coords="51,580,130,607"/>
+<area shape="rect" title=" " alt="" coords="36,631,145,657"/>
 <area shape="rect" title=" " alt="" coords="486,580,533,607"/>
-<area shape="rect" href="classvk_1_1OSRenderSurface.html" title=" " alt="" coords="436,631,583,657"/>
-<area shape="rect" title=" " alt="" coords="56,529,125,556"/>
-<area shape="rect" title=" " alt="" coords="71,580,110,607"/>
-<area shape="rect" title=" " alt="" coords="5,631,176,657"/>
-<area shape="rect" title=" " alt="" coords="51,681,130,708"/>
-<area shape="rect" title=" " alt="" coords="36,732,145,759"/>
+<area shape="rect" title=" " alt="" coords="486,631,533,657"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac19370f652c615253df3109c2c996819"><td class="memItemLeft" align="right" valign="top"><a id="ac19370f652c615253df3109c2c996819" name="ac19370f652c615253df3109c2c996819"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>PhysicalDevice</b> (VkPhysicalDevice _d, <a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *renderSurface=nullptr)</td></tr>
+<tr class="memitem:ac19370f652c615253df3109c2c996819"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice</a> (VkPhysicalDevice _d, <a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *renderSurface=nullptr)</td></tr>
 <tr class="separator:ac19370f652c615253df3109c2c996819"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33b7413c963b07f19ea336242ce85b58"><td class="memItemLeft" align="right" valign="top"><a id="a33b7413c963b07f19ea336242ce85b58" name="a33b7413c963b07f19ea336242ce85b58"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>PhysicalDevice</b> (const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;other)</td></tr>
+<tr class="memitem:a4f225004186fceea59e1f5feec4bfe76"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a4f225004186fceea59e1f5feec4bfe76">PhysicalDevice</a> ()=default</td></tr>
+<tr class="separator:a4f225004186fceea59e1f5feec4bfe76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33b7413c963b07f19ea336242ce85b58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a33b7413c963b07f19ea336242ce85b58">PhysicalDevice</a> (const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;other)</td></tr>
+<tr class="memdesc:a33b7413c963b07f19ea336242ce85b58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy Constructer  <a href="classvk_1_1PhysicalDevice.html#a33b7413c963b07f19ea336242ce85b58">More...</a><br /></td></tr>
 <tr class="separator:a33b7413c963b07f19ea336242ce85b58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9352d20a6d544e776fc98b78a2c7323f"><td class="memItemLeft" align="right" valign="top"><a id="a9352d20a6d544e776fc98b78a2c7323f" name="a9352d20a6d544e776fc98b78a2c7323f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>PhysicalDevice</b> (<a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&amp;other) noexcept</td></tr>
+<tr class="memitem:a9352d20a6d544e776fc98b78a2c7323f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a9352d20a6d544e776fc98b78a2c7323f">PhysicalDevice</a> (<a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&amp;other) noexcept</td></tr>
+<tr class="memdesc:a9352d20a6d544e776fc98b78a2c7323f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move Constructer  <a href="classvk_1_1PhysicalDevice.html#a9352d20a6d544e776fc98b78a2c7323f">More...</a><br /></td></tr>
 <tr class="separator:a9352d20a6d544e776fc98b78a2c7323f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0f84769275dff77d82bbfe76f8e6e04"><td class="memItemLeft" align="right" valign="top"><a id="ae0f84769275dff77d82bbfe76f8e6e04" name="ae0f84769275dff77d82bbfe76f8e6e04"></a>
 <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;)=default</td></tr>
+<tr class="memdesc:ae0f84769275dff77d82bbfe76f8e6e04"><td class="mdescLeft">&#160;</td><td class="mdescRight">See PhysicalDevice(const PhysicalDevicec&amp;) <br /></td></tr>
 <tr class="separator:ae0f84769275dff77d82bbfe76f8e6e04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88f80c84ae69f319727522d957d23dc5"><td class="memItemLeft" align="right" valign="top"><a id="a88f80c84ae69f319727522d957d23dc5" name="a88f80c84ae69f319727522d957d23dc5"></a>
 <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a88f80c84ae69f319727522d957d23dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">See PhysicalDevice(PhysicalDevicec&amp;&amp;) <br /></td></tr>
 <tr class="separator:a88f80c84ae69f319727522d957d23dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b382736f3450cce8c0e795479c747b3"><td class="memItemLeft" align="right" valign="top"><a id="a9b382736f3450cce8c0e795479c747b3" name="a9b382736f3450cce8c0e795479c747b3"></a>
-uint&#160;</td><td class="memItemRight" valign="bottom"><b>getMemoryTypeIndex</b> (uint bitFilter, <a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkMemoryEnum.html#ga3776a8012f3872aca8a50158d95a504b">MemoryFeature</a> &gt; feature) const</td></tr>
+<tr class="memitem:a9b382736f3450cce8c0e795479c747b3"><td class="memItemLeft" align="right" valign="top">uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a9b382736f3450cce8c0e795479c747b3">getMemoryTypeIndex</a> (uint bitFilter, <a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkMemoryEnum.html#ga3776a8012f3872aca8a50158d95a504b">MemoryFeature</a> &gt; feature) const</td></tr>
 <tr class="separator:a9b382736f3450cce8c0e795479c747b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a707788912ab40a92ed43809e58980cd9"><td class="memItemLeft" align="right" valign="top"><a id="a707788912ab40a92ed43809e58980cd9" name="a707788912ab40a92ed43809e58980cd9"></a>
-VkPhysicalDevice&#160;</td><td class="memItemRight" valign="bottom"><b>operator-&gt;</b> ()</td></tr>
+<tr class="memitem:a707788912ab40a92ed43809e58980cd9"><td class="memItemLeft" align="right" valign="top">VkPhysicalDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a707788912ab40a92ed43809e58980cd9">operator-&gt;</a> ()</td></tr>
 <tr class="separator:a707788912ab40a92ed43809e58980cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1a61c1831b07f71236c0a0ca3734047"><td class="memItemLeft" align="right" valign="top"><a id="ab1a61c1831b07f71236c0a0ca3734047" name="ab1a61c1831b07f71236c0a0ca3734047"></a>
-const VkPhysicalDevice&#160;</td><td class="memItemRight" valign="bottom"><b>operator-&gt;</b> () const</td></tr>
+<tr class="memitem:ab1a61c1831b07f71236c0a0ca3734047"><td class="memItemLeft" align="right" valign="top">const VkPhysicalDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#ab1a61c1831b07f71236c0a0ca3734047">operator-&gt;</a> () const</td></tr>
 <tr class="separator:ab1a61c1831b07f71236c0a0ca3734047"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af51b5681167b83871a7c86ac0a60ea62"><td class="memItemLeft" align="right" valign="top"><a id="af51b5681167b83871a7c86ac0a60ea62" name="af51b5681167b83871a7c86ac0a60ea62"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;other) const</td></tr>
+<tr class="memitem:af51b5681167b83871a7c86ac0a60ea62"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#af51b5681167b83871a7c86ac0a60ea62">operator==</a> (const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;other) const</td></tr>
 <tr class="separator:af51b5681167b83871a7c86ac0a60ea62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a116ada381954f111939063c643ef90e0"><td class="memItemLeft" align="right" valign="top"><a id="a116ada381954f111939063c643ef90e0" name="a116ada381954f111939063c643ef90e0"></a>
 std::partial_ordering&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;=&gt;</b> (const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;other) const</td></tr>
+<tr class="memdesc:a116ada381954f111939063c643ef90e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Order/Compare devices according to their score. <br /></td></tr>
 <tr class="separator:a116ada381954f111939063c643ef90e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd24eaa6c554f0de088eab3bc6d7b572"><td class="memItemLeft" align="right" valign="top"><a id="acd24eaa6c554f0de088eab3bc6d7b572" name="acd24eaa6c554f0de088eab3bc6d7b572"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>~PhysicalDevice</b> ()=default</td></tr>
+<tr class="memdesc:acd24eaa6c554f0de088eab3bc6d7b572"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="separator:acd24eaa6c554f0de088eab3bc6d7b572"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a92d09cd81d919ee45b82ee9e0a187905"><td class="memItemLeft" align="right" valign="top"><a id="a92d09cd81d919ee45b82ee9e0a187905" name="a92d09cd81d919ee45b82ee9e0a187905"></a>
-static <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>getUsablePhysicalDevice</b> (<a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *osSurface)</td></tr>
+<tr class="memitem:a92d09cd81d919ee45b82ee9e0a187905"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905">getUsablePhysicalDevice</a> (<a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *osSurface)</td></tr>
+<tr class="memdesc:a92d09cd81d919ee45b82ee9e0a187905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a usable physical device  <a href="classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905">More...</a><br /></td></tr>
 <tr class="separator:a92d09cd81d919ee45b82ee9e0a187905"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1c88178106c28b045fe8ba9a0a3d5997"><td class="memItemLeft" align="right" valign="top"><a id="a1c88178106c28b045fe8ba9a0a3d5997" name="a1c88178106c28b045fe8ba9a0a3d5997"></a>
-VkPhysicalDevice&#160;</td><td class="memItemRight" valign="bottom"><b>d</b> = nullptr</td></tr>
+<tr class="memitem:a1c88178106c28b045fe8ba9a0a3d5997"><td class="memItemLeft" align="right" valign="top">VkPhysicalDevice&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a1c88178106c28b045fe8ba9a0a3d5997">d</a> = nullptr</td></tr>
 <tr class="separator:a1c88178106c28b045fe8ba9a0a3d5997"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a685160267f84ba0688d60e20b7f5b12e"><td class="memItemLeft" align="right" valign="top"><a id="a685160267f84ba0688d60e20b7f5b12e" name="a685160267f84ba0688d60e20b7f5b12e"></a>
-VkPhysicalDeviceFeatures2&#160;</td><td class="memItemRight" valign="bottom"><b>features10</b></td></tr>
+<tr class="memitem:a685160267f84ba0688d60e20b7f5b12e"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceFeatures2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a685160267f84ba0688d60e20b7f5b12e">features10</a></td></tr>
 <tr class="separator:a685160267f84ba0688d60e20b7f5b12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ea2f034edbb4007968953e49d979f59"><td class="memItemLeft" align="right" valign="top"><a id="a7ea2f034edbb4007968953e49d979f59" name="a7ea2f034edbb4007968953e49d979f59"></a>
-VkPhysicalDeviceVulkan11Features&#160;</td><td class="memItemRight" valign="bottom"><b>features11</b></td></tr>
+<tr class="memitem:a7ea2f034edbb4007968953e49d979f59"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceVulkan11Features&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a7ea2f034edbb4007968953e49d979f59">features11</a></td></tr>
 <tr class="separator:a7ea2f034edbb4007968953e49d979f59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b464ece871a2543a4583c629dbf94d2"><td class="memItemLeft" align="right" valign="top"><a id="a4b464ece871a2543a4583c629dbf94d2" name="a4b464ece871a2543a4583c629dbf94d2"></a>
-VkPhysicalDeviceVulkan12Features&#160;</td><td class="memItemRight" valign="bottom"><b>features12</b></td></tr>
+<tr class="memitem:a4b464ece871a2543a4583c629dbf94d2"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceVulkan12Features&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a4b464ece871a2543a4583c629dbf94d2">features12</a></td></tr>
 <tr class="separator:a4b464ece871a2543a4583c629dbf94d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a765adf3d9e172977ae7009c884ed24ab"><td class="memItemLeft" align="right" valign="top"><a id="a765adf3d9e172977ae7009c884ed24ab" name="a765adf3d9e172977ae7009c884ed24ab"></a>
-VkPhysicalDeviceProperties2&#160;</td><td class="memItemRight" valign="bottom"><b>properties10</b></td></tr>
+<tr class="memitem:a765adf3d9e172977ae7009c884ed24ab"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceProperties2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a765adf3d9e172977ae7009c884ed24ab">properties10</a></td></tr>
 <tr class="separator:a765adf3d9e172977ae7009c884ed24ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a347bb7496d8f416ed4fae0234a8ed912"><td class="memItemLeft" align="right" valign="top"><a id="a347bb7496d8f416ed4fae0234a8ed912" name="a347bb7496d8f416ed4fae0234a8ed912"></a>
-VkPhysicalDeviceVulkan11Properties&#160;</td><td class="memItemRight" valign="bottom"><b>properties11</b></td></tr>
+<tr class="memitem:a347bb7496d8f416ed4fae0234a8ed912"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceVulkan11Properties&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a347bb7496d8f416ed4fae0234a8ed912">properties11</a></td></tr>
 <tr class="separator:a347bb7496d8f416ed4fae0234a8ed912"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7b37ac8b98c6f377aff87f151947f34"><td class="memItemLeft" align="right" valign="top"><a id="ae7b37ac8b98c6f377aff87f151947f34" name="ae7b37ac8b98c6f377aff87f151947f34"></a>
-VkPhysicalDeviceVulkan12Properties&#160;</td><td class="memItemRight" valign="bottom"><b>properties12</b></td></tr>
+<tr class="memitem:ae7b37ac8b98c6f377aff87f151947f34"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceVulkan12Properties&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#ae7b37ac8b98c6f377aff87f151947f34">properties12</a></td></tr>
 <tr class="separator:ae7b37ac8b98c6f377aff87f151947f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa06c584538bc00fa75b4425ef3e02b59"><td class="memItemLeft" align="right" valign="top"><a id="aa06c584538bc00fa75b4425ef3e02b59" name="aa06c584538bc00fa75b4425ef3e02b59"></a>
-VkPhysicalDeviceMemoryProperties&#160;</td><td class="memItemRight" valign="bottom"><b>memProperties</b></td></tr>
+<tr class="memitem:aa06c584538bc00fa75b4425ef3e02b59"><td class="memItemLeft" align="right" valign="top">VkPhysicalDeviceMemoryProperties&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#aa06c584538bc00fa75b4425ef3e02b59">memProperties</a></td></tr>
 <tr class="separator:aa06c584538bc00fa75b4425ef3e02b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a358b8108dc46e6a7b3d5298378b696f9"><td class="memItemLeft" align="right" valign="top"><a id="a358b8108dc46e6a7b3d5298378b696f9" name="a358b8108dc46e6a7b3d5298378b696f9"></a>
-std::vector&lt; VkQueueFamilyProperties &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>queueFamilies</b></td></tr>
+<tr class="memitem:a358b8108dc46e6a7b3d5298378b696f9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; VkQueueFamilyProperties &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a358b8108dc46e6a7b3d5298378b696f9">queueFamilies</a></td></tr>
 <tr class="separator:a358b8108dc46e6a7b3d5298378b696f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a931e5c0389c104bdf22cd232db0c07cd"><td class="memItemLeft" align="right" valign="top"><a id="a931e5c0389c104bdf22cd232db0c07cd" name="a931e5c0389c104bdf22cd232db0c07cd"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>rating</b></td></tr>
-<tr class="separator:a931e5c0389c104bdf22cd232db0c07cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e343a27b71ab6a5740b74390e09f9bd"><td class="memItemLeft" align="right" valign="top"><a id="a9e343a27b71ab6a5740b74390e09f9bd" name="a9e343a27b71ab6a5740b74390e09f9bd"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>meetRequirements</b></td></tr>
-<tr class="separator:a9e343a27b71ab6a5740b74390e09f9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac579cf4ea7afb9f7484459511e2873cf"><td class="memItemLeft" align="right" valign="top"><a id="ac579cf4ea7afb9f7484459511e2873cf" name="ac579cf4ea7afb9f7484459511e2873cf"></a>
-<a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>renderOut</b> = nullptr</td></tr>
+<tr class="memitem:ac579cf4ea7afb9f7484459511e2873cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#ac579cf4ea7afb9f7484459511e2873cf">renderOut</a> = nullptr</td></tr>
 <tr class="separator:ac579cf4ea7afb9f7484459511e2873cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a931e5c0389c104bdf22cd232db0c07cd"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a931e5c0389c104bdf22cd232db0c07cd">rating</a></td></tr>
+<tr class="separator:a931e5c0389c104bdf22cd232db0c07cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e343a27b71ab6a5740b74390e09f9bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvk_1_1PhysicalDevice.html#a9e343a27b71ab6a5740b74390e09f9bd">meetRequirements</a></td></tr>
+<tr class="separator:a9e343a27b71ab6a5740b74390e09f9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >A physical device </p>
+<p >This is a repesentation of a hardware, like a GPU. It caches the hardware related informations, used by other classes to properly construct an object that is compatible with the underlying hardware </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ac19370f652c615253df3109c2c996819" name="ac19370f652c615253df3109c2c996819"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac19370f652c615253df3109c2c996819">&#9670;&nbsp;</a></span>PhysicalDevice() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PhysicalDevice::PhysicalDevice </td>
+          <td>(</td>
+          <td class="paramtype">VkPhysicalDevice&#160;</td>
+          <td class="paramname"><em>_d</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *&#160;</td>
+          <td class="paramname"><em>renderSurface</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">References <a class="el" href="classvk_1_1PhysicalDevice.html#a1c88178106c28b045fe8ba9a0a3d5997">d</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a685160267f84ba0688d60e20b7f5b12e">features10</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a7ea2f034edbb4007968953e49d979f59">features11</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a4b464ece871a2543a4583c629dbf94d2">features12</a>, <a class="el" href="classvk_1_1QueuePoolLayout.html#ac75b4f4a0a09bb2785cb3021443869aa">vk::QueuePoolLayout::findFamilyBySupportType()</a>, <a class="el" href="group__vkQueueEnum.html#gga4166760d3982c46dd18923b19f24b660ad334dfcea59127bedfcdbe0a3ee7f494">vk::Graphics</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a9e343a27b71ab6a5740b74390e09f9bd">meetRequirements</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#aa06c584538bc00fa75b4425ef3e02b59">memProperties</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a765adf3d9e172977ae7009c884ed24ab">properties10</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a347bb7496d8f416ed4fae0234a8ed912">properties11</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#ae7b37ac8b98c6f377aff87f151947f34">properties12</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a358b8108dc46e6a7b3d5298378b696f9">queueFamilies</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a931e5c0389c104bdf22cd232db0c07cd">rating</a>, and <a class="el" href="classvk_1_1PhysicalDevice.html#ac579cf4ea7afb9f7484459511e2873cf">renderOut</a>.</p>
+<div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Here is the call graph for this function:</div>
+<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-1-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="classvk_1_1PhysicalDevice_ac19370f652c615253df3109c2c996819_cgraph.png" border="0" usemap="#aclassvk_1_1PhysicalDevice_ac19370f652c615253df3109c2c996819_cgraph" alt=""/></div>
+<map name="aclassvk_1_1PhysicalDevice_ac19370f652c615253df3109c2c996819_cgraph" id="aclassvk_1_1PhysicalDevice_ac19370f652c615253df3109c2c996819_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,136,47"/>
+<area shape="rect" href="classvk_1_1QueuePoolLayout.html#ac75b4f4a0a09bb2785cb3021443869aa" title=" " alt="" coords="184,5,363,47"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a4f225004186fceea59e1f5feec4bfe76" name="a4f225004186fceea59e1f5feec4bfe76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f225004186fceea59e1f5feec4bfe76">&#9670;&nbsp;</a></span>PhysicalDevice() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">vk::PhysicalDevice::PhysicalDevice </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905">getUsablePhysicalDevice()</a>.</p>
+<div id="dynsection-2" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-2-trigger" src="closed.png" alt="+"/> Here is the caller graph for this function:</div>
+<div id="dynsection-2-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-2-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="classvk_1_1PhysicalDevice_a4f225004186fceea59e1f5feec4bfe76_icgraph.png" border="0" usemap="#aclassvk_1_1PhysicalDevice_a4f225004186fceea59e1f5feec4bfe76_icgraph" alt=""/></div>
+<map name="aclassvk_1_1PhysicalDevice_a4f225004186fceea59e1f5feec4bfe76_icgraph" id="aclassvk_1_1PhysicalDevice_a4f225004186fceea59e1f5feec4bfe76_icgraph">
+<area shape="rect" title=" " alt="" coords="229,5,360,47"/>
+<area shape="rect" href="classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905" title="Get a usable physical device" alt="" coords="5,5,181,47"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a33b7413c963b07f19ea336242ce85b58" name="a33b7413c963b07f19ea336242ce85b58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33b7413c963b07f19ea336242ce85b58">&#9670;&nbsp;</a></span>PhysicalDevice() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">PhysicalDevice::PhysicalDevice </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy Constructer </p>
+<dl class="section note"><dt>Note</dt><dd>You are only copying the computed cache of the physical device properties. Therefore it is safe to be copyed around. </dd></dl>
+
+</div>
+</div>
+<a id="a9352d20a6d544e776fc98b78a2c7323f" name="a9352d20a6d544e776fc98b78a2c7323f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9352d20a6d544e776fc98b78a2c7323f">&#9670;&nbsp;</a></span>PhysicalDevice() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PhysicalDevice::PhysicalDevice </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move Constructer </p>
+<dl class="section warning"><dt>Warning</dt><dd>Only safe if no other objects are using the cache stored in the object! </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9b382736f3450cce8c0e795479c747b3" name="a9b382736f3450cce8c0e795479c747b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b382736f3450cce8c0e795479c747b3">&#9670;&nbsp;</a></span>getMemoryTypeIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint PhysicalDevice::getMemoryTypeIndex </td>
+          <td>(</td>
+          <td class="paramtype">uint&#160;</td>
+          <td class="paramname"><em>bitFilter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classFlags.html">Flags</a>&lt; <a class="el" href="group__vkMemoryEnum.html#ga3776a8012f3872aca8a50158d95a504b">MemoryFeature</a> &gt;&#160;</td>
+          <td class="paramname"><em>feature</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Get an index for an avaliable Memory Type that passes the bit filter and supports certain <code><a class="el" href="group__vkMemoryEnum.html#ga3776a8012f3872aca8a50158d95a504b" title="Types of Memory Feature">vk::MemoryFeature</a></code>. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bitFilter</td><td>Memory index that should be filtered out</td></tr>
+    <tr><td class="paramname">feature</td><td><a class="el" href="classFlags.html">Flags</a> of required <code><a class="el" href="group__vkMemoryEnum.html#ga3776a8012f3872aca8a50158d95a504b" title="Types of Memory Feature">vk::MemoryFeature</a></code> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="group__vkMemoryEnum.html#gga3776a8012f3872aca8a50158d95a504ba65d2523d959087dc90e3070bf940f94c">vk::Coherent</a>, <a class="el" href="group__vkMemoryEnum.html#gga3776a8012f3872aca8a50158d95a504ba3fc47beb16cb023b1648710687106a90">vk::Mappable</a>, and <a class="el" href="classvk_1_1PhysicalDevice.html#aa06c584538bc00fa75b4425ef3e02b59">memProperties</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1LogicalDevice.html#a1bf5c1100e6686101aeacf505fd17491">vk::LogicalDevice::allocMemory()</a>.</p>
+<div id="dynsection-3" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-3-trigger" src="closed.png" alt="+"/> Here is the caller graph for this function:</div>
+<div id="dynsection-3-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-3-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="classvk_1_1PhysicalDevice_a9b382736f3450cce8c0e795479c747b3_icgraph.png" border="0" usemap="#aclassvk_1_1PhysicalDevice_a9b382736f3450cce8c0e795479c747b3_icgraph" alt=""/></div>
+<map name="aclassvk_1_1PhysicalDevice_a9b382736f3450cce8c0e795479c747b3_icgraph" id="aclassvk_1_1PhysicalDevice_a9b382736f3450cce8c0e795479c747b3_icgraph">
+<area shape="rect" title=" " alt="" coords="183,5,337,47"/>
+<area shape="rect" href="classvk_1_1LogicalDevice.html#a1bf5c1100e6686101aeacf505fd17491" title="Allocate a memory section" alt="" coords="5,5,135,47"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a92d09cd81d919ee45b82ee9e0a187905" name="a92d09cd81d919ee45b82ee9e0a187905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92d09cd81d919ee45b82ee9e0a187905">&#9670;&nbsp;</a></span>getUsablePhysicalDevice()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> * PhysicalDevice::getUsablePhysicalDevice </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a> *&#160;</td>
+          <td class="paramname"><em>osSurface</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a usable physical device </p>
+<p >Calling this function will run a series of check on all avalible physical devices, and pick the most suitable device. The checks include: </p><ol>
+<li>
+Have default-required and requested Extensions  </li>
+<li>
+Have the following Features: <ol>
+<li>
+Geometry Shader Support </li>
+<li>
+Tesselation Shader Support </li>
+<li>
+Anisotropic Filtering Support </li>
+<li>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>more to be added</dd></dl>
+<p class="endli"></p>
+</li>
+</ol>
+</li>
+<li>
+Meet the following <a class="el" href="classvk_1_1Queue.html" title="A queue object for submiting commends">Queue</a> family requirements: <ol>
+<li>
+At least 1 graphic capable queue family </li>
+<li>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000002">Bug:</a></b></dt><dd>The first graphic capable queue family supports Present to the optional OSSurface</dd></dl>
+<p class="endli"></p>
+</li>
+</ol>
+</li>
+</ol>
+<p >However, the following properties will effect how suitable a certain device is: </p><ul>
+<li>
+Discrete GPU vs Intergrated GPU </li>
+<li>
+Max work group size for Compute Shaders </li>
+<li>
+Max number of output vertices for Geometry Shaders </li>
+<li>
+Max number of output data for Geometry Shaders </li>
+<li>
+<p class="startli">Max memory size for sparse memories </p><dl class="bug"><dt><b><a class="el" href="bug.html#_bug000003">Bug:</a></b></dt><dd>This should be total VRAM size...</dd></dl>
+<p class="endli"></p>
+</li>
+<li>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>more...</dd></dl>
+<p class="endli"></p>
+</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">osSurface</td><td>The surface that the returned device should be complitible with (Optional)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A physical device that matches requirements</dd></dl>
+
+<p class="reference">References <a class="el" href="classvk_1_1PhysicalDevice.html#a4f225004186fceea59e1f5feec4bfe76">PhysicalDevice()</a>.</p>
+<div id="dynsection-4" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-4-trigger" src="closed.png" alt="+"/> Here is the call graph for this function:</div>
+<div id="dynsection-4-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-4-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="classvk_1_1PhysicalDevice_a92d09cd81d919ee45b82ee9e0a187905_cgraph.png" border="0" usemap="#aclassvk_1_1PhysicalDevice_a92d09cd81d919ee45b82ee9e0a187905_cgraph" alt=""/></div>
+<map name="aclassvk_1_1PhysicalDevice_a92d09cd81d919ee45b82ee9e0a187905_cgraph" id="aclassvk_1_1PhysicalDevice_a92d09cd81d919ee45b82ee9e0a187905_cgraph">
+<area shape="rect" title="Get a usable physical device" alt="" coords="5,5,181,47"/>
+<area shape="rect" href="classvk_1_1PhysicalDevice.html#a4f225004186fceea59e1f5feec4bfe76" title=" " alt="" coords="229,5,360,47"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a707788912ab40a92ed43809e58980cd9" name="a707788912ab40a92ed43809e58980cd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a707788912ab40a92ed43809e58980cd9">&#9670;&nbsp;</a></span>operator-&gt;() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDevice vk::PhysicalDevice::operator-&gt; </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Returns the underlying native handle </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000020">Todo:</a></b></dt><dd>Make this a function </dd></dl>
+
+<p class="reference">References <a class="el" href="classvk_1_1PhysicalDevice.html#a1c88178106c28b045fe8ba9a0a3d5997">d</a>.</p>
+
+</div>
+</div>
+<a id="ab1a61c1831b07f71236c0a0ca3734047" name="ab1a61c1831b07f71236c0a0ca3734047"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1a61c1831b07f71236c0a0ca3734047">&#9670;&nbsp;</a></span>operator-&gt;() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const VkPhysicalDevice vk::PhysicalDevice::operator-&gt; </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Returns the underlying native handle </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000021">Todo:</a></b></dt><dd>Make this a function </dd></dl>
+
+<p class="reference">References <a class="el" href="classvk_1_1PhysicalDevice.html#a1c88178106c28b045fe8ba9a0a3d5997">d</a>.</p>
+
+</div>
+</div>
+<a id="af51b5681167b83871a7c86ac0a60ea62" name="af51b5681167b83871a7c86ac0a60ea62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af51b5681167b83871a7c86ac0a60ea62">&#9670;&nbsp;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool vk::PhysicalDevice::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Check if the other <a class="el" href="classvk_1_1PhysicalDevice.html" title="A physical device">PhysicalDevice</a> points to the same underlying physical deivce </p>
+
+<p class="reference">References <a class="el" href="classvk_1_1PhysicalDevice.html#a1c88178106c28b045fe8ba9a0a3d5997">d</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a1c88178106c28b045fe8ba9a0a3d5997" name="a1c88178106c28b045fe8ba9a0a3d5997"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c88178106c28b045fe8ba9a0a3d5997">&#9670;&nbsp;</a></span>d</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDevice vk::PhysicalDevice::d = nullptr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>, <a class="el" href="classvk_1_1QueuePoolLayout.html#af3e01abe905b6a8f1396d5ca13b7de7c">vk::QueuePoolLayout::QueuePoolLayout()</a>, <a class="el" href="classvk_1_1LogicalDevice.html#a3129919472c13e1fa56d57b1924f78b1">vk::LogicalDevice::_setup()</a>, <a class="el" href="classvk_1_1PhysicalDevice.html#a707788912ab40a92ed43809e58980cd9">operator-&gt;()</a>, and <a class="el" href="classvk_1_1PhysicalDevice.html#af51b5681167b83871a7c86ac0a60ea62">operator==()</a>.</p>
+
+</div>
+</div>
+<a id="a685160267f84ba0688d60e20b7f5b12e" name="a685160267f84ba0688d60e20b7f5b12e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a685160267f84ba0688d60e20b7f5b12e">&#9670;&nbsp;</a></span>features10</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceFeatures2 vk::PhysicalDevice::features10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>, and <a class="el" href="classvk_1_1LogicalDevice.html#a3129919472c13e1fa56d57b1924f78b1">vk::LogicalDevice::_setup()</a>.</p>
+
+</div>
+</div>
+<a id="a7ea2f034edbb4007968953e49d979f59" name="a7ea2f034edbb4007968953e49d979f59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ea2f034edbb4007968953e49d979f59">&#9670;&nbsp;</a></span>features11</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceVulkan11Features vk::PhysicalDevice::features11</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="a4b464ece871a2543a4583c629dbf94d2" name="a4b464ece871a2543a4583c629dbf94d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b464ece871a2543a4583c629dbf94d2">&#9670;&nbsp;</a></span>features12</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceVulkan12Features vk::PhysicalDevice::features12</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="a9e343a27b71ab6a5740b74390e09f9bd" name="a9e343a27b71ab6a5740b74390e09f9bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e343a27b71ab6a5740b74390e09f9bd">&#9670;&nbsp;</a></span>meetRequirements</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool vk::PhysicalDevice::meetRequirements</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Whether this device meets the basic requirments. See also <a class="el" href="classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905" title="Get a usable physical device">PhysicalDevice::getUsablePhysicalDevice()</a> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000019">Todo:</a></b></dt><dd>Make this a function </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="aa06c584538bc00fa75b4425ef3e02b59" name="aa06c584538bc00fa75b4425ef3e02b59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa06c584538bc00fa75b4425ef3e02b59">&#9670;&nbsp;</a></span>memProperties</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceMemoryProperties vk::PhysicalDevice::memProperties</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>, and <a class="el" href="classvk_1_1PhysicalDevice.html#a9b382736f3450cce8c0e795479c747b3">getMemoryTypeIndex()</a>.</p>
+
+</div>
+</div>
+<a id="a765adf3d9e172977ae7009c884ed24ab" name="a765adf3d9e172977ae7009c884ed24ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a765adf3d9e172977ae7009c884ed24ab">&#9670;&nbsp;</a></span>properties10</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceProperties2 vk::PhysicalDevice::properties10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1Buffer.html#ad67583101153bc6d46bbf6dcd8549c75">vk::Buffer::Buffer()</a>, and <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="a347bb7496d8f416ed4fae0234a8ed912" name="a347bb7496d8f416ed4fae0234a8ed912"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a347bb7496d8f416ed4fae0234a8ed912">&#9670;&nbsp;</a></span>properties11</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceVulkan11Properties vk::PhysicalDevice::properties11</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="ae7b37ac8b98c6f377aff87f151947f34" name="ae7b37ac8b98c6f377aff87f151947f34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7b37ac8b98c6f377aff87f151947f34">&#9670;&nbsp;</a></span>properties12</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VkPhysicalDeviceVulkan12Properties vk::PhysicalDevice::properties12</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="a358b8108dc46e6a7b3d5298378b696f9" name="a358b8108dc46e6a7b3d5298378b696f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a358b8108dc46e6a7b3d5298378b696f9">&#9670;&nbsp;</a></span>queueFamilies</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;VkQueueFamilyProperties&gt; vk::PhysicalDevice::queueFamilies</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>Make this private </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
+<a id="a931e5c0389c104bdf22cd232db0c07cd" name="a931e5c0389c104bdf22cd232db0c07cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a931e5c0389c104bdf22cd232db0c07cd">&#9670;&nbsp;</a></span>rating</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float vk::PhysicalDevice::rating</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >An arbitrary score for how suitable this physical device is. See also <a class="el" href="classvk_1_1PhysicalDevice.html#a92d09cd81d919ee45b82ee9e0a187905" title="Get a usable physical device">PhysicalDevice::getUsablePhysicalDevice()</a> </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000018">Todo:</a></b></dt><dd>Make this a function </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>, and <a class="el" href="classvk_1_1PhysicalDevice.html#a116ada381954f111939063c643ef90e0">operator&lt;=&gt;()</a>.</p>
+
+</div>
+</div>
+<a id="ac579cf4ea7afb9f7484459511e2873cf" name="ac579cf4ea7afb9f7484459511e2873cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac579cf4ea7afb9f7484459511e2873cf">&#9670;&nbsp;</a></span>renderOut</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classvk_1_1OSRenderSurface.html">OSRenderSurface</a>* vk::PhysicalDevice::renderOut = nullptr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>Make this private... Or is this needed? </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="classvk_1_1PhysicalDevice.html#ac19370f652c615253df3109c2c996819">PhysicalDevice()</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>C:/Users/tomle/source/repos/Planetery-Engine/Planetery Engine PreBuild v0.3/SrcVulkan/Vulkan-Device.ixx</li>
 <li>C:/Users/tomle/source/repos/Planetery-Engine/Planetery Engine PreBuild v0.3/SrcVulkan/Vulkan-DeviceImp.cpp</li>
@@ -206,7 +771,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>meetRequirements</b><
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacevk.html">vk</a></li><li class="navelem"><a class="el" href="classvk_1_1PhysicalDevice.html">PhysicalDevice</a></li>
-    <li class="footer">Generated on Wed Oct 6 2021 22:01:29 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Sun Oct 10 2021 15:52:53 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 </body>
