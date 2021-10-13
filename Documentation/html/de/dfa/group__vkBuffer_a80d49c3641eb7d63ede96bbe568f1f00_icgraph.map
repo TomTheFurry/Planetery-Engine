@@ -1,0 +1,4 @@
+<map id="vk::Buffer::map" name="vk::Buffer::map">
+<area shape="rect" id="node1" title="Map the Buffer for direct access." alt="" coords="200,5,308,32"/>
+<area shape="rect" id="node2" href="$de/dfa/group__vkBuffer.html#ae16d79fc9f6a2a5d474dccf9cadf3d3f" title="Directly writes to the buffer data." alt="" coords="5,5,152,32"/>
+</map>

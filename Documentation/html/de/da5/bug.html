@@ -86,16 +86,20 @@ $(document).ready(function(){initNavTree('de/da5/bug.html','../../'); initResiza
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt>Member <a class="el" href="../../dd/dda/classvk_1_1Buffer.html#a80d49c3641eb7d63ede96bbe568f1f00">vk::Buffer::map</a>  ()</dt>
-<dd><a class="anchor" id="_bug000001"></a> Currently only one mapped region is allowed at a time due to shared memory region issues.  </dd>
+<dt>Member <a class="el" href="../../de/dfa/group__vkBuffer.html#a80d49c3641eb7d63ede96bbe568f1f00">vk::Buffer::map</a>  ()</dt>
+<dd><a class="anchor" id="_bug000002"></a>See <a class="el" href="../../de/da5/bug.html#vkBufferBugMapping">memory mapping bug</a>.  </dd>
 <dt>Member <a class="el" href="../../dc/dc1/group__vkPipelineEnum.html#gaf6ed084a6c53ab72c7ec3e3d541fea7e">vk::LogicOperator</a>  </dt>
-<dd><a class="anchor" id="_bug000004"></a>Need to disignate a value to turn off logic operator  </dd>
+<dd><a class="anchor" id="_bug000005"></a>Need to disignate a value to turn off logic operator  </dd>
 <dt>Member <a class="el" href="../../d1/d93/group__vkDevice.html#a92d09cd81d919ee45b82ee9e0a187905">vk::PhysicalDevice::getUsablePhysicalDevice</a>  (<a class="el" href="../../d1/d3e/group__vkSwapchain.html#d8/d35/classvk_1_1OSRenderSurface" title="An object repesenting OS-specific surface.">OSRenderSurface</a> *osSurface)</dt>
-<dd><p class="startdd"><a class="anchor" id="_bug000002"></a>The first graphic capable queue family supports Present to the optional OSSurface</p>
-<p class="enddd"><a class="anchor" id="_bug000003"></a>This should be total VRAM size... </p>
+<dd><p class="startdd"><a class="anchor" id="_bug000003"></a>The first graphic capable queue family supports Present to the optional OSSurface</p>
+<p class="enddd"><a class="anchor" id="_bug000004"></a>This should be total VRAM size... </p>
 </dd>
 <dt>Member <a class="el" href="../../d1/d3e/group__vkSwapchain.html#af5fd5b9fbb69f2dda45ebd5e8ea034ac">vk::Swapchain::getDevice</a>  () const</dt>
-<dd><a class="anchor" id="_bug000005"></a>Repeated func </dd>
+<dd><a class="anchor" id="_bug000006"></a>Repeated func  </dd>
+<dt>Module <a class="el" href="../../de/dfa/group__vkBuffer.html">vkBuffer</a>  </dt>
+<dd><p class="startdd"><a class="anchor" id="_bug000001"></a><a class="anchor" id="vkBufferBugMapping"></a>Cannot unmap just a buffer if said buffer shares same memory with another buffer. Current bypass is to only allow mapping to one buffer at a time</p>
+<p class="enddd"></p>
+</dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -103,7 +107,7 @@ $(document).ready(function(){initNavTree('de/da5/bug.html','../../'); initResiza
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Oct 13 2021 13:25:28 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="../../doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Wed Oct 13 2021 16:33:02 for Planetery-Engine by <a href="https://www.doxygen.org/index.html"><img class="footer" src="../../doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 </body>

@@ -7,11 +7,11 @@
 <area shape="rect" id="node6" href="$d4/dba/classvk_1_1DescriptorSet.html" title=" " alt="" coords="1483,309,1605,336"/>
 <area shape="rect" id="node7" href="$d5/db0/structvk_1_1ComplexObject.html" title=" " alt="" coords="904,411,1035,437"/>
 <area shape="rect" id="node10" href="$de/d06/classvk_1_1DescriptorPool.html" title=" " alt="" coords="1176,360,1303,387"/>
-<area shape="rect" id="node32" href="$dd/dda/classvk_1_1Buffer.html" title="Vulkan Buffer Base Class Provides basic universal functions for all types of buffers" alt="" coords="1202,988,1277,1015"/>
+<area shape="rect" id="node32" href="$de/dfa/group__vkBuffer.html#dd/dda/classvk_1_1Buffer" title="Vulkan Buffer Base Class." alt="" coords="1202,988,1277,1015"/>
 <area shape="rect" id="node39" href="$d6/db3/classvk_1_1ImageView.html" title=" " alt="" coords="1187,627,1292,653"/>
 <area shape="rect" id="node41" href="$df/d40/classvk_1_1FrameBuffer.html" title=" " alt="" coords="1183,157,1295,184"/>
 <area shape="rect" id="node43" href="$dd/d98/group__vkQueue.html#df/d93/classvk_1_1Queue" title="A queue object for submiting commends." alt="" coords="1504,487,1584,513"/>
-<area shape="rect" id="node49" href="$d4/d31/classvk_1_1CommendPool.html" title=" " alt="" coords="1481,711,1607,737"/>
+<area shape="rect" id="node49" href="$d0/d98/group__vkCommend.html#d4/d31/classvk_1_1CommendPool" title="A commend pool for allocating CommendBuffer." alt="" coords="1481,711,1607,737"/>
 <area shape="rect" id="node8" title=" " alt="" coords="339,237,386,264"/>
 <area shape="rect" id="node17" href="$d1/d93/group__vkDevice.html#d9/da9/classvk_1_1PhysicalDevice" title="A physical device." alt="" coords="640,597,771,624"/>
 <area shape="rect" id="node9" title=" " alt="" coords="1181,309,1298,336"/>
@@ -36,7 +36,7 @@
 <area shape="rect" id="node29" title=" " alt="" coords="21,932,59,959"/>
 <area shape="rect" id="node46" href="$dd/d98/group__vkQueue.html#dd/df0/structvk_1_1QueueHint" title="Hint struct for queues usage." alt="" coords="508,929,611,956"/>
 <area shape="rect" id="node30" title=" " alt="" coords="339,415,386,441"/>
-<area shape="rect" id="node31" href="$d8/d3e/classvk_1_1StorageBuffer.html" title=" " alt="" coords="1484,823,1604,849"/>
+<area shape="rect" id="node31" href="$de/dfa/group__vkBuffer.html#d8/d3e/classvk_1_1StorageBuffer" title="A shader storage buffer." alt="" coords="1484,823,1604,849"/>
 <area shape="rect" id="node33" title=" " alt="" coords="677,1135,734,1161"/>
 <area shape="rect" id="node35" href="$d5/df6/namespacevk.html#d7/de4/structvk_1_1MemoryPointer" title=" " alt="" coords="904,1039,1035,1065"/>
 <area shape="rect" id="node34" title=" " alt="" coords="934,1089,1005,1116"/>

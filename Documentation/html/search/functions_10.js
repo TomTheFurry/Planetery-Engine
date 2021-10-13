@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['_7ebuffer_0',['~Buffer',['../dd/dda/classvk_1_1Buffer.html#a59b8743e4a5f731bdd0c4185c9ef263b',1,'vk::Buffer']]],
-  ['_7elogicaldevice_1',['~LogicalDevice',['../d1/d93/group__vkDevice.html#a109ef3c2ae8a10450fbddb73135d6154',1,'vk::LogicalDevice']]],
-  ['_7eosrendersurface_2',['~OSRenderSurface',['../d1/d3e/group__vkSwapchain.html#a94101980177b901aca195021aca876fa',1,'vk::OSRenderSurface']]],
-  ['_7ephysicaldevice_3',['~PhysicalDevice',['../d1/d93/group__vkDevice.html#acd24eaa6c554f0de088eab3bc6d7b572',1,'vk::PhysicalDevice']]],
-  ['_7equeue_4',['~Queue',['../dd/d98/group__vkQueue.html#a5e882cf1c6843b9cff4098cf8d56b854',1,'vk::Queue']]],
-  ['_7equeuepool_5',['~QueuePool',['../dd/d98/group__vkQueue.html#a2682b77260d50bd6e291ca5195a78f9e',1,'vk::QueuePool']]],
-  ['_7eswapchain_6',['~Swapchain',['../d1/d3e/group__vkSwapchain.html#ad6bf18e6177d5a233386909807c3ad8d',1,'vk::Swapchain']]]
+  ['setcallback_0',['setCallback',['../d1/d3e/group__vkSwapchain.html#a455d959f3f092d2e9b38cd6368a90be1',1,'vk::Swapchain::setCallback(SwapchainCallback callback)'],['../d1/d3e/group__vkSwapchain.html#a5dc8daeae6e7903f3c9f15898dce8ed1',1,'vk::Swapchain::setCallback(FrameCallback callback)']]],
+  ['startrecording_1',['startRecording',['../d0/d98/group__vkCommend.html#a959699b6aacaa8ef50146e15ca267ed7',1,'vk::CommendBuffer']]],
+  ['storagebuffer_2',['StorageBuffer',['../de/dfa/group__vkBuffer.html#a79e27609c5af4af0940638263b70ab90',1,'vk::StorageBuffer']]],
+  ['submit_3',['submit',['../dd/d98/group__vkQueue.html#a6432ee33873049ded0d590c8d3626e45',1,'vk::Queue']]],
+  ['support_4',['Support',['../d6/da0/classvk_1_1OSRenderSurface_1_1Support.html#a20d2206d9db0100a718f31c2de292786',1,'vk::OSRenderSurface::Support']]],
+  ['swapchain_5',['Swapchain',['../d1/d3e/group__vkSwapchain.html#ad0fa00a44b3c7e00bdc510987bd1593e',1,'vk::Swapchain']]],
+  ['swapchainimage_6',['SwapchainImage',['../d1/d3e/group__vkSwapchain.html#a066a6e987dcff8e206daeb1c882e9998',1,'vk::SwapchainImage']]]
 ];

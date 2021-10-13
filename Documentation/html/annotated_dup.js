@@ -71,9 +71,9 @@ var annotated_dup =
       [ "ValPtrUnion", "d6/d17/classutil_1_1ValPtrUnion.html", null ]
     ] ],
     [ "vk", "d5/df6/namespacevk.html", [
-      [ "Buffer", "dd/dda/classvk_1_1Buffer.html", "dd/dda/classvk_1_1Buffer" ],
-      [ "CommendBuffer", "dc/d2b/classvk_1_1CommendBuffer.html", null ],
-      [ "CommendPool", "d4/d31/classvk_1_1CommendPool.html", null ],
+      [ "Buffer", "de/dfa/group__vkBuffer.html#dd/dda/classvk_1_1Buffer", "de/dfa/group__vkBuffer_dd/dda/classvk_1_1Buffer" ],
+      [ "CommendBuffer", "d0/d98/group__vkCommend.html#dc/d2b/classvk_1_1CommendBuffer", "d0/d98/group__vkCommend_dc/d2b/classvk_1_1CommendBuffer" ],
+      [ "CommendPool", "d0/d98/group__vkCommend.html#d4/d31/classvk_1_1CommendPool", "d0/d98/group__vkCommend_d4/d31/classvk_1_1CommendPool" ],
       [ "ComplexObject", "d5/db0/structvk_1_1ComplexObject.html", null ],
       [ "DescriptorContainer", "d3/dea/classvk_1_1DescriptorContainer.html", null ],
       [ "DescriptorLayout", "d0/d39/classvk_1_1DescriptorLayout.html", "d0/d39/classvk_1_1DescriptorLayout" ],
@@ -90,7 +90,7 @@ var annotated_dup =
       [ "Image", "de/dfe/classvk_1_1Image.html", null ],
       [ "ImageSampler", "d1/d76/classvk_1_1ImageSampler.html", null ],
       [ "ImageView", "d6/db3/classvk_1_1ImageView.html", null ],
-      [ "IndexBuffer", "dd/d96/classvk_1_1IndexBuffer.html", null ],
+      [ "IndexBuffer", "de/dfa/group__vkBuffer.html#dd/d96/classvk_1_1IndexBuffer", "de/dfa/group__vkBuffer_dd/d96/classvk_1_1IndexBuffer" ],
       [ "Layer", "d1/d93/group__vkDevice.html#d6/d4d/structvk_1_1Layer", null ],
       [ "LifetimeManager", "dd/d97/classvk_1_1LifetimeManager.html", null ],
       [ "LogicalDevice", "d1/d93/group__vkDevice.html#d6/d4f/classvk_1_1LogicalDevice", "d1/d93/group__vkDevice_d6/d4f/classvk_1_1LogicalDevice" ],
@@ -110,7 +110,7 @@ var annotated_dup =
       [ "RenderPipeline", "dc/d2d/classvk_1_1RenderPipeline.html", "dc/d2d/classvk_1_1RenderPipeline" ],
       [ "Semaphore", "d4/d30/classvk_1_1Semaphore.html", null ],
       [ "ShaderCompiled", "d7/df0/classvk_1_1ShaderCompiled.html", null ],
-      [ "StorageBuffer", "d8/d3e/classvk_1_1StorageBuffer.html", null ],
+      [ "StorageBuffer", "de/dfa/group__vkBuffer.html#d8/d3e/classvk_1_1StorageBuffer", "de/dfa/group__vkBuffer_d8/d3e/classvk_1_1StorageBuffer" ],
       [ "SurfaceMinimizedException", "d1/d93/group__vkDevice.html#d0/def/structvk_1_1SurfaceMinimizedException", null ],
       [ "Swapchain", "d1/d3e/group__vkSwapchain.html#db/de5/classvk_1_1Swapchain", "d1/d3e/group__vkSwapchain_db/de5/classvk_1_1Swapchain" ],
       [ "SwapchainCallback", "d9/da8/structvk_1_1SwapchainCallback.html", null ],
@@ -120,9 +120,9 @@ var annotated_dup =
       [ "TextureSubLayers", "d5/df6/namespacevk.html#d6/de8/structvk_1_1TextureSubLayers", null ],
       [ "TextureSubRegion", "d5/df6/namespacevk.html#d9/d92/structvk_1_1TextureSubRegion", null ],
       [ "TimelineSemaphore", "dd/d6e/classvk_1_1TimelineSemaphore.html", null ],
-      [ "UniformBuffer", "d1/df3/classvk_1_1UniformBuffer.html", null ],
+      [ "UniformBuffer", "de/dfa/group__vkBuffer.html#d1/df3/classvk_1_1UniformBuffer", "de/dfa/group__vkBuffer_d1/df3/classvk_1_1UniformBuffer" ],
       [ "VertexAttribute", "dc/d1e/classvk_1_1VertexAttribute.html", null ],
-      [ "VertexBuffer", "dc/d13/classvk_1_1VertexBuffer.html", null ]
+      [ "VertexBuffer", "de/dfa/group__vkBuffer.html#dc/d13/classvk_1_1VertexBuffer", "de/dfa/group__vkBuffer_dc/d13/classvk_1_1VertexBuffer" ]
     ] ],
     [ "_Glyph", "dc/dea/struct__Glyph.html", null ],
     [ "_KeyCallback", "d5/d71/struct__KeyCallback.html", null ],

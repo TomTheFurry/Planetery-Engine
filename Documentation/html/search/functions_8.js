@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['logicaldevice_0',['LogicalDevice',['../d1/d93/group__vkDevice.html#abc40aa56c386b75accc9f3a1eb4e45ca',1,'vk::LogicalDevice::LogicalDevice(PhysicalDevice &amp;pd, const QueuePoolLayout &amp;queueLayout)'],['../d1/d93/group__vkDevice.html#a5b6789cb0cbd9811ee5ba0309fe133bb',1,'vk::LogicalDevice::LogicalDevice(LogicalDevice &amp;&amp;)=delete']]]
+  ['hasaquiredimage_0',['hasAquiredImage',['../d1/d3e/group__vkSwapchain.html#ae7f825676e174c883e1366edcfd5617b',1,'vk::SwapchainImage']]],
+  ['hintgroupusage_1',['hintGroupUsage',['../dd/d98/group__vkQueue.html#a848b3d8bf6bd07d7f98bd0dfe39eae85',1,'vk::QueuePoolLayout']]]
 ];

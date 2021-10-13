@@ -1,5 +1,5 @@
 <map id="vk::UniformBuffer" name="vk::UniformBuffer">
-<area shape="rect" id="node1" title=" " alt="" coords="11,155,130,181"/>
-<area shape="rect" id="node2" href="$dd/dda/classvk_1_1Buffer.html" title="Vulkan Buffer Base Class Provides basic universal functions for all types of buffers" alt="" coords="33,80,108,107"/>
+<area shape="rect" id="node1" title="An uniform buffer." alt="" coords="11,155,130,181"/>
+<area shape="rect" id="node2" href="$de/dfa/group__vkBuffer.html#dd/dda/classvk_1_1Buffer" title="Vulkan Buffer Base Class." alt="" coords="33,80,108,107"/>
 <area shape="rect" id="node3" href="$d5/db0/structvk_1_1ComplexObject.html" title=" " alt="" coords="5,5,136,32"/>
 </map>

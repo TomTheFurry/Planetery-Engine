@@ -5,7 +5,7 @@ var searchData=
   ['vertex_2',['Vertex',['../d3/dd0/group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6cab22b929ba52471a02d18bb3a4e4472e6',1,'vk']]],
   ['vertexattribute_3',['VertexAttribute',['../dc/d1e/classvk_1_1VertexAttribute.html',1,'vk']]],
   ['vertexattributearray_4',['VertexAttributeArray',['../de/d4e/classgl_1_1VertexAttributeArray.html',1,'gl']]],
-  ['vertexbuffer_5',['VertexBuffer',['../d4/df2/classgl_1_1VertexBuffer.html',1,'gl::VertexBuffer'],['../dc/d13/classvk_1_1VertexBuffer.html',1,'vk::VertexBuffer']]],
+  ['vertexbuffer_5',['VertexBuffer',['../d4/df2/classgl_1_1VertexBuffer.html',1,'gl::VertexBuffer'],['../de/dfa/group__vkBuffer.html#a2648d98669af92b92543dcb293518bb8',1,'vk::VertexBuffer::VertexBuffer()'],['../de/dfa/group__vkBuffer.html#dc/d13/classvk_1_1VertexBuffer',1,'vk::VertexBuffer']]],
   ['vertexinput_6',['VertexInput',['../dc/dc1/group__vkPipelineEnum.html#gga4a4e720588a7b36b283a468d01f01c2ea9cd8956bef976d28daf75c3ef327137d',1,'vk']]],
   ['vertexinputattributeread_7',['VertexInputAttributeRead',['../d4/d07/group__vkMemoryEnum.html#ggad3905d63091f95e3c7669512efd82e22a82bf071d03477673e2f06df3529d81f4',1,'vk']]],
   ['vertexinputindexread_8',['VertexInputIndexRead',['../d4/d07/group__vkMemoryEnum.html#ggad3905d63091f95e3c7669512efd82e22ad4159a8935fbbdd1012be13a52e63809',1,'vk']]],

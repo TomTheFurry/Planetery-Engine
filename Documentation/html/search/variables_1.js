@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['d_0',['d',['../d1/d93/group__vkDevice.html#a1c88178106c28b045fe8ba9a0a3d5997',1,'vk::PhysicalDevice::d()'],['../d1/d93/group__vkDevice.html#a5feac002e533d7c5f1aafd5c9539bb3b',1,'vk::LogicalDevice::d()']]]
+  ['b_0',['b',['../de/dfa/group__vkBuffer.html#ad73a374dd74aa460e96b954b39af1cbf',1,'vk::Buffer']]]
 ];

@@ -1,0 +1,4 @@
+<map id="vk::Buffer::flush" name="vk::Buffer::flush">
+<area shape="rect" id="node1" title="Flush and sync the mapped Buffer memory." alt="" coords="200,5,311,32"/>
+<area shape="rect" id="node2" href="$de/dfa/group__vkBuffer.html#ae16d79fc9f6a2a5d474dccf9cadf3d3f" title="Directly writes to the buffer data." alt="" coords="5,5,152,32"/>
+</map>

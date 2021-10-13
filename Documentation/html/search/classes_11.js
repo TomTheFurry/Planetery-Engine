@@ -10,7 +10,7 @@ var searchData=
   ['size_7',['Size',['../d0/d39/classvk_1_1DescriptorLayout.html#de/d22/structvk_1_1DescriptorLayout_1_1Size',1,'vk::DescriptorLayout']]],
   ['stackmemoryresource_8',['StackMemoryResource',['../d7/d94/classpmr_1_1StackMemoryResource.html',1,'pmr']]],
   ['state_9',['State',['../d7/da4/classvk_1_1MemoryPool.html#d7/db3/structvk_1_1MemoryPool_1_1State',1,'vk::MemoryPool']]],
-  ['storagebuffer_10',['StorageBuffer',['../d8/d3e/classvk_1_1StorageBuffer.html',1,'vk']]],
+  ['storagebuffer_10',['StorageBuffer',['../de/dfa/group__vkBuffer.html#d8/d3e/classvk_1_1StorageBuffer',1,'vk']]],
   ['stringbox_11',['StringBox',['../df/df4/classStringBox.html',1,'']]],
   ['subpass_12',['SubPass',['../d4/d7a/classvk_1_1RenderPass_1_1SubPass.html',1,'vk::RenderPass']]],
   ['subpassdependency_13',['SubPassDependency',['../d8/d81/classvk_1_1RenderPass_1_1SubPassDependency.html',1,'vk::RenderPass']]],

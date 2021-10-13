@@ -12,5 +12,6 @@ var searchData=
   ['queueindex_9',['queueIndex',['../dd/d98/group__vkQueue.html#aa42342ccef2841e50cb5723522198b09',1,'vk::Queue']]],
   ['queuepool_10',['QueuePool',['../dd/d98/group__vkQueue.html#ab71bd2dc5881008bb4e263d043c5c2b2',1,'vk::QueuePool::QueuePool()'],['../dd/d98/group__vkQueue.html#d5/d2a/classvk_1_1QueuePool',1,'vk::QueuePool']]],
   ['queuepoollayout_11',['QueuePoolLayout',['../dd/d98/group__vkQueue.html#af3e01abe905b6a8f1396d5ca13b7de7c',1,'vk::QueuePoolLayout::QueuePoolLayout()'],['../dd/d98/group__vkQueue.html#df/d15/classvk_1_1QueuePoolLayout',1,'vk::QueuePoolLayout']]],
-  ['queuetype_12',['QueueType',['../d6/d73/group__vkQueueEnum.html#ga4166760d3982c46dd18923b19f24b660',1,'vk']]]
+  ['queuetype_12',['QueueType',['../d6/d73/group__vkQueueEnum.html#ga4166760d3982c46dd18923b19f24b660',1,'vk']]],
+  ['quicksubmit_13',['quickSubmit',['../d0/d98/group__vkCommend.html#a3a2232930174e3b3463a83a1b598a1c4',1,'vk::CommendBuffer']]]
 ];

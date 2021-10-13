@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['physicaldevice_0',['PhysicalDevice',['../d1/d93/group__vkDevice.html#ac19370f652c615253df3109c2c996819',1,'vk::PhysicalDevice::PhysicalDevice(VkPhysicalDevice _d, OSRenderSurface *renderSurface=nullptr)'],['../d1/d93/group__vkDevice.html#a4f225004186fceea59e1f5feec4bfe76',1,'vk::PhysicalDevice::PhysicalDevice()=default'],['../d1/d93/group__vkDevice.html#a33b7413c963b07f19ea336242ce85b58',1,'vk::PhysicalDevice::PhysicalDevice(const PhysicalDevice &amp;other)'],['../d1/d93/group__vkDevice.html#a9352d20a6d544e776fc98b78a2c7323f',1,'vk::PhysicalDevice::PhysicalDevice(PhysicalDevice &amp;&amp;other) noexcept']]],
-  ['presentimage_1',['presentImage',['../dd/d98/group__vkQueue.html#a8fcb0b675de5147f843e14565f278314',1,'vk::Queue']]]
+  ['makecommendbuffer_0',['makeCommendBuffer',['../d0/d98/group__vkCommend.html#a33e0757de2bc88bdcb5eccdccc3c5053',1,'vk::CommendPool']]],
+  ['makeimageview_1',['makeImageView',['../d1/d3e/group__vkSwapchain.html#a074135514fd33c79c485fe85c747d945',1,'vk::SwapchainImage::makeImageView() const'],['../d1/d3e/group__vkSwapchain.html#ga34264da464d53008c3a335d5dda09b8a',1,'vk::SwapchainImage::makeImageView(LM &amp;lm) const']]],
+  ['map_2',['map',['../de/dfa/group__vkBuffer.html#a80d49c3641eb7d63ede96bbe568f1f00',1,'vk::Buffer::map()'],['../de/dfa/group__vkBuffer.html#afd84016f1952893d0e3c2a99bd811f01',1,'vk::Buffer::map(size_t size, size_t offset)']]],
+  ['markqueuenotinuse_3',['markQueueNotInUse',['../dd/d98/group__vkQueue.html#ae1e515af723baf32370d2bea35eedd32',1,'vk::QueuePool']]]
 ];
