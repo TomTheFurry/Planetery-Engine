@@ -1,0 +1,4 @@
+<map id="vk::QueuePool::markQueueNotInUse" name="vk::QueuePool::markQueueNotInUse">
+<area shape="rect" id="node1" title="Mark a Queue object as not in&#45;use." alt="" coords="5,5,187,47"/>
+<area shape="rect" id="node2" href="$dd/d98/group__vkQueue.html#a729f4f8bec1453f36a7d5691f08e09b4" title="Get the QueuePool that the Queue is in." alt="" coords="235,13,405,39"/>
+</map>

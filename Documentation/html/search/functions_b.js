@@ -1,9 +1,5 @@
 var searchData=
 [
-  ['querycommendpool_0',['queryCommendPool',['../classvk_1_1QueuePool.html#a1556a550e118111e2b9ec56ed5deac37',1,'vk::QueuePool']]],
-  ['queryqueueinuse_1',['queryQueueInUse',['../classvk_1_1QueuePool.html#a721387813a86162a1e51ad788065f3a2',1,'vk::QueuePool']]],
-  ['queryqueuenotinuse_2',['queryQueueNotInUse',['../classvk_1_1QueuePool.html#ab819530eb231dc1f8f3f904d584a06ad',1,'vk::QueuePool']]],
-  ['queue_3',['Queue',['../classvk_1_1Queue.html#a17e3e5d826d7aba0e15af7fa8b248170',1,'vk::Queue']]],
-  ['queuepool_4',['QueuePool',['../classvk_1_1QueuePool.html#ab71bd2dc5881008bb4e263d043c5c2b2',1,'vk::QueuePool']]],
-  ['queuepoollayout_5',['QueuePoolLayout',['../classvk_1_1QueuePoolLayout.html#af3e01abe905b6a8f1396d5ca13b7de7c',1,'vk::QueuePoolLayout']]]
+  ['physicaldevice_0',['PhysicalDevice',['../d1/d93/group__vkDevice.html#ac19370f652c615253df3109c2c996819',1,'vk::PhysicalDevice::PhysicalDevice(VkPhysicalDevice _d, OSRenderSurface *renderSurface=nullptr)'],['../d1/d93/group__vkDevice.html#a4f225004186fceea59e1f5feec4bfe76',1,'vk::PhysicalDevice::PhysicalDevice()=default'],['../d1/d93/group__vkDevice.html#a33b7413c963b07f19ea336242ce85b58',1,'vk::PhysicalDevice::PhysicalDevice(const PhysicalDevice &amp;other)'],['../d1/d93/group__vkDevice.html#a9352d20a6d544e776fc98b78a2c7323f',1,'vk::PhysicalDevice::PhysicalDevice(PhysicalDevice &amp;&amp;other) noexcept']]],
+  ['presentimage_1',['presentImage',['../dd/d98/group__vkQueue.html#a8fcb0b675de5147f843e14565f278314',1,'vk::Queue']]]
 ];

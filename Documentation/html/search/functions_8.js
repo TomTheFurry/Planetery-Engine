@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['map_0',['map',['../classvk_1_1Buffer.html#a80d49c3641eb7d63ede96bbe568f1f00',1,'vk::Buffer']]],
-  ['markqueuenotinuse_1',['markQueueNotInUse',['../classvk_1_1QueuePool.html#ae1e515af723baf32370d2bea35eedd32',1,'vk::QueuePool']]]
+  ['logicaldevice_0',['LogicalDevice',['../d1/d93/group__vkDevice.html#abc40aa56c386b75accc9f3a1eb4e45ca',1,'vk::LogicalDevice::LogicalDevice(PhysicalDevice &amp;pd, const QueuePoolLayout &amp;queueLayout)'],['../d1/d93/group__vkDevice.html#a5b6789cb0cbd9811ee5ba0309fe133bb',1,'vk::LogicalDevice::LogicalDevice(LogicalDevice &amp;&amp;)=delete']]]
 ];

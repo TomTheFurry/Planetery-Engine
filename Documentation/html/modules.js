@@ -1,4 +1,4 @@
 var modules =
 [
-    [ "Vulkan Interface", "group__vulkan.html", "group__vulkan" ]
+    [ "Vulkan Interface", "db/de0/group__vulkan.html", "db/de0/group__vulkan" ]
 ];

@@ -1,0 +1,8 @@
+<map id="vk::Buffer" name="vk::Buffer">
+<area shape="rect" id="node1" title="Vulkan Buffer Base Class Provides basic universal functions for all types of buffers" alt="" coords="231,80,305,107"/>
+<area shape="rect" id="node3" href="$dd/d96/classvk_1_1IndexBuffer.html" title=" " alt="" coords="5,155,112,181"/>
+<area shape="rect" id="node4" href="$d8/d3e/classvk_1_1StorageBuffer.html" title=" " alt="" coords="136,155,256,181"/>
+<area shape="rect" id="node5" href="$d1/df3/classvk_1_1UniformBuffer.html" title=" " alt="" coords="281,155,399,181"/>
+<area shape="rect" id="node6" href="$dc/d13/classvk_1_1VertexBuffer.html" title=" " alt="" coords="423,155,537,181"/>
+<area shape="rect" id="node2" href="$d5/db0/structvk_1_1ComplexObject.html" title=" " alt="" coords="203,5,333,32"/>
+</map>

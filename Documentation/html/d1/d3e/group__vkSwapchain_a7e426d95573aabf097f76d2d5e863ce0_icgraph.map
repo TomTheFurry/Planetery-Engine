@@ -1,0 +1,4 @@
+<map id="vk::Swapchain::getNextImage" name="vk::Swapchain::getNextImage">
+<area shape="rect" id="node1" title="Aquire next SwapchainImage &#160;(timed blocking)" alt="" coords="229,13,423,39"/>
+<area shape="rect" id="node2" href="$d1/d3e/group__vkSwapchain.html#aca98a32261232934e01bf0ecad2ee8f4" title="Aquire and render next SwapchainImage (timed blocking)" alt="" coords="5,5,181,47"/>
+</map>
