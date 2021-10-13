@@ -1,11 +1,8 @@
 var searchData=
 [
-  ['querycommendpool_0',['queryCommendPool',['../dd/d98/group__vkQueue.html#a1556a550e118111e2b9ec56ed5deac37',1,'vk::QueuePool']]],
-  ['queryqueueinuse_1',['queryQueueInUse',['../dd/d98/group__vkQueue.html#a721387813a86162a1e51ad788065f3a2',1,'vk::QueuePool']]],
-  ['queryqueuenotinuse_2',['queryQueueNotInUse',['../dd/d98/group__vkQueue.html#ab819530eb231dc1f8f3f904d584a06ad',1,'vk::QueuePool']]],
-  ['querysupport_3',['querySupport',['../d1/d3e/group__vkSwapchain.html#a263fc014f42ec557536232124aaf4423',1,'vk::OSRenderSurface']]],
-  ['queryswapchain_4',['querySwapchain',['../d1/d3e/group__vkSwapchain.html#adff8f4a837d53334ff04de7fbd9283ce',1,'vk::OSRenderSurface']]],
-  ['queue_5',['Queue',['../dd/d98/group__vkQueue.html#a17e3e5d826d7aba0e15af7fa8b248170',1,'vk::Queue']]],
-  ['queuepool_6',['QueuePool',['../dd/d98/group__vkQueue.html#ab71bd2dc5881008bb4e263d043c5c2b2',1,'vk::QueuePool']]],
-  ['queuepoollayout_7',['QueuePoolLayout',['../dd/d98/group__vkQueue.html#af3e01abe905b6a8f1396d5ca13b7de7c',1,'vk::QueuePoolLayout']]]
+  ['operator_2d_3e_0',['operator-&gt;',['../d1/d93/group__vkDevice.html#a707788912ab40a92ed43809e58980cd9',1,'vk::PhysicalDevice::operator-&gt;()'],['../d1/d93/group__vkDevice.html#ab1a61c1831b07f71236c0a0ca3734047',1,'vk::PhysicalDevice::operator-&gt;() const'],['../d1/d93/group__vkDevice.html#ae7218965ebc99561825b1f91d2471263',1,'vk::LogicalDevice::operator-&gt;()'],['../d1/d93/group__vkDevice.html#aaf0d65cd162f0f988fbf81abfc59f7a7',1,'vk::LogicalDevice::operator-&gt;() const']]],
+  ['operator_3c_3d_3e_1',['operator&lt;=&gt;',['../d1/d93/group__vkDevice.html#a116ada381954f111939063c643ef90e0',1,'vk::PhysicalDevice']]],
+  ['operator_3d_2',['operator=',['../d1/d93/group__vkDevice.html#ae0f84769275dff77d82bbfe76f8e6e04',1,'vk::PhysicalDevice::operator=(const PhysicalDevice &amp;)=default'],['../d1/d93/group__vkDevice.html#a88f80c84ae69f319727522d957d23dc5',1,'vk::PhysicalDevice::operator=(PhysicalDevice &amp;&amp;)=default']]],
+  ['operator_3d_3d_3',['operator==',['../d1/d93/group__vkDevice.html#af51b5681167b83871a7c86ac0a60ea62',1,'vk::PhysicalDevice']]],
+  ['osrendersurface_4',['OSRenderSurface',['../d1/d3e/group__vkSwapchain.html#a31aacf0e9b9afc99ce4beb3671f99deb',1,'vk::OSRenderSurface']]]
 ];

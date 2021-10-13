@@ -1,0 +1,4 @@
+<map id="vk::QueuePool::getExpressMemoryCopyQueue" name="vk::QueuePool::getExpressMemoryCopyQueue">
+<area shape="rect" id="node1" title="Get an express queue for Memory copy operations." alt="" coords="227,5,407,47"/>
+<area shape="rect" id="node2" href="$de/dfa/group__vkBuffer.html#a0ed56df420301ce726528f7d3db0d464" title="Indirectly writes to the Buffer data (blocking)" alt="" coords="5,5,179,47"/>
+</map>

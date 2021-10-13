@@ -1,0 +1,4 @@
+<map id="vk::Queue::submit" name="vk::Queue::submit">
+<area shape="rect" id="node1" title="Submit a CommendBuffer for execution." alt="" coords="196,13,323,39"/>
+<area shape="rect" id="node2" href="$d0/d98/group__vkCommend.html#a3a2232930174e3b3463a83a1b598a1c4" title="Submit the buffer, and returns a waitable Fence object to wait on." alt="" coords="5,5,148,47"/>
+</map>

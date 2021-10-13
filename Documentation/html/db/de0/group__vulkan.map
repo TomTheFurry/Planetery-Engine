@@ -1,7 +1,9 @@
 <map id="Vulkan Interface" name="Vulkan Interface">
-<area shape="rect" id="node1" href="$d1/d93/group__vkDevice.html" title="A group of vulkan classes that is related to device." alt="" coords="181,5,241,31"/>
-<area shape="rect" id="node2" href="$d0/de6/group__vkEnum.html" title=" " alt="" coords="179,55,242,80"/>
-<area shape="rect" id="node3" href="$dd/d98/group__vkQueue.html" title="A group of vulkan classes that is related to device queue. See also LogicalDevice." alt="" coords="181,104,241,129"/>
-<area shape="rect" id="node4" href="$d1/d3e/group__vkSwapchain.html" title="A group of vulkan classes that is related to swapchain. All class in here is provided by default&#45;incl..." alt="" coords="168,153,253,179"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,80,120,105"/>
+<area shape="rect" id="node1" href="$de/dfa/group__vkBuffer.html" title="A group of vulkan buffer based classes." alt="" coords="183,5,238,31"/>
+<area shape="rect" id="node2" href="$d0/d98/group__vkCommend.html" title="A group of vulkan classes providing commend support." alt="" coords="170,55,251,80"/>
+<area shape="rect" id="node3" href="$d1/d93/group__vkDevice.html" title="A group of vulkan classes that is related to device." alt="" coords="181,104,241,129"/>
+<area shape="rect" id="node4" href="$d0/de6/group__vkEnum.html" title=" " alt="" coords="179,153,242,179"/>
+<area shape="rect" id="node5" href="$dd/d98/group__vkQueue.html" title="A group of vulkan classes that is related to device queue. See also LogicalDevice." alt="" coords="181,203,241,228"/>
+<area shape="rect" id="node6" href="$d1/d3e/group__vkSwapchain.html" title="A group of vulkan classes that is related to swapchain. All class in here is provided by default&#45;incl..." alt="" coords="168,252,253,277"/>
+<area shape="rect" id="node7" title=" " alt="" coords="5,129,120,155"/>
 </map>

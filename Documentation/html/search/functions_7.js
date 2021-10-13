@@ -1,7 +1,25 @@
 var searchData=
 [
-  ['invalidateallimages_0',['invalidateAllImages',['../d1/d3e/group__vkSwapchain.html#ab0ae3285f6deb6f17b7a957cdc79b850',1,'vk::Swapchain']]],
-  ['invalidateimage_1',['invalidateImage',['../d1/d3e/group__vkSwapchain.html#a6602c7dcfc4f49240f82f061f786b837',1,'vk::SwapchainImage']]],
-  ['invalidateswapchain_2',['invalidateSwapchain',['../d1/d3e/group__vkSwapchain.html#a9049bddc39f034d8f74e0d7a32b82154',1,'vk::Swapchain']]],
-  ['isvalid_3',['isValid',['../d1/d3e/group__vkSwapchain.html#a296e69ff731927e7f80684b2f93c5e8d',1,'vk::Swapchain']]]
+  ['getdevice_0',['getDevice',['../d0/d98/group__vkCommend.html#a7061cdd19f322402cf053c35080ff261',1,'vk::CommendPool::getDevice()'],['../dd/d98/group__vkQueue.html#abead6757ce3b1493c7ba6be05a7eb5b1',1,'vk::QueuePool::getDevice()'],['../dd/d98/group__vkQueue.html#aa221e8e07e830b08e893219965415234',1,'vk::Queue::getDevice()'],['../d1/d3e/group__vkSwapchain.html#af5fd5b9fbb69f2dda45ebd5e8ea034ac',1,'vk::Swapchain::getDevice()'],['../d1/d3e/group__vkSwapchain.html#a57e25d68bbacd49e214f351d9e3dde55',1,'vk::SwapchainImage::getDevice()']]],
+  ['getexpressmemorycopyqueue_1',['getExpressMemoryCopyQueue',['../dd/d98/group__vkQueue.html#ae1db302ee4d674d3d9b711ec85e922f7',1,'vk::QueuePool']]],
+  ['getexpressrenderqueue_2',['getExpressRenderQueue',['../dd/d98/group__vkQueue.html#acaaada80ac670789badd3c927f7ba0da',1,'vk::QueuePool']]],
+  ['getfamilymaxqueuecount_3',['getFamilyMaxQueueCount',['../dd/d98/group__vkQueue.html#a9afb5a8f341017ccc97334cceba8ef4c',1,'vk::QueuePoolLayout']]],
+  ['getfamilysupporttype_4',['getFamilySupportType',['../dd/d98/group__vkQueue.html#afb9b7ca66a36e4f24a4652067bf5ecd8',1,'vk::QueuePoolLayout']]],
+  ['getformat_5',['getFormat',['../d6/da0/classvk_1_1OSRenderSurface_1_1Support.html#ad8e4d474add5b6f0b49c3dfd15550ddb',1,'vk::OSRenderSurface::Support::getFormat()'],['../d1/d3e/group__vkSwapchain.html#a1c70fcf767e4c83fb54f02e2978dc23a',1,'vk::SwapchainImage::getFormat()']]],
+  ['getgroupbyhint_6',['getGroupByHint',['../dd/d98/group__vkQueue.html#add7a18c754156c9e0cf969d78167a218',1,'vk::QueuePool']]],
+  ['getimagecount_7',['getImageCount',['../d1/d3e/group__vkSwapchain.html#a5a4da1b64d2bbb463790c0876ad0a276',1,'vk::Swapchain']]],
+  ['getimageformat_8',['getImageFormat',['../d1/d3e/group__vkSwapchain.html#a1dd06ae87660e62bcb402983bf8a89af',1,'vk::Swapchain']]],
+  ['getimageindex_9',['getImageIndex',['../d1/d3e/group__vkSwapchain.html#a6edbcc35dae9b71cbe4718eed3f5ac9d',1,'vk::SwapchainImage']]],
+  ['getimagerecievedsemaphore_10',['getImageRecievedSemaphore',['../d1/d3e/group__vkSwapchain.html#a177e5cef686d44c6a9da9dc12c4923e2',1,'vk::SwapchainImage']]],
+  ['getlogicaldevice_11',['getLogicalDevice',['../d1/d3e/group__vkSwapchain.html#a6ab54d52c781f28c7af26954deca280e',1,'vk::Swapchain']]],
+  ['getmemorytypeindex_12',['getMemoryTypeIndex',['../d1/d93/group__vkDevice.html#a9b382736f3450cce8c0e795479c747b3',1,'vk::PhysicalDevice']]],
+  ['getnextimage_13',['getNextImage',['../d1/d3e/group__vkSwapchain.html#a7e426d95573aabf097f76d2d5e863ce0',1,'vk::Swapchain']]],
+  ['getperframeresource_14',['getPerFrameResource',['../d1/d3e/group__vkSwapchain.html#abf21c56c0179ea31139479e8338e77b3',1,'vk::SwapchainImage']]],
+  ['getperimageresource_15',['getPerImageResource',['../d1/d3e/group__vkSwapchain.html#ae847ec06fca1b4b6d5e425c127198ee4',1,'vk::SwapchainImage']]],
+  ['getperswapchainresource_16',['getPerSwapchainResource',['../d1/d3e/group__vkSwapchain.html#a884197f4584775250a846b03eb403260',1,'vk::Swapchain']]],
+  ['getpixelsize_17',['getPixelSize',['../d1/d3e/group__vkSwapchain.html#a88fe65637cbe1730acafb3a99bed850a',1,'vk::Swapchain']]],
+  ['getqueuepool_18',['getQueuePool',['../d1/d93/group__vkDevice.html#a4b0514f26d4f0ae857dd2cb1d650ea69',1,'vk::LogicalDevice::getQueuePool()'],['../dd/d98/group__vkQueue.html#a729f4f8bec1453f36a7d5691f08e09b4',1,'vk::Queue::getQueuePool()']]],
+  ['getrendersurface_19',['getRenderSurface',['../d1/d3e/group__vkSwapchain.html#a5dfbdddaa1ae5af86ffb599b3446b13d',1,'vk::Swapchain']]],
+  ['getswapchain_20',['getSwapchain',['../d1/d3e/group__vkSwapchain.html#aa68ae962b1d23ed5247900361dc64b9c',1,'vk::OSRenderSurface::getSwapchain()'],['../d1/d3e/group__vkSwapchain.html#ae211c95f825ed0be0ba1ff106de9b6df',1,'vk::SwapchainImage::getSwapchain()']]],
+  ['getusablephysicaldevice_21',['getUsablePhysicalDevice',['../d1/d93/group__vkDevice.html#a92d09cd81d919ee45b82ee9e0a187905',1,'vk::PhysicalDevice']]]
 ];

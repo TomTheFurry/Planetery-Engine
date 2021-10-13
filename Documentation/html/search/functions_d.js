@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['rebuild_0',['rebuild',['../d1/d3e/group__vkSwapchain.html#ab2779e4feceea3df854fec357dd998a9',1,'vk::Swapchain']]],
-  ['releaseswapchain_1',['releaseSwapchain',['../d1/d3e/group__vkSwapchain.html#ad6039b869c094c2e1b67d493bfa86f1a',1,'vk::OSRenderSurface']]],
-  ['rendernextimage_2',['renderNextImage',['../d1/d3e/group__vkSwapchain.html#aca98a32261232934e01bf0ecad2ee8f4',1,'vk::Swapchain']]]
+  ['physicaldevice_0',['PhysicalDevice',['../d1/d93/group__vkDevice.html#ac19370f652c615253df3109c2c996819',1,'vk::PhysicalDevice::PhysicalDevice(VkPhysicalDevice _d, OSRenderSurface *renderSurface=nullptr)'],['../d1/d93/group__vkDevice.html#a4f225004186fceea59e1f5feec4bfe76',1,'vk::PhysicalDevice::PhysicalDevice()=default'],['../d1/d93/group__vkDevice.html#a33b7413c963b07f19ea336242ce85b58',1,'vk::PhysicalDevice::PhysicalDevice(const PhysicalDevice &amp;other)'],['../d1/d93/group__vkDevice.html#a9352d20a6d544e776fc98b78a2c7323f',1,'vk::PhysicalDevice::PhysicalDevice(PhysicalDevice &amp;&amp;other) noexcept']]],
+  ['presentimage_1',['presentImage',['../dd/d98/group__vkQueue.html#a8fcb0b675de5147f843e14565f278314',1,'vk::Queue']]]
 ];

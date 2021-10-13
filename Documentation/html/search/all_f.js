@@ -32,5 +32,6 @@ var searchData=
   ['properties11_29',['properties11',['../d1/d93/group__vkDevice.html#a347bb7496d8f416ed4fae0234a8ed912',1,'vk::PhysicalDevice']]],
   ['properties12_30',['properties12',['../d1/d93/group__vkDevice.html#ae7b37ac8b98c6f377aff87f151947f34',1,'vk::PhysicalDevice']]],
   ['protected_31',['Protected',['../d6/d8c/group__vkImageEnum.html#ggaa5936aa22562776a7daf57b0bf4c0f52a56f0605c9795b173abd2e34fab7fc164',1,'vk::Protected()'],['../de/ded/group__vkCommendEnum.html#ggac6d0aa539dc2aa38bc0797739598626da56f0605c9795b173abd2e34fab7fc164',1,'vk::Protected()']]],
-  ['pushconstantlayout_32',['PushConstantLayout',['../d3/dfd/classvk_1_1RenderPipeline_1_1PushConstantLayout.html',1,'vk::RenderPipeline']]]
+  ['ptr_32',['ptr',['../de/dfa/group__vkBuffer.html#a769a0f4aafc410379e498b5cd31da444',1,'vk::Buffer']]],
+  ['pushconstantlayout_33',['PushConstantLayout',['../d3/dfd/classvk_1_1RenderPipeline_1_1PushConstantLayout.html',1,'vk::RenderPipeline']]]
 ];

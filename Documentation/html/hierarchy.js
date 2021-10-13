@@ -31,14 +31,14 @@ var hierarchy =
     [ "CharFlags", "da/d68/structCharFlags.html", null ],
     [ "vk::DescriptorSet::CmdWriteInfo", "d4/dba/classvk_1_1DescriptorSet.html#d1/de8/structvk_1_1DescriptorSet_1_1CmdWriteInfo", null ],
     [ "vk::ComplexObject", "d5/db0/structvk_1_1ComplexObject.html", [
-      [ "vk::Buffer", "dd/dda/classvk_1_1Buffer.html", [
-        [ "vk::IndexBuffer", "dd/d96/classvk_1_1IndexBuffer.html", null ],
-        [ "vk::StorageBuffer", "d8/d3e/classvk_1_1StorageBuffer.html", null ],
-        [ "vk::UniformBuffer", "d1/df3/classvk_1_1UniformBuffer.html", null ],
-        [ "vk::VertexBuffer", "dc/d13/classvk_1_1VertexBuffer.html", null ]
+      [ "vk::Buffer", "de/dfa/group__vkBuffer.html#dd/dda/classvk_1_1Buffer", [
+        [ "vk::IndexBuffer", "de/dfa/group__vkBuffer.html#dd/d96/classvk_1_1IndexBuffer", null ],
+        [ "vk::StorageBuffer", "de/dfa/group__vkBuffer.html#d8/d3e/classvk_1_1StorageBuffer", null ],
+        [ "vk::UniformBuffer", "de/dfa/group__vkBuffer.html#d1/df3/classvk_1_1UniformBuffer", null ],
+        [ "vk::VertexBuffer", "de/dfa/group__vkBuffer.html#dc/d13/classvk_1_1VertexBuffer", null ]
       ] ],
-      [ "vk::CommendBuffer", "dc/d2b/classvk_1_1CommendBuffer.html", null ],
-      [ "vk::CommendPool", "d4/d31/classvk_1_1CommendPool.html", null ],
+      [ "vk::CommendBuffer", "d0/d98/group__vkCommend.html#dc/d2b/classvk_1_1CommendBuffer", null ],
+      [ "vk::CommendPool", "d0/d98/group__vkCommend.html#d4/d31/classvk_1_1CommendPool", null ],
       [ "vk::DescriptorLayout", "d0/d39/classvk_1_1DescriptorLayout.html", null ],
       [ "vk::DescriptorPool", "de/d06/classvk_1_1DescriptorPool.html", [
         [ "vk::DescriptorContainer", "d3/dea/classvk_1_1DescriptorContainer.html", null ]

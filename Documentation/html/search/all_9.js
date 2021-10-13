@@ -15,7 +15,7 @@ var searchData=
   ['immediate_12',['Immediate',['../dc/dd1/group__vkSwapchainEnum.html#gga5e5f7e8b5e9d193a167aa710d6d5638ea43f6615bbb2c40a5306ff804094420b1',1,'vk']]],
   ['inandd_13',['INandD',['../dc/dc1/group__vkPipelineEnum.html#ggaf6ed084a6c53ab72c7ec3e3d541fea7ea75b214929a273b50221492b1d7e676eb',1,'vk']]],
   ['index_14',['Index',['../d3/dd0/group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6ca88fa71f0a6e0dfedbb46d91cc0b37a50',1,'vk']]],
-  ['indexbuffer_15',['IndexBuffer',['../dd/d96/classvk_1_1IndexBuffer.html',1,'vk']]],
+  ['indexbuffer_15',['IndexBuffer',['../de/dfa/group__vkBuffer.html#a9e25c84c44c3b735069fe6d3577e31b5',1,'vk::IndexBuffer::IndexBuffer()'],['../de/dfa/group__vkBuffer.html#dd/d96/classvk_1_1IndexBuffer',1,'vk::IndexBuffer']]],
   ['indicebuffer_16',['IndiceBuffer',['../de/d2d/classgl_1_1IndiceBuffer.html',1,'gl']]],
   ['indirectdraw_17',['IndirectDraw',['../d3/dd0/group__vkBufferEnum.html#ggaa28524e4c5dea828d7014d4e4da7bc6ca2737349e4921b08b4b5a97a2cf46d5df',1,'vk']]],
   ['indirectreadable_18',['IndirectReadable',['../d4/d07/group__vkMemoryEnum.html#gga3776a8012f3872aca8a50158d95a504ba3364d006914a891e5bb8e983302dc7cb',1,'vk']]],
