@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['operator_2d_3e_0',['operator-&gt;',['../classvk_1_1PhysicalDevice.html#a707788912ab40a92ed43809e58980cd9',1,'vk::PhysicalDevice::operator-&gt;()'],['../classvk_1_1PhysicalDevice.html#ab1a61c1831b07f71236c0a0ca3734047',1,'vk::PhysicalDevice::operator-&gt;() const'],['../classvk_1_1LogicalDevice.html#ae7218965ebc99561825b1f91d2471263',1,'vk::LogicalDevice::operator-&gt;()'],['../classvk_1_1LogicalDevice.html#aaf0d65cd162f0f988fbf81abfc59f7a7',1,'vk::LogicalDevice::operator-&gt;() const']]],
-  ['operator_3c_3d_3e_1',['operator&lt;=&gt;',['../classvk_1_1PhysicalDevice.html#a116ada381954f111939063c643ef90e0',1,'vk::PhysicalDevice']]],
-  ['operator_3d_2',['operator=',['../classvk_1_1PhysicalDevice.html#ae0f84769275dff77d82bbfe76f8e6e04',1,'vk::PhysicalDevice::operator=(const PhysicalDevice &amp;)=default'],['../classvk_1_1PhysicalDevice.html#a88f80c84ae69f319727522d957d23dc5',1,'vk::PhysicalDevice::operator=(PhysicalDevice &amp;&amp;)=default']]],
-  ['operator_3d_3d_3',['operator==',['../classvk_1_1PhysicalDevice.html#af51b5681167b83871a7c86ac0a60ea62',1,'vk::PhysicalDevice']]]
+  ['makeimageview_0',['makeImageView',['../d1/d3e/group__vkSwapchain.html#a074135514fd33c79c485fe85c747d945',1,'vk::SwapchainImage::makeImageView() const'],['../d1/d3e/group__vkSwapchain.html#ga34264da464d53008c3a335d5dda09b8a',1,'vk::SwapchainImage::makeImageView(LM &amp;lm) const']]],
+  ['map_1',['map',['../dd/dda/classvk_1_1Buffer.html#a80d49c3641eb7d63ede96bbe568f1f00',1,'vk::Buffer']]],
+  ['markqueuenotinuse_2',['markQueueNotInUse',['../dd/d98/group__vkQueue.html#ae1e515af723baf32370d2bea35eedd32',1,'vk::QueuePool']]]
 ];

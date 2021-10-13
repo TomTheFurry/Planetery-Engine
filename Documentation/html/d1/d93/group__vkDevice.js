@@ -1,0 +1,47 @@
+var group__vkDevice =
+[
+    [ "vk::SurfaceMinimizedException", "d1/d93/group__vkDevice.html#d0/def/structvk_1_1SurfaceMinimizedException", null ],
+    [ "vk::Layer", "d1/d93/group__vkDevice.html#d6/d4d/structvk_1_1Layer", null ],
+    [ "vk::Extension", "d1/d93/group__vkDevice.html#d5/d21/structvk_1_1Extension", null ],
+    [ "vk::PhysicalDevice", "d1/d93/group__vkDevice.html#d9/da9/classvk_1_1PhysicalDevice", [
+      [ "PhysicalDevice", "d1/d93/group__vkDevice.html#ac19370f652c615253df3109c2c996819", null ],
+      [ "PhysicalDevice", "d1/d93/group__vkDevice.html#a4f225004186fceea59e1f5feec4bfe76", null ],
+      [ "PhysicalDevice", "d1/d93/group__vkDevice.html#a33b7413c963b07f19ea336242ce85b58", null ],
+      [ "PhysicalDevice", "d1/d93/group__vkDevice.html#a9352d20a6d544e776fc98b78a2c7323f", null ],
+      [ "~PhysicalDevice", "d1/d93/group__vkDevice.html#acd24eaa6c554f0de088eab3bc6d7b572", null ],
+      [ "getUsablePhysicalDevice", "d1/d93/group__vkDevice.html#a92d09cd81d919ee45b82ee9e0a187905", null ],
+      [ "operator=", "d1/d93/group__vkDevice.html#ae0f84769275dff77d82bbfe76f8e6e04", null ],
+      [ "operator=", "d1/d93/group__vkDevice.html#a88f80c84ae69f319727522d957d23dc5", null ],
+      [ "getMemoryTypeIndex", "d1/d93/group__vkDevice.html#a9b382736f3450cce8c0e795479c747b3", null ],
+      [ "operator->", "d1/d93/group__vkDevice.html#a707788912ab40a92ed43809e58980cd9", null ],
+      [ "operator->", "d1/d93/group__vkDevice.html#ab1a61c1831b07f71236c0a0ca3734047", null ],
+      [ "operator==", "d1/d93/group__vkDevice.html#af51b5681167b83871a7c86ac0a60ea62", null ],
+      [ "operator<=>", "d1/d93/group__vkDevice.html#a116ada381954f111939063c643ef90e0", null ],
+      [ "d", "d1/d93/group__vkDevice.html#a1c88178106c28b045fe8ba9a0a3d5997", null ],
+      [ "features10", "d1/d93/group__vkDevice.html#a685160267f84ba0688d60e20b7f5b12e", null ],
+      [ "features11", "d1/d93/group__vkDevice.html#a7ea2f034edbb4007968953e49d979f59", null ],
+      [ "features12", "d1/d93/group__vkDevice.html#a4b464ece871a2543a4583c629dbf94d2", null ],
+      [ "properties10", "d1/d93/group__vkDevice.html#a765adf3d9e172977ae7009c884ed24ab", null ],
+      [ "properties11", "d1/d93/group__vkDevice.html#a347bb7496d8f416ed4fae0234a8ed912", null ],
+      [ "properties12", "d1/d93/group__vkDevice.html#ae7b37ac8b98c6f377aff87f151947f34", null ],
+      [ "memProperties", "d1/d93/group__vkDevice.html#aa06c584538bc00fa75b4425ef3e02b59", null ],
+      [ "queueFamilies", "d1/d93/group__vkDevice.html#a358b8108dc46e6a7b3d5298378b696f9", null ],
+      [ "renderOut", "d1/d93/group__vkDevice.html#ac579cf4ea7afb9f7484459511e2873cf", null ],
+      [ "rating", "d1/d93/group__vkDevice.html#a931e5c0389c104bdf22cd232db0c07cd", null ],
+      [ "meetRequirements", "d1/d93/group__vkDevice.html#a9e343a27b71ab6a5740b74390e09f9bd", null ]
+    ] ],
+    [ "vk::LogicalDevice", "d1/d93/group__vkDevice.html#d6/d4f/classvk_1_1LogicalDevice", [
+      [ "LogicalDevice", "d1/d93/group__vkDevice.html#abc40aa56c386b75accc9f3a1eb4e45ca", null ],
+      [ "LogicalDevice", "d1/d93/group__vkDevice.html#a5b6789cb0cbd9811ee5ba0309fe133bb", null ],
+      [ "~LogicalDevice", "d1/d93/group__vkDevice.html#a109ef3c2ae8a10450fbddb73135d6154", null ],
+      [ "_setup", "d1/d93/group__vkDevice.html#a3129919472c13e1fa56d57b1924f78b1", null ],
+      [ "allocMemory", "d1/d93/group__vkDevice.html#a1bf5c1100e6686101aeacf505fd17491", null ],
+      [ "freeMemory", "d1/d93/group__vkDevice.html#abaf6c1f9189e0cd7079bcb015488fdeb", null ],
+      [ "getQueuePool", "d1/d93/group__vkDevice.html#a4b0514f26d4f0ae857dd2cb1d650ea69", null ],
+      [ "operator->", "d1/d93/group__vkDevice.html#ae7218965ebc99561825b1f91d2471263", null ],
+      [ "operator->", "d1/d93/group__vkDevice.html#aaf0d65cd162f0f988fbf81abfc59f7a7", null ],
+      [ "d", "d1/d93/group__vkDevice.html#a5feac002e533d7c5f1aafd5c9539bb3b", null ],
+      [ "memoryPools", "d1/d93/group__vkDevice.html#a6e07091b635690ea45496a6bfebf5de8", null ],
+      [ "pd", "d1/d93/group__vkDevice.html#a5f9d67ce613ac3bd87534d0be8124332", null ]
+    ] ]
+];

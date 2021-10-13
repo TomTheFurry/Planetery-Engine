@@ -1,0 +1,4 @@
+<map id="vk::SwapchainImage::waitForCompletion" name="vk::SwapchainImage::waitForCompletion">
+<area shape="rect" id="node1" title="Wait until the frame can be cleanup within the timeout." alt="" coords="5,5,145,47"/>
+<area shape="rect" id="node2" href="$d1/d3e/group__vkSwapchain.html#af5fd5b9fbb69f2dda45ebd5e8ea034ac" title=" " alt="" coords="193,13,363,39"/>
+</map>

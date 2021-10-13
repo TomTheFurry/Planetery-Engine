@@ -1,0 +1,4 @@
+<map id="vk::Queue::presentImage" name="vk::Queue::presentImage">
+<area shape="rect" id="node1" title="Presents a SwapchainImage to the Swapchain." alt="" coords="5,13,172,39"/>
+<area shape="rect" id="node2" href="$d1/d3e/group__vkSwapchain.html#a9049bddc39f034d8f74e0d7a32b82154" title="Invalidate the Swapchain and set the &#39;outdated&#39; flag." alt="" coords="220,5,387,47"/>
+</map>

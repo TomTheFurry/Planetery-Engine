@@ -1,0 +1,4 @@
+<map id="vk::PhysicalDevice::getMemoryTypeIndex" name="vk::PhysicalDevice::getMemoryTypeIndex">
+<area shape="rect" id="node1" title="Get an index for an avaliable Memory Type that passes the bit filter and supports certain vk::MemoryF..." alt="" coords="183,5,337,47"/>
+<area shape="rect" id="node2" href="$d1/d93/group__vkDevice.html#a1bf5c1100e6686101aeacf505fd17491" title="Allocate a memory section." alt="" coords="5,5,135,47"/>
+</map>

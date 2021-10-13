@@ -1,0 +1,4 @@
+<map id="vk::SwapchainImage::_getImgViewInfo" name="vk::SwapchainImage::_getImgViewInfo">
+<area shape="rect" id="node1" title="Internal use." alt="" coords="193,5,333,47"/>
+<area shape="rect" id="node2" href="$d1/d3e/group__vkSwapchain.html#ga34264da464d53008c3a335d5dda09b8a" title="Make an IamgeView using LM as the LifetimeMangager from this image." alt="" coords="5,5,145,47"/>
+</map>
